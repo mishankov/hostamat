@@ -1,0 +1,42 @@
+services:
+  proxymini:
+    image: ghcr.io/mishankov/proxymini:main
+    environment:
+      - PROXYMINI_PORT=1000
+    ports:
+      - 1000:1000
+    volumes:
+      - ./config/proxymini.conf.toml:/app/proxymini.conf.toml:ro
+      - ./container-data/proxymini:/app/data:rw
+
+  caddy:
+    image: caddy:latest
+    ports:
+      - 80:80
+      - 443:443
+      - 2019:2019
+    volumes:
+      - ./config/Caddyfile:/etc/caddy/Caddyfile
+      - ./container-data/caddy/data:/data
+      - ./container-data/caddy/config:/config
+
+  hostamat:
+    build:
+      context: ../platform
+      dockerfile: Dockerfile.test
+    env_file:
+      - .env
+    environment:
+      - HOSTAMAT_PORT=1001
+      - HOSTAMAT_LOG_LEVEL=debug
+      - HOSTAMAT_LOG_TYPE=text
+      - HOSTAMAT_DOMAIN=hostamat.localhost
+
+      - HOSTAMAT_CADDY_URL=http://proxymini:1000/caddy/config
+      - HOSTAMAT_CADDY_HOST=host.docker.internal:1001
+
+      - HOSTAMAT_TIMEWEB_URL=http://proxymini:1000/timeweb
+    ports:
+    - 1001:1001
+    volumes:
+      - ../platform:/app

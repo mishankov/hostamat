@@ -1,0 +1,12 @@
+{
+	# Make admin endpoint available
+  admin 0.0.0.0:2019
+}
+
+proxy.localhost {
+  reverse_proxy proxymini:1000
+}
+
+platform.localhost {
+	reverse_proxy host.docker.internal:1001
+}

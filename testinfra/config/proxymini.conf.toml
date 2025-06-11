@@ -1,0 +1,11 @@
+[[proxy]]
+prefix = "/upload"
+target = "http://host.docker.internal:1001/upload"
+
+[[proxy]]
+prefix = "/timeweb"
+target = "https://api.timeweb.cloud/api/v1"
+
+[[proxy]]
+prefix = "/caddy"
+target = "http://host.docker.internal:2019"
