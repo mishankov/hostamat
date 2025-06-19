@@ -10,17 +10,17 @@ type logger interface {
 	DebugContext(ctx context.Context, msg string, args ...any)
 }
 
-type HttpClient struct {
+type Client struct {
 	client *http.Client
 	logger logger
 }
 
-func New(logger logger) *HttpClient {
+func New(logger logger) *Client {
 	// TODO: probably need better http client
-	return &HttpClient{http.DefaultClient, logger}
+	return &Client{http.DefaultClient, logger}
 }
 
-func (c *HttpClient) Do(req *http.Request) (*http.Response, error) {
+func (c *Client) Do(req *http.Request) (*http.Response, error) {
 	// TODO: mask or do not log Authorization header
 	c.logger.DebugContext(req.Context(), "request started", "url", req.URL, "headers", maskedHeaders(req.Header))
 	resp, err := c.client.Do(req)

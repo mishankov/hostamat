@@ -11,8 +11,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-
-	"github.com/google/uuid"
 )
 
 type logger interface {
@@ -33,9 +31,7 @@ func NewUploadFileHandler(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAP
 }
 
 func (ufh *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx := context.WithValue(r.Context(), "traceId", uuid.NewString())
-
-	ufh.logger.DebugContext(ctx, "upload file handler started")
+	ctx := r.Context()
 
 	if r.Method != "POST" {
 		http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
@@ -75,8 +71,6 @@ func (ufh *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	}
 
 	fmt.Fprintf(w, "File saved successfully.")
-
-	ufh.logger.DebugContext(ctx, "upload file handler finished")
 }
 
 func randomBase64String(length int) string {

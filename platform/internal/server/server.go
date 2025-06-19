@@ -1,11 +1,16 @@
 package server
 
 import (
+	"context"
+	"hostamat/pkg/platforma/httpserver"
 	"net/http"
 )
 
 type logger interface {
 	Info(msg string, args ...any)
+	DebugContext(ctx context.Context, msg string, args ...any)
+	InfoContext(ctx context.Context, msg string, args ...any)
+	ErrorContext(ctx context.Context, msg string, args ...any)
 }
 
 type Server struct {
@@ -19,7 +24,10 @@ func New(port string, logger logger, uploadFileHandler http.Handler) *Server {
 }
 
 func (s *Server) Run() {
-	server := http.NewServeMux()
+	server := httpserver.New()
+
+	server.Use(&LoggerMiddleware{logger: s.logger})
+
 	server.Handle("/uploadFile", s.uploadFileHandler)
 
 	server.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {

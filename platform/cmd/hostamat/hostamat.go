@@ -5,9 +5,9 @@ import (
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/timeweb"
 	"hostamat/internal/handlers"
-	"hostamat/internal/infra/httpclient"
 	"hostamat/internal/infra/logger"
 	"hostamat/internal/server"
+	"hostamat/pkg/platforma/httpclient"
 )
 
 func main() {
