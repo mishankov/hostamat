@@ -2,7 +2,7 @@ package application
 
 import (
 	"context"
-	"log"
+	"hostamat/pkg/platforma/log"
 	"sync"
 )
 
@@ -32,10 +32,10 @@ func (a *Application) Run(ctx context.Context) error {
 	for serviceName, service := range a.services {
 		wg.Add(1)
 		go func() {
-			log.Println("starting service", serviceName)
+			log.InfoContext(ctx, "starting service", "service", serviceName)
 			err := service.Run(ctx)
 			if err != nil {
-				log.Println("Error in service:", serviceName, err)
+				log.ErrorContext(ctx, "error in service", "service", serviceName, "error", err)
 			}
 		}()
 	}

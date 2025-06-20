@@ -2,7 +2,7 @@ package httpserver
 
 import (
 	"context"
-	"log"
+	"hostamat/pkg/platforma/log"
 	"net/http"
 )
 
@@ -22,6 +22,6 @@ func New(port string, handleGroups map[string]http.Handler) *HttpServer {
 
 // TODO: graceful shutdown
 func (s *HttpServer) Run(ctx context.Context) error {
-	log.Println("starting http server at http://localhost:" + s.port)
+	log.InfoContext(ctx, "starting http server", "address", "http://localhost:"+s.port)
 	return http.ListenAndServe(":"+s.port, s.mux)
 }

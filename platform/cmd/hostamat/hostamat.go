@@ -12,35 +12,37 @@ import (
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
 	"hostamat/pkg/platforma/httpserver/handlegroup"
+	"hostamat/pkg/platforma/log"
 	"net/http"
 )
 
 func main() {
 	ctx := context.Background()
 
+	// Basic components
 	conf := config.New()
-
 	logger := logger.New(conf.Logger.Type, conf.Logger.Level)
-
 	httpClient := httpclient.New(logger)
 
+	// Setting default logger for platforma pkg
+	log.SetDefault(logger)
+
+	// API adapters
 	timewebAPI := timeweb.New(httpClient, conf.Timeweb.BaseURL, conf.Timeweb.APIToken)
 	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL, conf.Caddy.ServerHost, conf.BaseDomain)
 
+	// Handlers
 	uploadFileHandler := handlers.NewUploadFileHandler(logger, timewebAPI, caddyAPI, conf.Timeweb.BaseDomain)
 
-	// server := server.New(conf.Port, logger, uploadFileHandler)
-
-	// server.Run()
-
+	// Middlewares
 	requestLogger := middlewares.NewRequestLogger(logger)
 
+	// Handle groups
 	fileHandlers := handlegroup.New()
-
 	fileHandlers.Use(requestLogger)
-
 	fileHandlers.Handle("/upload", uploadFileHandler)
 
+	// Services
 	api := httpserver.New(conf.Port, map[string]http.Handler{
 		"/files": fileHandlers,
 		"/healthcheck": http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -48,9 +50,11 @@ func main() {
 		}),
 	})
 
+	// Application
 	app := application.New()
-
 	app.Register("API", api)
 
-	logger.Error("Application finished", "error", app.Run(ctx))
+	if err := app.Run(ctx); err != nil {
+		logger.Error("Applicaton finished with error", "error", err)
+	}
 }
