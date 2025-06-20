@@ -1,0 +1,2 @@
+- [ ] Graceful shutdown
+- [ ] Global logger

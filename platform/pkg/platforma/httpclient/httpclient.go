@@ -21,7 +21,6 @@ func New(logger logger) *Client {
 }
 
 func (c *Client) Do(req *http.Request) (*http.Response, error) {
-	// TODO: mask or do not log Authorization header
 	c.logger.DebugContext(req.Context(), "request started", "url", req.URL, "headers", maskedHeaders(req.Header))
 	resp, err := c.client.Do(req)
 	c.logger.DebugContext(req.Context(), "request made", "status", resp.Status, "headers", maskedHeaders(resp.Header))
