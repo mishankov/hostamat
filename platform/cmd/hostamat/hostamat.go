@@ -50,7 +50,7 @@ func main() {
 
 	app := application.New()
 
-	app.Register(api)
+	app.Register("API", api)
 
 	logger.Error("Application finished", "error", app.Run(ctx))
 }

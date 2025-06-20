@@ -11,15 +11,15 @@ type ApplicationService interface {
 }
 
 type Application struct {
-	services []ApplicationService
+	services map[string]ApplicationService
 }
 
 func New() *Application {
-	return &Application{}
+	return &Application{services: make(map[string]ApplicationService)}
 }
 
-func (a *Application) Register(service ApplicationService) {
-	a.services = append(a.services, service)
+func (a *Application) Register(serviceName string, service ApplicationService) {
+	a.services[serviceName] = service
 }
 
 func (a *Application) Run(ctx context.Context) error {
@@ -29,12 +29,13 @@ func (a *Application) Run(ctx context.Context) error {
 		ctx = context.Background()
 	}
 
-	for _, service := range a.services {
+	for serviceName, service := range a.services {
 		wg.Add(1)
 		go func() {
+			log.Println("starting service", serviceName)
 			err := service.Run(ctx)
 			if err != nil {
-				log.Println("Error in service:", err)
+				log.Println("Error in service:", serviceName, err)
 			}
 		}()
 	}
