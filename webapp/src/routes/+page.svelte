@@ -4,7 +4,7 @@
 </script>
 
 <FileUploader 
-  uploadUrl="/uploadFile"
+  uploadUrl="/files/upload"
   acceptedTypes=".html"
   maxSizeMB={5}
 />

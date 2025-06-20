@@ -1,6 +1,6 @@
 [[proxy]]
-prefix = "/upload"
-target = "http://host.docker.internal:1001/upload"
+prefix = "/files/upload"
+target = "http://host.docker.internal:1001/files/upload"
 
 [[proxy]]
 prefix = "/timeweb"

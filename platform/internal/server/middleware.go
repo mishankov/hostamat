@@ -7,11 +7,11 @@ import (
 	"github.com/google/uuid"
 )
 
-type LoggerMiddleware struct {
+type RequestLogger struct {
 	logger logger
 }
 
-func (m *LoggerMiddleware) Wrap(h http.Handler) http.Handler {
+func (m *RequestLogger) Wrap(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), "traceId", uuid.NewString())
 

@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"hostamat/pkg/platforma/httpserver"
+	"hostamat/pkg/platforma/httpserver/handlegroup"
 	"net/http"
 )
 
@@ -24,9 +24,9 @@ func New(port string, logger logger, uploadFileHandler http.Handler) *Server {
 }
 
 func (s *Server) Run() {
-	server := httpserver.New()
+	server := handlegroup.New()
 
-	server.Use(&LoggerMiddleware{logger: s.logger})
+	server.Use(&RequestLogger{logger: s.logger})
 
 	server.Handle("/uploadFile", s.uploadFileHandler)
 
