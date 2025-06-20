@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/timeweb"
@@ -15,6 +16,8 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
+
 	conf := config.New()
 
 	logger := logger.New(conf.Logger.Type, conf.Logger.Level)
@@ -49,5 +52,5 @@ func main() {
 
 	app.Register(api)
 
-	logger.Error("Application finished", "error", app.Run())
+	logger.Error("Application finished", "error", app.Run(ctx))
 }

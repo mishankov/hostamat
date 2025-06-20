@@ -1,6 +1,7 @@
 package httpserver
 
 import (
+	"context"
 	"log"
 	"net/http"
 )
@@ -19,7 +20,8 @@ func New(port string, handleGroups map[string]http.Handler) *HttpServer {
 	return &HttpServer{mux: mux, port: port}
 }
 
-func (s *HttpServer) Run() error {
+// TODO: graceful shutdown
+func (s *HttpServer) Run(ctx context.Context) error {
 	log.Println("starting http server at http://localhost:" + s.port)
 	return http.ListenAndServe(":"+s.port, s.mux)
 }
