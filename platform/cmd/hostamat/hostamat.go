@@ -13,7 +13,9 @@ import (
 	"hostamat/pkg/platforma/httpserver"
 	"hostamat/pkg/platforma/httpserver/handlegroup"
 	"hostamat/pkg/platforma/log"
+	"hostamat/pkg/platforma/scheduler"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -50,9 +52,15 @@ func main() {
 		}),
 	})
 
+	testScheduler := scheduler.New(3*time.Second, func(ctx context.Context) error {
+		logger.DebugContext(ctx, "hey")
+		return nil
+	})
+
 	// Application
 	app := application.New()
 	app.Register("API", api)
+	app.Register("Sheduler", testScheduler)
 
 	if err := app.Run(ctx); err != nil {
 		logger.Error("Applicaton finished with error", "error", err)
