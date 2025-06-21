@@ -31,9 +31,10 @@ func (a *Application) Run(ctx context.Context) error {
 
 	for serviceName, service := range a.services {
 		wg.Add(1)
+		serviceCtx := context.WithValue(ctx, "serviceName", serviceName)
 		go func() {
 			log.InfoContext(ctx, "starting service", "service", serviceName)
-			err := service.Run(ctx)
+			err := service.Run(serviceCtx)
 			if err != nil {
 				log.ErrorContext(ctx, "error in service", "service", serviceName, "error", err)
 			}
