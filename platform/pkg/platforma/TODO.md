@@ -1,1 +1,2 @@
 - [ ] Graceful shutdown
+- [ ] Automatic env vars to disable services
