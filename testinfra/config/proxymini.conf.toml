@@ -9,3 +9,8 @@ target = "https://api.timeweb.cloud/api/v1"
 [[proxy]]
 prefix = "/caddy"
 target = "http://host.docker.internal:2019"
+
+
+[[proxy]]
+prefix = "/minio"
+target = "http://minio:9000"

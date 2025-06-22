@@ -16,6 +16,13 @@ type caddy struct {
 	ServerHost string
 }
 
+type minio struct {
+	BaseURL  string
+	Login    string
+	Password string
+	Bucket   string
+}
+
 type logger struct {
 	Level slog.Level
 
@@ -29,6 +36,7 @@ type Config struct {
 	Logger     logger
 	Caddy      caddy
 	Timeweb    timeweb
+	Minio      minio
 }
 
 func New() *Config {
@@ -43,6 +51,12 @@ func New() *Config {
 			APIToken:   os.Getenv("HOSTAMAT_TIMEWEB_TOKEN"),
 			BaseURL:    os.Getenv("HOSTAMAT_TIMEWEB_URL"),
 			BaseDomain: os.Getenv("HOSTAMAT_TIMEWEB_DOMAIN"),
+		},
+		Minio: minio{
+			BaseURL:  os.Getenv("HOSTAMAT_MINIO_URL"),
+			Login:    os.Getenv("HOSTAMAT_MINIO_LOGIN"),
+			Password: os.Getenv("HOSTAMAT_MINIO_PASSWORD"),
+			Bucket:   os.Getenv("HOSTAMAT_MINIO_BUCKET"),
 		},
 		Logger: logger{
 			Level: func() slog.Level {

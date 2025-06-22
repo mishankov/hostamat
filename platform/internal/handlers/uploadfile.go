@@ -1,16 +1,18 @@
 package handlers
 
 import (
-	"bytes"
 	"context"
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
 	"hostamat/internal/adapters/caddy"
+	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/timeweb"
-	"io"
 	"log"
 	"net/http"
+
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 type logger interface {
@@ -51,13 +53,6 @@ func (ufh *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	fmt.Fprintf(w, "Received file: %s\n", handler.Filename)
 	fmt.Fprintf(w, "File size: %d\n", handler.Size)
 
-	var buf = bytes.Buffer{}
-	if _, err := io.Copy(&buf, file); err != nil {
-		ufh.logger.ErrorContext(ctx, "error saving file", "error", err)
-		http.Error(w, "Error saving file", http.StatusInternalServerError)
-		return
-	}
-
 	subdomain := randomBase64String(5)
 
 	err = ufh.timewebAPI.AddSubdomain(ctx, ufh.baseDomain, subdomain)
@@ -71,6 +66,39 @@ func (ufh *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	}
 
 	fmt.Fprintf(w, "File saved successfully.")
+
+	c := config.New()
+
+	log.Println("Minio config", c.Minio)
+
+	minioClient, err := minio.New(c.Minio.BaseURL, &minio.Options{
+		Creds:  credentials.NewStaticV4(c.Minio.Login, c.Minio.Password, ""),
+		Secure: false,
+	})
+
+	if err != nil {
+		log.Fatal("Error creating minio client", err)
+	}
+
+	err = minioClient.MakeBucket(ctx, c.Minio.Bucket, minio.MakeBucketOptions{})
+	if err != nil {
+		// Check to see if we already own this bucket (which happens if you run this twice)
+		exists, errBucketExists := minioClient.BucketExists(ctx, c.Minio.Bucket)
+		if errBucketExists == nil && exists {
+			log.Printf("We already own %s\n", c.Minio.Bucket)
+		} else {
+			log.Fatalln("Error creating bucket", err)
+		}
+	} else {
+		log.Printf("Successfully created %s\n", c.Minio.Bucket)
+	}
+
+	info, err := minioClient.PutObject(ctx, c.Minio.Bucket, subdomain+"-"+handler.Filename, file, handler.Size, minio.PutObjectOptions{})
+	if err != nil {
+		log.Fatal("Error saving file to minio", err)
+	}
+
+	ufh.logger.DebugContext(ctx, "Upload file info", "info", info)
 }
 
 func randomBase64String(length int) string {
