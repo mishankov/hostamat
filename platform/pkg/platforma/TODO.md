@@ -1,2 +1,3 @@
 - [ ] Graceful shutdown
 - [ ] Automatic env vars to disable services
+- [ ] Panic recover for services
