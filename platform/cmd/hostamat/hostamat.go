@@ -6,7 +6,6 @@ import (
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/timeweb"
 	"hostamat/internal/handlers"
-	"hostamat/internal/infra/logger"
 	"hostamat/internal/middlewares"
 	"hostamat/pkg/platforma/application"
 	"hostamat/pkg/platforma/httpclient"
@@ -23,7 +22,7 @@ func main() {
 
 	// Basic components
 	conf := config.New()
-	logger := logger.New(conf.Logger.Type, conf.Logger.Level)
+	logger := log.New(conf.Logger.Type, conf.Logger.Level, nil)
 	httpClient := httpclient.New(logger)
 
 	// Setting default logger for platforma pkg

@@ -26,7 +26,7 @@ func (s *Scheduler) Run(ctx context.Context) error {
 	for {
 		select {
 		case <-ticker.C:
-			runCtx := context.WithValue(ctx, "traceId", uuid.NewString())
+			runCtx := context.WithValue(ctx, log.TraceIdKey, uuid.NewString())
 			err := s.action(runCtx)
 			if err != nil {
 				log.ErrorContext(ctx, "error in scheduler", "error", err)
