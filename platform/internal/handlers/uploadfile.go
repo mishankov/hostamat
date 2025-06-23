@@ -39,7 +39,7 @@ func NewUploadFileHandler(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAP
 	}
 }
 
-func (ufh *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	if r.Method != "POST" {
@@ -51,7 +51,7 @@ func (ufh *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 
 	file, handler, err := r.FormFile("file")
 	if err != nil {
-		ufh.logger.ErrorContext(ctx, "error retrieving file", "error", err)
+		h.logger.ErrorContext(ctx, "error retrieving file", "error", err)
 		http.Error(w, "Error retrieving file", http.StatusInternalServerError)
 		return
 	}
@@ -62,39 +62,39 @@ func (ufh *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 
 	subdomain := randomBase64String(5)
 
-	err = ufh.timewebAPI.AddSubdomain(ctx, ufh.baseDomain, subdomain)
+	err = h.timewebAPI.AddSubdomain(ctx, h.baseDomain, subdomain)
 	if err != nil {
-		ufh.logger.ErrorContext(ctx, "error in timeweb add subdomain", "error", err)
+		h.logger.ErrorContext(ctx, "error in timeweb add subdomain", "error", err)
 	}
 
-	err = ufh.caddyAPI.AddSubdomain(ctx, subdomain)
+	err = h.caddyAPI.AddSubdomain(ctx, subdomain)
 	if err != nil {
-		ufh.logger.ErrorContext(ctx, "error in caddy add subdomain", "error", err)
+		h.logger.ErrorContext(ctx, "error in caddy add subdomain", "error", err)
 	}
 
 	fmt.Fprintf(w, "File saved successfully.\n")
 
-	err = ufh.s3.MakeBucket(ctx, ufh.s3Bucket, minio.MakeBucketOptions{})
+	err = h.s3.MakeBucket(ctx, h.s3Bucket, minio.MakeBucketOptions{})
 	if err != nil {
 		// Check to see if we already own this bucket (which happens if you run this twice)
-		exists, errBucketExists := ufh.s3.BucketExists(ctx, ufh.s3Bucket)
+		exists, errBucketExists := h.s3.BucketExists(ctx, h.s3Bucket)
 		if errBucketExists == nil && exists {
-			log.Printf("We already own %s\n", ufh.s3Bucket)
+			log.Printf("We already own %s\n", h.s3Bucket)
 		} else {
 			log.Fatalln("Error creating bucket", err)
 		}
 	} else {
-		log.Printf("Successfully created %s\n", ufh.s3Bucket)
+		log.Printf("Successfully created %s\n", h.s3Bucket)
 	}
 
-	info, err := ufh.s3.PutObject(ctx, ufh.s3Bucket, subdomain+"/"+handler.Filename, file, handler.Size, minio.PutObjectOptions{})
+	info, err := h.s3.PutObject(ctx, h.s3Bucket, subdomain+"/"+handler.Filename, file, handler.Size, minio.PutObjectOptions{})
 	if err != nil {
 		log.Fatal("Error saving file to minio", err)
 	}
 
 	fmt.Fprintf(w, "S3 upload info: %+v\n", info)
 
-	ufh.logger.DebugContext(ctx, "Upload file info", "info", info)
+	h.logger.DebugContext(ctx, "Upload file info", "info", info)
 }
 
 func randomBase64String(length int) string {
