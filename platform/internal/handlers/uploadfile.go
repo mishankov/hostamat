@@ -93,7 +93,7 @@ func (ufh *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		log.Printf("Successfully created %s\n", c.S3.Bucket)
 	}
 
-	info, err := minioClient.PutObject(ctx, c.S3.Bucket, subdomain+"-"+handler.Filename, file, handler.Size, minio.PutObjectOptions{})
+	info, err := minioClient.PutObject(ctx, c.S3.Bucket, subdomain+"/"+handler.Filename, file, handler.Size, minio.PutObjectOptions{})
 	if err != nil {
 		log.Fatal("Error saving file to minio", err)
 	}
