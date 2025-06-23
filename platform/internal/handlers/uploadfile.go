@@ -6,13 +6,11 @@ import (
 	"encoding/base64"
 	"fmt"
 	"hostamat/internal/adapters/caddy"
-	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/timeweb"
 	"log"
 	"net/http"
 
 	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 type logger interface {
@@ -25,11 +23,20 @@ type UploadFileHandler struct {
 	logger     logger
 	timewebAPI *timeweb.TimewebAPI
 	caddyAPI   *caddy.CaddyAPI
+	s3         *minio.Client
+	s3Bucket   string
 	baseDomain string
 }
 
-func NewUploadFileHandler(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAPI *caddy.CaddyAPI, baseDomain string) *UploadFileHandler {
-	return &UploadFileHandler{logger: logger, timewebAPI: timewebAPI, caddyAPI: caddyAPI, baseDomain: baseDomain}
+func NewUploadFileHandler(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAPI *caddy.CaddyAPI, s3 *minio.Client, s3Bucket string, baseDomain string) *UploadFileHandler {
+	return &UploadFileHandler{
+		logger:     logger,
+		timewebAPI: timewebAPI,
+		caddyAPI:   caddyAPI,
+		s3:         s3,
+		s3Bucket:   s3Bucket,
+		baseDomain: baseDomain,
+	}
 }
 
 func (ufh *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -65,38 +72,27 @@ func (ufh *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		ufh.logger.ErrorContext(ctx, "error in caddy add subdomain", "error", err)
 	}
 
-	fmt.Fprintf(w, "File saved successfully.")
+	fmt.Fprintf(w, "File saved successfully.\n")
 
-	c := config.New()
-
-	log.Println("Minio config", c.S3)
-
-	minioClient, err := minio.New(c.S3.BaseURL, &minio.Options{
-		Creds:  credentials.NewStaticV4(c.S3.Login, c.S3.Password, ""),
-		Secure: false,
-	})
-
-	if err != nil {
-		log.Fatal("Error creating minio client", err)
-	}
-
-	err = minioClient.MakeBucket(ctx, c.S3.Bucket, minio.MakeBucketOptions{})
+	err = ufh.s3.MakeBucket(ctx, ufh.s3Bucket, minio.MakeBucketOptions{})
 	if err != nil {
 		// Check to see if we already own this bucket (which happens if you run this twice)
-		exists, errBucketExists := minioClient.BucketExists(ctx, c.S3.Bucket)
+		exists, errBucketExists := ufh.s3.BucketExists(ctx, ufh.s3Bucket)
 		if errBucketExists == nil && exists {
-			log.Printf("We already own %s\n", c.S3.Bucket)
+			log.Printf("We already own %s\n", ufh.s3Bucket)
 		} else {
 			log.Fatalln("Error creating bucket", err)
 		}
 	} else {
-		log.Printf("Successfully created %s\n", c.S3.Bucket)
+		log.Printf("Successfully created %s\n", ufh.s3Bucket)
 	}
 
-	info, err := minioClient.PutObject(ctx, c.S3.Bucket, subdomain+"/"+handler.Filename, file, handler.Size, minio.PutObjectOptions{})
+	info, err := ufh.s3.PutObject(ctx, ufh.s3Bucket, subdomain+"/"+handler.Filename, file, handler.Size, minio.PutObjectOptions{})
 	if err != nil {
 		log.Fatal("Error saving file to minio", err)
 	}
+
+	fmt.Fprintf(w, "S3 upload info: %+v\n", info)
 
 	ufh.logger.DebugContext(ctx, "Upload file info", "info", info)
 }
