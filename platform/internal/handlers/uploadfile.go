@@ -69,10 +69,10 @@ func (ufh *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 
 	c := config.New()
 
-	log.Println("Minio config", c.Minio)
+	log.Println("Minio config", c.S3)
 
-	minioClient, err := minio.New(c.Minio.BaseURL, &minio.Options{
-		Creds:  credentials.NewStaticV4(c.Minio.Login, c.Minio.Password, ""),
+	minioClient, err := minio.New(c.S3.BaseURL, &minio.Options{
+		Creds:  credentials.NewStaticV4(c.S3.Login, c.S3.Password, ""),
 		Secure: false,
 	})
 
@@ -80,20 +80,20 @@ func (ufh *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		log.Fatal("Error creating minio client", err)
 	}
 
-	err = minioClient.MakeBucket(ctx, c.Minio.Bucket, minio.MakeBucketOptions{})
+	err = minioClient.MakeBucket(ctx, c.S3.Bucket, minio.MakeBucketOptions{})
 	if err != nil {
 		// Check to see if we already own this bucket (which happens if you run this twice)
-		exists, errBucketExists := minioClient.BucketExists(ctx, c.Minio.Bucket)
+		exists, errBucketExists := minioClient.BucketExists(ctx, c.S3.Bucket)
 		if errBucketExists == nil && exists {
-			log.Printf("We already own %s\n", c.Minio.Bucket)
+			log.Printf("We already own %s\n", c.S3.Bucket)
 		} else {
 			log.Fatalln("Error creating bucket", err)
 		}
 	} else {
-		log.Printf("Successfully created %s\n", c.Minio.Bucket)
+		log.Printf("Successfully created %s\n", c.S3.Bucket)
 	}
 
-	info, err := minioClient.PutObject(ctx, c.Minio.Bucket, subdomain+"-"+handler.Filename, file, handler.Size, minio.PutObjectOptions{})
+	info, err := minioClient.PutObject(ctx, c.S3.Bucket, subdomain+"-"+handler.Filename, file, handler.Size, minio.PutObjectOptions{})
 	if err != nil {
 		log.Fatal("Error saving file to minio", err)
 	}
