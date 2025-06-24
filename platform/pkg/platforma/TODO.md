@@ -1,4 +1,3 @@
 - [ ] Graceful shutdown
 - [ ] Automatic env vars to disable services
 - [ ] Panic recover for services
-- [ ] Start up tasks for app (before services start) or services prerequisites

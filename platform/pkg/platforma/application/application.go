@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"fmt"
 	"hostamat/pkg/platforma/log"
 	"sync"
 )
@@ -14,6 +15,18 @@ type RunnerFunc func(context.Context) error
 
 func (rf RunnerFunc) Run(ctx context.Context) error {
 	return rf(ctx)
+}
+
+type ErrStartupTaskFailed struct {
+	err error
+}
+
+func (e *ErrStartupTaskFailed) Error() string {
+	return fmt.Sprintf("failed to run startup task: %v", e.err)
+}
+
+func (e *ErrStartupTaskFailed) Unwrap() error {
+	return e.err
 }
 
 type StartupTaskConfig struct {
@@ -52,14 +65,15 @@ func (a *Application) Run(ctx context.Context) error {
 
 	for i, task := range a.startupTasks {
 		log.InfoContext(ctx, "running task", "task", task.config.Name, "index", i)
+
 		taskCtx := context.WithValue(ctx, log.SartupTaskKey, task.config.Name)
+
 		err := task.runner.Run(taskCtx)
 		if err != nil {
 			log.ErrorContext(ctx, "error in startup task", "error", err, "task", task.config.Name)
 
 			if task.config.AbortOnError {
-				// TODO: wrap error
-				return err
+				return &ErrStartupTaskFailed{err: err}
 			}
 		}
 	}
@@ -68,7 +82,9 @@ func (a *Application) Run(ctx context.Context) error {
 
 	for serviceName, service := range a.services {
 		wg.Add(1)
+
 		serviceCtx := context.WithValue(ctx, log.ServiceNameKey, serviceName)
+
 		go func() {
 			log.InfoContext(ctx, "starting service", "service", serviceName)
 			err := service.Run(serviceCtx)
