@@ -7,55 +7,56 @@ import (
 	"sync"
 )
 
-type Runner interface {
-	Run(context.Context) error
-}
-
-type RunnerFunc func(context.Context) error
-
-func (rf RunnerFunc) Run(ctx context.Context) error {
-	return rf(ctx)
-}
-
+// ErrStartupTaskFailed represents an error that occurs when a startup task fails.
 type ErrStartupTaskFailed struct {
 	err error
 }
 
+// Error returns the formatted error message for ErrStartupTaskFailed.
 func (e *ErrStartupTaskFailed) Error() string {
 	return fmt.Sprintf("failed to run startup task: %v", e.err)
 }
 
+// Unwrap returns the underlying error for ErrStartupTaskFailed.
 func (e *ErrStartupTaskFailed) Unwrap() error {
 	return e.err
 }
 
+// StartupTaskConfig contains configuration options for a startup task.
 type StartupTaskConfig struct {
-	Name         string
-	AbortOnError bool
+	Name         string // Name of the startup task
+	AbortOnError bool   // Whether to abort application startup if this task fails
 }
 
+// startupTask represents an individual startup task with its runner and configuration.
 type startupTask struct {
 	runner Runner
 	config StartupTaskConfig
 }
 
+// Application manages startup tasks and services for the application lifecycle.
 type Application struct {
 	startupTasks []startupTask
 	services     map[string]Runner
 }
 
+// New creates and returns a new Application instance.
 func New() *Application {
 	return &Application{services: make(map[string]Runner)}
 }
 
+// OnStart registers a new startup task with the given runner and configuration.
 func (a *Application) OnStart(task Runner, config StartupTaskConfig) {
 	a.startupTasks = append(a.startupTasks, startupTask{task, config})
 }
 
+// Register adds a named service to the application.
 func (a *Application) Register(serviceName string, service Runner) {
 	a.services[serviceName] = service
 }
 
+// Run executes all startup tasks and services in the application.
+// It returns an error if any startup task configured to abort on error fails.
 func (a *Application) Run(ctx context.Context) error {
 	if ctx == nil {
 		ctx = context.Background()
