@@ -60,9 +60,6 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	fmt.Fprintf(w, "Received file: %s\n", handler.Filename)
-	fmt.Fprintf(w, "File size: %d\n", handler.Size)
-
 	subdomain := randomBase64String(5)
 
 	err = h.timewebAPI.AddSubdomain(ctx, h.baseDomain, subdomain)
@@ -75,12 +72,12 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.logger.ErrorContext(ctx, "error in caddy add subdomain", "error", err)
 	}
 
-	fmt.Fprintf(w, "File saved successfully.\n")
-
 	err = h.s3.PutObject(ctx, h.s3Bucket, subdomain+"/"+handler.Filename, file, handler.Size)
 	if err != nil {
 		log.Fatal("Error saving file to minio", err)
 	}
+
+	fmt.Fprint(w, subdomain+"."+h.baseDomain)
 }
 
 func randomBase64String(length int) string {

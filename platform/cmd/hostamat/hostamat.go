@@ -13,8 +13,10 @@ import (
 	"hostamat/pkg/platforma/httpserver"
 	"hostamat/pkg/platforma/httpserver/handlegroup"
 	"hostamat/pkg/platforma/log"
+	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -56,12 +58,20 @@ func main() {
 		"/healthcheck": http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("ok"))
 		}),
-	})
+		"": http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			logger.InfoContext(ctx, "request", "host", r.Host, "uri", r.RequestURI)
 
-	// testScheduler := scheduler.New(3*time.Second, func(ctx context.Context) error {
-	// 	logger.DebugContext(ctx, "hey")
-	// 	return nil
-	// })
+			subdomain := strings.Split(r.Host, ".")[0]
+
+			file, err := s3Client.GetObject(ctx, conf.S3.Bucket, subdomain+"/index.html")
+			if err != nil {
+				logger.ErrorContext(ctx, "error getting file", "error", err)
+			}
+
+			n, err := io.Copy(w, file)
+			logger.InfoContext(ctx, "file copy", "bytes", n, "error", err)
+		}),
+	})
 
 	// Application
 	app := application.New()
@@ -71,7 +81,6 @@ func main() {
 	}), application.StartupTaskConfig{Name: "createBucket", AbortOnError: false})
 
 	app.Register("api", api)
-	// app.Register("Sheduler", testScheduler)
 
 	if err := app.Run(ctx); err != nil {
 		logger.Error("Applicaton finished with error", "error", err)
