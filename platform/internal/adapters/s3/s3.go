@@ -44,3 +44,12 @@ func (s3 *S3) PutObject(ctx context.Context, bucketName, fileName string, file i
 
 	return err
 }
+
+func (s3 *S3) GetObject(ctx context.Context, bucketName, fileName string) (io.Reader, error) {
+	obj, err := s3.client.GetObject(ctx, bucketName, fileName, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	return obj, nil
+}
