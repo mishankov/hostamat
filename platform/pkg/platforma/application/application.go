@@ -6,19 +6,19 @@ import (
 	"sync"
 )
 
-type ApplicationService interface {
+type Runner interface {
 	Run(context.Context) error
 }
 
 type Application struct {
-	services map[string]ApplicationService
+	services map[string]Runner
 }
 
 func New() *Application {
-	return &Application{services: make(map[string]ApplicationService)}
+	return &Application{services: make(map[string]Runner)}
 }
 
-func (a *Application) Register(serviceName string, service ApplicationService) {
+func (a *Application) Register(serviceName string, service Runner) {
 	a.services[serviceName] = service
 }
 
