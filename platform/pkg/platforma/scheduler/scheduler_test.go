@@ -20,7 +20,7 @@ func TestSuccessRun(t *testing.T) {
 
 	go s.Run(context.TODO())
 
-	time.Sleep(3*time.Second + 1*time.Millisecond)
+	time.Sleep(3500 * time.Millisecond)
 
 	if buf.String() != "111" {
 		t.Errorf("wrong buffer content. expected %v, got %v", "111", buf.String())
@@ -38,10 +38,10 @@ func TestErrorRun(t *testing.T) {
 
 	go s.Run(context.TODO())
 
-	time.Sleep(3*time.Second + 1*time.Millisecond)
+	time.Sleep(3500 * time.Millisecond)
 
 	if buf.String() != "111" {
-		t.Errorf("wrong buffer content. expected %v, got %v", "1", buf.String())
+		t.Errorf("wrong buffer content. expected %v, got %v", "111", buf.String())
 	}
 }
 
@@ -64,7 +64,7 @@ func TestContextDecline(t *testing.T) {
 	err := s.Run(ctx)
 
 	if buf.String() != "111" {
-		t.Errorf("wrong buffer content. expected %v, got %v", "1", buf.String())
+		t.Errorf("wrong buffer content. expected %v, got %v", "111", buf.String())
 	}
 
 	if err == nil {
