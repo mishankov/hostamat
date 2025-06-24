@@ -14,6 +14,7 @@ type contextKey string
 const (
 	TraceIdKey     contextKey = "traceId"
 	ServiceNameKey contextKey = "serviceName"
+	SartupTaskKey  contextKey = "satrtupTask"
 )
 
 // SetDefault sets the default logger used by the package-level logging functions.
@@ -34,6 +35,10 @@ func (h *contextHandler) Handle(ctx context.Context, r slog.Record) error {
 
 	if serviceName, ok := ctx.Value(ServiceNameKey).(string); ok {
 		r.AddAttrs(slog.String("serviceName", serviceName))
+	}
+
+	if startupTask, ok := ctx.Value(SartupTaskKey).(string); ok {
+		r.AddAttrs(slog.String("startupTask", startupTask))
 	}
 
 	for _, key := range h.additionKeys {

@@ -65,7 +65,12 @@ func main() {
 
 	// Application
 	app := application.New()
-	app.Register("API", api)
+
+	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
+		return s3Client.MakeBucket(ctx, conf.S3.Bucket)
+	}), application.StartupTaskConfig{Name: "createBucket", AbortOnError: false})
+
+	app.Register("api", api)
 	// app.Register("Sheduler", testScheduler)
 
 	if err := app.Run(ctx); err != nil {
