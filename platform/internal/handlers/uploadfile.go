@@ -7,10 +7,9 @@ import (
 	"fmt"
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/timeweb"
+	"io"
 	"log"
 	"net/http"
-
-	"github.com/minio/minio-go/v7"
 )
 
 type logger interface {
@@ -19,16 +18,20 @@ type logger interface {
 	ErrorContext(ctx context.Context, msg string, args ...any)
 }
 
+type s3 interface {
+	PutObject(ctx context.Context, bucketName, fileName string, file io.Reader, fileSize int64) error
+}
+
 type UploadFileHandler struct {
 	logger     logger
 	timewebAPI *timeweb.TimewebAPI
 	caddyAPI   *caddy.CaddyAPI
-	s3         *minio.Client
+	s3         s3
 	s3Bucket   string
 	baseDomain string
 }
 
-func NewUploadFileHandler(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAPI *caddy.CaddyAPI, s3 *minio.Client, s3Bucket string, baseDomain string) *UploadFileHandler {
+func NewUploadFileHandler(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAPI *caddy.CaddyAPI, s3 s3, s3Bucket string, baseDomain string) *UploadFileHandler {
 	return &UploadFileHandler{
 		logger:     logger,
 		timewebAPI: timewebAPI,
@@ -74,27 +77,10 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, "File saved successfully.\n")
 
-	err = h.s3.MakeBucket(ctx, h.s3Bucket, minio.MakeBucketOptions{})
-	if err != nil {
-		// Check to see if we already own this bucket (which happens if you run this twice)
-		exists, errBucketExists := h.s3.BucketExists(ctx, h.s3Bucket)
-		if errBucketExists == nil && exists {
-			log.Printf("We already own %s\n", h.s3Bucket)
-		} else {
-			log.Fatalln("Error creating bucket", err)
-		}
-	} else {
-		log.Printf("Successfully created %s\n", h.s3Bucket)
-	}
-
-	info, err := h.s3.PutObject(ctx, h.s3Bucket, subdomain+"/"+handler.Filename, file, handler.Size, minio.PutObjectOptions{})
+	err = h.s3.PutObject(ctx, h.s3Bucket, subdomain+"/"+handler.Filename, file, handler.Size)
 	if err != nil {
 		log.Fatal("Error saving file to minio", err)
 	}
-
-	fmt.Fprintf(w, "S3 upload info: %+v\n", info)
-
-	h.logger.DebugContext(ctx, "Upload file info", "info", info)
 }
 
 func randomBase64String(length int) string {

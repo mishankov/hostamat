@@ -4,6 +4,7 @@ import (
 	"context"
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/config"
+	"hostamat/internal/adapters/s3"
 	"hostamat/internal/adapters/timeweb"
 	"hostamat/internal/handlers"
 	"hostamat/internal/middlewares"
@@ -13,9 +14,7 @@ import (
 	"hostamat/pkg/platforma/httpserver/handlegroup"
 	"hostamat/pkg/platforma/log"
 	"net/http"
-
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
+	"os"
 )
 
 func main() {
@@ -33,13 +32,11 @@ func main() {
 	timewebAPI := timeweb.New(httpClient, conf.Timeweb.BaseURL, conf.Timeweb.APIToken)
 	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL, conf.Caddy.ServerHost, conf.BaseDomain)
 
-	s3Client, err := minio.New(conf.S3.BaseURL, &minio.Options{
-		Creds:  credentials.NewStaticV4(conf.S3.Login, conf.S3.Password, ""),
-		Secure: false,
-	})
-
+	// S3 client
+	s3Client, err := s3.New(conf.S3.BaseURL, conf.S3.Login, conf.S3.Password, false)
 	if err != nil {
 		logger.Error("failed to create s3 client", "error", err)
+		os.Exit(1)
 	}
 
 	// Handlers
