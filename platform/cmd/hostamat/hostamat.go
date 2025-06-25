@@ -58,6 +58,7 @@ func main() {
 		"/healthcheck": http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("ok"))
 		}),
+		// TODO: prob should not be root endpoint
 		"": http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			logger.InfoContext(ctx, "request", "host", r.Host, "uri", r.RequestURI)
 
