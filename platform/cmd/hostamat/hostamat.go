@@ -32,7 +32,7 @@ func main() {
 
 	// API adapters
 	timewebAPI := timeweb.New(httpClient, conf.Timeweb.BaseURL, conf.Timeweb.APIToken)
-	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL, conf.Caddy.ServerHost, conf.BaseDomain)
+	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL, conf.Caddy.ServerHost)
 
 	// S3 client
 	s3Client, err := s3.New(conf.S3.BaseURL, conf.S3.Login, conf.S3.Password, false)
@@ -42,7 +42,7 @@ func main() {
 	}
 
 	// Handlers
-	uploadFileHandler := handlers.NewUploadFileHandler(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.Timeweb.BaseDomain)
+	uploadFileHandler := handlers.NewUploadFileHandler(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.BaseDomain)
 
 	// Middlewares
 	requestLogger := middlewares.NewRequestLogger(logger)

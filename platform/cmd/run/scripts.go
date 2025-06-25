@@ -27,7 +27,7 @@ func flushSubdomains() {
 	httpClient := httpclient.New(logger)
 	timewebAPI := timeweb.New(httpClient, conf.Timeweb.BaseURL, conf.Timeweb.APIToken)
 
-	domain, err := timewebAPI.GetDomain(ctx, conf.Timeweb.BaseDomain)
+	domain, err := timewebAPI.GetDomain(ctx, conf.BaseDomain)
 	if err != nil {
 		logger.Error("Error getting domain", "error", err)
 	}
@@ -49,7 +49,7 @@ func flushSubdomains() {
 		}
 	}
 
-	domain, err = timewebAPI.GetDomain(ctx, conf.Timeweb.BaseDomain)
+	domain, err = timewebAPI.GetDomain(ctx, conf.BaseDomain)
 	if err != nil {
 		logger.Error("Error getting domain", "error", err)
 	}

@@ -6,9 +6,8 @@ import (
 )
 
 type timeweb struct {
-	APIToken   string
-	BaseURL    string
-	BaseDomain string
+	APIToken string
+	BaseURL  string
 }
 
 type caddy struct {
@@ -48,9 +47,8 @@ func New() *Config {
 			ServerHost: os.Getenv("HOSTAMAT_CADDY_HOST"),
 		},
 		Timeweb: timeweb{
-			APIToken:   os.Getenv("HOSTAMAT_TIMEWEB_TOKEN"),
-			BaseURL:    os.Getenv("HOSTAMAT_TIMEWEB_URL"),
-			BaseDomain: os.Getenv("HOSTAMAT_TIMEWEB_DOMAIN"),
+			APIToken: os.Getenv("HOSTAMAT_TIMEWEB_TOKEN"),
+			BaseURL:  os.Getenv("HOSTAMAT_TIMEWEB_URL"),
 		},
 		S3: s3{
 			BaseURL:  os.Getenv("HOSTAMAT_S3_URL"),
