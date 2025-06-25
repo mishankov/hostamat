@@ -9,6 +9,7 @@
     let progress = 0;
     let uploadError = null;
     let uploadSuccess = false;
+    let link = ""
 
     // Handle file selection
     function handleFileChange(e) {
@@ -34,6 +35,7 @@
         progress = 0;
         uploadError = null;
         uploadSuccess = false;
+        link = ""
 
         const formData = new FormData();
         formData.append('file', selectedFile);
@@ -52,6 +54,7 @@
             xhr.addEventListener('load', () => {
                 if (xhr.status >= 200 && xhr.status < 300) {
                     uploadSuccess = true;
+                    link = xhr.responseText
                 } else {
                     uploadError = `Upload failed: ${xhr.statusText}`;
                 }
@@ -123,6 +126,10 @@
 
     {#if uploadError}
         <div class="error-message">{uploadError}</div>
+    {/if}
+
+    {#if link !== ""}
+        <a href="https://{link}" target="_blank">{link}</a>
     {/if}
 </div>
 
