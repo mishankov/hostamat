@@ -23,6 +23,7 @@ func NewRequestLogger(logger logger) *RequestLogger {
 func (m *RequestLogger) Wrap(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), log.TraceIdKey, uuid.NewString())
+		r = r.WithContext(ctx)
 
 		m.logger.DebugContext(ctx, "service invoke started", "path", r.URL.Path, "method", r.Method)
 		h.ServeHTTP(w, r)
