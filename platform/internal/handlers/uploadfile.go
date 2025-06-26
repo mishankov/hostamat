@@ -24,24 +24,26 @@ type s3 interface {
 }
 
 type UploadFileHandler struct {
-	logger     logger
-	timewebAPI *timeweb.TimewebAPI
-	caddyAPI   *caddy.CaddyAPI
-	s3         s3
-	s3Bucket   string
-	baseDomain string
-	target     string
+	logger                logger
+	timewebAPI            *timeweb.TimewebAPI
+	caddyAPI              *caddy.CaddyAPI
+	s3                    s3
+	s3Bucket              string
+	baseDomain            string
+	target                string
+	fileHandlerPathPrefix string
 }
 
-func NewUploadFileHandler(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAPI *caddy.CaddyAPI, s3 s3, s3Bucket string, baseDomain string, target string) *UploadFileHandler {
+func NewUploadFileHandler(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAPI *caddy.CaddyAPI, s3 s3, s3Bucket string, baseDomain string, target string, fileHandlerPathPrefix string) *UploadFileHandler {
 	return &UploadFileHandler{
-		logger:     logger,
-		timewebAPI: timewebAPI,
-		caddyAPI:   caddyAPI,
-		s3:         s3,
-		s3Bucket:   s3Bucket,
-		baseDomain: baseDomain,
-		target:     target,
+		logger:                logger,
+		timewebAPI:            timewebAPI,
+		caddyAPI:              caddyAPI,
+		s3:                    s3,
+		s3Bucket:              s3Bucket,
+		baseDomain:            baseDomain,
+		target:                target,
+		fileHandlerPathPrefix: fileHandlerPathPrefix,
 	}
 }
 
@@ -70,7 +72,7 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.logger.ErrorContext(ctx, "error in timeweb add subdomain", "error", err)
 	}
 
-	err = h.caddyAPI.AddSubdomain(ctx, h.baseDomain, subdomain, h.target)
+	err = h.caddyAPI.AddSubdomain(ctx, h.baseDomain, subdomain, h.target, h.fileHandlerPathPrefix)
 	if err != nil {
 		h.logger.ErrorContext(ctx, "error in caddy add subdomain", "error", err)
 	}

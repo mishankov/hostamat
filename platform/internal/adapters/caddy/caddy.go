@@ -21,7 +21,7 @@ func New(httpClient httpClient, apiBasePath string) *CaddyAPI {
 	return &CaddyAPI{httpClient: httpClient, apiBasePath: apiBasePath}
 }
 
-func (capi *CaddyAPI) AddSubdomain(ctx context.Context, baseDomain, subdomain, target string) error {
+func (capi *CaddyAPI) AddSubdomain(ctx context.Context, baseDomain, subdomain, target string, handlerPrefix string) error {
 	// TODO: use shorthand syntax
 	reqBody := Route{
 		Handle: []Handle{{
@@ -31,8 +31,7 @@ func (capi *CaddyAPI) AddSubdomain(ctx context.Context, baseDomain, subdomain, t
 					Group: "group2",
 					Handle: []Handle{{
 						Handler: "rewrite",
-						// TODO: hardcode
-						Uri: "/files/serve{http.request.uri}",
+						Uri:     handlerPrefix + "{http.request.uri}",
 					}},
 				},
 				{
@@ -45,6 +44,7 @@ func (capi *CaddyAPI) AddSubdomain(ctx context.Context, baseDomain, subdomain, t
 				}},
 		}},
 		Match: []Match{{
+			// TODO: only add hosts to matcher. routes can stay the same and be updated on start or when needed
 			Host: []string{subdomain + "." + baseDomain},
 		}},
 		Terminal: true,

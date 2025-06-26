@@ -43,7 +43,8 @@ services:
       - HOSTAMAT_LOG_LEVEL=debug
       - HOSTAMAT_LOG_TYPE=text
       - HOSTAMAT_DOMAIN=hostamat.localhost
-      - HOSTAMAT_FILESERVER_URL=host.docker.internal:1001
+      - HOSTAMAT_FILESERVER_HOST=host.docker.internal:1001
+      - HOSTAMAT_FILESERVER_PATH=/files/serve
 
       - HOSTAMAT_CADDY_URL=http://proxymini:1000/caddy/config
 

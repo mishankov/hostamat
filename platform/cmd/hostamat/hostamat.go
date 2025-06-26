@@ -41,7 +41,7 @@ func main() {
 	}
 
 	// Handlers
-	uploadFileHandler := handlers.NewUploadFileHandler(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.BaseDomain, conf.FileServerURL)
+	uploadFileHandler := handlers.NewUploadFileHandler(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.BaseDomain, conf.FileServerHost, conf.FileServerPath)
 	getFileHandler := getfilehandler.New(logger, s3Client, conf.S3.Bucket)
 
 	// Middlewares
@@ -57,8 +57,8 @@ func main() {
 		"/healthcheck": http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("ok"))
 		}),
-		"/files/api":   filesAPI,
-		"/files/serve": requestLogger.Wrap(getFileHandler),
+		"/files/api":        filesAPI,
+		conf.FileServerPath: requestLogger.Wrap(getFileHandler),
 		"": requestLogger.Wrap(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			logger.InfoContext(r.Context(), "root handler", "uri", r.RequestURI)
 			w.Write([]byte("ok"))
