@@ -11,8 +11,7 @@ type timeweb struct {
 }
 
 type caddy struct {
-	BaseURL    string
-	ServerHost string
+	BaseURL string
 }
 
 type s3 struct {
@@ -30,21 +29,22 @@ type logger struct {
 }
 
 type Config struct {
-	Port       string
-	BaseDomain string
-	Logger     logger
-	Caddy      caddy
-	Timeweb    timeweb
-	S3         s3
+	Port          string
+	BaseDomain    string
+	FileServerURL string
+	Logger        logger
+	Caddy         caddy
+	Timeweb       timeweb
+	S3            s3
 }
 
 func New() *Config {
 	return &Config{
-		Port:       os.Getenv("HOSTAMAT_PORT"),
-		BaseDomain: os.Getenv("HOSTAMAT_DOMAIN"),
+		Port:          os.Getenv("HOSTAMAT_PORT"),
+		BaseDomain:    os.Getenv("HOSTAMAT_DOMAIN"),
+		FileServerURL: os.Getenv("HOSTAMAT_FILESERVER_URL"),
 		Caddy: caddy{
-			BaseURL:    os.Getenv("HOSTAMAT_CADDY_URL"),
-			ServerHost: os.Getenv("HOSTAMAT_CADDY_HOST"),
+			BaseURL: os.Getenv("HOSTAMAT_CADDY_URL"),
 		},
 		Timeweb: timeweb{
 			APIToken: os.Getenv("HOSTAMAT_TIMEWEB_TOKEN"),

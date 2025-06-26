@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type logger interface {
@@ -29,9 +30,10 @@ type UploadFileHandler struct {
 	s3         s3
 	s3Bucket   string
 	baseDomain string
+	target     string
 }
 
-func NewUploadFileHandler(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAPI *caddy.CaddyAPI, s3 s3, s3Bucket string, baseDomain string) *UploadFileHandler {
+func NewUploadFileHandler(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAPI *caddy.CaddyAPI, s3 s3, s3Bucket string, baseDomain string, target string) *UploadFileHandler {
 	return &UploadFileHandler{
 		logger:     logger,
 		timewebAPI: timewebAPI,
@@ -39,6 +41,7 @@ func NewUploadFileHandler(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAP
 		s3:         s3,
 		s3Bucket:   s3Bucket,
 		baseDomain: baseDomain,
+		target:     target,
 	}
 }
 
@@ -67,7 +70,7 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.logger.ErrorContext(ctx, "error in timeweb add subdomain", "error", err)
 	}
 
-	err = h.caddyAPI.AddSubdomain(ctx, h.baseDomain, subdomain)
+	err = h.caddyAPI.AddSubdomain(ctx, h.baseDomain, subdomain, h.target)
 	if err != nil {
 		h.logger.ErrorContext(ctx, "error in caddy add subdomain", "error", err)
 	}
@@ -88,5 +91,5 @@ func randomBase64String(length int) string {
 
 	result := base64.URLEncoding.EncodeToString(bytes)
 
-	return result[:len(result)-1]
+	return strings.ToLower(result[:len(result)-1])
 }

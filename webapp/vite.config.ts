@@ -6,7 +6,7 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
 		proxy: {
-			'/files/upload': {
+			'/files/api/upload': {
 				target: 'http://localhost:1000'
 			}
 		}

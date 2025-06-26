@@ -15,26 +15,34 @@ type httpClient interface {
 type CaddyAPI struct {
 	httpClient  httpClient
 	apiBasePath string
-	serverHost  string
 }
 
-func New(httpClient httpClient, apiBasePath string, serverHost string) *CaddyAPI {
-	return &CaddyAPI{httpClient: httpClient, apiBasePath: apiBasePath, serverHost: serverHost}
+func New(httpClient httpClient, apiBasePath string) *CaddyAPI {
+	return &CaddyAPI{httpClient: httpClient, apiBasePath: apiBasePath}
 }
 
-func (capi *CaddyAPI) AddSubdomain(ctx context.Context, baseDomain, subdomain string) error {
+func (capi *CaddyAPI) AddSubdomain(ctx context.Context, baseDomain, subdomain, target string) error {
 	// TODO: use shorthand syntax
 	reqBody := Route{
 		Handle: []Handle{{
 			Handler: "subroute",
-			Routes: []Route{{
-				Handle: []Handle{{
-					Handler: "reverse_proxy",
-					Upstreams: []Upstream{{
-						Dial: capi.serverHost,
+			Routes: []Route{
+				{
+					Group: "group2",
+					Handle: []Handle{{
+						Handler: "rewrite",
+						// TODO: hardcode
+						Uri: "/files/serve{http.request.uri}",
+					}},
+				},
+				{
+					Handle: []Handle{{
+						Handler: "reverse_proxy",
+						Upstreams: []Upstream{{
+							Dial: target,
+						}},
 					}},
 				}},
-			}},
 		}},
 		Match: []Match{{
 			Host: []string{subdomain + "." + baseDomain},

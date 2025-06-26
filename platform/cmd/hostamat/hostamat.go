@@ -31,7 +31,7 @@ func main() {
 
 	// API adapters
 	timewebAPI := timeweb.New(httpClient, conf.Timeweb.BaseURL, conf.Timeweb.APIToken)
-	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL, conf.Caddy.ServerHost)
+	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL)
 
 	// S3 client
 	s3Client, err := s3.New(conf.S3.BaseURL, conf.S3.Login, conf.S3.Password, false)
@@ -41,25 +41,28 @@ func main() {
 	}
 
 	// Handlers
-	uploadFileHandler := handlers.NewUploadFileHandler(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.BaseDomain)
+	uploadFileHandler := handlers.NewUploadFileHandler(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.BaseDomain, conf.FileServerURL)
 	getFileHandler := getfilehandler.New(logger, s3Client, conf.S3.Bucket)
 
 	// Middlewares
 	requestLogger := middlewares.NewRequestLogger(logger)
 
 	// Handle groups
-	fileHandlers := handlegroup.New()
-	fileHandlers.Use(requestLogger)
-	fileHandlers.Handle("/upload", uploadFileHandler)
+	filesAPI := handlegroup.New()
+	filesAPI.Use(requestLogger)
+	filesAPI.Handle("/upload", uploadFileHandler)
 
 	// Services
-	api := httpserver.New(conf.Port, map[string]http.Handler{
-		"/files": fileHandlers,
+	httpServer := httpserver.New(conf.Port, map[string]http.Handler{
 		"/healthcheck": http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("ok"))
 		}),
-		// TODO: prob should not be root endpoint
-		"": requestLogger.Wrap(getFileHandler),
+		"/files/api":   filesAPI,
+		"/files/serve": requestLogger.Wrap(getFileHandler),
+		"": requestLogger.Wrap(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			logger.InfoContext(r.Context(), "root handler", "uri", r.RequestURI)
+			w.Write([]byte("ok"))
+		})),
 	})
 
 	// Application
@@ -69,7 +72,7 @@ func main() {
 		return s3Client.MakeBucket(ctx, conf.S3.Bucket)
 	}), application.StartupTaskConfig{Name: "createBucket", AbortOnError: false})
 
-	app.Register("api", api)
+	app.Register("http", httpServer)
 
 	if err := app.Run(ctx); err != nil {
 		logger.Error("Applicaton finished with error", "error", err)
