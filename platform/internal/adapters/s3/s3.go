@@ -2,6 +2,7 @@ package s3
 
 import (
 	"context"
+	"fmt"
 	"hostamat/pkg/platforma/log"
 	"io"
 
@@ -32,6 +33,31 @@ func (s3 *S3) MakeBucket(ctx context.Context, name string) error {
 		} else {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (s3 *S3) CleanBucket(ctx context.Context, bucketName string) error {
+	// List all objects in the bucket
+	objectsCh := s3.client.ListObjects(ctx, bucketName, minio.ListObjectsOptions{
+		Recursive: true,
+	})
+
+	// Remove all objects
+	for obj := range objectsCh {
+		if obj.Err != nil {
+			return fmt.Errorf("error listing objects: %w", obj.Err)
+		}
+		err := s3.client.RemoveObject(ctx, bucketName, obj.Key, minio.RemoveObjectOptions{})
+		if err != nil {
+			return fmt.Errorf("error removing object %s: %w", obj.Key, err)
+		}
+	}
+
+	// Remove the bucket after it's empty
+	if err := s3.client.RemoveBucket(ctx, bucketName); err != nil {
+		return fmt.Errorf("error removing bucket: %w", err)
 	}
 
 	return nil

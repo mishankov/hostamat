@@ -10,12 +10,15 @@ import (
 	"hostamat/internal/handlers/servefilehandler"
 	"hostamat/internal/handlers/uploadfilehandler"
 	"hostamat/internal/middlewares"
+	"hostamat/internal/schedulers/cleanup"
 	"hostamat/pkg/platforma/application"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
 	"hostamat/pkg/platforma/log"
+	"hostamat/pkg/platforma/scheduler"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -61,6 +64,9 @@ func main() {
 
 	httpServer.Use(requestLogger)
 
+	cleanupService := cleanup.New(s3Client, conf.S3.Bucket, caddyAPI, timewebAPI)
+	cleanupJob := scheduler.New(30*time.Second, cleanupService)
+
 	// Application
 	app := application.New()
 
@@ -70,6 +76,7 @@ func main() {
 	}), application.StartupTaskConfig{Name: "createBucket", AbortOnError: false})
 
 	app.Register("http", httpServer)
+	app.Register("cleanup", cleanupJob)
 
 	if err := app.Run(ctx); err != nil {
 		logger.Error("Applicaton finished with error", "error", err)
