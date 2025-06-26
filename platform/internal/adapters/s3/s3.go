@@ -37,6 +37,18 @@ func (s3 *S3) MakeBucket(ctx context.Context, name string) error {
 	return nil
 }
 
+func (s3 *S3) ObjectExists(ctx context.Context, bucketName, fileName string) (bool, error) {
+	_, err := s3.client.StatObject(ctx, bucketName, fileName, minio.StatObjectOptions{})
+	if err != nil {
+		if minio.ToErrorResponse(err).Code == "NoSuchKey" {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
+}
+
 func (s3 *S3) PutObject(ctx context.Context, bucketName, fileName string, file io.Reader, fileSize int64) error {
 	info, err := s3.client.PutObject(ctx, bucketName, fileName, file, fileSize, minio.PutObjectOptions{})
 

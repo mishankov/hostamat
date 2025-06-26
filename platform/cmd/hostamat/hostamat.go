@@ -7,16 +7,15 @@ import (
 	"hostamat/internal/adapters/s3"
 	"hostamat/internal/adapters/timeweb"
 	"hostamat/internal/handlers"
+	"hostamat/internal/handlers/getfilehandler"
 	"hostamat/internal/middlewares"
 	"hostamat/pkg/platforma/application"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
 	"hostamat/pkg/platforma/httpserver/handlegroup"
 	"hostamat/pkg/platforma/log"
-	"io"
 	"net/http"
 	"os"
-	"strings"
 )
 
 func main() {
@@ -43,6 +42,7 @@ func main() {
 
 	// Handlers
 	uploadFileHandler := handlers.NewUploadFileHandler(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.BaseDomain)
+	getFileHandler := getfilehandler.New(logger, s3Client, conf.S3.Bucket)
 
 	// Middlewares
 	requestLogger := middlewares.NewRequestLogger(logger)
@@ -59,19 +59,7 @@ func main() {
 			w.Write([]byte("ok"))
 		}),
 		// TODO: prob should not be root endpoint
-		"": http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			logger.InfoContext(ctx, "request", "host", r.Host, "uri", r.RequestURI)
-
-			subdomain := strings.Split(r.Host, ".")[0]
-
-			file, err := s3Client.GetObject(ctx, conf.S3.Bucket, subdomain+"/index.html")
-			if err != nil {
-				logger.ErrorContext(ctx, "error getting file", "error", err)
-			}
-
-			n, err := io.Copy(w, file)
-			logger.InfoContext(ctx, "file copy", "bytes", n, "error", err)
-		}),
+		"": requestLogger.Wrap(getFileHandler),
 	})
 
 	// Application
