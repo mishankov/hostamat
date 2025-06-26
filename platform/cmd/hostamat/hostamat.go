@@ -7,7 +7,8 @@ import (
 	"hostamat/internal/adapters/s3"
 	"hostamat/internal/adapters/timeweb"
 	"hostamat/internal/handlers"
-	"hostamat/internal/handlers/servrefilehandler"
+	"hostamat/internal/handlers/servefilehandler"
+	"hostamat/internal/handlers/uploadfilehandler"
 	"hostamat/internal/middlewares"
 	"hostamat/pkg/platforma/application"
 	"hostamat/pkg/platforma/httpclient"
@@ -44,8 +45,8 @@ func main() {
 
 	// Handlers
 	healthcheckHandler := handlers.NewHealthcheckHandler()
-	uploadFileHandler := handlers.NewUploadFileHandler(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.BaseDomain, conf.FileServerHost, conf.FileServerPath)
-	serveFileHandler := servrefilehandler.New(logger, s3Client, conf.S3.Bucket)
+	uploadFileHandler := uploadfilehandler.New(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.BaseDomain, conf.FileServerHost, conf.FileServerPath)
+	serveFileHandler := servefilehandler.New(logger, s3Client, conf.S3.Bucket)
 
 	// Handle groups
 	filesAPI := httpserver.NewHandleGroup()

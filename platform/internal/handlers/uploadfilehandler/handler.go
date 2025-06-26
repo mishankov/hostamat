@@ -1,4 +1,4 @@
-package handlers
+package uploadfilehandler
 
 import (
 	"context"
@@ -34,7 +34,7 @@ type UploadFileHandler struct {
 	fileHandlerPathPrefix string
 }
 
-func NewUploadFileHandler(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAPI *caddy.CaddyAPI, s3 s3, s3Bucket string, baseDomain string, target string, fileHandlerPathPrefix string) *UploadFileHandler {
+func New(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAPI *caddy.CaddyAPI, s3 s3, s3Bucket string, baseDomain string, target string, fileHandlerPathPrefix string) *UploadFileHandler {
 	return &UploadFileHandler{
 		logger:                logger,
 		timewebAPI:            timewebAPI,
