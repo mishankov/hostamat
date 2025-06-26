@@ -7,12 +7,11 @@ import (
 	"hostamat/internal/adapters/s3"
 	"hostamat/internal/adapters/timeweb"
 	"hostamat/internal/handlers"
-	"hostamat/internal/handlers/getfilehandler"
+	"hostamat/internal/handlers/servrefilehandler"
 	"hostamat/internal/middlewares"
 	"hostamat/pkg/platforma/application"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
-	"hostamat/pkg/platforma/httpserver/handlegroup"
 	"hostamat/pkg/platforma/log"
 	"net/http"
 	"os"
@@ -40,34 +39,31 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Handlers
-	uploadFileHandler := handlers.NewUploadFileHandler(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.BaseDomain, conf.FileServerHost, conf.FileServerPath)
-	getFileHandler := getfilehandler.New(logger, s3Client, conf.S3.Bucket)
-
 	// Middlewares
 	requestLogger := middlewares.NewRequestLogger(logger)
 
+	// Handlers
+	healthcheckHandler := handlers.NewHealthcheckHandler()
+	uploadFileHandler := handlers.NewUploadFileHandler(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.BaseDomain, conf.FileServerHost, conf.FileServerPath)
+	serveFileHandler := servrefilehandler.New(logger, s3Client, conf.S3.Bucket)
+
 	// Handle groups
-	filesAPI := handlegroup.New()
-	filesAPI.Use(requestLogger)
+	filesAPI := httpserver.NewHandleGroup()
 	filesAPI.Handle("/upload", uploadFileHandler)
 
 	// Services
 	httpServer := httpserver.New(conf.Port, map[string]http.Handler{
-		"/healthcheck": http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("ok"))
-		}),
+		"/healthcheck":      healthcheckHandler,
 		"/files/api":        filesAPI,
-		conf.FileServerPath: requestLogger.Wrap(getFileHandler),
-		"": requestLogger.Wrap(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			logger.InfoContext(r.Context(), "root handler", "uri", r.RequestURI)
-			w.Write([]byte("ok"))
-		})),
+		conf.FileServerPath: serveFileHandler,
 	})
+
+	httpServer.Use(requestLogger)
 
 	// Application
 	app := application.New()
 
+	// Ensure that bucket exists before starting application
 	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
 		return s3Client.MakeBucket(ctx, conf.S3.Bucket)
 	}), application.StartupTaskConfig{Name: "createBucket", AbortOnError: false})

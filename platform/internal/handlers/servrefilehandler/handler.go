@@ -1,4 +1,4 @@
-package getfilehandler
+package servrefilehandler
 
 import (
 	"context"

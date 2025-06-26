@@ -7,8 +7,9 @@ import (
 )
 
 type HttpServer struct {
-	mux  *http.ServeMux
-	port string
+	mux         *http.ServeMux
+	port        string
+	middlewares []Middleware
 }
 
 func New(port string, handleGroups map[string]http.Handler) *HttpServer {
@@ -20,8 +21,16 @@ func New(port string, handleGroups map[string]http.Handler) *HttpServer {
 	return &HttpServer{mux: mux, port: port}
 }
 
+func (s *HttpServer) Use(middleware Middleware) {
+	s.middlewares = append(s.middlewares, middleware)
+}
+
+func (s *HttpServer) UseFunc(middlewareFunc func(http.Handler) http.Handler) {
+	s.middlewares = append(s.middlewares, MiddlewareFunc(middlewareFunc))
+}
+
 // TODO: graceful shutdown
 func (s *HttpServer) Run(ctx context.Context) error {
 	log.InfoContext(ctx, "starting http server", "address", "http://localhost:"+s.port)
-	return http.ListenAndServe(":"+s.port, s.mux)
+	return http.ListenAndServe(":"+s.port, wrapHandlerInMiddleware(s.mux, s.middlewares))
 }
