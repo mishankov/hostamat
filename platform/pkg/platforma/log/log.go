@@ -6,7 +6,24 @@ import (
 	"log/slog"
 )
 
-var Logger = slog.Default()
+type logger interface {
+	Debug(msg string, args ...any)
+	Info(msg string, args ...any)
+	Warn(msg string, args ...any)
+	Error(msg string, args ...any)
+
+	DebugContext(ctx context.Context, msg string, args ...any)
+	InfoContext(ctx context.Context, msg string, args ...any)
+	WarnContext(ctx context.Context, msg string, args ...any)
+	ErrorContext(ctx context.Context, msg string, args ...any)
+}
+
+var Logger logger = slog.Default()
+
+// SetDefault sets the default logger used by the package-level logging functions.
+func SetDefault(l logger) {
+	Logger = l
+}
 
 type contextKey string
 
@@ -15,11 +32,6 @@ const (
 	ServiceNameKey contextKey = "serviceName"
 	SartupTaskKey  contextKey = "satrtupTask"
 )
-
-// SetDefault sets the default logger used by the package-level logging functions.
-func SetDefault(l *slog.Logger) {
-	Logger = l
-}
 
 type contextHandler struct {
 	slog.Handler
