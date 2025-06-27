@@ -87,6 +87,7 @@ func (a *Application) Run(ctx context.Context) error {
 		serviceCtx := context.WithValue(ctx, log.ServiceNameKey, serviceName)
 
 		go func() {
+			defer wg.Done()
 			log.InfoContext(ctx, "starting service", "service", serviceName)
 			err := service.Run(serviceCtx)
 			if err != nil {
