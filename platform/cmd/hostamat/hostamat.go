@@ -56,7 +56,7 @@ func main() {
 	filesAPI.Handle("/upload", uploadFileHandler)
 
 	// Services
-	httpServer := httpserver.New(conf.Port, map[string]http.Handler{
+	httpServer := httpserver.New(conf.Port, 10*time.Second, map[string]http.Handler{
 		"/healthcheck":      healthcheckHandler,
 		"/files/api":        filesAPI,
 		conf.FileServerPath: serveFileHandler,
