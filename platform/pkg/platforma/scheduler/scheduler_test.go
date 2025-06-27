@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"hostamat/pkg/platforma/application"
+	"hostamat/pkg/platforma/log"
 	"hostamat/pkg/platforma/scheduler"
 	"testing"
 	"time"
@@ -14,7 +15,7 @@ func TestSuccessRun(t *testing.T) {
 	t.Parallel()
 
 	buf := bytes.Buffer{}
-	s := scheduler.New(1*time.Second, application.RunnerFunc(func(ctx context.Context) error {
+	s := scheduler.New(log.Logger, 1*time.Second, application.RunnerFunc(func(ctx context.Context) error {
 		buf.Write([]byte("1"))
 		return nil
 	}))
@@ -32,7 +33,7 @@ func TestErrorRun(t *testing.T) {
 	t.Parallel()
 
 	buf := bytes.Buffer{}
-	s := scheduler.New(1*time.Second, application.RunnerFunc(func(ctx context.Context) error {
+	s := scheduler.New(log.Logger, 1*time.Second, application.RunnerFunc(func(ctx context.Context) error {
 		buf.Write([]byte("1"))
 		return errors.New("some error")
 	}))
@@ -50,7 +51,7 @@ func TestContextDecline(t *testing.T) {
 	t.Parallel()
 
 	buf := bytes.Buffer{}
-	s := scheduler.New(1*time.Second, application.RunnerFunc(func(ctx context.Context) error {
+	s := scheduler.New(log.Logger, 1*time.Second, application.RunnerFunc(func(ctx context.Context) error {
 		buf.Write([]byte("1"))
 		return nil
 	}))

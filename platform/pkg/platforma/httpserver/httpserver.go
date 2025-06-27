@@ -3,7 +3,6 @@ package httpserver
 import (
 	"context"
 	"errors"
-	"hostamat/pkg/platforma/log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,20 +10,26 @@ import (
 	"time"
 )
 
+type logger interface {
+	InfoContext(ctx context.Context, msg string, args ...any)
+	ErrorContext(ctx context.Context, msg string, args ...any)
+}
+
 type HttpServer struct {
+	logger          logger
 	mux             *http.ServeMux
 	port            string
 	shutdownTimeout time.Duration
 	middlewares     []Middleware
 }
 
-func New(port string, shutdownTimeout time.Duration, handleGroups map[string]http.Handler) *HttpServer {
+func New(logger logger, port string, shutdownTimeout time.Duration, handleGroups map[string]http.Handler) *HttpServer {
 	mux := http.NewServeMux()
 	for pattern, handleGroup := range handleGroups {
 		mux.Handle(pattern+"/", http.StripPrefix(pattern, handleGroup))
 	}
 
-	return &HttpServer{mux: mux, port: port}
+	return &HttpServer{logger: logger, mux: mux, port: port, shutdownTimeout: shutdownTimeout}
 }
 
 func (s *HttpServer) Use(middleware Middleware) {
@@ -42,12 +47,12 @@ func (s *HttpServer) Run(ctx context.Context) error {
 	}
 
 	go func() {
-		log.InfoContext(ctx, "starting http server", "address", server.Addr)
+		s.logger.InfoContext(ctx, "starting http server", "address", server.Addr)
 
 		if err := server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-			log.ErrorContext(ctx, "HTTP server error", "error", err)
+			s.logger.ErrorContext(ctx, "HTTP server error", "error", err)
 		}
-		log.InfoContext(ctx, "stopped serving new connections.")
+		s.logger.InfoContext(ctx, "stopped serving new connections.")
 	}()
 
 	sigChan := make(chan os.Signal, 1)
@@ -58,10 +63,10 @@ func (s *HttpServer) Run(ctx context.Context) error {
 	defer shutdownRelease()
 
 	if err := server.Shutdown(shutdownCtx); err != nil {
-		log.ErrorContext(ctx, "HTTP shutdown error", "error", err)
+		s.logger.ErrorContext(ctx, "HTTP shutdown error", "error", err)
 		return err
 	}
-	log.InfoContext(ctx, "graceful shutdown complete.")
+	s.logger.InfoContext(ctx, "graceful shutdown complete.")
 
 	return nil
 }

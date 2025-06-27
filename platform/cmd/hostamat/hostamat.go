@@ -56,7 +56,7 @@ func main() {
 	filesAPI.Handle("/upload", uploadFileHandler)
 
 	// Services
-	httpServer := httpserver.New(conf.Port, 10*time.Second, map[string]http.Handler{
+	httpServer := httpserver.New(logger, conf.Port, 10*time.Second, map[string]http.Handler{
 		"/healthcheck":      healthcheckHandler,
 		"/files/api":        filesAPI,
 		conf.FileServerPath: serveFileHandler,
@@ -65,7 +65,7 @@ func main() {
 	httpServer.Use(requestLogger)
 
 	cleanupService := cleanup.New(s3Client, conf.S3.Bucket, caddyAPI, timewebAPI)
-	cleanupJob := scheduler.New(30*time.Second, cleanupService)
+	cleanupJob := scheduler.New(logger, 30*time.Second, cleanupService)
 
 	// Application
 	app := application.New()
