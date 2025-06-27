@@ -2,9 +2,8 @@ package log
 
 import (
 	"context"
-	"fmt"
+	"io"
 	"log/slog"
-	"os"
 )
 
 var Logger = slog.Default()
@@ -24,7 +23,7 @@ func SetDefault(l *slog.Logger) {
 
 type contextHandler struct {
 	slog.Handler
-	additionKeys []fmt.Stringer
+	additionKeys map[string]any
 }
 
 // Handle processes the log record by adding context values before passing it to the underlying handler.
@@ -41,9 +40,9 @@ func (h *contextHandler) Handle(ctx context.Context, r slog.Record) error {
 		r.AddAttrs(slog.String("startupTask", startupTask))
 	}
 
-	for _, key := range h.additionKeys {
+	for keyString, key := range h.additionKeys {
 		if value, ok := ctx.Value(key).(string); ok {
-			r.AddAttrs(slog.String(key.String(), value))
+			r.AddAttrs(slog.String(keyString, value))
 		}
 	}
 
@@ -51,12 +50,12 @@ func (h *contextHandler) Handle(ctx context.Context, r slog.Record) error {
 }
 
 // New creates a new slog.Logger with the specified type (json/text), log level, and additional context keys to include.
-func New(loggerType string, level slog.Level, contextKeys []fmt.Stringer) *slog.Logger {
+func New(w io.Writer, loggerType string, level slog.Level, contextKeys map[string]any) *slog.Logger {
 	if loggerType == "json" {
-		return slog.New(&contextHandler{slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: level}), contextKeys})
+		return slog.New(&contextHandler{slog.NewJSONHandler(w, &slog.HandlerOptions{Level: level}), contextKeys})
 	}
 
-	return slog.New(&contextHandler{slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: level}), contextKeys})
+	return slog.New(&contextHandler{slog.NewTextHandler(w, &slog.HandlerOptions{Level: level}), contextKeys})
 }
 
 // Debug logs a message at Debug level.

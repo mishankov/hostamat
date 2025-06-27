@@ -23,7 +23,7 @@ func main() {
 func flushSubdomains() {
 	ctx := context.Background()
 	conf := config.New()
-	logger := log.New(conf.Logger.Type, slog.LevelInfo, nil)
+	logger := log.New(os.Stdout, conf.Logger.Type, slog.LevelInfo, nil)
 	httpClient := httpclient.New(logger)
 	timewebAPI := timeweb.New(httpClient, conf.Timeweb.BaseURL, conf.Timeweb.APIToken)
 

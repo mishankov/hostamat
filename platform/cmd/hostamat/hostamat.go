@@ -26,7 +26,7 @@ func main() {
 
 	// Basic components
 	conf := config.New()
-	logger := log.New(conf.Logger.Type, conf.Logger.Level, nil)
+	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, nil)
 	httpClient := httpclient.New(logger)
 
 	// Setting default logger for platforma pkg
