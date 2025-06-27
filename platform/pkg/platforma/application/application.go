@@ -88,6 +88,12 @@ func (a *Application) Run(ctx context.Context) error {
 
 		go func() {
 			defer wg.Done()
+			defer func() {
+				if r := recover(); r != nil {
+					log.ErrorContext(serviceCtx, "service panicked", "service", serviceName, "panic", r)
+				}
+			}()
+
 			log.InfoContext(ctx, "starting service", "service", serviceName)
 			err := service.Run(serviceCtx)
 			if err != nil {
