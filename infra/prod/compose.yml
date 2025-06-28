@@ -22,12 +22,12 @@ services:
 
   hostamat:
     build:
-      context: ../platform
+      context: ../../platform
       dockerfile: Dockerfile
     env_file:
       - .env
 
   landing:
     build:
-      context: ../webapp
+      context: ../../webapp
       dockerfile: Dockerfile

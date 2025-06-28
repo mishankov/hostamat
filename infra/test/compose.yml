@@ -34,7 +34,7 @@ services:
 
   hostamat:
     build:
-      context: ../platform
+      context: ../../platform
       dockerfile: Dockerfile.test
     env_file:
       - .env
@@ -57,4 +57,4 @@ services:
     ports:
     - 1001:1001
     volumes:
-      - ../platform:/app
+      - ../../platform:/app
