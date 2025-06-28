@@ -3,9 +3,9 @@ FROM node:latest AS build
 
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --omit dev
+RUN npm ci
 COPY . .
-RUN npm build
+RUN npm run build
 
 # Stage 2: Create the production image
 FROM node:latest AS final
