@@ -8,7 +8,8 @@ export const POST: RequestHandler = async ({ request }) => {
       method: 'POST',
       headers: request.headers,
       body: request.body,
-      duplex: 'half',
+      // @ts-ignore
+      duplex: 'half', 
     });
 
     return new Response(response.body, { status: response.status, headers: response.headers });
