@@ -9,17 +9,6 @@ services:
       - ./container-data/caddy/data:/data
       - ./container-data/caddy/config:/config
 
-  minio:
-    image: quay.io/minio/minio
-    ports:
-      - "9000:9000"   # API port
-      - "9001:9001"   # Console port
-    volumes:
-      - ./container-data/minio/data:/data   # Mount host directory to /data
-    env_file:
-      - .env
-    command: server /data --console-address ":9001"   # Launch command
-
   hostamat:
     build:
       context: ../../platform
