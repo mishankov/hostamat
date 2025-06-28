@@ -1,9 +1,9 @@
 import type { RequestHandler } from './$types';
-import { env } from '$env/dynamic/private';
+import { Config } from '$lib/config';
 
 export const POST: RequestHandler = async ({ request }) => {
   try {
-    const backendUrl = `${env.API_BASE}/files/api/upload`;
+    const backendUrl = Config.files.uploadUrl;
     const response = await fetch(backendUrl, {
       method: 'POST',
       headers: request.headers,
