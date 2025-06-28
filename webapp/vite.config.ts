@@ -5,11 +5,11 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
-		proxy: {
-			'/files/api/upload': {
-				target: 'http://localhost:1000'
-			}
-		}
+		// proxy: {
+		// 	'/files/api/upload': {
+		// 		target: 'http://localhost:1000'
+		// 	}
+		// }
 	},
 	test: {
 		workspace: [

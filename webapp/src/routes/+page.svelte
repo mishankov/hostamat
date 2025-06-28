@@ -5,7 +5,7 @@
 
 
 <FileUploader 
-  uploadUrl="/files/api/upload"
+  uploadUrl="/api/uploadFile"
   acceptedTypes=".html"
   multiple={true}
   onfilesselected={(e) => console.log('Files selected:', e.files)}
