@@ -13,6 +13,7 @@ services:
     build:
       context: ../../platform
       dockerfile: Dockerfile
+      network: host
     env_file:
       - .env
 
@@ -20,5 +21,6 @@ services:
     build:
       context: ../../webapp
       dockerfile: Dockerfile
+      network: host
     env_file:
       - .env
