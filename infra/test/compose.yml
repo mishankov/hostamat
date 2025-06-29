@@ -19,6 +19,7 @@ services:
       - ./config/Caddyfile:/etc/caddy/Caddyfile
       - ./container-data/caddy/data:/data
       - ./container-data/caddy/config:/config
+    command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile --resume
 
   minio:
     image: quay.io/minio/minio

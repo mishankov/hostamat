@@ -1,1 +1,2 @@
 - [ ] Automatic env vars to disable services
+- [ ] Healthcheck endpoint with servvices status
