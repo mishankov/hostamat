@@ -25,7 +25,7 @@ func (m *RequestLogger) Wrap(h http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), log.TraceIdKey, uuid.NewString())
 		r = r.WithContext(ctx)
 
-		m.logger.DebugContext(ctx, "service invoke started", "path", r.URL.Path, "method", r.Method, "remote", r.RemoteAddr)
+		m.logger.DebugContext(ctx, "service invoke started", "path", r.URL.Path, "method", r.Method, "remote", r.RemoteAddr, "headers", r.Header)
 		h.ServeHTTP(w, r)
 		m.logger.DebugContext(ctx, "service invoke finished")
 	})
