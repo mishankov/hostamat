@@ -27,6 +27,7 @@ func (c *Cleanup) Run(ctx context.Context) error {
 	}
 
 	// Get and delete all subdomains from Timeweb
+	// TODO: fix bucketName -> domain
 	domain, err := c.domainprovider.GetDomain(ctx, c.bucketName)
 	if err != nil {
 		return fmt.Errorf("failed to get domain info: %w", err)

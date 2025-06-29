@@ -65,7 +65,7 @@ func main() {
 	httpServer.Use(requestLogger)
 
 	cleanupService := cleanup.New(s3Client, conf.S3.Bucket, caddyAPI, timewebAPI)
-	cleanupJob := scheduler.New(logger, 30*time.Second, cleanupService)
+	_ = scheduler.New(logger, 30*time.Second, cleanupService)
 
 	// Application
 	app := application.New()
@@ -76,7 +76,7 @@ func main() {
 	}), application.StartupTaskConfig{Name: "createBucket", AbortOnError: false})
 
 	app.Register("http", httpServer)
-	app.Register("cleanup", cleanupJob)
+	// app.Register("cleanup", cleanupJob)
 
 	if err := app.Run(ctx); err != nil {
 		logger.Error("Applicaton finished with error", "error", err)
