@@ -72,10 +72,10 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// 	h.logger.ErrorContext(ctx, "error in timeweb add subdomain", "error", err)
 	// }
 
-	err = h.caddyAPI.AddSubdomain(ctx, h.baseDomain, subdomain, h.target, h.fileHandlerPathPrefix)
-	if err != nil {
-		h.logger.ErrorContext(ctx, "error in caddy add subdomain", "error", err)
-	}
+	// err = h.caddyAPI.AddSubdomain(ctx, h.baseDomain, subdomain, h.target, h.fileHandlerPathPrefix)
+	// if err != nil {
+	// 	h.logger.ErrorContext(ctx, "error in caddy add subdomain", "error", err)
+	// }
 
 	err = h.s3.PutObject(ctx, h.s3Bucket, subdomain+"/"+handler.Filename, file, handler.Size)
 	if err != nil {
