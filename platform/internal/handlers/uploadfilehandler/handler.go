@@ -67,10 +67,10 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	subdomain := randomBase64String(5)
 
-	err = h.timewebAPI.AddSubdomain(ctx, h.baseDomain, subdomain)
-	if err != nil {
-		h.logger.ErrorContext(ctx, "error in timeweb add subdomain", "error", err)
-	}
+	// err = h.timewebAPI.AddSubdomain(ctx, h.baseDomain, subdomain)
+	// if err != nil {
+	// 	h.logger.ErrorContext(ctx, "error in timeweb add subdomain", "error", err)
+	// }
 
 	err = h.caddyAPI.AddSubdomain(ctx, h.baseDomain, subdomain, h.target, h.fileHandlerPathPrefix)
 	if err != nil {
