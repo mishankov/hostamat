@@ -48,7 +48,7 @@ func main() {
 
 	// Handlers
 	healthcheckHandler := handlers.NewHealthcheckHandler()
-	uploadFileHandler := uploadfilehandler.New(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.BaseDomain, conf.FileServerHost, conf.FileServerPath)
+	uploadFileHandler := uploadfilehandler.New(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.PublicBaseDomain, conf.FileServerHost, conf.FileServerPath)
 	serveFileHandler := servefilehandler.New(logger, s3Client, conf.S3.Bucket)
 
 	// Handle groups

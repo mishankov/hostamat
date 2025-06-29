@@ -29,22 +29,22 @@ type logger struct {
 }
 
 type Config struct {
-	Port           string
-	BaseDomain     string
-	FileServerHost string
-	FileServerPath string
-	Logger         logger
-	Caddy          caddy
-	Timeweb        timeweb
-	S3             s3
+	Port             string // Port to run http server
+	PublicBaseDomain string // Base domain for uploaded sites
+	FileServerHost   string // Internal host for file server
+	FileServerPath   string
+	Logger           logger
+	Caddy            caddy
+	Timeweb          timeweb
+	S3               s3
 }
 
 func New() *Config {
 	return &Config{
-		Port:           os.Getenv("HOSTAMAT_PORT"),
-		BaseDomain:     os.Getenv("HOSTAMAT_DOMAIN"),
-		FileServerHost: os.Getenv("HOSTAMAT_FILESERVER_HOST"),
-		FileServerPath: os.Getenv("HOSTAMAT_FILESERVER_PATH"),
+		Port:             os.Getenv("HOSTAMAT_PORT"),
+		PublicBaseDomain: os.Getenv("HOSTAMAT_DOMAIN"),
+		FileServerHost:   os.Getenv("HOSTAMAT_FILESERVER_HOST"),
+		FileServerPath:   os.Getenv("HOSTAMAT_FILESERVER_PATH"),
 		Caddy: caddy{
 			BaseURL: os.Getenv("HOSTAMAT_CADDY_URL"),
 		},
