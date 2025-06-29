@@ -1,0 +1,2 @@
+- [ ] Link subdomain to server
+- [ ] Fix delete domain in cleanup (now it is a bucket)
