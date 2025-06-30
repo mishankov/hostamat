@@ -2,6 +2,7 @@ services:
   # TODO: caddy admin port should probably not be exposed
   caddy:
     image: caddy:latest
+    container_name: caddy
     ports:
       - 80:80
       - 443:443
@@ -18,6 +19,7 @@ services:
       context: ../../platform
       dockerfile: Dockerfile
       network: host
+    container_name: hostamat
     ports:
       - ${HOSTAMAT_PORT}:1001
     env_file:
@@ -29,12 +31,14 @@ services:
       context: ../../webapp
       dockerfile: Dockerfile
       network: host
+    container_name: landing
     env_file:
       - .env
     restart: unless-stopped
   
   dozzle-agent:
     image: amir20/dozzle:latest
+    container_name: dozzle-agent
     command: agent
     environment:
       - DOZZLE_HOSTNAME=hostamat
