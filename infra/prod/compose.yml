@@ -30,17 +30,28 @@ services:
       - .env
     restart: unless-stopped
 
-  # TODO: use agent on host and viwer on separate host
-  dozzle:
+  # # TODO: use agent on host and viwer on separate host
+  # dozzle:
+  #   image: amir20/dozzle:latest
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - ./config/dozzle:/data
+  #   ports:
+  #     - 8080:8080
+  #   environment:
+  #     - DOZZLE_ENABLE_ACTIONS=true
+  #     - DOZZLE_ENABLE_SHELL=true
+  #     - DOZZLE_AUTH_PROVIDER=simple
+  #     - DOZZLE_AUTH_TTL=10000h
+  #   restart: unless-stopped
+  
+  dozzle-agent:
     image: amir20/dozzle:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./config/dozzle:/data
-    ports:
-      - 8080:8080
+    command: agent
     environment:
-      - DOZZLE_ENABLE_ACTIONS=true
-      - DOZZLE_ENABLE_SHELL=true
-      - DOZZLE_AUTH_PROVIDER=simple
-      - DOZZLE_AUTH_TTL=10000h
+      - DOZZLE_HOSTNAME=hostamat
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 7007:7007
     restart: unless-stopped
