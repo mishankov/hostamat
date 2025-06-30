@@ -26,3 +26,16 @@ services:
       network: host
     env_file:
       - .env
+
+  dozzle:
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/dozzle:/data
+    ports:
+      - 8080:8080
+    environment:
+      - DOZZLE_ENABLE_ACTIONS=true
+      - DOZZLE_ENABLE_SHELL=true
+      - DOZZLE_AUTH_PROVIDER=simple
+      - DOZZLE_AUTH_TTL=10000h
