@@ -5,7 +5,7 @@ import (
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/s3"
-	"hostamat/internal/adapters/timeweb"
+
 	"hostamat/internal/handlers"
 	"hostamat/internal/handlers/servefilehandler"
 	"hostamat/internal/handlers/uploadfilehandler"
@@ -33,7 +33,6 @@ func main() {
 	log.SetDefault(logger)
 
 	// API adapters
-	timewebAPI := timeweb.New(httpClient, conf.Timeweb.BaseURL, conf.Timeweb.APIToken)
 	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL)
 
 	// S3 client
@@ -48,7 +47,7 @@ func main() {
 
 	// Handlers
 	healthcheckHandler := handlers.NewHealthcheckHandler()
-	uploadFileHandler := uploadfilehandler.New(logger, timewebAPI, caddyAPI, s3Client, conf.S3.Bucket, conf.PublicBaseDomain, conf.FileServerHost, conf.FileServerPath)
+	uploadFileHandler := uploadfilehandler.New(logger, caddyAPI, s3Client, conf.S3.Bucket, conf.PublicBaseDomain, conf.FileServerHost, conf.FileServerPath)
 	serveFileHandler := servefilehandler.New(logger, s3Client, conf.S3.Bucket)
 
 	// Handle groups
@@ -64,7 +63,7 @@ func main() {
 
 	httpServer.Use(requestLogger)
 
-	cleanupService := cleanup.New(s3Client, conf.S3.Bucket, caddyAPI, timewebAPI)
+	cleanupService := cleanup.New(s3Client, conf.S3.Bucket, caddyAPI)
 	_ = scheduler.New(logger, 30*time.Second, cleanupService)
 
 	// Application

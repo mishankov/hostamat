@@ -5,11 +5,6 @@ import (
 	"os"
 )
 
-type timeweb struct {
-	APIToken string
-	BaseURL  string
-}
-
 type caddy struct {
 	BaseURL string
 }
@@ -35,7 +30,6 @@ type Config struct {
 	FileServerPath   string
 	Logger           logger
 	Caddy            caddy
-	Timeweb          timeweb
 	S3               s3
 }
 
@@ -47,10 +41,6 @@ func New() *Config {
 		FileServerPath:   os.Getenv("HOSTAMAT_FILESERVER_PATH"),
 		Caddy: caddy{
 			BaseURL: os.Getenv("HOSTAMAT_CADDY_URL"),
-		},
-		Timeweb: timeweb{
-			APIToken: os.Getenv("HOSTAMAT_TIMEWEB_TOKEN"),
-			BaseURL:  os.Getenv("HOSTAMAT_TIMEWEB_URL"),
 		},
 		S3: s3{
 			BaseURL:  os.Getenv("HOSTAMAT_S3_URL"),

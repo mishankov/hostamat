@@ -49,7 +49,7 @@ services:
 
       - HOSTAMAT_CADDY_URL=http://proxymini:1000/caddy/config
 
-      - HOSTAMAT_TIMEWEB_URL=http://proxymini:1000/timeweb
+      
 
       - HOSTAMAT_S3_URL=minio:9000
       - HOSTAMAT_S3_LOGIN=ROOTNAME

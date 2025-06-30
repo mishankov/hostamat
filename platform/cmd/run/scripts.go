@@ -1,14 +1,11 @@
 package main
 
 import (
-	"context"
 	"hostamat/internal/adapters/config"
-	"hostamat/internal/adapters/timeweb"
-	"hostamat/pkg/platforma/httpclient"
+
 	"hostamat/pkg/platforma/log"
 	"log/slog"
 	"os"
-	"strings"
 )
 
 func main() {
@@ -21,37 +18,8 @@ func main() {
 }
 
 func flushSubdomains() {
-	ctx := context.Background()
 	conf := config.New()
 	logger := log.New(os.Stdout, conf.Logger.Type, slog.LevelInfo, nil)
-	httpClient := httpclient.New(logger)
-	timewebAPI := timeweb.New(httpClient, conf.Timeweb.BaseURL, conf.Timeweb.APIToken)
 
-	domain, err := timewebAPI.GetDomain(ctx, conf.PublicBaseDomain)
-	if err != nil {
-		logger.Error("Error getting domain", "error", err)
-	}
-
-	logger.Info("Subdomains amount", "amount", len(domain.Subdomains))
-
-	if len(domain.Subdomains) == 0 {
-		return
-	}
-
-	logger.Info("Deleting subdomains...")
-
-	for i, subdomain := range domain.Subdomains {
-		logger.Info("Deleting subdomain", "index", i)
-
-		err := timewebAPI.DeleteSubdomain(ctx, domain.Fqdn, strings.Split(subdomain.Fqdn, ".")[0])
-		if err != nil {
-			logger.Error("Error deletting domain", "error", err)
-		}
-	}
-
-	domain, err = timewebAPI.GetDomain(ctx, conf.PublicBaseDomain)
-	if err != nil {
-		logger.Error("Error getting domain", "error", err)
-	}
-	logger.Info("Subdomains amount", "amount", len(domain.Subdomains))
+	logger.Info("TODO")
 }

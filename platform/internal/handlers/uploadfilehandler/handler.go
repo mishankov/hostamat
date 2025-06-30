@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"hostamat/internal/adapters/caddy"
-	"hostamat/internal/adapters/timeweb"
+
 	"io"
 	"log"
 	"net/http"
@@ -25,7 +25,6 @@ type s3 interface {
 
 type UploadFileHandler struct {
 	logger                logger
-	timewebAPI            *timeweb.TimewebAPI
 	caddyAPI              *caddy.CaddyAPI
 	s3                    s3
 	s3Bucket              string
@@ -34,10 +33,9 @@ type UploadFileHandler struct {
 	fileHandlerPathPrefix string
 }
 
-func New(logger logger, timewebAPI *timeweb.TimewebAPI, caddyAPI *caddy.CaddyAPI, s3 s3, s3Bucket string, baseDomain string, target string, fileHandlerPathPrefix string) *UploadFileHandler {
+func New(logger logger, caddyAPI *caddy.CaddyAPI, s3 s3, s3Bucket string, baseDomain string, target string, fileHandlerPathPrefix string) *UploadFileHandler {
 	return &UploadFileHandler{
 		logger:                logger,
-		timewebAPI:            timewebAPI,
 		caddyAPI:              caddyAPI,
 		s3:                    s3,
 		s3Bucket:              s3Bucket,
@@ -66,11 +64,6 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	subdomain := randomBase64String(5)
-
-	// err = h.timewebAPI.AddSubdomain(ctx, h.baseDomain, subdomain)
-	// if err != nil {
-	// 	h.logger.ErrorContext(ctx, "error in timeweb add subdomain", "error", err)
-	// }
 
 	err = h.caddyAPI.AddSubdomain(ctx, h.baseDomain, subdomain, h.target, h.fileHandlerPathPrefix)
 	if err != nil {
