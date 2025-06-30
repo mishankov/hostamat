@@ -94,6 +94,8 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 			h.logger.DebugContext(ctx, "current file", "fileName", fileName, "fileSize", file.UncompressedSize64)
 
+			// TODO: only upload files with allowed extensions
+			// TODO: do not upload files starts with "."
 			if fileName == "" || file.FileInfo().IsDir() {
 				continue
 			}
