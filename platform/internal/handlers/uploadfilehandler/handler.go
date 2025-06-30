@@ -94,7 +94,7 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 			err = h.s3.PutObject(ctx, h.s3Bucket, subdomain+"/"+fileName, zippedFile, int64(file.UncompressedSize64))
 			if err != nil {
-				h.logger.ErrorContext(ctx, "error in s3 put object", "error", err)
+				h.logger.ErrorContext(ctx, "error in s3 put object", "error", err, "filName", fileName, "fileSize", file.UncompressedSize64)
 				http.Error(w, "Error uploading file", http.StatusInternalServerError)
 				return
 			}
