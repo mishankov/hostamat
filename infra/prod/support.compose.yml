@@ -1,6 +1,7 @@
 services:
   dozzle:
     image: 'amir20/dozzle:latest'
+    container_name: dozzle
     environment:
       - DOZZLE_ENABLE_ACTIONS=true
       - DOZZLE_ENABLE_SHELL=true
@@ -15,6 +16,7 @@ services:
 
   uptime-kuma:
     image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
     ports:
       - 3001:3001
     volumes:
