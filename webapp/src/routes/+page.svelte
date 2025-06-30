@@ -6,7 +6,7 @@
 
 <FileUploader 
   uploadUrl="/api/uploadFile"
-  acceptedTypes=".html"
+  acceptedTypes=".html,.zip"
   multiple={true}
   onfilesselected={(e) => console.log('Files selected:', e.files)}
   onuploadcomplete={(e) => console.log('Upload complete!')}

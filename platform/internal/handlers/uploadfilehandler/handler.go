@@ -1,6 +1,7 @@
 package uploadfilehandler
 
 import (
+	"archive/zip"
 	"context"
 	"crypto/rand"
 	"encoding/base64"
@@ -65,14 +66,47 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	subdomain := randomBase64String(5)
 
+	fileExtension := strings.Split(handler.Filename, ".")[strings.Count(handler.Filename, ".")]
+	switch fileExtension {
+	case "html":
+		err = h.s3.PutObject(ctx, h.s3Bucket, subdomain+"/"+handler.Filename, file, handler.Size)
+		if err != nil {
+			h.logger.ErrorContext(ctx, "error in s3 put object", "error", err)
+			http.Error(w, "Error uploading file", http.StatusInternalServerError)
+			return
+		}
+	case "zip":
+		zipFile, err := zip.NewReader(file, handler.Size)
+		if err != nil {
+			h.logger.ErrorContext(ctx, "error in zip new reader", "error", err)
+			http.Error(w, "Error uploading file", http.StatusInternalServerError)
+			return
+		}
+		for _, file := range zipFile.File {
+			zippedFile, err := file.Open()
+			if err != nil {
+				h.logger.ErrorContext(ctx, "error in zip file open", "error", err)
+				http.Error(w, "Error uploading file", http.StatusInternalServerError)
+				return
+			}
+
+			fileName := strings.Join(strings.Split(file.Name, "/")[1:], "/")
+
+			err = h.s3.PutObject(ctx, h.s3Bucket, subdomain+"/"+fileName, zippedFile, int64(file.UncompressedSize64))
+			if err != nil {
+				h.logger.ErrorContext(ctx, "error in s3 put object", "error", err)
+				http.Error(w, "Error uploading file", http.StatusInternalServerError)
+				return
+			}
+		}
+	default:
+		http.Error(w, "Only html and zip files are allowed", http.StatusBadRequest)
+		return
+	}
+
 	err = h.caddyAPI.AddSubdomain(ctx, h.baseDomain, subdomain, h.target, h.fileHandlerPathPrefix)
 	if err != nil {
 		h.logger.ErrorContext(ctx, "error in caddy add subdomain", "error", err)
-	}
-
-	err = h.s3.PutObject(ctx, h.s3Bucket, subdomain+"/"+handler.Filename, file, handler.Size)
-	if err != nil {
-		log.Fatal("Error saving file to minio", err)
 	}
 
 	fmt.Fprint(w, subdomain+"."+h.baseDomain)
