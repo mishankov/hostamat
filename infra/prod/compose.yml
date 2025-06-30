@@ -1,4 +1,5 @@
 services:
+  # TODO: caddy admin port should probably not be exposed
   caddy:
     image: caddy:latest
     ports:
