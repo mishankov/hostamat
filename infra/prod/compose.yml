@@ -17,6 +17,8 @@ services:
       context: ../../platform
       dockerfile: Dockerfile
       network: host
+    ports:
+      - ${HOSTAMAT_PORT}:1001
     env_file:
       - .env
     restart: unless-stopped
