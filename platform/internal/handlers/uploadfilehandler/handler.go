@@ -92,7 +92,9 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 			fileName := strings.Join(strings.Split(file.Name, "/")[1:], "/")
 
-			if fileName == "" {
+			h.logger.DebugContext(ctx, "current file", "fileName", fileName, "fileSize", file.UncompressedSize64)
+
+			if fileName == "" || file.FileInfo().IsDir() {
 				continue
 			}
 
