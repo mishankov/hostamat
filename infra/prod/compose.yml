@@ -10,6 +10,7 @@ services:
       - ./container-data/caddy/data:/data
       - ./container-data/caddy/config:/config
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile --resume
+    restart: unless-stopped
 
   hostamat:
     build:
@@ -18,6 +19,7 @@ services:
       network: host
     env_file:
       - .env
+    restart: unless-stopped
 
   landing:
     build:
@@ -26,6 +28,7 @@ services:
       network: host
     env_file:
       - .env
+    restart: unless-stopped
 
   # TODO: use agent on host and viwer on separate host
   dozzle:
@@ -40,3 +43,4 @@ services:
       - DOZZLE_ENABLE_SHELL=true
       - DOZZLE_AUTH_PROVIDER=simple
       - DOZZLE_AUTH_TTL=10000h
+    restart: unless-stopped
