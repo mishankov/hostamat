@@ -29,6 +29,8 @@
   let uploadProgress: number = $state(0);
   let error: string = $state('');
   let link: string = $state('');
+  let uploadedFiles: string[] = $state([]);
+  let skippedFiles: string[] = $state([]);
   
   function handleFileSelect(event: Event): void {
     const target = event.target as HTMLInputElement;
@@ -104,6 +106,10 @@
         uploadProgress = ((i + 1) / selectedFiles.length) * 100;
         link = result.link
         
+        // Store uploaded and skipped files
+        uploadedFiles = result.uploadedFiles || [];
+        skippedFiles = result.skippedFiles || [];
+
         onfileuploaded?.({ file, result });
       }
       
@@ -249,6 +255,26 @@
   {#if link}
     <div class="message success">
       <a href="https://{link}" target="_blank">{link}</a>
+      {#if uploadedFiles.length > 0}
+        <div class="uploaded-files">
+          <h4>Uploaded Files:</h4>
+          <ul>
+            {#each uploadedFiles as file}
+              <li>{file}</li>
+            {/each}
+          </ul>
+        </div>
+      {/if}
+      {#if skippedFiles.length > 0}
+        <div class="skipped-files">
+          <h4>Skipped Files:</h4>
+          <ul>
+            {#each skippedFiles as file}
+              <li>{file}</li>
+            {/each}
+          </ul>
+        </div>
+      {/if}
     </div>
   {/if}
   
@@ -457,6 +483,30 @@
     background-color: #f0fdf4;
     color: #16a34a;
     border: 1px solid #bbf7d0;
+  }
+  
+  .uploaded-files,
+  .skipped-files {
+    margin-top: 1rem;
+  }
+  
+  .uploaded-files h4,
+  .skipped-files h4 {
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
+    color: #1e293b;
+  }
+  
+  .uploaded-files ul,
+  .skipped-files ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+  
+  .skipped-files {
+    color: #d97706;
   }
   
   .actions {

@@ -107,14 +107,14 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 			fileName := strings.Join(strings.Split(file.Name, "/")[1:], "/")
 
-			if fileName == "" {
+			if file.FileInfo().IsDir() || fileName == "" {
 				continue
 			}
 
 			h.logger.DebugContext(ctx, "current file", "fileName", fileName, "fileSize", file.UncompressedSize64)
 
 			// TODO: only upload files with allowed extensions
-			if file.FileInfo().IsDir() || strings.HasPrefix(fileName, ".") || strings.Contains(fileName, "/.") {
+			if strings.HasPrefix(fileName, ".") || strings.Contains(fileName, "/.") {
 				h.logger.DebugContext(ctx, "skip file", "fileName", fileName)
 				resp.SkippedFiles = append(resp.SkippedFiles, fileName)
 				continue
