@@ -100,9 +100,9 @@
           throw new Error(`Upload failed: ${response.statusText}`);
         }
         
-        const result = await response.text();
+        const result = await response.json();
         uploadProgress = ((i + 1) / selectedFiles.length) * 100;
-        link = result
+        link = result.link
         
         onfileuploaded?.({ file, result });
       }
