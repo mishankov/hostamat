@@ -47,10 +47,9 @@ services:
       - HOSTAMAT_FILESERVER_HOST=host.docker.internal:1001
       - HOSTAMAT_FILESERVER_PATH=/files/serve
 
-      - HOSTAMAT_CADDY_URL=http://proxymini:1000/caddy/config
-
-      
-
+      - HOSTAMAT_CADDY_URL=http://proxymini:1000/caddy
+      - HOSTAMAT_CADDY_SHORTHAND_ID=hostamat_proxy
+  
       - HOSTAMAT_S3_URL=minio:9000
       - HOSTAMAT_S3_LOGIN=ROOTNAME
       - HOSTAMAT_S3_PASSWORD=CHANGEME123

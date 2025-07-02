@@ -1,0 +1,1 @@
+- [ ] Adapters should return error if api response status is not 2xx

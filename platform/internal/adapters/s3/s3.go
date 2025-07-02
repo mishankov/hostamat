@@ -55,11 +55,6 @@ func (s3 *S3) CleanBucket(ctx context.Context, bucketName string) error {
 		}
 	}
 
-	// Remove the bucket after it's empty
-	if err := s3.client.RemoveBucket(ctx, bucketName); err != nil {
-		return fmt.Errorf("error removing bucket: %w", err)
-	}
-
 	return nil
 }
 

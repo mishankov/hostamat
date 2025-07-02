@@ -6,7 +6,8 @@ import (
 )
 
 type caddy struct {
-	BaseURL string
+	BaseURL     string
+	ShorthandId string // https://caddyserver.com/docs/api#using-id-in-json
 }
 
 type s3 struct {
@@ -40,7 +41,8 @@ func New() *Config {
 		FileServerHost:   os.Getenv("HOSTAMAT_FILESERVER_HOST"),
 		FileServerPath:   os.Getenv("HOSTAMAT_FILESERVER_PATH"),
 		Caddy: caddy{
-			BaseURL: os.Getenv("HOSTAMAT_CADDY_URL"),
+			BaseURL:     os.Getenv("HOSTAMAT_CADDY_URL"),
+			ShorthandId: os.Getenv("HOSTAMAT_CADDY_SHORTHAND_ID"),
 		},
 		S3: s3{
 			BaseURL:  os.Getenv("HOSTAMAT_S3_URL"),

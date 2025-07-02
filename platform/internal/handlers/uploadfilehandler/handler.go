@@ -32,24 +32,22 @@ type response struct {
 }
 
 type UploadFileHandler struct {
-	logger                logger
-	caddyAPI              *caddy.CaddyAPI
-	s3                    s3
-	s3Bucket              string
-	baseDomain            string
-	target                string
-	fileHandlerPathPrefix string
+	logger      logger
+	caddyAPI    *caddy.CaddyAPI
+	s3          s3
+	s3Bucket    string
+	baseDomain  string
+	shorthandId string
 }
 
-func New(logger logger, caddyAPI *caddy.CaddyAPI, s3 s3, s3Bucket string, baseDomain string, target string, fileHandlerPathPrefix string) *UploadFileHandler {
+func New(logger logger, caddyAPI *caddy.CaddyAPI, s3 s3, s3Bucket string, baseDomain string, shorthandId string) *UploadFileHandler {
 	return &UploadFileHandler{
-		logger:                logger,
-		caddyAPI:              caddyAPI,
-		s3:                    s3,
-		s3Bucket:              s3Bucket,
-		baseDomain:            baseDomain,
-		target:                target,
-		fileHandlerPathPrefix: fileHandlerPathPrefix,
+		logger:      logger,
+		caddyAPI:    caddyAPI,
+		s3:          s3,
+		s3Bucket:    s3Bucket,
+		baseDomain:  baseDomain,
+		shorthandId: shorthandId,
 	}
 }
 
@@ -134,7 +132,7 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.caddyAPI.AddSubdomain(ctx, h.baseDomain, subdomain, h.target, h.fileHandlerPathPrefix)
+	err = h.caddyAPI.AddSubdomain(ctx, h.baseDomain, subdomain, h.shorthandId)
 	if err != nil {
 		h.logger.ErrorContext(ctx, "error in caddy add subdomain", "error", err)
 	}

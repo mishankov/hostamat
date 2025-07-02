@@ -47,7 +47,7 @@ func main() {
 
 	// Handlers
 	healthcheckHandler := handlers.NewHealthcheckHandler()
-	uploadFileHandler := uploadfilehandler.New(logger, caddyAPI, s3Client, conf.S3.Bucket, conf.PublicBaseDomain, conf.FileServerHost, conf.FileServerPath)
+	uploadFileHandler := uploadfilehandler.New(logger, caddyAPI, s3Client, conf.S3.Bucket, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
 	serveFileHandler := servefilehandler.New(logger, s3Client, conf.S3.Bucket)
 
 	// Handle groups
@@ -63,8 +63,9 @@ func main() {
 
 	httpServer.Use(requestLogger)
 
-	cleanupService := cleanup.New(s3Client, conf.S3.Bucket, caddyAPI)
-	_ = scheduler.New(logger, 30*time.Second, cleanupService)
+	// Cleanup service to remove files from S3 and subdomains from Caddy
+	cleanupService := cleanup.New(s3Client, caddyAPI, conf.S3.Bucket, conf.Caddy.ShorthandId)
+	cleanupJob := scheduler.New(logger, 30*time.Minute, cleanupService)
 
 	// Application
 	app := application.New()
@@ -72,10 +73,22 @@ func main() {
 	// Ensure that bucket exists before starting application
 	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
 		return s3Client.MakeBucket(ctx, conf.S3.Bucket)
-	}), application.StartupTaskConfig{Name: "createBucket", AbortOnError: false})
+	}), application.StartupTaskConfig{Name: "createBucket", AbortOnError: true})
+
+	// Ensure that caddy has desired configuration
+	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
+		err := caddyAPI.CheckConfigWithId(ctx, conf.Caddy.ShorthandId)
+		if err == nil {
+			return nil
+		}
+
+		err = caddyAPI.CreateBaseConfig(ctx, conf.FileServerHost, conf.FileServerPath, conf.Caddy.ShorthandId)
+
+		return nil
+	}), application.StartupTaskConfig{Name: "prepareCaddy", AbortOnError: true})
 
 	app.Register("http", httpServer)
-	// app.Register("cleanup", cleanupJob)
+	app.Register("cleanup", cleanupJob)
 
 	if err := app.Run(ctx); err != nil {
 		logger.Error("Applicaton finished with error", "error", err)
