@@ -38,13 +38,15 @@ func (s *Scheduler) Run(ctx context.Context) error {
 	for {
 		select {
 		case <-ticker.C:
-			s.logger.InfoContext(ctx, "scheduler task started")
 			runCtx := context.WithValue(ctx, log.TraceIdKey, uuid.NewString())
+			s.logger.InfoContext(runCtx, "scheduler task started")
+
 			err := s.runner.Run(runCtx)
 			if err != nil {
-				s.logger.ErrorContext(ctx, "error in scheduler", "error", err)
+				s.logger.ErrorContext(runCtx, "error in scheduler", "error", err)
 			}
-			s.logger.InfoContext(ctx, "scheduler task finished")
+
+			s.logger.InfoContext(runCtx, "scheduler task finished")
 		case <-ctx.Done():
 			return ctx.Err()
 		}

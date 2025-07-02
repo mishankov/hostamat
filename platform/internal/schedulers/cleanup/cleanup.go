@@ -24,7 +24,6 @@ func (c *Cleanup) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to delete S3 bucket: %w", err)
 	}
 
-	// TODO: Delete all subdomains from Caddy
 	if err := c.caddy.ClearSubdomains(ctx, c.shorthandId); err != nil {
 		return fmt.Errorf("failed to delete Caddy subdomains: %w", err)
 	}
