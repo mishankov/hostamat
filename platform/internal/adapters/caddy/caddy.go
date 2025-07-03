@@ -4,8 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
-	"log"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -37,11 +36,18 @@ func (capi *CaddyAPI) CheckConfigWithId(ctx context.Context, shorthandId string)
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == 404 {
-		return errors.New("config not found")
+	switch {
+	case statusOk(resp.StatusCode):
+		return nil
+	case resp.StatusCode == 404:
+		return ErrConfigNotFound
+	case statusBadRequest(resp.StatusCode):
+		return ErrInvalidRequest
+	case statusServerError(resp.StatusCode):
+		return ErrServerError
+	default:
+		return ErrUnexpectedResponse
 	}
-
-	return nil
 }
 
 func (capi *CaddyAPI) CreateBaseConfig(ctx context.Context, target, handlerPrefix, shorthandId string) error {
@@ -75,7 +81,7 @@ func (capi *CaddyAPI) CreateBaseConfig(ctx context.Context, target, handlerPrefi
 	var buf bytes.Buffer
 	err := json.NewEncoder(&buf).Encode(reqBody)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("failed to encode request body: %w", err)
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST",
@@ -94,7 +100,16 @@ func (capi *CaddyAPI) CreateBaseConfig(ctx context.Context, target, handlerPrefi
 	}
 	defer resp.Body.Close()
 
-	return nil
+	switch {
+	case statusOk(resp.StatusCode):
+		return nil
+	case statusBadRequest(resp.StatusCode):
+		return ErrInvalidRequest
+	case statusServerError(resp.StatusCode):
+		return ErrServerError
+	default:
+		return ErrUnexpectedResponse
+	}
 }
 
 func (capi *CaddyAPI) AddSubdomain(ctx context.Context, baseDomain, subdomain, shorthandId string) error {
@@ -115,7 +130,16 @@ func (capi *CaddyAPI) AddSubdomain(ctx context.Context, baseDomain, subdomain, s
 	}
 	defer resp.Body.Close()
 
-	return nil
+	switch {
+	case statusOk(resp.StatusCode):
+		return nil
+	case statusBadRequest(resp.StatusCode):
+		return ErrInvalidRequest
+	case statusServerError(resp.StatusCode):
+		return ErrServerError
+	default:
+		return ErrUnexpectedResponse
+	}
 }
 
 func (capi *CaddyAPI) ClearSubdomains(ctx context.Context, shorthandId string) error {
@@ -135,6 +159,13 @@ func (capi *CaddyAPI) ClearSubdomains(ctx context.Context, shorthandId string) e
 	}
 	defer respDelete.Body.Close()
 
+	switch {
+	case statusBadRequest(respDelete.StatusCode):
+		return ErrInvalidRequest
+	case statusServerError(respDelete.StatusCode):
+		return ErrServerError
+	}
+
 	reqPost, err := http.NewRequestWithContext(ctx, "POST",
 		capi.apiBasePath+"/id/"+shorthandId+"/host",
 		strings.NewReader(`[]`),
@@ -151,5 +182,14 @@ func (capi *CaddyAPI) ClearSubdomains(ctx context.Context, shorthandId string) e
 	}
 	defer respPost.Body.Close()
 
-	return nil
+	switch {
+	case statusOk(respPost.StatusCode):
+		return nil
+	case statusBadRequest(respPost.StatusCode):
+		return ErrInvalidRequest
+	case statusServerError(respPost.StatusCode):
+		return ErrServerError
+	default:
+		return ErrUnexpectedResponse
+	}
 }
