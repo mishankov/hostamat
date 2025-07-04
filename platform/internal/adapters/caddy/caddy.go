@@ -85,7 +85,7 @@ func (capi *CaddyAPI) CreateBaseConfig(ctx context.Context, target, handlerPrefi
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST",
-		capi.apiBasePath+"/config/apps/http/servers/srv0/routes", // TODO: remove srv0 harcode
+		capi.apiBasePath+"/config/apps/http/servers/srv0/routes", // TODO: remove srv0 harcode AI!
 		&buf,
 	)
 	if err != nil {
