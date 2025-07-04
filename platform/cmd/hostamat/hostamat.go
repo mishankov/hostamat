@@ -33,7 +33,7 @@ func main() {
 	log.SetDefault(logger)
 
 	// API adapters
-	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL)
+	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL, "srv0") // Default server name
 
 	// S3 client
 	s3Client, err := s3.New(conf.S3.BaseURL, conf.S3.Login, conf.S3.Password, false)
