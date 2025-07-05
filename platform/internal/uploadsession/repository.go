@@ -18,7 +18,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 
 func (r *Repository) Get(id string) (*UploadSession, error) {
 	var session UploadSession
-	err := r.db.Get(&session, "SELECT * FROM upload_sessions WHERE id = $1", id) //use tableName constant AI!
+	err := r.db.Get(&session, "SELECT * FROM "+tableName+" WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
