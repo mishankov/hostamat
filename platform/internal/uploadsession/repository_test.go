@@ -70,11 +70,21 @@ func TestGet(t *testing.T) {
 			t.Fatalf("Failed to get session: %v", err)
 		}
 
+		// Compare all fields
 		if got.Id != testSession.Id {
 			t.Errorf("Expected ID %q, got %q", testSession.Id, got.Id)
 		}
+		if !got.CreatedAt.Equal(testSession.CreatedAt) {
+			t.Errorf("Expected CreatedAt %v, got %v", testSession.CreatedAt, got.CreatedAt)
+		}
 		if got.Status != testSession.Status {
 			t.Errorf("Expected status %q, got %q", testSession.Status, got.Status)
+		}
+		if !got.ExpiresAt.Equal(testSession.ExpiresAt) {
+			t.Errorf("Expected ExpiresAt %v, got %v", testSession.ExpiresAt, got.ExpiresAt)
+		}
+		if !got.ResolvedAt.IsZero() {
+			t.Errorf("Expected empty ResolvedAt, got %v", got.ResolvedAt)
 		}
 	})
 }
