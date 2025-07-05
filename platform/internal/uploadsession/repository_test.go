@@ -21,34 +21,28 @@ func TestMigrate(t *testing.T) {
 			t.Fatal(err)
 		}
 		defer rows.Close()
-	})
 
-	t.Run("has correct columns", func(t *testing.T) {
-		rows, err := db.Query("SELECT * FROM upload_sessions")
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer rows.Close()
-
-		columns, err := rows.Columns()
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		expectedColumns := []string{"id", "created_at", "expires_at", "status", "resolved_at"}
-
-		t.Run("column count", func(t *testing.T) {
-			if len(columns) != len(expectedColumns) {
-				t.Fatalf("Expected %d columns, got %d", len(expectedColumns), len(columns))
+		t.Run("has correct columns", func(t *testing.T) {
+			columns, err := rows.Columns()
+			if err != nil {
+				t.Fatal(err)
 			}
-		})
 
-		t.Run("column names", func(t *testing.T) {
-			for i, column := range columns {
-				if !slices.Contains(expectedColumns, column) {
-					t.Errorf("Expected column %s to be in %s", column, expectedColumns[i])
+			expectedColumns := []string{"id", "created_at", "expires_at", "status", "resolved_at"}
+
+			t.Run("column count", func(t *testing.T) {
+				if len(columns) != len(expectedColumns) {
+					t.Fatalf("Expected %d columns, got %d", len(expectedColumns), len(columns))
 				}
-			}
+			})
+
+			t.Run("column names", func(t *testing.T) {
+				for i, column := range columns {
+					if !slices.Contains(expectedColumns, column) {
+						t.Errorf("Expected column %s to be in %s", column, expectedColumns[i])
+					}
+				}
+			})
 		})
 	})
 }
