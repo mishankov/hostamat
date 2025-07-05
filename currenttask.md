@@ -1,3 +1,7 @@
+# Platforma fixes
+
+- [ ] Fix mandatory trailing slashes in URL
+
 # Frontend tips
 ## Upload files
 

@@ -5,6 +5,8 @@ import (
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/s3"
+	"hostamat/internal/infra/db"
+	"hostamat/internal/uploadsession"
 
 	"hostamat/internal/handlers"
 	"hostamat/internal/handlers/servefilehandler"
@@ -42,6 +44,18 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Database
+	db, err := db.CreateDB("hostamat.db")
+	if err != nil {
+		logger.Error("failed to create database", "error", err)
+		os.Exit(1)
+	}
+
+	// Upload Session
+	uploadSessionRepo := uploadsession.NewRepository(db)
+	uploadSessionService := uploadsession.NewService(uploadSessionRepo)
+	uploadSessionHandlerCreate := uploadsession.NewCreateUploadSessionHandler(uploadSessionService)
+
 	// Middlewares
 	requestLogger := middlewares.NewRequestLogger(logger)
 
@@ -58,6 +72,7 @@ func main() {
 	httpServer := httpserver.New(logger, conf.Port, 10*time.Second, map[string]http.Handler{
 		"/healthcheck":      healthcheckHandler,
 		"/files/api":        filesAPI,
+		"/uploadsession":    uploadSessionHandlerCreate,
 		conf.FileServerPath: serveFileHandler,
 	})
 
@@ -69,6 +84,11 @@ func main() {
 
 	// Application
 	app := application.New()
+
+	// Migrate DB
+	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
+		return uploadSessionRepo.Migrate() //TODO: add ctx
+	}), application.StartupTaskConfig{Name: "migrateDB", AbortOnError: true})
 
 	// Ensure that bucket exists before starting application
 	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
