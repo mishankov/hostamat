@@ -37,12 +37,8 @@ func TestService_Create(t *testing.T) {
 	})
 
 	t.Run("repository error", func(t *testing.T) {
-		mockRepo := &mockRepository{
-			sessions: make(map[string]*uploadsession.UploadSession),
-		}
-		// Force Create to fail
-		mockRepo.Create = func(*uploadsession.UploadSession) error {
-			return errors.New("forced repository error")
+		mockRepo := &errorProneMockRepository{
+			shouldError: true,
 		}
 
 		service := uploadsession.NewService(mockRepo)
@@ -95,4 +91,16 @@ func (m *mockRepository) Update(session *uploadsession.UploadSession) error {
 	}
 	m.sessions[session.Id] = session
 	return nil
+}
+
+type errorProneMockRepository struct {
+	mockRepository
+	shouldError bool
+}
+
+func (m *errorProneMockRepository) Create(session *uploadsession.UploadSession) error {
+	if m.shouldError {
+		return errors.New("forced repository error")
+	}
+	return m.mockRepository.Create(session)
 }
