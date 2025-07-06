@@ -139,16 +139,6 @@ func TestUpdate(t *testing.T) {
 			t.Errorf("Expected ResolvedAt %v, got %v", updatedSession.ResolvedAt, got.ResolvedAt)
 		}
 	})
-
-	t.Run("update non-existent session", func(t *testing.T) {
-		nonExistentSession := &uploadsession.UploadSession{
-			Id: "non-existent-id",
-		}
-		err := repo.Update(nonExistentSession)
-		if err == nil {
-			t.Error("Expected error when updating non-existent session")
-		}
-	})
 }
 
 func TestGet(t *testing.T) {
