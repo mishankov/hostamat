@@ -3,7 +3,6 @@ package uploadsession_test
 import (
 	"errors"
 	"sync"
-	"time"
 
 	"hostamat/internal/uploadsession"
 )
