@@ -105,6 +105,129 @@ func (m *errorProneMockRepository) Create(session *uploadsession.UploadSession) 
 	return m.mockRepository.Create(session)
 }
 
+func (m *errorProneMockRepository) Update(session *uploadsession.UploadSession) error {
+	if m.shouldError {
+		return errors.New("forced repository error")
+	}
+	return m.mockRepository.Update(session)
+}
+
+func TestService_Cancel(t *testing.T) {
+	t.Run("successful cancellation", func(t *testing.T) {
+		mockRepo := newMockRepository()
+		service := uploadsession.NewService(mockRepo)
+
+		// Create test session
+		testSession := &uploadsession.UploadSession{
+			Id:        "test-cancel-id",
+			Status:    uploadsession.Open,
+			CreatedAt: time.Now(),
+			ExpiresAt: time.Now().Add(time.Hour),
+		}
+		if err := mockRepo.Create(testSession); err != nil {
+			t.Fatalf("Failed to setup test session: %v", err)
+		}
+
+		// Test Cancel
+		err := service.Cancel("test-cancel-id")
+		if err != nil {
+			t.Fatalf("Cancel failed: %v", err)
+		}
+
+		// Verify status was updated
+		updated, err := mockRepo.Get("test-cancel-id")
+		if err != nil {
+			t.Fatalf("Failed to get updated session: %v", err)
+		}
+		if updated.Status != uploadsession.Cancelled {
+			t.Errorf("Expected status %q, got %q", uploadsession.Cancelled, updated.Status)
+		}
+		if updated.ResolvedAt.IsZero() {
+			t.Error("Expected ResolvedAt to be set")
+		}
+	})
+
+	t.Run("non-existent session", func(t *testing.T) {
+		mockRepo := newMockRepository()
+		service := uploadsession.NewService(mockRepo)
+
+		err := service.Cancel("non-existent-id")
+		if err == nil {
+			t.Error("Expected error for non-existent session")
+		}
+	})
+
+	t.Run("repository error", func(t *testing.T) {
+		mockRepo := &errorProneMockRepository{
+			shouldError: true,
+		}
+		service := uploadsession.NewService(mockRepo)
+
+		err := service.Cancel("any-id")
+		if err == nil {
+			t.Error("Expected error from repository")
+		}
+	})
+}
+
+func TestService_Finish(t *testing.T) {
+	t.Run("successful finish", func(t *testing.T) {
+		mockRepo := newMockRepository()
+		service := uploadsession.NewService(mockRepo)
+
+		// Create test session
+		testSession := &uploadsession.UploadSession{
+			Id:        "test-finish-id",
+			Status:    uploadsession.Open,
+			CreatedAt: time.Now(),
+			ExpiresAt: time.Now().Add(time.Hour),
+		}
+		if err := mockRepo.Create(testSession); err != nil {
+			t.Fatalf("Failed to setup test session: %v", err)
+		}
+
+		// Test Finish
+		err := service.Finish("test-finish-id")
+		if err != nil {
+			t.Fatalf("Finish failed: %v", err)
+		}
+
+		// Verify status was updated
+		updated, err := mockRepo.Get("test-finish-id")
+		if err != nil {
+			t.Fatalf("Failed to get updated session: %v", err)
+		}
+		if updated.Status != uploadsession.Finished {
+			t.Errorf("Expected status %q, got %q", uploadsession.Finished, updated.Status)
+		}
+		if updated.ResolvedAt.IsZero() {
+			t.Error("Expected ResolvedAt to be set")
+		}
+	})
+
+	t.Run("non-existent session", func(t *testing.T) {
+		mockRepo := newMockRepository()
+		service := uploadsession.NewService(mockRepo)
+
+		err := service.Finish("non-existent-id")
+		if err == nil {
+			t.Error("Expected error for non-existent session")
+		}
+	})
+
+	t.Run("repository error", func(t *testing.T) {
+		mockRepo := &errorProneMockRepository{
+			shouldError: true,
+		}
+		service := uploadsession.NewService(mockRepo)
+
+		err := service.Finish("any-id")
+		if err == nil {
+			t.Error("Expected error from repository")
+		}
+	})
+}
+
 func TestService_Get(t *testing.T) {
 	t.Run("existing session", func(t *testing.T) {
 		mockRepo := newMockRepository()
