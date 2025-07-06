@@ -49,69 +49,6 @@ func TestService_Create(t *testing.T) {
 	})
 }
 
-type mockRepository struct {
-	mu       sync.Mutex
-	sessions map[string]*uploadsession.UploadSession
-}
-
-func newMockRepository() *mockRepository {
-	return &mockRepository{
-		sessions: make(map[string]*uploadsession.UploadSession),
-	}
-}
-
-func (m *mockRepository) Get(id string) (*uploadsession.UploadSession, error) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	session, exists := m.sessions[id]
-	if !exists {
-		return nil, errors.New("not found")
-	}
-	return session, nil
-}
-
-func (m *mockRepository) Create(session *uploadsession.UploadSession) error {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	if _, exists := m.sessions[session.Id]; exists {
-		return errors.New("already exists")
-	}
-	m.sessions[session.Id] = session
-	return nil
-}
-
-func (m *mockRepository) Update(session *uploadsession.UploadSession) error {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	if _, exists := m.sessions[session.Id]; !exists {
-		return errors.New("not found")
-	}
-	m.sessions[session.Id] = session
-	return nil
-}
-
-type errorProneMockRepository struct {
-	mockRepository
-	shouldError bool
-}
-
-func (m *errorProneMockRepository) Create(session *uploadsession.UploadSession) error {
-	if m.shouldError {
-		return errors.New("forced repository error")
-	}
-	return m.mockRepository.Create(session)
-}
-
-func (m *errorProneMockRepository) Update(session *uploadsession.UploadSession) error {
-	if m.shouldError {
-		return errors.New("forced repository error")
-	}
-	return m.mockRepository.Update(session)
-}
-
 func TestService_Cancel(t *testing.T) {
 	t.Run("successful cancellation", func(t *testing.T) {
 		mockRepo := newMockRepository()
@@ -279,4 +216,67 @@ func TestService_Get(t *testing.T) {
 			t.Error("Expected error from repository")
 		}
 	})
+}
+
+type mockRepository struct {
+	mu       sync.Mutex
+	sessions map[string]*uploadsession.UploadSession
+}
+
+func newMockRepository() *mockRepository {
+	return &mockRepository{
+		sessions: make(map[string]*uploadsession.UploadSession),
+	}
+}
+
+func (m *mockRepository) Get(id string) (*uploadsession.UploadSession, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	session, exists := m.sessions[id]
+	if !exists {
+		return nil, errors.New("not found")
+	}
+	return session, nil
+}
+
+func (m *mockRepository) Create(session *uploadsession.UploadSession) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if _, exists := m.sessions[session.Id]; exists {
+		return errors.New("already exists")
+	}
+	m.sessions[session.Id] = session
+	return nil
+}
+
+func (m *mockRepository) Update(session *uploadsession.UploadSession) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if _, exists := m.sessions[session.Id]; !exists {
+		return errors.New("not found")
+	}
+	m.sessions[session.Id] = session
+	return nil
+}
+
+type errorProneMockRepository struct {
+	mockRepository
+	shouldError bool
+}
+
+func (m *errorProneMockRepository) Create(session *uploadsession.UploadSession) error {
+	if m.shouldError {
+		return errors.New("forced repository error")
+	}
+	return m.mockRepository.Create(session)
+}
+
+func (m *errorProneMockRepository) Update(session *uploadsession.UploadSession) error {
+	if m.shouldError {
+		return errors.New("forced repository error")
+	}
+	return m.mockRepository.Update(session)
 }
