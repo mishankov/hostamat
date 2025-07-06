@@ -98,6 +98,59 @@ func TestCreate(t *testing.T) {
 	})
 }
 
+func TestUpdate(t *testing.T) {
+	db := testDB()
+	repo := uploadsession.NewRepository(db)
+	repo.Migrate()
+
+	t.Run("update status", func(t *testing.T) {
+		// Create test session
+		testSession := &uploadsession.UploadSession{
+			Id:        "update-test-id",
+			CreatedAt: time.Now(),
+			Status:    uploadsession.Open,
+			ExpiresAt: time.Now().Add(time.Hour),
+		}
+		err := repo.Create(testSession)
+		if err != nil {
+			t.Fatalf("Failed to create test session: %v", err)
+		}
+
+		// Update the session
+		updatedSession := *testSession
+		updatedSession.Status = uploadsession.Finished
+		updatedSession.ResolvedAt = time.Now()
+
+		err = repo.Update(&updatedSession)
+		if err != nil {
+			t.Fatalf("Update failed: %v", err)
+		}
+
+		// Verify the update
+		got, err := repo.Get("update-test-id")
+		if err != nil {
+			t.Fatalf("Failed to get updated session: %v", err)
+		}
+
+		if got.Status != updatedSession.Status {
+			t.Errorf("Expected status %q, got %q", updatedSession.Status, got.Status)
+		}
+		if !got.ResolvedAt.Equal(updatedSession.ResolvedAt) {
+			t.Errorf("Expected ResolvedAt %v, got %v", updatedSession.ResolvedAt, got.ResolvedAt)
+		}
+	})
+
+	t.Run("update non-existent session", func(t *testing.T) {
+		nonExistentSession := &uploadsession.UploadSession{
+			Id: "non-existent-id",
+		}
+		err := repo.Update(nonExistentSession)
+		if err == nil {
+			t.Error("Expected error when updating non-existent session")
+		}
+	})
+}
+
 func TestGet(t *testing.T) {
 	db := testDB()
 	repo := uploadsession.NewRepository(db)
