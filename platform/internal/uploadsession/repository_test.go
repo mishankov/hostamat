@@ -47,6 +47,57 @@ func TestMigrate(t *testing.T) {
 	})
 }
 
+func TestCreate(t *testing.T) {
+	db := testDB()
+	repo := uploadsession.NewRepository(db)
+	repo.Migrate()
+
+	t.Run("successful creation", func(t *testing.T) {
+		testSession := &uploadsession.UploadSession{
+			Id:        "create-test-id",
+			CreatedAt: time.Now(),
+			Status:    uploadsession.Open,
+			ExpiresAt: time.Now().Add(time.Hour),
+		}
+
+		err := repo.Create(testSession)
+		if err != nil {
+			t.Fatalf("Create failed: %v", err)
+		}
+
+		// Verify the session was actually created
+		var count int
+		err = db.Get(&count, "SELECT COUNT(*) FROM upload_sessions WHERE id = ?", testSession.Id)
+		if err != nil {
+			t.Fatalf("Failed to verify creation: %v", err)
+		}
+		if count != 1 {
+			t.Errorf("Expected 1 record, got %d", count)
+		}
+	})
+
+	t.Run("duplicate id", func(t *testing.T) {
+		testSession := &uploadsession.UploadSession{
+			Id:        "duplicate-id",
+			CreatedAt: time.Now(),
+			Status:    uploadsession.Open,
+			ExpiresAt: time.Now().Add(time.Hour),
+		}
+
+		// First create should succeed
+		err := repo.Create(testSession)
+		if err != nil {
+			t.Fatalf("First create failed: %v", err)
+		}
+
+		// Second create with same ID should fail
+		err = repo.Create(testSession)
+		if err == nil {
+			t.Error("Expected error for duplicate ID")
+		}
+	})
+}
+
 func TestGet(t *testing.T) {
 	db := testDB()
 	repo := uploadsession.NewRepository(db)
