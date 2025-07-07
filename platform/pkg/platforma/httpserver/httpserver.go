@@ -23,13 +23,20 @@ type HttpServer struct {
 	middlewares     []Middleware
 }
 
-func New(logger logger, port string, shutdownTimeout time.Duration, handleGroups map[string]http.Handler) *HttpServer {
-	mux := http.NewServeMux()
-	for pattern, handleGroup := range handleGroups {
-		mux.Handle(pattern+"/", http.StripPrefix(pattern, handleGroup))
-	}
+func New(logger logger, port string, shutdownTimeout time.Duration) *HttpServer {
+	return &HttpServer{logger: logger, mux: http.NewServeMux(), port: port, shutdownTimeout: shutdownTimeout}
+}
 
-	return &HttpServer{logger: logger, mux: mux, port: port, shutdownTimeout: shutdownTimeout}
+func (s *HttpServer) Handle(pattern string, handler http.Handler) {
+	s.mux.Handle(pattern, handler)
+}
+
+func (s *HttpServer) HandleFunc(pattern string, handlerFunc http.HandlerFunc) {
+	s.mux.HandleFunc(pattern, handlerFunc)
+}
+
+func (s *HttpServer) HandleGroup(pattern string, handler http.Handler) {
+	s.mux.Handle(pattern+"/", http.StripPrefix(pattern, handler))
 }
 
 func (s *HttpServer) Use(middleware Middleware) {

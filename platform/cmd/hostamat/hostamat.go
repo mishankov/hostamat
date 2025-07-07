@@ -18,7 +18,6 @@ import (
 	"hostamat/pkg/platforma/httpserver"
 	"hostamat/pkg/platforma/log"
 	"hostamat/pkg/platforma/scheduler"
-	"net/http"
 	"os"
 	"time"
 )
@@ -69,12 +68,12 @@ func main() {
 	filesAPI.Handle("/upload", uploadFileHandler)
 
 	// Services
-	httpServer := httpserver.New(logger, conf.Port, 10*time.Second, map[string]http.Handler{
-		"/healthcheck":      healthcheckHandler,
-		"/files/api":        filesAPI,
-		"/uploadsession":    uploadSessionHandlerCreate,
-		conf.FileServerPath: serveFileHandler,
-	})
+	httpServer := httpserver.New(logger, conf.Port, 10*time.Second)
+
+	httpServer.Handle("/healthcheck", healthcheckHandler)
+	httpServer.HandleGroup("/files/api", filesAPI)
+	httpServer.Handle("/uploadsession", uploadSessionHandlerCreate)
+	httpServer.Handle(conf.FileServerPath, serveFileHandler)
 
 	httpServer.Use(requestLogger)
 

@@ -5,7 +5,9 @@
 - POST /files/api/upload  + H-Upload-Session - upload a file
 # Platforma fixes
 
-- [ ] Fix mandatory trailing slashes in URL
+- [x] Fix mandatory trailing slashes in URL
+- [ ] In handle group apply middlewares in ServeHTTP
+- [ ] HandleGroup -> HandlerGroup
 
 # Frontend tips
 ## Upload files
