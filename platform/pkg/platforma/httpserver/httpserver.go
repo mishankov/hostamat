@@ -31,8 +31,8 @@ func (s *HttpServer) Handle(pattern string, handler http.Handler) {
 	s.mux.Handle(pattern, handler)
 }
 
-func (s *HttpServer) HandleFunc(pattern string, handlerFunc http.HandlerFunc) {
-	s.mux.HandleFunc(pattern, handlerFunc)
+func (s *HttpServer) HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request)) {
+	s.mux.HandleFunc(pattern, http.HandlerFunc(handler))
 }
 
 func (s *HttpServer) HandleGroup(pattern string, handler http.Handler) {
