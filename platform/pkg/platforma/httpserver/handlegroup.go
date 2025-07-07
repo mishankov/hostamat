@@ -28,17 +28,18 @@ func (hg *HandleGroup) UseFunc(middlewareFunc func(http.Handler) http.Handler) {
 // Handle registers an http.Handler for the given pattern, applying all
 // middlewares in the HandleGroup's chain.
 func (hg *HandleGroup) Handle(pattern string, handler http.Handler) {
-	hg.mux.Handle(pattern, wrapHandlerInMiddleware(handler, hg.middlewares))
+	hg.mux.Handle(pattern, handler)
 }
 
 // HandleFunc registers an http.HandlerFunc for the given pattern, applying all
 // middlewares in the HandleGroup's chain.
 func (hg *HandleGroup) HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request)) {
-	hg.mux.Handle(pattern, wrapHandlerInMiddleware(http.HandlerFunc(handler), hg.middlewares))
+	hg.mux.Handle(pattern, http.HandlerFunc(handler))
 }
 
 // ServeHTTP implements the http.Handler interface, allowing HandleGroup to
 // be used as an HTTP handler itself.
 func (hg *HandleGroup) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	hg.mux.ServeHTTP(w, r)
+	wrappedMux := wrapHandlerInMiddleware(hg.mux, hg.middlewares)
+	wrappedMux.ServeHTTP(w, r)
 }

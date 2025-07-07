@@ -73,7 +73,9 @@ func main() {
 	httpServer.Handle("/healthcheck", healthcheckHandler)
 	httpServer.HandleGroup("/files/api", filesAPI)
 	httpServer.Handle("/uploadsession", uploadSessionHandlerCreate)
-	httpServer.Handle(conf.FileServerPath, serveFileHandler)
+	// HandleGroup used here because client would request files by additional path
+	// TODO: should probably document it in platforma
+	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
 
 	httpServer.Use(requestLogger)
 
