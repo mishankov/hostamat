@@ -64,7 +64,7 @@ func main() {
 	serveFileHandler := servefilehandler.New(logger, s3Client, conf.S3.Bucket)
 
 	// Handle groups
-	filesAPI := httpserver.NewHandleGroup()
+	filesAPI := httpserver.NewHandlerGroup()
 	filesAPI.Handle("/upload", uploadFileHandler)
 
 	// Services

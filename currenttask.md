@@ -6,8 +6,8 @@
 # Platforma fixes
 
 - [x] Fix mandatory trailing slashes in URL
-- [ ] In handle group apply middlewares in ServeHTTP
-- [ ] HandleGroup -> HandlerGroup
+- [x] In handle group apply middlewares in ServeHTTP
+- [x] HandleGroup -> HandlerGroup
 
 # Frontend tips
 ## Upload files
