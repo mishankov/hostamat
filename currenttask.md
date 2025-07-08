@@ -1,8 +1,12 @@
+# Refactor
+- [ ] CaddyAPI adapter -> domain *domain*
+
 # APIs
 
 - POST /uploadsession - creates a new upload session
 - DELETE /uploadsession + H-Upload-Session - finish an upload session
 - POST /files/api/upload  + H-Upload-Session - upload a file
+
 # Platforma fixes
 
 - [x] Fix mandatory trailing slashes in URL
