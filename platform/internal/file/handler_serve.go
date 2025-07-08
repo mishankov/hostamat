@@ -7,16 +7,16 @@ import (
 	"strings"
 )
 
-type service interface {
+type serviceServe interface {
 	GetFile(ctx context.Context, fileName string) (io.Reader, error)
 	FileExists(ctx context.Context, fileName string) (bool, error)
 }
 
 type ServeHandler struct {
-	service service
+	service serviceServe
 }
 
-func NewServeHandler(service service) *ServeHandler {
+func NewServeHandler(service serviceServe) *ServeHandler {
 	return &ServeHandler{
 		service: service,
 	}

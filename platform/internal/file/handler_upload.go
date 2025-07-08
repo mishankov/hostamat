@@ -13,19 +13,19 @@ import (
 	"hostamat/internal/adapters/caddy"
 )
 
-type service interface {
+type serviceUpload interface {
 	UploadFile(ctx context.Context, fileName string, file io.Reader, size int64) error
 	FileExists(ctx context.Context, fileName string) (bool, error)
 }
 
 type UploadHandler struct {
-	service     service
+	service     serviceUpload
 	caddyAPI    *caddy.CaddyAPI
 	baseDomain  string
 	shorthandId string
 }
 
-func NewUploadHandler(service service, caddyAPI *caddy.CaddyAPI, baseDomain, shorthandId string) *UploadHandler {
+func NewUploadHandler(service serviceUpload, caddyAPI *caddy.CaddyAPI, baseDomain, shorthandId string) *UploadHandler {
 	return &UploadHandler{
 		service:     service,
 		caddyAPI:    caddyAPI,
