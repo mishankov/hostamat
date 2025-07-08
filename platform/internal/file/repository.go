@@ -4,37 +4,29 @@ import (
 	"context"
 	"io"
 
-	"github.com/minio/minio-go/v7"
+	"hostamat/internal/adapters/s3"
 )
 
 type Repository struct {
-	client     *minio.Client
+	s3Client   *s3.S3
 	bucketName string
 }
 
-func NewRepository(client *minio.Client, bucketName string) *Repository {
+func NewRepository(s3Client *s3.S3, bucketName string) *Repository {
 	return &Repository{
-		client:     client,
+		s3Client:   s3Client,
 		bucketName: bucketName,
 	}
 }
 
 func (r *Repository) ObjectExists(ctx context.Context, fileName string) (bool, error) {
-	_, err := r.client.StatObject(ctx, r.bucketName, fileName, minio.StatObjectOptions{})
-	if err != nil {
-		if minio.ToErrorResponse(err).Code == "NoSuchKey" {
-			return false, nil
-		}
-		return false, err
-	}
-	return true, nil
+	return r.s3Client.ObjectExists(ctx, r.bucketName, fileName)
 }
 
 func (r *Repository) GetObject(ctx context.Context, fileName string) (io.Reader, error) {
-	return r.client.GetObject(ctx, r.bucketName, fileName, minio.GetObjectOptions{})
+	return r.s3Client.GetObject(ctx, r.bucketName, fileName)
 }
 
 func (r *Repository) PutObject(ctx context.Context, fileName string, file io.Reader, size int64) error {
-	_, err := r.client.PutObject(ctx, r.bucketName, fileName, file, size, minio.PutObjectOptions{})
-	return err
+	return r.s3Client.PutObject(ctx, r.bucketName, fileName, file, size)
 }
