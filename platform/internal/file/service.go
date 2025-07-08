@@ -18,14 +18,20 @@ type repository interface {
 }
 
 type Service struct {
-	repo       repository
-	bucketName string
+	repo         repository
+	bucketName   string
+	caddyAPI     *caddy.CaddyAPI
+	baseDomain   string
+	shorthandId  string
 }
 
-func NewService(repo repository, bucketName string) *Service {
+func NewService(repo repository, bucketName string, caddyAPI *caddy.CaddyAPI, baseDomain, shorthandId string) *Service {
 	return &Service{
-		repo:       repo,
-		bucketName: bucketName,
+		repo:        repo,
+		bucketName:  bucketName,
+		caddyAPI:    caddyAPI,
+		baseDomain:  baseDomain,
+		shorthandId: shorthandId,
 	}
 }
 
@@ -85,6 +91,10 @@ func (s *Service) UploadZipArchive(ctx context.Context, subdomain string, zipFil
 
 func (s *Service) GenerateSubdomain() string {
 	return randomBase64String(5)
+}
+
+func (s *Service) CreateSubdomain(ctx context.Context, subdomain string) error {
+	return s.caddyAPI.AddSubdomain(ctx, s.baseDomain, subdomain, s.shorthandId)
 }
 
 func (s *Service) GetContentType(filename string) string {

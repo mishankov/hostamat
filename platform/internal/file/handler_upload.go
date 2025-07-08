@@ -9,18 +9,12 @@ import (
 )
 
 type UploadHandler struct {
-	service     *Service
-	caddyAPI    *caddy.CaddyAPI
-	baseDomain  string
-	shorthandId string
+	service *Service
 }
 
-func NewUploadHandler(service *Service, caddyAPI *caddy.CaddyAPI, baseDomain, shorthandId string) *UploadHandler {
+func NewUploadHandler(service *Service) *UploadHandler {
 	return &UploadHandler{
-		service:     service,
-		caddyAPI:    caddyAPI,
-		baseDomain:  baseDomain,
-		shorthandId: shorthandId,
+		service: service,
 	}
 }
 
@@ -67,11 +61,11 @@ func (h *UploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.caddyAPI.AddSubdomain(ctx, h.baseDomain, subdomain, h.shorthandId); err != nil {
+	if err := h.service.CreateSubdomain(ctx, subdomain); err != nil {
 		response.Errors = append(response.Errors, "Failed to create subdomain: "+err.Error())
 	}
 
-	response.Link = subdomain + "." + h.baseDomain
+	response.Link = subdomain + "." + h.service.baseDomain
 	response.UploadedFiles = uploaded
 	response.SkippedFiles = skipped
 
