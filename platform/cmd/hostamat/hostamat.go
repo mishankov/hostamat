@@ -58,10 +58,14 @@ func main() {
 	// Middlewares
 	requestLogger := middlewares.NewRequestLogger(logger)
 
+	// File service setup
+	fileRepo := file.NewRepository(s3Client, conf.S3.Bucket)
+	fileService := file.NewService(fileRepo, conf.S3.Bucket, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
+
 	// Handlers
 	healthcheckHandler := handlers.NewHealthcheckHandler()
-	uploadFileHandler := uploadfilehandler.New(logger, caddyAPI, s3Client, conf.S3.Bucket, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
-	serveFileHandler := servefilehandler.New(logger, s3Client, conf.S3.Bucket)
+	uploadFileHandler := file.NewUploadHandler(fileService)
+	serveFileHandler := file.NewServeHandler(fileService)
 
 	// Handle groups
 	filesAPI := httpserver.NewHandlerGroup()
@@ -74,7 +78,6 @@ func main() {
 	httpServer.HandleGroup("/files/api", filesAPI)
 	httpServer.Handle("/uploadsession", uploadSessionHandlerCreate)
 	// HandleGroup used here because client would request files by additional path
-	// TODO: should probably document it in platforma
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
 
 	httpServer.Use(requestLogger)
