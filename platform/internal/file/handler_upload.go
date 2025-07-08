@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"path/filepath"
-
-	"hostamat/internal/adapters/caddy"
 )
 
 type UploadHandler struct {

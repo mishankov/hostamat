@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"hostamat/internal/adapters/caddy"
 	"io"
 	"path/filepath"
 	"strings"
@@ -18,11 +19,11 @@ type repository interface {
 }
 
 type Service struct {
-	repo         repository
-	bucketName   string
-	caddyAPI     *caddy.CaddyAPI
-	baseDomain   string
-	shorthandId  string
+	repo        repository
+	bucketName  string
+	caddyAPI    *caddy.CaddyAPI
+	baseDomain  string
+	shorthandId string
 }
 
 func NewService(repo repository, bucketName string, caddyAPI *caddy.CaddyAPI, baseDomain, shorthandId string) *Service {
