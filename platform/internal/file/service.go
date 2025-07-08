@@ -13,9 +13,9 @@ import (
 )
 
 type repository interface {
-	ObjectExists(ctx context.Context, fileName string) (bool, error)
-	GetObject(ctx context.Context, fileName string) (io.Reader, error)
-	PutObject(ctx context.Context, fileName string, file io.Reader, size int64) error
+	ObjectExists(ctx context.Context, bucketName, fileName string) (bool, error)
+	GetObject(ctx context.Context, bucketName, fileName string) (io.Reader, error)
+	PutObject(ctx context.Context, bucketName, fileName string, file io.Reader, size int64) error
 }
 
 type Service struct {
