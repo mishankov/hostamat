@@ -8,9 +8,8 @@ import (
 	"hostamat/internal/infra/db"
 	"hostamat/internal/uploadsession"
 
+	"hostamat/internal/file"
 	"hostamat/internal/handlers"
-	"hostamat/internal/handlers/servefilehandler"
-	"hostamat/internal/handlers/uploadfilehandler"
 	"hostamat/internal/middlewares"
 	"hostamat/internal/schedulers/cleanup"
 	"hostamat/pkg/platforma/application"
