@@ -1,10 +1,9 @@
 package file
 
 import (
-	"context"
 	"encoding/json"
-	"io"
 	"net/http"
+	"path/filepath"
 
 	"hostamat/internal/adapters/caddy"
 )

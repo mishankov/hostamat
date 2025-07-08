@@ -1,7 +1,6 @@
 package file
 
 import (
-	"context"
 	"io"
 	"net/http"
 	"strings"

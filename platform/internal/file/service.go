@@ -5,7 +5,9 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"errors"
 	"io"
+	"path/filepath"
 	"strings"
 )
 
