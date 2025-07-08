@@ -40,10 +40,6 @@ func (s *Service) GetFile(ctx context.Context, fileName string) (io.Reader, erro
 	return s.repo.GetObject(ctx, fileName)
 }
 
-func (s *Service) FileExists(ctx context.Context, fileName string) (bool, error) {
-	return s.repo.ObjectExists(ctx, fileName)
-}
-
 func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reader, size int64) (string, []string, []string, error) {
 	subdomain := s.GenerateSubdomain()
 	var uploaded, skipped []string

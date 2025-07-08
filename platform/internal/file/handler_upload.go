@@ -3,7 +3,6 @@ package file
 import (
 	"encoding/json"
 	"net/http"
-	"path/filepath"
 )
 
 type UploadHandler struct {
