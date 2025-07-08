@@ -32,40 +32,21 @@ func (h *UploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	subdomain := h.service.GenerateSubdomain()
+	link, uploaded, skipped, err := h.service.UploadFile(ctx, handler.Filename, file, handler.Size)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	response := struct {
 		Link          string   `json:"link"`
 		UploadedFiles []string `json:"uploadedFiles"`
 		SkippedFiles  []string `json:"skippedFiles"`
-		Errors        []string `json:"errors"`
-	}{}
-
-	var uploaded, skipped []string
-	switch filepath.Ext(handler.Filename) {
-	case ".html":
-		if err := h.service.UploadSingleFile(ctx, subdomain, handler.Filename, file, handler.Size); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		uploaded = []string{handler.Filename}
-	case ".zip":
-		uploaded, skipped, err = h.service.UploadZipArchive(ctx, subdomain, file, handler.Size)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-	default:
-		http.Error(w, "Only html and zip files are allowed", http.StatusBadRequest)
-		return
+	}{
+		Link:          link,
+		UploadedFiles: uploaded,
+		SkippedFiles:  skipped,
 	}
-
-	if err := h.service.CreateSubdomain(ctx, subdomain); err != nil {
-		response.Errors = append(response.Errors, "Failed to create subdomain: "+err.Error())
-	}
-
-	response.Link = subdomain + "." + h.service.baseDomain
-	response.UploadedFiles = uploaded
-	response.SkippedFiles = skipped
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)

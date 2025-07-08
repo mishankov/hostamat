@@ -44,21 +44,52 @@ func (s *Service) FileExists(ctx context.Context, fileName string) (bool, error)
 	return s.repo.ObjectExists(ctx, fileName)
 }
 
-func (s *Service) UploadSingleFile(ctx context.Context, subdomain, filename string, file io.Reader, size int64) error {
+func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reader, size int64) (string, []string, []string, error) {
+	subdomain := s.GenerateSubdomain()
+	var uploaded, skipped []string
+
+	switch filepath.Ext(filename) {
+	case ".html":
+		if err := s.uploadSingleFile(ctx, subdomain, filename, file, size); err != nil {
+			return "", nil, nil, err
+		}
+		uploaded = []string{filename}
+	case ".zip":
+		var err error
+		uploaded, skipped, err = s.uploadZipArchive(ctx, subdomain, file, size)
+		if err != nil {
+			return "", nil, nil, err
+		}
+	default:
+		return "", nil, nil, ErrInvalidFileType
+	}
+
+	if err := s.CreateSubdomain(ctx, subdomain); err != nil {
+		return "", nil, nil, err
+	}
+
+	return subdomain + "." + s.baseDomain, uploaded, skipped, nil
+}
+
+func (s *Service) uploadSingleFile(ctx context.Context, subdomain, filename string, file io.Reader, size int64) error {
 	if !isAllowedExtension(filename) {
 		return ErrInvalidFileType
 	}
 	return s.repo.PutObject(ctx, subdomain+"/"+filename, file, size)
 }
 
-func (s *Service) UploadZipArchive(ctx context.Context, subdomain string, zipFile io.ReaderAt, size int64) ([]string, []string, error) {
-	zipReader, err := zip.NewReader(zipFile, size)
+func (s *Service) uploadZipArchive(ctx context.Context, subdomain string, file io.Reader, size int64) ([]string, []string, error) {
+	fileReaderAt, ok := file.(io.ReaderAt)
+	if !ok {
+		return nil, nil, errors.New("zip file must be seekable")
+	}
+
+	zipReader, err := zip.NewReader(fileReaderAt, size)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	var uploadedFiles []string
-	var skippedFiles []string
+	var uploadedFiles, skippedFiles []string
 
 	for _, f := range zipReader.File {
 		if f.FileInfo().IsDir() {
@@ -77,7 +108,7 @@ func (s *Service) UploadZipArchive(ctx context.Context, subdomain string, zipFil
 			continue
 		}
 
-		err = s.UploadSingleFile(ctx, subdomain, filename, fileReader, int64(f.UncompressedSize64))
+		err = s.uploadSingleFile(ctx, subdomain, filename, fileReader, int64(f.UncompressedSize64))
 		fileReader.Close()
 		if err != nil {
 			skippedFiles = append(skippedFiles, filename)
