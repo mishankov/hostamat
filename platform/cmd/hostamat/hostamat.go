@@ -58,7 +58,7 @@ func main() {
 	requestLogger := middlewares.NewRequestLogger(logger)
 
 	// File service setup
-	fileRepo := file.NewRepository(s3Client, conf.S3.Bucket)
+	fileRepo := file.NewRepository(s3Client)
 	fileService := file.NewService(fileRepo, conf.S3.Bucket, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
 
 	// Handlers

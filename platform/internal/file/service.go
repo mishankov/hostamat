@@ -37,7 +37,7 @@ func NewService(repo repository, bucketName string, caddyAPI *caddy.CaddyAPI, ba
 }
 
 func (s *Service) GetFile(ctx context.Context, fileName string) (io.Reader, error) {
-	return s.repo.GetObject(ctx, fileName)
+	return s.repo.GetObject(ctx, s.bucketName, fileName)
 }
 
 func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reader, size int64) (string, []string, []string, error) {
@@ -71,7 +71,7 @@ func (s *Service) uploadSingleFile(ctx context.Context, subdomain, filename stri
 	if !isAllowedExtension(filename) {
 		return ErrInvalidFileType
 	}
-	return s.repo.PutObject(ctx, subdomain+"/"+filename, file, size)
+	return s.repo.PutObject(ctx, s.bucketName, subdomain+"/"+filename, file, size)
 }
 
 func (s *Service) uploadZipArchive(ctx context.Context, subdomain string, file io.Reader, size int64) ([]string, []string, error) {
