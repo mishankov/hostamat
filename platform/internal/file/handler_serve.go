@@ -7,16 +7,11 @@ import (
 	"strings"
 )
 
-type serviceServe interface {
-	GetFile(ctx context.Context, fileName string) (io.Reader, error)
-	FileExists(ctx context.Context, fileName string) (bool, error)
-}
-
 type ServeHandler struct {
-	service serviceServe
+	service *Service
 }
 
-func NewServeHandler(service serviceServe) *ServeHandler {
+func NewServeHandler(service *Service) *ServeHandler {
 	return &ServeHandler{
 		service: service,
 	}
@@ -32,23 +27,12 @@ func (h *ServeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fileName := subdomain + filePath
-	exists, err := h.service.FileExists(ctx, fileName)
+	file, err := h.service.GetFile(ctx, fileName)
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	if !exists {
 		http.Error(w, "File not found", http.StatusNotFound)
 		return
 	}
 
-	file, err := h.service.GetFile(ctx, fileName)
-	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", contentTypeFromFileName(filePath))
+	w.Header().Set("Content-Type", h.service.GetContentType(filePath))
 	io.Copy(w, file)
 }
