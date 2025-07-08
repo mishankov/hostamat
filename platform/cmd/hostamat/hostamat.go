@@ -52,7 +52,7 @@ func main() {
 	// Upload Session
 	uploadSessionRepo := uploadsession.NewRepository(db)
 	uploadSessionService := uploadsession.NewService(uploadSessionRepo)
-	uploadSessionHandlerCreate := uploadsession.NewCreateUploadSessionHandler(uploadSessionService)
+	createUploadSessionHandler := uploadsession.NewCreateUploadSessionHandler(uploadSessionService)
 
 	// Middlewares
 	requestLogger := middlewares.NewRequestLogger(logger)
@@ -60,11 +60,11 @@ func main() {
 	// File service setup
 	fileRepo := file.NewRepository(s3Client)
 	fileService := file.NewService(fileRepo, conf.S3.Bucket, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
+	uploadFileHandler := file.NewUploadHandler(fileService)
+	serveFileHandler := file.NewServeHandler(fileService)
 
 	// Handlers
 	healthcheckHandler := handlers.NewHealthcheckHandler()
-	uploadFileHandler := file.NewUploadHandler(fileService)
-	serveFileHandler := file.NewServeHandler(fileService)
 
 	// Handle groups
 	filesAPI := httpserver.NewHandlerGroup()
@@ -75,7 +75,7 @@ func main() {
 
 	httpServer.Handle("/healthcheck", healthcheckHandler)
 	httpServer.HandleGroup("/files/api", filesAPI)
-	httpServer.Handle("/uploadsession", uploadSessionHandlerCreate)
+	httpServer.Handle("/uploadsession", createUploadSessionHandler)
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
 
@@ -95,7 +95,7 @@ func main() {
 
 	// Ensure that bucket exists before starting application
 	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
-		return s3Client.MakeBucket(ctx, conf.S3.Bucket)
+		return fileRepo.Migrate(ctx, conf.S3.Bucket)
 	}), application.StartupTaskConfig{Name: "createBucket", AbortOnError: true})
 
 	// Ensure that caddy has desired configuration
@@ -105,9 +105,7 @@ func main() {
 			return nil
 		}
 
-		err = caddyAPI.CreateBaseConfig(ctx, conf.FileServerHost, conf.FileServerPath, conf.Caddy.ShorthandId)
-
-		return nil
+		return caddyAPI.CreateBaseConfig(ctx, conf.FileServerHost, conf.FileServerPath, conf.Caddy.ShorthandId)
 	}), application.StartupTaskConfig{Name: "prepareCaddy", AbortOnError: true})
 
 	app.Register("http", httpServer)
