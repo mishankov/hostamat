@@ -1,15 +1,21 @@
 package file
 
 import (
+	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 )
 
-type UploadHandler struct {
-	service *Service
+type uploadService interface {
+	UploadFile(ctx context.Context, fileName string, file io.Reader, size int64) (string, []string, []string, error)
 }
 
-func NewUploadHandler(service *Service) *UploadHandler {
+type UploadHandler struct {
+	service uploadService
+}
+
+func NewUploadHandler(service uploadService) *UploadHandler {
 	return &UploadHandler{
 		service: service,
 	}

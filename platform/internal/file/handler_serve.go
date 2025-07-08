@@ -1,16 +1,22 @@
 package file
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"strings"
 )
 
-type ServeHandler struct {
-	service *Service
+type serveService interface {
+	GetFile(ctx context.Context, fileName string) (io.Reader, error)
+	GetContentType(filePath string) string
 }
 
-func NewServeHandler(service *Service) *ServeHandler {
+type ServeHandler struct {
+	service serveService
+}
+
+func NewServeHandler(service serveService) *ServeHandler {
 	return &ServeHandler{
 		service: service,
 	}
