@@ -53,6 +53,7 @@ func main() {
 	uploadSessionRepo := uploadsession.NewRepository(db)
 	uploadSessionService := uploadsession.NewService(uploadSessionRepo)
 	createUploadSessionHandler := uploadsession.NewCreateUploadSessionHandler(uploadSessionService)
+	closeUploadSessionHandler := uploadsession.NewCloseUploadSessionHandler(uploadSessionService)
 
 	// Middlewares
 	requestLogger := middlewares.NewRequestLogger(logger)
@@ -76,6 +77,7 @@ func main() {
 	httpServer.Handle("/healthcheck", healthcheckHandler)
 	httpServer.HandleGroup("/files/api", filesAPI)
 	httpServer.Handle("/uploadsession", createUploadSessionHandler)
+	httpServer.Handle("/uploadsession/close", closeUploadSessionHandler)
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
 
