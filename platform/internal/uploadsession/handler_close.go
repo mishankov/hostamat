@@ -20,7 +20,7 @@ func NewCloseUploadSessionHandler(service closeUploadSessionService) *CloseUploa
 }
 
 func (h *CloseUploadSessionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != http.MethodDelete {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}

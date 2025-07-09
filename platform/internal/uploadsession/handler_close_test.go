@@ -25,7 +25,7 @@ func TestCloseUploadSessionHandler_ServeHTTP(t *testing.T) {
 
 	t.Run("missing header", func(t *testing.T) {
 		handler := uploadsession.NewCloseUploadSessionHandler(nil)
-		req := httptest.NewRequest("POST", "/", nil)
+		req := httptest.NewRequest("DELETE", "/", nil)
 		w := httptest.NewRecorder()
 
 		handler.ServeHTTP(w, req)
@@ -42,7 +42,7 @@ func TestCloseUploadSessionHandler_ServeHTTP(t *testing.T) {
 			},
 		})
 
-		req := httptest.NewRequest("POST", "/", nil)
+		req := httptest.NewRequest("DELETE", "/", nil)
 		req.Header.Set("H-Upload-Session", "test-id")
 		w := httptest.NewRecorder()
 
@@ -60,7 +60,7 @@ func TestCloseUploadSessionHandler_ServeHTTP(t *testing.T) {
 			},
 		})
 
-		req := httptest.NewRequest("POST", "/", nil)
+		req := httptest.NewRequest("DELETE", "/", nil)
 		req.Header.Set("H-Upload-Session", "test-id")
 		w := httptest.NewRecorder()
 
