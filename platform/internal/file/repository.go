@@ -3,15 +3,20 @@ package file
 import (
 	"context"
 	"io"
-
-	"hostamat/internal/adapters/s3"
 )
 
-type Repository struct {
-	s3Client *s3.S3
+type s3 interface {
+	MakeBucket(ctx context.Context, bucketName string) error
+	ObjectExists(ctx context.Context, bucketName, fileName string) (bool, error)
+	GetObject(ctx context.Context, bucketName, fileName string) (io.Reader, error)
+	PutObject(ctx context.Context, bucketName, fileName string, file io.Reader, size int64) error
 }
 
-func NewRepository(s3Client *s3.S3) *Repository {
+type Repository struct {
+	s3Client s3
+}
+
+func NewRepository(s3Client s3) *Repository {
 	return &Repository{
 		s3Client: s3Client,
 	}
