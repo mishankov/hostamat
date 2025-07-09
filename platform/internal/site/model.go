@@ -2,8 +2,6 @@ package site
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Site struct {
