@@ -23,7 +23,7 @@ func TestCreateUploadSessionHandler_ServeHTTP(t *testing.T) {
 	})
 
 	t.Run("service error", func(t *testing.T) {
-		handler := uploadsession.NewCreateUploadSessionHandler(&mockService{
+		handler := uploadsession.NewCreateUploadSessionHandler(&mockServiceCreate{
 			createFn: func() (*uploadsession.UploadSession, error) {
 				return nil, errors.New("service error")
 			},
@@ -40,7 +40,7 @@ func TestCreateUploadSessionHandler_ServeHTTP(t *testing.T) {
 	})
 
 	t.Run("success", func(t *testing.T) {
-		handler := uploadsession.NewCreateUploadSessionHandler(&mockService{
+		handler := uploadsession.NewCreateUploadSessionHandler(&mockServiceCreate{
 			createFn: func() (*uploadsession.UploadSession, error) {
 				return &uploadsession.UploadSession{
 					Id: "1",
@@ -67,18 +67,11 @@ func TestCreateUploadSessionHandler_ServeHTTP(t *testing.T) {
 	})
 }
 
-type mockService struct {
+type mockServiceCreate struct {
 	createFn func() (*uploadsession.UploadSession, error)
 	finishFn func(string) error
 }
 
-func (m *mockService) Create() (*uploadsession.UploadSession, error) {
+func (m *mockServiceCreate) Create() (*uploadsession.UploadSession, error) {
 	return m.createFn()
-}
-
-func (m *mockService) Finish(id string) error {
-	if m.finishFn != nil {
-		return m.finishFn(id)
-	}
-	return nil
 }

@@ -36,7 +36,7 @@ func TestCloseUploadSessionHandler_ServeHTTP(t *testing.T) {
 	})
 
 	t.Run("service error", func(t *testing.T) {
-		handler := uploadsession.NewCloseUploadSessionHandler(&mockService{
+		handler := uploadsession.NewCloseUploadSessionHandler(&mockServiceClose{
 			finishFn: func(id string) error {
 				return errors.New("service error")
 			},
@@ -54,7 +54,7 @@ func TestCloseUploadSessionHandler_ServeHTTP(t *testing.T) {
 	})
 
 	t.Run("success", func(t *testing.T) {
-		handler := uploadsession.NewCloseUploadSessionHandler(&mockService{
+		handler := uploadsession.NewCloseUploadSessionHandler(&mockServiceClose{
 			finishFn: func(id string) error {
 				return nil
 			},
@@ -80,10 +80,10 @@ func TestCloseUploadSessionHandler_ServeHTTP(t *testing.T) {
 	})
 }
 
-type mockService struct {
+type mockServiceClose struct {
 	finishFn func(string) error
 }
 
-func (m *mockService) Finish(id string) error {
+func (m *mockServiceClose) Finish(id string) error {
 	return m.finishFn(id)
 }
