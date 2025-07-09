@@ -6,8 +6,11 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"hostamat/internal/uploadsession"
+
+	"github.com/google/uuid"
 )
 
 func TestCloseUploadSessionHandler_ServeHTTP(t *testing.T) {
@@ -82,6 +85,15 @@ func TestCloseUploadSessionHandler_ServeHTTP(t *testing.T) {
 
 type mockServiceClose struct {
 	finishFn func(string) error
+}
+
+func (m *mockServiceClose) Get(id string) (*uploadsession.UploadSession, error) {
+	return &uploadsession.UploadSession{
+		Id:        uuid.NewString(),
+		CreatedAt: time.Now().Add(-1 * time.Minute),
+		Status:    uploadsession.Finished,
+		ExpiresAt: time.Now().Add(time.Minute * 5),
+	}, nil
 }
 
 func (m *mockServiceClose) Finish(id string) error {
