@@ -27,7 +27,7 @@ func TestMigrate(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		expectedColumns := []string{"id", "domain", "created_at"}
+		expectedColumns := []string{"id", "subdomain", "created_at"}
 
 		if len(columns) != len(expectedColumns) {
 			t.Fatalf("Expected %d columns, got %d", len(expectedColumns), len(columns))
@@ -49,7 +49,7 @@ func TestCreate(t *testing.T) {
 	t.Run("successful creation", func(t *testing.T) {
 		testSite := &site.Site{
 			Id:        "create-test-id",
-			Domain:    "example.com",
+			Subdomain: "example",
 			CreatedAt: time.Now(),
 		}
 
@@ -72,7 +72,7 @@ func TestCreate(t *testing.T) {
 	t.Run("duplicate id", func(t *testing.T) {
 		testSite := &site.Site{
 			Id:        "duplicate-id",
-			Domain:    "example.com",
+			Subdomain: "example",
 			CreatedAt: time.Now(),
 		}
 
@@ -106,7 +106,7 @@ func TestGet(t *testing.T) {
 		// Create test site
 		testSite := &site.Site{
 			Id:        "test-id",
-			Domain:    "example.com",
+			Subdomain: "example",
 			CreatedAt: time.Now(),
 		}
 		err := repo.Create(context.Background(), testSite)
@@ -124,8 +124,8 @@ func TestGet(t *testing.T) {
 		if got.Id != testSite.Id {
 			t.Errorf("Expected ID %q, got %q", testSite.Id, got.Id)
 		}
-		if got.Domain != testSite.Domain {
-			t.Errorf("Expected domain %q, got %q", testSite.Domain, got.Domain)
+		if got.Subdomain != testSite.Subdomain {
+			t.Errorf("Expected subdomain %q, got %q", testSite.Subdomain, got.Subdomain)
 		}
 		if !got.CreatedAt.Equal(testSite.CreatedAt) {
 			t.Errorf("Expected CreatedAt %v, got %v", testSite.CreatedAt, got.CreatedAt)

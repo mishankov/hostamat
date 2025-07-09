@@ -42,7 +42,7 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 			},
 		})
 
-		req := httptest.NewRequest("POST", "/", strings.NewReader(`{"domain":"example.com"}`))
+		req := httptest.NewRequest("POST", "/", strings.NewReader(`{"subdomain":"example"}`))
 		w := httptest.NewRecorder()
 
 		handler.ServeHTTP(w, req)
@@ -56,13 +56,13 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 		handler := site.NewCreateSiteHandler(&mockServiceCreate{
 			createFn: func(domain string) (*site.Site, error) {
 				return &site.Site{
-					Id:     "1",
-					Domain: domain,
+					Id:        "1",
+					Subdomain: domain,
 				}, nil
 			},
 		})
 
-		req := httptest.NewRequest("POST", "/", strings.NewReader(`{"domain":"example.com"}`))
+		req := httptest.NewRequest("POST", "/", strings.NewReader(`{"subdomain":"example"}`))
 		w := httptest.NewRecorder()
 
 		handler.ServeHTTP(w, req)
@@ -78,8 +78,8 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 		if !strings.Contains(w.Body.String(), `"id":"1"`) {
 			t.Errorf("Expected body to contain %s, got %s", `"id":"1"`, w.Body.String())
 		}
-		if !strings.Contains(w.Body.String(), `"domain":"example.com"`) {
-			t.Errorf("Expected body to contain %s, got %s", `"domain":"example.com"`, w.Body.String())
+		if !strings.Contains(w.Body.String(), `"subdomain":"example"`) {
+			t.Errorf("Expected body to contain %s, got %s", `"subdomain":"example"`, w.Body.String())
 		}
 	})
 }

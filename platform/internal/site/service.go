@@ -22,10 +22,10 @@ func NewService(repository repository) *Service {
 	}
 }
 
-func (s *Service) Create(ctx context.Context, domain string) (*Site, error) {
+func (s *Service) Create(ctx context.Context, subdomain string) (*Site, error) {
 	site := &Site{
 		Id:        uuid.NewString(),
-		Domain:    domain,
+		Subdomain: subdomain,
 		CreatedAt: time.Now(),
 	}
 

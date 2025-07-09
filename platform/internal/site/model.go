@@ -6,6 +6,6 @@ import (
 
 type Site struct {
 	Id        string    `db:"id" json:"id"`
-	Domain    string    `db:"domain" json:"domain"`
+	Subdomain string    `db:"subdomain" json:"subdomain"`
 	CreatedAt time.Time `db:"created_at" json:"createdAt"`
 }

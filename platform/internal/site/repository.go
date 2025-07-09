@@ -24,7 +24,7 @@ func (r *Repository) Migrate() error {
 	query := `
 		CREATE TABLE IF NOT EXISTS ` + tableName + ` (
 			id VARCHAR(255) PRIMARY KEY,
-			domain VARCHAR(255) NOT NULL,
+			subdomain VARCHAR(255) NOT NULL,
 			created_at TIMESTAMP NOT NULL
 		)
 	`
@@ -34,8 +34,8 @@ func (r *Repository) Migrate() error {
 
 func (r *Repository) Create(ctx context.Context, site *Site) error {
 	query := `
-		INSERT INTO ` + tableName + ` (id, domain, created_at)
-		VALUES (:id, :domain, :created_at)
+		INSERT INTO ` + tableName + ` (id, subdomain, created_at)
+		VALUES (:id, :subdomain, :created_at)
 	`
 	_, err := r.db.NamedExecContext(ctx, query, site)
 	return err

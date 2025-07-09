@@ -26,14 +26,14 @@ func (h *CreateSiteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var request struct {
-		Domain string `json:"domain"`
+		Subdomain string `json:"subdomain"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	site, err := h.service.Create(request.Domain)
+	site, err := h.service.Create(request.Subdomain)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

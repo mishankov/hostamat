@@ -15,8 +15,8 @@ func TestService_Create(t *testing.T) {
 		mockRepo := newMockRepository()
 		service := site.NewService(mockRepo)
 
-		testDomain := "example.com"
-		createdSite, err := service.Create(context.Background(), testDomain)
+		testSubdomain := "example"
+		createdSite, err := service.Create(context.Background(), testSubdomain)
 		if err != nil {
 			t.Fatalf("Create failed: %v", err)
 		}
@@ -24,8 +24,8 @@ func TestService_Create(t *testing.T) {
 		if createdSite.Id == "" {
 			t.Error("Expected non-empty site ID")
 		}
-		if createdSite.Domain != testDomain {
-			t.Errorf("Expected domain %q, got %q", testDomain, createdSite.Domain)
+		if createdSite.Subdomain != testSubdomain {
+			t.Errorf("Expected subdomain %q, got %q", testSubdomain, createdSite.Subdomain)
 		}
 		if createdSite.CreatedAt.IsZero() {
 			t.Error("Expected CreatedAt to be set")
@@ -59,7 +59,7 @@ func TestService_Get(t *testing.T) {
 		// Create test site directly in mock
 		testSite := &site.Site{
 			Id:        "test-get-id",
-			Domain:    "example.com",
+			Subdomain: "example",
 			CreatedAt: time.Now(),
 		}
 		if err := mockRepo.Create(context.Background(), testSite); err != nil {
@@ -75,8 +75,8 @@ func TestService_Get(t *testing.T) {
 		if got.Id != testSite.Id {
 			t.Errorf("Expected ID %q, got %q", testSite.Id, got.Id)
 		}
-		if got.Domain != testSite.Domain {
-			t.Errorf("Expected domain %q, got %q", testSite.Domain, got.Domain)
+		if got.Subdomain != testSite.Subdomain {
+			t.Errorf("Expected subdomain %q, got %q", testSite.Subdomain, got.Subdomain)
 		}
 	})
 
