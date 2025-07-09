@@ -6,7 +6,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"hostamat/internal/adapters/caddy"
 	"io"
 	"path/filepath"
 	"strings"
@@ -18,21 +17,25 @@ type repository interface {
 	PutObject(ctx context.Context, bucketName, fileName string, file io.Reader, size int64) error
 }
 
-type Service struct {
-	repo        repository
-	bucketName  string
-	caddyAPI    *caddy.CaddyAPI
-	baseDomain  string
-	shorthandId string
+type domainService interface {
+	AddSubdomain(ctx context.Context, baseDomain, subdomain, shorthandId string) error
 }
 
-func NewService(repo repository, bucketName string, caddyAPI *caddy.CaddyAPI, baseDomain, shorthandId string) *Service {
+type Service struct {
+	domainService domainService
+	repo          repository
+	bucketName    string
+	baseDomain    string
+	shorthandId   string
+}
+
+func NewService(repo repository, bucketName string, domainService domainService, baseDomain, shorthandId string) *Service {
 	return &Service{
-		repo:        repo,
-		bucketName:  bucketName,
-		caddyAPI:    caddyAPI,
-		baseDomain:  baseDomain,
-		shorthandId: shorthandId,
+		repo:          repo,
+		bucketName:    bucketName,
+		domainService: domainService,
+		baseDomain:    baseDomain,
+		shorthandId:   shorthandId,
 	}
 }
 
@@ -122,7 +125,7 @@ func (s *Service) GenerateSubdomain() string {
 }
 
 func (s *Service) CreateSubdomain(ctx context.Context, subdomain string) error {
-	return s.caddyAPI.AddSubdomain(ctx, s.baseDomain, subdomain, s.shorthandId)
+	return s.domainService.AddSubdomain(ctx, s.baseDomain, subdomain, s.shorthandId)
 }
 
 func (s *Service) GetContentType(filename string) string {
