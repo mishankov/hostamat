@@ -1,8 +1,5 @@
 package uploadsession
 
-type CloseUploadSessionHandler struct{}
-package uploadsession
-
 import (
 	"encoding/json"
 	"net/http"
