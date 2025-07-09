@@ -69,8 +69,16 @@ func TestCreateUploadSessionHandler_ServeHTTP(t *testing.T) {
 
 type mockService struct {
 	createFn func() (*uploadsession.UploadSession, error)
+	finishFn func(string) error
 }
 
 func (m *mockService) Create() (*uploadsession.UploadSession, error) {
 	return m.createFn()
+}
+
+func (m *mockService) Finish(id string) error {
+	if m.finishFn != nil {
+		return m.finishFn(id)
+	}
+	return nil
 }
