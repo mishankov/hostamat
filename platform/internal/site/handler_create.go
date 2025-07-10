@@ -6,7 +6,7 @@ import (
 )
 
 type createSiteService interface {
-	Create(domain string) (*Site, error)
+	Create(subdomain string) (*Site, error)
 }
 
 type CreateSiteHandler struct {
