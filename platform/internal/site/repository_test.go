@@ -133,6 +133,51 @@ func TestGet(t *testing.T) {
 	})
 }
 
+func TestGetList(t *testing.T) {
+	db := testDB()
+	repo := site.NewRepository(db)
+	repo.Migrate()
+
+	// Create test sites
+	testSites := []*site.Site{
+		{
+			Id:        "1",
+			Subdomain: "site1",
+			CreatedAt: time.Now(),
+		},
+		{
+			Id:        "2",
+			Subdomain: "site2",
+			CreatedAt: time.Now(),
+		},
+	}
+
+	for _, s := range testSites {
+		if err := repo.Create(context.Background(), s); err != nil {
+			t.Fatalf("Failed to create test site: %v", err)
+		}
+	}
+
+	// Test GetList
+	sites, err := repo.GetList(context.Background())
+	if err != nil {
+		t.Fatalf("GetList failed: %v", err)
+	}
+
+	if len(sites) != len(testSites) {
+		t.Fatalf("Expected %d sites, got %d", len(testSites), len(sites))
+	}
+
+	for i, s := range sites {
+		if s.Id != testSites[i].Id {
+			t.Errorf("Expected ID %q, got %q", testSites[i].Id, s.Id)
+		}
+		if s.Subdomain != testSites[i].Subdomain {
+			t.Errorf("Expected subdomain %q, got %q", testSites[i].Subdomain, s.Subdomain)
+		}
+	}
+}
+
 func testDB() *sqlx.DB {
 	db, err := sqlx.Open("sqlite", ":memory:")
 	if err != nil {

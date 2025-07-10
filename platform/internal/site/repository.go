@@ -49,3 +49,12 @@ func (r *Repository) Get(ctx context.Context, id string) (*Site, error) {
 	}
 	return &site, nil
 }
+
+func (r *Repository) GetList(ctx context.Context) ([]*Site, error) {
+	var sites []*Site
+	err := r.db.SelectContext(ctx, &sites, "SELECT * FROM "+tableName)
+	if err != nil {
+		return nil, err
+	}
+	return sites, nil
+}

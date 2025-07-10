@@ -91,6 +91,57 @@ func TestService_Get(t *testing.T) {
 	})
 }
 
+func TestService_GetList(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		mockRepo := newMockRepository()
+		service := site.NewService(mockRepo)
+
+		// Create test sites directly in mock
+		testSites := []*site.Site{
+			{
+				Id:        "1",
+				Subdomain: "site1",
+				CreatedAt: time.Now(),
+			},
+			{
+				Id:        "2",
+				Subdomain: "site2",
+				CreatedAt: time.Now(),
+			},
+		}
+
+		for _, s := range testSites {
+			if err := mockRepo.Create(context.Background(), s); err != nil {
+				t.Fatalf("Failed to setup test site: %v", err)
+			}
+		}
+
+		// Test GetList
+		sites, err := service.GetList(context.Background())
+		if err != nil {
+			t.Fatalf("GetList failed: %v", err)
+		}
+
+		if len(sites) != len(testSites) {
+			t.Fatalf("Expected %d sites, got %d", len(testSites), len(sites))
+		}
+	})
+
+	t.Run("empty list", func(t *testing.T) {
+		mockRepo := newMockRepository()
+		service := site.NewService(mockRepo)
+
+		sites, err := service.GetList(context.Background())
+		if err != nil {
+			t.Fatalf("GetList failed: %v", err)
+		}
+
+		if len(sites) != 0 {
+			t.Errorf("Expected empty list, got %d items", len(sites))
+		}
+	})
+}
+
 type mockRepository struct {
 	mu    sync.Mutex
 	sites map[string]*site.Site
@@ -122,6 +173,17 @@ func (m *mockRepository) Create(ctx context.Context, site *site.Site) error {
 	}
 	m.sites[site.Id] = site
 	return nil
+}
+
+func (m *mockRepository) GetList(ctx context.Context) ([]*site.Site, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	sites := make([]*site.Site, 0, len(m.sites))
+	for _, s := range m.sites {
+		sites = append(sites, s)
+	}
+	return sites, nil
 }
 
 type errorProneMockRepository struct {

@@ -9,6 +9,7 @@ import (
 
 type repository interface {
 	Get(ctx context.Context, id string) (*Site, error)
+	GetList(ctx context.Context) ([]*Site, error)
 	Create(ctx context.Context, site *Site) error
 }
 
@@ -39,4 +40,8 @@ func (s *Service) Create(ctx context.Context, subdomain string) (*Site, error) {
 
 func (s *Service) Get(ctx context.Context, id string) (*Site, error) {
 	return s.repository.Get(ctx, id)
+}
+
+func (s *Service) GetList(ctx context.Context) ([]*Site, error) {
+	return s.repository.GetList(ctx)
 }
