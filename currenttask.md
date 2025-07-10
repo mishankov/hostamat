@@ -1,3 +1,9 @@
+# Next
+- [ ] Move subdomain creation and registration in Caddy to site from file
+- [ ] Add and delete sites
+- [ ] Add and delete files
+- [ ] New flow of file uploads
+
 # Refactor
 - [ ] CaddyAPI adapter -> domain *domain*
 
