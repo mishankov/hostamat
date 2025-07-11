@@ -8,15 +8,15 @@ import (
 	"time"
 
 	"hostamat/internal/site"
+	"hostamat/internal/subdomain"
 )
 
 func TestService_Create(t *testing.T) {
 	t.Run("successful creation", func(t *testing.T) {
 		mockRepo := newMockRepository()
-		service := site.NewService(mockRepo, "example.com")
+		service := site.NewService(mockRepo, &mockDomainService{})
 
-		testSubdomain := "example"
-		createdSite, err := service.Create(context.Background(), testSubdomain)
+		createdSite, err := service.Create(context.Background())
 		if err != nil {
 			t.Fatalf("Create failed: %v", err)
 		}
@@ -24,8 +24,8 @@ func TestService_Create(t *testing.T) {
 		if createdSite.Id == "" {
 			t.Error("Expected non-empty site ID")
 		}
-		if createdSite.Subdomain != testSubdomain {
-			t.Errorf("Expected subdomain %q, got %q", testSubdomain, createdSite.Subdomain)
+		if createdSite.Subdomain != "id" {
+			t.Errorf("Expected subdomain %q, got %q", "id", createdSite.Subdomain)
 		}
 		if createdSite.CreatedAt.IsZero() {
 			t.Error("Expected CreatedAt to be set")
@@ -42,9 +42,9 @@ func TestService_Create(t *testing.T) {
 		mockRepo := &errorProneMockRepository{
 			shouldError: true,
 		}
-		service := site.NewService(mockRepo, "example.com")
+		service := site.NewService(mockRepo, &mockDomainService{})
 
-		_, err := service.Create(context.Background(), "example.com")
+		_, err := service.Create(context.Background())
 		if err == nil {
 			t.Error("Expected error from repository")
 		}
@@ -54,7 +54,7 @@ func TestService_Create(t *testing.T) {
 func TestService_Get(t *testing.T) {
 	t.Run("existing site", func(t *testing.T) {
 		mockRepo := newMockRepository()
-		service := site.NewService(mockRepo, "example.com")
+		service := site.NewService(mockRepo, &mockDomainService{})
 
 		// Create test site directly in mock
 		testSite := &site.Site{
@@ -82,7 +82,7 @@ func TestService_Get(t *testing.T) {
 
 	t.Run("non-existent site", func(t *testing.T) {
 		mockRepo := newMockRepository()
-		service := site.NewService(mockRepo, "example.com")
+		service := site.NewService(mockRepo, &mockDomainService{})
 
 		_, err := service.Get(context.Background(), "non-existent-id")
 		if err == nil {
@@ -94,7 +94,7 @@ func TestService_Get(t *testing.T) {
 func TestService_GetList(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		mockRepo := newMockRepository()
-		service := site.NewService(mockRepo, "example.com")
+		service := site.NewService(mockRepo, &mockDomainService{})
 
 		// Create test sites directly in mock
 		testSites := []*site.Site{
@@ -129,7 +129,7 @@ func TestService_GetList(t *testing.T) {
 
 	t.Run("empty list", func(t *testing.T) {
 		mockRepo := newMockRepository()
-		service := site.NewService(mockRepo, "example.com")
+		service := site.NewService(mockRepo, &mockDomainService{})
 
 		sites, err := service.GetList(context.Background())
 		if err != nil {
@@ -196,4 +196,14 @@ func (m *errorProneMockRepository) Create(ctx context.Context, site *site.Site) 
 		return errors.New("forced repository error")
 	}
 	return m.mockRepository.Create(ctx, site)
+}
+
+type mockDomainService struct{}
+
+func (s *mockDomainService) Create(_ context.Context) (*subdomain.Subdomain, error) {
+	return &subdomain.Subdomain{
+		Id:         "id",
+		Name:       "name",
+		FullDomain: "name.example.com",
+	}, nil
 }

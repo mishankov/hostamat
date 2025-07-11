@@ -2,6 +2,7 @@ package site
 
 import (
 	"context"
+	"hostamat/internal/subdomain"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,27 +14,38 @@ type repository interface {
 	Create(ctx context.Context, site *Site) error
 }
 
-type Service struct {
-	repository repository
-	baseDomain string
+type domainService interface {
+	Create(ctx context.Context) (*subdomain.Subdomain, error)
 }
 
-func NewService(repository repository, baseDomain string) *Service {
+type Service struct {
+	repository    repository
+	domainService domainService
+}
+
+func NewService(repository repository, domainService domainService) *Service {
 	return &Service{
-		repository: repository,
-		baseDomain: baseDomain,
+		repository:    repository,
+		domainService: domainService,
 	}
 }
 
-func (s *Service) Create(ctx context.Context, subdomain string) (*Site, error) {
+func (s *Service) Create(ctx context.Context) (*Site, error) {
+	var err error
+
+	subdomain, err := s.domainService.Create(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	site := &Site{
 		Id:        uuid.NewString(),
-		Subdomain: subdomain,
-		Domain:    subdomain + "." + s.baseDomain,
+		Subdomain: subdomain.Id,
+		Domain:    subdomain.FullDomain,
 		CreatedAt: time.Now(),
 	}
 
-	err := s.repository.Create(ctx, site)
+	err = s.repository.Create(ctx, site)
 	if err != nil {
 		return nil, err
 	}
