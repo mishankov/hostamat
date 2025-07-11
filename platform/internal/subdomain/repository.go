@@ -20,6 +20,17 @@ func New(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
+func (r *Repository) Migrate() error {
+	query := `
+		CREATE TABLE IF NOT EXISTS ` + tableName + ` (
+			id VARCHAR(255) PRIMARY KEY,
+			name VARCHAR(255) NOT NULL
+		)
+	`
+	_, err := r.db.Exec(query)
+	return err
+}
+
 func (r *Repository) Get(ctx context.Context, id string) (*Subdomain, error) {
 	const query = `SELECT id, name FROM ` + tableName + ` WHERE id = $1`
 
@@ -44,15 +55,4 @@ func (r *Repository) Create(ctx context.Context, subdomain *Subdomain) error {
 	}
 
 	return nil
-}
-
-func (r *Repository) Migrate() error {
-	query := `
-		CREATE TABLE IF NOT EXISTS ` + tableName + ` (
-			id VARCHAR(255) PRIMARY KEY,
-			name VARCHAR(255) NOT NULL
-		)
-	`
-	_, err := r.db.Exec(query)
-	return err
 }
