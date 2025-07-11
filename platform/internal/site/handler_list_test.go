@@ -13,22 +13,7 @@ import (
 
 func TestListSiteHandler_ServeHTTP(t *testing.T) {
 	t.Run("invalid method", func(t *testing.T) {
-		handler := site.NewListSiteHandler(&mockServiceList{
-			getListFn: func() ([]*site.Site, error) {
-				return []*site.Site{
-					{
-						Id:        "1",
-						Subdomain: "site1",
-						Domain:    "site1.example.com",
-					},
-					{
-						Id:        "2", 
-						Subdomain: "site2",
-						Domain:    "site2.example.com",
-					},
-				}, nil
-			},
-		})
+		handler := site.NewListSiteHandler(nil)
 		req := httptest.NewRequest("POST", "/", nil)
 		w := httptest.NewRecorder()
 
@@ -69,7 +54,7 @@ func TestListSiteHandler_ServeHTTP(t *testing.T) {
 					{
 						Id:        "2",
 						Subdomain: "site2",
-						Domain:    "site2.example.com", 
+						Domain:    "site2.example.com",
 						CreatedAt: time.Now(),
 					},
 				}, nil
