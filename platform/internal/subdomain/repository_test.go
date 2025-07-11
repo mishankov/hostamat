@@ -80,9 +80,17 @@ func TestRepository_Create(t *testing.T) {
 		err := repo.Create(context.Background(), testSubdomain)
 		if err == nil {
 			t.Error("expected error for duplicate id")
-		} else {
-			// Just verify we got an error - don't check specific message
-			t.Logf("got expected duplicate error: %v", err)
+		}
+	})
+
+	t.Run("duplicate name", func(t *testing.T) {
+		subdomain2 := &Subdomain{
+			Id:   "test-id-2",
+			Name: testSubdomain.Name,
+		}
+		err := repo.Create(context.Background(), subdomain2)
+		if err == nil {
+			t.Error("expected error for duplicate name")
 		}
 	})
 }

@@ -24,7 +24,7 @@ func (r *Repository) Migrate() error {
 	query := `
 		CREATE TABLE IF NOT EXISTS ` + tableName + ` (
 			id VARCHAR(255) PRIMARY KEY,
-			name VARCHAR(255) NOT NULL
+			name VARCHAR(255) NOT NULL UNIQUE
 		)
 	`
 	_, err := r.db.Exec(query)
