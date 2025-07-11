@@ -15,11 +15,13 @@ type repository interface {
 
 type Service struct {
 	repository repository
+	baseDomain string
 }
 
-func NewService(repository repository) *Service {
+func NewService(repository repository, baseDomain string) *Service {
 	return &Service{
 		repository: repository,
+		baseDomain: baseDomain,
 	}
 }
 
@@ -27,6 +29,7 @@ func (s *Service) Create(ctx context.Context, subdomain string) (*Site, error) {
 	site := &Site{
 		Id:        uuid.NewString(),
 		Subdomain: subdomain,
+		Domain:    subdomain + "." + s.baseDomain,
 		CreatedAt: time.Now(),
 	}
 
