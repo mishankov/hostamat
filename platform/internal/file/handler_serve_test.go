@@ -10,27 +10,19 @@ import (
 	"testing"
 )
 
-type mockServeService struct {
-	getFileFunc func(ctx context.Context, fileName string, domain string) (io.Reader, error)
-}
-
-func (m *mockServeService) GetFile(ctx context.Context, fileName string, domain string) (io.Reader, error) {
-	return m.getFileFunc(ctx, fileName, domain)
-}
-
 func TestServeHandler_ServeHTTP(t *testing.T) {
 	tests := []struct {
-		name           string
-		host          string
-		path          string
-		mockResponse  io.Reader
-		mockError     error
-		expectedCode  int
-		expectedType  string
-		expectedBody  string
+		name         string
+		host         string
+		path         string
+		mockResponse io.Reader
+		mockError    error
+		expectedCode int
+		expectedType string
+		expectedBody string
 	}{
 		{
-			name:          "successful html file",
+			name:         "successful html file",
 			host:         "test.example.com",
 			path:         "/index.html",
 			mockResponse: strings.NewReader("<html></html>"),
@@ -39,7 +31,7 @@ func TestServeHandler_ServeHTTP(t *testing.T) {
 			expectedBody: "<html></html>",
 		},
 		{
-			name:          "root path redirects to index.html",
+			name:         "root path redirects to index.html",
 			host:         "test.example.com",
 			path:         "/",
 			mockResponse: strings.NewReader("<html></html>"),
@@ -47,7 +39,7 @@ func TestServeHandler_ServeHTTP(t *testing.T) {
 			expectedType: "text/html",
 		},
 		{
-			name:          "css file",
+			name:         "css file",
 			host:         "test.example.com",
 			path:         "/style.css",
 			mockResponse: strings.NewReader("body{}"),
@@ -55,7 +47,7 @@ func TestServeHandler_ServeHTTP(t *testing.T) {
 			expectedType: "text/css",
 		},
 		{
-			name:          "file not found",
+			name:         "file not found",
 			host:         "test.example.com",
 			path:         "/missing.html",
 			mockError:    errors.New("not found"),
@@ -101,4 +93,12 @@ func TestServeHandler_ServeHTTP(t *testing.T) {
 			}
 		})
 	}
+}
+
+type mockServeService struct {
+	getFileFunc func(ctx context.Context, fileName string, domain string) (io.Reader, error)
+}
+
+func (m *mockServeService) GetFile(ctx context.Context, fileName string, domain string) (io.Reader, error) {
+	return m.getFileFunc(ctx, fileName, domain)
 }
