@@ -2,7 +2,12 @@ package subdomain
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
+	"strings"
+
+	"github.com/google/uuid"
 )
 
 type repository interface {
@@ -28,15 +33,22 @@ func (s *Service) Get(ctx context.Context, id string) (*Subdomain, error) {
 	return subdomain, nil
 }
 
-func (s *Service) Create(ctx context.Context, subdomain *Subdomain) error {
-	if subdomain.Name == "" {
-		return fmt.Errorf("subdomain name cannot be empty")
+func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
+	subdomain := &Subdomain{
+		Id:   uuid.NewString(),
+		Name: randomBase64String(5),
 	}
 
 	err := s.repo.Create(ctx, subdomain)
 	if err != nil {
-		return fmt.Errorf("failed to create subdomain: %w", err)
+		return nil, fmt.Errorf("failed to create subdomain: %w", err)
 	}
 
-	return nil
+	return subdomain, nil
+}
+
+func randomBase64String(length int) string {
+	bytes := make([]byte, length+1)
+	rand.Read(bytes)
+	return strings.ToLower(base64.URLEncoding.EncodeToString(bytes)[:length])
 }
