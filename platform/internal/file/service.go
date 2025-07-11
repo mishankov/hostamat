@@ -40,7 +40,7 @@ func (s *Service) GetFile(ctx context.Context, fileName, domain string) (io.Read
 		return nil, err
 	}
 
-	return s.repo.GetObject(ctx, site.Id, fileName)
+	return s.repo.GetObject(ctx, s.bucketName, site.Id+"/"+fileName)
 }
 
 func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reader, size int64, siteId string) ([]string, []string, error) {
