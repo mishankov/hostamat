@@ -19,6 +19,67 @@ func TestRepository_Migrate(t *testing.T) {
 	}
 }
 
+func TestRepository_ObjectExists(t *testing.T) {
+	tests := []struct {
+		name          string
+		bucketName    string
+		fileName      string
+		preCreate     bool
+		wantExists    bool
+		wantErr       bool
+	}{
+		{
+			name:       "object exists",
+			bucketName: "test-bucket",
+			fileName:   "test-file",
+			preCreate:  true,
+			wantExists: true,
+		},
+		{
+			name:       "object does not exist",
+			bucketName: "test-bucket",
+			fileName:   "missing-file",
+			preCreate:  false,
+			wantExists: false,
+		},
+		{
+			name:       "bucket does not exist",
+			bucketName: "missing-bucket",
+			fileName:   "test-file",
+			preCreate:  false,
+			wantExists: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mock := &mockS3{}
+			r := file.NewRepository(mock)
+
+			// Setup test bucket and object if needed
+			if tt.preCreate {
+				err := mock.MakeBucket(context.Background(), tt.bucketName)
+				if err != nil {
+					t.Fatalf("failed to create test bucket: %v", err)
+				}
+				mock.objects[tt.bucketName][tt.fileName] = []byte("test content")
+			}
+
+			exists, err := r.ObjectExists(context.Background(), tt.bucketName, tt.fileName)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ObjectExists() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if exists != tt.wantExists {
+				t.Errorf("ObjectExists() exists = %v, want %v", exists, tt.wantExists)
+			}
+			if mock.objectExistsCallCount != 1 {
+				t.Errorf("expected ObjectExists to be called once, got %d", mock.objectExistsCallCount)
+			}
+		})
+	}
+}
+
 type mockS3 struct {
 	makeBucketCallCount   int
 	objectExistsCallCount int
