@@ -4,22 +4,27 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"io"
 	"hostamat/internal/file"
+	"io"
 	"testing"
 )
 
-func Testrepository_Migrate(t *testing.T) {
+func TestRepository_Migrate(t *testing.T) {
 	r := file.NewRepository(&mockS3{})
 
+	err := r.Migrate(context.Background(), "")
+
+	if err != nil {
+		t.Fatalf("error expected to be nil, got: %s", err)
+	}
 }
 
 type mockS3 struct {
-	makeBucketCallCount int
+	makeBucketCallCount   int
 	objectExistsCallCount int
-	getObjectCallCount int
-	putObjectCallCount int
-	
+	getObjectCallCount    int
+	putObjectCallCount    int
+
 	objects map[string]map[string][]byte // bucket -> key -> content
 }
 
@@ -56,12 +61,12 @@ func (m *mockS3) PutObject(ctx context.Context, bucketName, fileName string, fil
 	if _, ok := m.objects[bucketName]; !ok {
 		return errors.New("bucket does not exist")
 	}
-	
+
 	content, err := io.ReadAll(file)
 	if err != nil {
 		return err
 	}
-	
+
 	m.objects[bucketName][fileName] = content
 	return nil
 }
