@@ -12,7 +12,22 @@ import (
 
 func TestListSiteHandler_ServeHTTP(t *testing.T) {
 	t.Run("invalid method", func(t *testing.T) {
-		handler := site.NewListSiteHandler(nil)
+		handler := site.NewListSiteHandler(&mockServiceList{
+			getListFn: func() ([]*site.Site, error) {
+				return []*site.Site{
+					{
+						Id:        "1",
+						Subdomain: "site1",
+						Domain:    "site1.example.com",
+					},
+					{
+						Id:        "2", 
+						Subdomain: "site2",
+						Domain:    "site2.example.com",
+					},
+				}, nil
+			},
+		})
 		req := httptest.NewRequest("POST", "/", nil)
 		w := httptest.NewRecorder()
 
@@ -70,11 +85,11 @@ func TestListSiteHandler_ServeHTTP(t *testing.T) {
 		}
 
 		body := w.Body.String()
-		if !strings.Contains(body, `"id":"1"`) || !strings.Contains(body, `"subdomain":"site1"`) {
-			t.Errorf("Expected body to contain site1, got %s", body)
+		if !strings.Contains(body, `"id":"1"`) || !strings.Contains(body, `"subdomain":"site1"`) || !strings.Contains(body, `"domain":"site1.example.com"`) {
+			t.Errorf("Expected body to contain site1 with domain, got %s", body)
 		}
-		if !strings.Contains(body, `"id":"2"`) || !strings.Contains(body, `"subdomain":"site2"`) {
-			t.Errorf("Expected body to contain site2, got %s", body)
+		if !strings.Contains(body, `"id":"2"`) || !strings.Contains(body, `"subdomain":"site2"`) || !strings.Contains(body, `"domain":"site2.example.com"`) {
+			t.Errorf("Expected body to contain site2 with domain, got %s", body)
 		}
 	})
 }

@@ -12,7 +12,15 @@ import (
 
 func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 	t.Run("invalid method", func(t *testing.T) {
-		handler := site.NewCreateSiteHandler(nil)
+		handler := site.NewCreateSiteHandler(&mockServiceCreate{
+			createFn: func(subdomain string) (*site.Site, error) {
+				return &site.Site{
+					Id:        "1",
+					Subdomain: subdomain,
+					Domain:    subdomain + ".example.com",
+				}, nil
+			},
+		})
 		req := httptest.NewRequest("GET", "/", nil)
 		w := httptest.NewRecorder()
 

@@ -13,7 +13,7 @@ import (
 func TestService_Create(t *testing.T) {
 	t.Run("successful creation", func(t *testing.T) {
 		mockRepo := newMockRepository()
-		service := site.NewService(mockRepo)
+		service := site.NewService(mockRepo, "example.com")
 
 		testSubdomain := "example"
 		createdSite, err := service.Create(context.Background(), testSubdomain)
@@ -42,7 +42,7 @@ func TestService_Create(t *testing.T) {
 		mockRepo := &errorProneMockRepository{
 			shouldError: true,
 		}
-		service := site.NewService(mockRepo)
+		service := site.NewService(mockRepo, "example.com")
 
 		_, err := service.Create(context.Background(), "example.com")
 		if err == nil {
@@ -54,7 +54,7 @@ func TestService_Create(t *testing.T) {
 func TestService_Get(t *testing.T) {
 	t.Run("existing site", func(t *testing.T) {
 		mockRepo := newMockRepository()
-		service := site.NewService(mockRepo)
+		service := site.NewService(mockRepo, "example.com")
 
 		// Create test site directly in mock
 		testSite := &site.Site{
