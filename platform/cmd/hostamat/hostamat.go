@@ -63,8 +63,8 @@ func main() {
 	siteCreateHandle := site.NewCreateSiteHandler(siteService)
 	siteListHandler := site.NewListSiteHandler(siteService)
 	siteHandlerGroup := httpserver.NewHandlerGroup()
-	siteHandlerGroup.Handle("POST", siteCreateHandle)
-	siteHandlerGroup.Handle("GET", siteListHandler)
+	siteHandlerGroup.Handle("POST /", siteCreateHandle)
+	siteHandlerGroup.Handle("GET /", siteListHandler)
 
 	// File service setup
 	fileRepo := file.NewRepository(s3Client)
