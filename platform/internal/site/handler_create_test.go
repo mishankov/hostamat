@@ -67,6 +67,7 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 				return &site.Site{
 					Id:        "1",
 					Subdomain: domain,
+					Domain:    domain + ".example.com",
 				}, nil
 			},
 		})
@@ -94,6 +95,9 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 		}
 		if response.Subdomain != "example" {
 			t.Errorf("Expected subdomain %q, got %q", "example", response.Subdomain)
+		}
+		if response.Domain != "example.example.com" {
+			t.Errorf("Expected domain %q, got %q", "example.example.com", response.Domain)
 		}
 	})
 }
