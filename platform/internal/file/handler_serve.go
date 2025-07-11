@@ -8,7 +8,7 @@ import (
 )
 
 type serveService interface {
-	GetFile(ctx context.Context, fileName string) (io.Reader, error)
+	GetFile(ctx context.Context, fileName string, domain string) (io.Reader, error)
 	GetContentType(filePath string) string
 }
 
@@ -32,7 +32,7 @@ func (h *ServeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fileName := subdomain + filePath
-	file, err := h.service.GetFile(ctx, fileName)
+	file, err := h.service.GetFile(ctx, fileName, r.Host)
 	if err != nil {
 		http.Error(w, "File not found", http.StatusNotFound)
 		return
