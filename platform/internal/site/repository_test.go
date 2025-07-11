@@ -27,7 +27,7 @@ func TestMigrate(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		expectedColumns := []string{"id", "subdomain", "created_at"}
+		expectedColumns := []string{"id", "subdomain", "domain", "created_at"}
 
 		if len(columns) != len(expectedColumns) {
 			t.Fatalf("Expected %d columns, got %d", len(expectedColumns), len(columns))
