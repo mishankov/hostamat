@@ -73,20 +73,34 @@ func TestRepository_Create(t *testing.T) {
 	})
 
 	t.Run("duplicate id", func(t *testing.T) {
-		if err := repo.Create(context.Background(), testSubdomain); err != nil {
+		// Create fresh subdomain with unique name to avoid name conflict
+		uniqueSubdomain := &Subdomain{
+			Id:   testSubdomain.Id,
+			Name: "unique-name-1",
+		}
+		if err := repo.Create(context.Background(), uniqueSubdomain); err != nil {
 			t.Fatal(err)
 		}
 
-		err := repo.Create(context.Background(), testSubdomain)
+		err := repo.Create(context.Background(), uniqueSubdomain)
 		if err == nil {
 			t.Error("expected error for duplicate id")
 		}
 	})
 
 	t.Run("duplicate name", func(t *testing.T) {
-		subdomain2 := &Subdomain{
-			Id:   "test-id-2",
+		// Create fresh subdomain with unique id to avoid id conflict
+		uniqueSubdomain := &Subdomain{
+			Id:   "unique-id-1",
 			Name: testSubdomain.Name,
+		}
+		if err := repo.Create(context.Background(), uniqueSubdomain); err != nil {
+			t.Fatal(err)
+		}
+
+		subdomain2 := &Subdomain{
+			Id:   "unique-id-2",
+			Name: uniqueSubdomain.Name,
 		}
 		err := repo.Create(context.Background(), subdomain2)
 		if err == nil {
