@@ -1,12 +1,14 @@
 package file_test
 
 import (
+	"archive/zip"
 	"bytes"
 	"context"
 	"errors"
 	"hostamat/internal/file"
 	"hostamat/internal/site"
 	"io"
+	"slices"
 	"testing"
 )
 
@@ -81,6 +83,32 @@ func TestService_UploadFile(t *testing.T) {
 		}
 	})
 
+	t.Run("zip file upload success", func(t *testing.T) {
+		zipFile, size := createTestZip(t, map[string]string{
+			"archive/index.html": "<html></html>",
+			"archive/style.css":  "body {}",
+		})
+
+		uploaded, skipped, err := s.UploadFile(context.TODO(), "archive.zip", zipFile, size, "site_id")
+		if err != nil {
+			t.Fatalf("error was not expected, got: %s", err)
+		}
+
+		if len(uploaded) != 2 {
+			t.Errorf("expected to upload 2 files, got: %d", len(uploaded))
+		}
+
+		for _, name := range []string{"index.html", "style.css"} {
+			if !slices.Contains(uploaded, name) {
+				t.Errorf("%s expected to be uploaded, got: %s", name, uploaded)
+			}
+		}
+
+		if len(skipped) != 0 {
+			t.Errorf("expected to skip no files, got: %d, slice: %s", len(skipped), skipped)
+		}
+	})
+
 }
 
 type mockFile struct {
@@ -138,4 +166,28 @@ type mockSiteService struct {
 
 func (m *mockSiteService) GetByDomain(ctx context.Context, domain string) (*site.Site, error) {
 	return m.sites[domain], nil
+}
+
+func createTestZip(t *testing.T, files map[string]string) (io.Reader, int64) {
+	t.Helper()
+	buf := new(bytes.Buffer)
+	w := zip.NewWriter(buf)
+
+	for name, content := range files {
+		f, err := w.Create(name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, err = f.Write([]byte(content))
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	err := w.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return bytes.NewReader(buf.Bytes()), int64(buf.Len())
 }

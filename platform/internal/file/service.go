@@ -113,25 +113,6 @@ func (s *Service) uploadZipArchive(ctx context.Context, folder string, file io.R
 	return uploadedFiles, skippedFiles, nil
 }
 
-func (s *Service) GetContentType(filename string) string {
-	switch {
-	case strings.HasSuffix(filename, ".html"):
-		return "text/html"
-	case strings.HasSuffix(filename, ".css"):
-		return "text/css"
-	case strings.HasSuffix(filename, ".js"):
-		return "application/javascript"
-	case strings.HasSuffix(filename, ".png"):
-		return "image/png"
-	case strings.HasSuffix(filename, ".jpg"), strings.HasSuffix(filename, ".jpeg"):
-		return "image/jpeg"
-	case strings.HasSuffix(filename, ".svg"):
-		return "image/svg+xml"
-	default:
-		return "application/octet-stream"
-	}
-}
-
 func isAllowedFile(filename string) bool {
 	if filename == "" || strings.HasPrefix(filename, ".") || strings.Contains(filename, "/.") {
 		return false
