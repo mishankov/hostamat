@@ -2,16 +2,17 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/s3"
-	"hostamat/internal/infra/db"
-	"hostamat/internal/uploadsession"
-
 	"hostamat/internal/file"
 	"hostamat/internal/handlers"
+	"hostamat/internal/infra/db"
 	"hostamat/internal/middlewares"
 	"hostamat/internal/schedulers/cleanup"
+	"hostamat/internal/site"
+	"hostamat/internal/subdomain"
 	"hostamat/pkg/platforma/application"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
@@ -49,22 +50,25 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Upload Session
-	uploadSessionRepo := uploadsession.NewRepository(db)
-	uploadSessionService := uploadsession.NewService(uploadSessionRepo)
-	createUploadSessionHandler := uploadsession.NewCreateUploadSessionHandler(uploadSessionService)
-	closeUploadSessionHandler := uploadsession.NewCloseUploadSessionHandler(uploadSessionService)
-
-	uploadSessionHandlerGroup := httpserver.NewHandlerGroup()
-	uploadSessionHandlerGroup.Handle("POST /", createUploadSessionHandler)
-	uploadSessionHandlerGroup.Handle("DELETE /", closeUploadSessionHandler)
-
 	// Middlewares
 	requestLogger := middlewares.NewRequestLogger(logger)
 
+	// Domain service setup
+	subdomainRepo := subdomain.NewRepository(db)
+	subdomainService := subdomain.NewService(subdomainRepo, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
+
+	// Site service setup
+	siteRepo := site.NewRepository(db)
+	siteService := site.NewService(siteRepo, subdomainService)
+	siteCreateHandle := site.NewCreateSiteHandler(siteService)
+	siteListHandler := site.NewListSiteHandler(siteService)
+	siteHandlerGroup := httpserver.NewHandlerGroup()
+	siteHandlerGroup.Handle("POST", siteCreateHandle)
+	siteHandlerGroup.Handle("GET", siteListHandler)
+
 	// File service setup
 	fileRepo := file.NewRepository(s3Client)
-	fileService := file.NewService(fileRepo, conf.S3.Bucket, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
+	fileService := file.NewService(fileRepo, siteService, conf.S3.Bucket)
 	uploadFileHandler := file.NewUploadHandler(fileService)
 	serveFileHandler := file.NewServeHandler(fileService)
 
@@ -80,7 +84,7 @@ func main() {
 
 	httpServer.Handle("/healthcheck", healthcheckHandler)
 	httpServer.HandleGroup("/files/api", filesAPI)
-	httpServer.Handle("/uploadsession", uploadSessionHandlerGroup)
+	httpServer.HandleGroup("/sites/api", siteHandlerGroup)
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
 
@@ -95,13 +99,26 @@ func main() {
 
 	// Migrate DB
 	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
-		return uploadSessionRepo.Migrate() //TODO: add ctx
-	}), application.StartupTaskConfig{Name: "migrateDB", AbortOnError: true})
+		var err error
 
-	// Ensure that bucket exists before starting application
-	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
-		return fileRepo.Migrate(ctx, conf.S3.Bucket)
-	}), application.StartupTaskConfig{Name: "createBucket", AbortOnError: true})
+		// TODO: Migrates shiuld accept ctx
+		err = subdomainRepo.Migrate()
+		if err != nil {
+			return fmt.Errorf("failed to migrate subdomain repo: %w", err)
+		}
+
+		err = siteRepo.Migrate()
+		if err != nil {
+			return fmt.Errorf("failed to migrate site repo: %w", err)
+		}
+
+		err = fileRepo.Migrate(ctx, conf.S3.Bucket)
+		if err != nil {
+			return fmt.Errorf("failed to migrate file repo: %w", err)
+		}
+
+		return nil
+	}), application.StartupTaskConfig{Name: "migrateRepos", AbortOnError: true})
 
 	// Ensure that caddy has desired configuration
 	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {

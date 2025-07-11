@@ -1,9 +1,10 @@
-package subdomain
+package subdomain_test
 
 import (
 	"context"
 	"database/sql"
 	"errors"
+	"hostamat/internal/subdomain"
 	"slices"
 	"testing"
 
@@ -21,7 +22,7 @@ func testDB(t *testing.T) *sqlx.DB {
 
 func TestRepository_Migrate(t *testing.T) {
 	db := testDB(t)
-	repo := New(db)
+	repo := subdomain.NewRepository(db)
 
 	if err := repo.Migrate(); err != nil {
 		t.Fatalf("Migrate() error = %v", err)
@@ -59,13 +60,13 @@ func TestRepository_Migrate(t *testing.T) {
 
 func TestRepository_Create(t *testing.T) {
 	db := testDB(t)
-	repo := New(db)
+	repo := subdomain.NewRepository(db)
 	if err := repo.Migrate(); err != nil {
 		t.Fatal(err)
 	}
 
 	t.Run("success", func(t *testing.T) {
-		if err := repo.Create(context.Background(), &Subdomain{
+		if err := repo.Create(context.Background(), &subdomain.Subdomain{
 			Id:   "test-id",
 			Name: "test-name",
 		}); err != nil {
@@ -82,7 +83,7 @@ func TestRepository_Create(t *testing.T) {
 	})
 
 	t.Run("duplicate id", func(t *testing.T) {
-		err := repo.Create(context.Background(), &Subdomain{
+		err := repo.Create(context.Background(), &subdomain.Subdomain{
 			Id:   "test-id-2",
 			Name: "test-name2",
 		})
@@ -90,7 +91,7 @@ func TestRepository_Create(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		err = repo.Create(context.Background(), &Subdomain{
+		err = repo.Create(context.Background(), &subdomain.Subdomain{
 			Id:   "test-id-2",
 			Name: "test-name22",
 		})
@@ -101,14 +102,14 @@ func TestRepository_Create(t *testing.T) {
 
 	t.Run("duplicate name", func(t *testing.T) {
 		// Create fresh subdomain with unique id to avoid id conflict
-		if err := repo.Create(context.Background(), &Subdomain{
+		if err := repo.Create(context.Background(), &subdomain.Subdomain{
 			Id:   "test-id3",
 			Name: "test-name3",
 		}); err != nil {
 			t.Fatal(err)
 		}
 
-		err := repo.Create(context.Background(), &Subdomain{
+		err := repo.Create(context.Background(), &subdomain.Subdomain{
 			Id:   "test-id4",
 			Name: "test-name3",
 		})
@@ -120,12 +121,12 @@ func TestRepository_Create(t *testing.T) {
 
 func TestRepository_Get(t *testing.T) {
 	db := testDB(t)
-	repo := New(db)
+	repo := subdomain.NewRepository(db)
 	if err := repo.Migrate(); err != nil {
 		t.Fatal(err)
 	}
 
-	testSubdomain := &Subdomain{
+	testSubdomain := &subdomain.Subdomain{
 		Id:   "test-id",
 		Name: "test-name",
 	}

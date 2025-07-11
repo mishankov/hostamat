@@ -1,24 +1,24 @@
 package site_test
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
+	"hostamat/internal/site"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-
-	"hostamat/internal/site"
 )
 
 func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 	t.Run("invalid method", func(t *testing.T) {
 		handler := site.NewCreateSiteHandler(&mockServiceCreate{
-			createFn: func(subdomain string) (*site.Site, error) {
+			createFn: func(_ context.Context) (*site.Site, error) {
 				return &site.Site{
 					Id:        "1",
-					Subdomain: subdomain,
-					Domain:    subdomain + ".example.com",
+					Subdomain: "my",
+					Domain:    "my.example.com",
 				}, nil
 			},
 		})
@@ -32,21 +32,9 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 		}
 	})
 
-	t.Run("invalid request body", func(t *testing.T) {
-		handler := site.NewCreateSiteHandler(nil)
-		req := httptest.NewRequest("POST", "/", strings.NewReader("invalid json"))
-		w := httptest.NewRecorder()
-
-		handler.ServeHTTP(w, req)
-
-		if w.Code != http.StatusBadRequest {
-			t.Errorf("Expected status %d, got %d", http.StatusBadRequest, w.Code)
-		}
-	})
-
 	t.Run("service error", func(t *testing.T) {
 		handler := site.NewCreateSiteHandler(&mockServiceCreate{
-			createFn: func(domain string) (*site.Site, error) {
+			createFn: func(_ context.Context) (*site.Site, error) {
 				return nil, errors.New("service error")
 			},
 		})
@@ -63,11 +51,11 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		handler := site.NewCreateSiteHandler(&mockServiceCreate{
-			createFn: func(domain string) (*site.Site, error) {
+			createFn: func(_ context.Context) (*site.Site, error) {
 				return &site.Site{
 					Id:        "1",
-					Subdomain: domain,
-					Domain:    domain + ".example.com",
+					Subdomain: "my",
+					Domain:    "my.example.com",
 				}, nil
 			},
 		})
@@ -93,19 +81,19 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 		if response.Id != "1" {
 			t.Errorf("Expected id %q, got %q", "1", response.Id)
 		}
-		if response.Subdomain != "example" {
-			t.Errorf("Expected subdomain %q, got %q", "example", response.Subdomain)
+		if response.Subdomain != "my" {
+			t.Errorf("Expected subdomain %q, got %q", "my", response.Subdomain)
 		}
-		if response.Domain != "example.example.com" {
-			t.Errorf("Expected domain %q, got %q", "example.example.com", response.Domain)
+		if response.Domain != "my.example.com" {
+			t.Errorf("Expected domain %q, got %q", "my.example.com", response.Domain)
 		}
 	})
 }
 
 type mockServiceCreate struct {
-	createFn func(string) (*site.Site, error)
+	createFn func(context.Context) (*site.Site, error)
 }
 
-func (m *mockServiceCreate) Create(domain string) (*site.Site, error) {
-	return m.createFn(domain)
+func (m *mockServiceCreate) Create(ctx context.Context) (*site.Site, error) {
+	return m.createFn(ctx)
 }

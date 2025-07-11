@@ -15,26 +15,26 @@ type repository interface {
 	Create(ctx context.Context, site *Site) error
 }
 
-type domainService interface {
+type subdomainService interface {
 	Create(ctx context.Context) (*subdomain.Subdomain, error)
 }
 
 type Service struct {
-	repository    repository
-	domainService domainService
+	repository       repository
+	subdomainService subdomainService
 }
 
-func NewService(repository repository, domainService domainService) *Service {
+func NewService(repository repository, subdomainService subdomainService) *Service {
 	return &Service{
-		repository:    repository,
-		domainService: domainService,
+		repository:       repository,
+		subdomainService: subdomainService,
 	}
 }
 
 func (s *Service) Create(ctx context.Context) (*Site, error) {
 	var err error
 
-	subdomain, err := s.domainService.Create(ctx)
+	subdomain, err := s.subdomainService.Create(ctx)
 	if err != nil {
 		return nil, err
 	}

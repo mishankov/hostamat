@@ -1,6 +1,7 @@
 package site_test
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -26,7 +27,7 @@ func TestListSiteHandler_ServeHTTP(t *testing.T) {
 
 	t.Run("service error", func(t *testing.T) {
 		handler := site.NewListSiteHandler(&mockServiceList{
-			getListFn: func() ([]*site.Site, error) {
+			getListFn: func(context.Context) ([]*site.Site, error) {
 				return nil, errors.New("service error")
 			},
 		})
@@ -43,7 +44,7 @@ func TestListSiteHandler_ServeHTTP(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		handler := site.NewListSiteHandler(&mockServiceList{
-			getListFn: func() ([]*site.Site, error) {
+			getListFn: func(_ context.Context) ([]*site.Site, error) {
 				return []*site.Site{
 					{
 						Id:        "1",
@@ -93,9 +94,9 @@ func TestListSiteHandler_ServeHTTP(t *testing.T) {
 }
 
 type mockServiceList struct {
-	getListFn func() ([]*site.Site, error)
+	getListFn func(context.Context) ([]*site.Site, error)
 }
 
-func (m *mockServiceList) GetList() ([]*site.Site, error) {
-	return m.getListFn()
+func (m *mockServiceList) GetList(ctx context.Context) ([]*site.Site, error) {
+	return m.getListFn(ctx)
 }

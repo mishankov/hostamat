@@ -1,12 +1,13 @@
 package site
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 )
 
 type createSiteService interface {
-	Create(subdomain string) (*Site, error)
+	Create(context.Context) (*Site, error)
 }
 
 type CreateSiteHandler struct {
@@ -20,20 +21,14 @@ func NewCreateSiteHandler(service createSiteService) *CreateSiteHandler {
 }
 
 func (h *CreateSiteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	var request struct {
-		Subdomain string `json:"subdomain"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
-
-	site, err := h.service.Create(request.Subdomain)
+	site, err := h.service.Create(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
