@@ -1,6 +1,7 @@
 package site_test
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -74,12 +75,20 @@ func TestListSiteHandler_ServeHTTP(t *testing.T) {
 			t.Errorf("Expected content type %s, got %s", "application/json", w.Header().Get("Content-Type"))
 		}
 
-		body := w.Body.String()
-		if !strings.Contains(body, `"id":"1"`) || !strings.Contains(body, `"subdomain":"site1"`) || !strings.Contains(body, `"domain":"site1.example.com"`) {
-			t.Errorf("Expected body to contain site1 with domain, got %s", body)
+		var response []site.Site
+		if err := json.NewDecoder(w.Body).Decode(&response); err != nil {
+			t.Fatalf("Failed to decode response: %v", err)
 		}
-		if !strings.Contains(body, `"id":"2"`) || !strings.Contains(body, `"subdomain":"site2"`) || !strings.Contains(body, `"domain":"site2.example.com"`) {
-			t.Errorf("Expected body to contain site2 with domain, got %s", body)
+
+		if len(response) != 2 {
+			t.Fatalf("Expected 2 sites, got %d", len(response))
+		}
+
+		if response[0].Id != "1" || response[0].Subdomain != "site1" || response[0].Domain != "site1.example.com" {
+			t.Errorf("Expected site1 with id=1, subdomain=site1, domain=site1.example.com, got %+v", response[0])
+		}
+		if response[1].Id != "2" || response[1].Subdomain != "site2" || response[1].Domain != "site2.example.com" {
+			t.Errorf("Expected site2 with id=2, subdomain=site2, domain=site2.example.com, got %+v", response[1])
 		}
 	})
 }

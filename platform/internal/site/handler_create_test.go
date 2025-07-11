@@ -1,6 +1,7 @@
 package site_test
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -83,11 +84,16 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 			t.Errorf("Expected content type %s, got %s", "application/json", w.Header().Get("Content-Type"))
 		}
 
-		if !strings.Contains(w.Body.String(), `"id":"1"`) {
-			t.Errorf("Expected body to contain %s, got %s", `"id":"1"`, w.Body.String())
+		var response site.Site
+		if err := json.NewDecoder(w.Body).Decode(&response); err != nil {
+			t.Fatalf("Failed to decode response: %v", err)
 		}
-		if !strings.Contains(w.Body.String(), `"subdomain":"example"`) {
-			t.Errorf("Expected body to contain %s, got %s", `"subdomain":"example"`, w.Body.String())
+
+		if response.Id != "1" {
+			t.Errorf("Expected id %q, got %q", "1", response.Id)
+		}
+		if response.Subdomain != "example" {
+			t.Errorf("Expected subdomain %q, got %q", "example", response.Subdomain)
 		}
 	})
 }
