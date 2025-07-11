@@ -2,7 +2,6 @@ package subdomain
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
@@ -24,7 +23,8 @@ func (r *Repository) Migrate() error {
 	query := `
 		CREATE TABLE IF NOT EXISTS ` + tableName + ` (
 			id VARCHAR(255) PRIMARY KEY,
-			name VARCHAR(255) NOT NULL UNIQUE
+			name VARCHAR(255) NOT NULL UNIQUE,
+			full_domain VARCHAR(255) NOT NULL
 		)
 	`
 	_, err := r.db.Exec(query)
@@ -37,9 +37,6 @@ func (r *Repository) Get(ctx context.Context, id string) (*Subdomain, error) {
 	var subdomain Subdomain
 	err := r.db.GetContext(ctx, &subdomain, query, id)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, sql.ErrNoRows
-		}
 		return nil, fmt.Errorf("failed to get subdomain: %w", err)
 	}
 
@@ -47,7 +44,7 @@ func (r *Repository) Get(ctx context.Context, id string) (*Subdomain, error) {
 }
 
 func (r *Repository) Create(ctx context.Context, subdomain *Subdomain) error {
-	const query = `INSERT INTO ` + tableName + ` (id, name) VALUES (:id, :name)`
+	const query = `INSERT INTO ` + tableName + ` (id, name, full_domain) VALUES (:id, :name, :full_domain)`
 
 	_, err := r.db.NamedExecContext(ctx, query, subdomain)
 	if err != nil {

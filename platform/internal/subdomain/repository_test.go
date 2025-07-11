@@ -3,6 +3,8 @@ package subdomain
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"slices"
 	"testing"
 
 	_ "github.com/glebarez/go-sqlite"
@@ -37,12 +39,21 @@ func TestRepository_Migrate(t *testing.T) {
 			t.Fatalf("failed to get columns: %v", err)
 		}
 
-		if len(columns) != 2 {
-			t.Fatalf("expected 2 columns, got %d", len(columns))
-		}
-		if columns[0] != "id" || columns[1] != "name" {
-			t.Fatalf("expected columns [id name], got %v", columns)
-		}
+		expectedColumns := []string{"id", "name", "full_domain"}
+
+		t.Run("column count", func(t *testing.T) {
+			if len(columns) != len(expectedColumns) {
+				t.Fatalf("Expected %d columns, got %d", len(expectedColumns), len(columns))
+			}
+		})
+
+		t.Run("column names", func(t *testing.T) {
+			for i, column := range columns {
+				if !slices.Contains(expectedColumns, column) {
+					t.Errorf("Expected column %s to be in %s", column, expectedColumns[i])
+				}
+			}
+		})
 	})
 }
 
@@ -121,7 +132,7 @@ func TestRepository_Get(t *testing.T) {
 
 	t.Run("not found", func(t *testing.T) {
 		_, err := repo.Get(context.Background(), "nonexistent")
-		if err != sql.ErrNoRows {
+		if !errors.Is(err, sql.ErrNoRows) {
 			t.Errorf("expected sql.ErrNoRows, got %v", err)
 		}
 	})

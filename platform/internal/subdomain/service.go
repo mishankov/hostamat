@@ -15,13 +15,23 @@ type repository interface {
 	Create(ctx context.Context, subdomain *Subdomain) error
 }
 
-type Service struct {
-	repo repository
+type webserver interface {
+	AddSubdomain(ctx context.Context, baseDomain, subdomain, shorthandId string) error
 }
 
-func NewService(repo repository) *Service {
+type Service struct {
+	repo        repository
+	webserver   webserver
+	baseDomain  string
+	shorthandId string
+}
+
+func NewService(repo repository, webserver webserver, baseDomain, shorthandId string) *Service {
 	return &Service{
-		repo: repo,
+		repo:        repo,
+		webserver:   webserver,
+		baseDomain:  baseDomain,
+		shorthandId: shorthandId,
 	}
 }
 
@@ -34,14 +44,21 @@ func (s *Service) Get(ctx context.Context, id string) (*Subdomain, error) {
 }
 
 func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
+	var err error
+
 	subdomain := &Subdomain{
 		Id:   uuid.NewString(),
 		Name: randomBase64String(5),
 	}
 
-	err := s.repo.Create(ctx, subdomain)
+	err = s.repo.Create(ctx, subdomain)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create subdomain: %w", err)
+	}
+
+	err = s.webserver.AddSubdomain(ctx, s.baseDomain, subdomain.Name, s.shorthandId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to add sudomain to webserver: %w", err)
 	}
 
 	return subdomain, nil
