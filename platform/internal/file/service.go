@@ -3,8 +3,6 @@ package file
 import (
 	"archive/zip"
 	"context"
-	"crypto/rand"
-	"encoding/base64"
 	"errors"
 	"io"
 	"path/filepath"
@@ -17,25 +15,15 @@ type repository interface {
 	PutObject(ctx context.Context, bucketName, fileName string, file io.Reader, size int64) error
 }
 
-type domainService interface {
-	AddSubdomain(ctx context.Context, baseDomain, subdomain, shorthandId string) error
-}
-
 type Service struct {
-	domainService domainService
-	repo          repository
-	bucketName    string
-	baseDomain    string
-	shorthandId   string
+	repo       repository
+	bucketName string
 }
 
-func NewService(repo repository, bucketName string, domainService domainService, baseDomain, shorthandId string) *Service {
+func NewService(repo repository, bucketName string) *Service {
 	return &Service{
-		repo:          repo,
-		bucketName:    bucketName,
-		domainService: domainService,
-		baseDomain:    baseDomain,
-		shorthandId:   shorthandId,
+		repo:       repo,
+		bucketName: bucketName,
 	}
 }
 
@@ -43,41 +31,36 @@ func (s *Service) GetFile(ctx context.Context, fileName string) (io.Reader, erro
 	return s.repo.GetObject(ctx, s.bucketName, fileName)
 }
 
-func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reader, size int64) (string, []string, []string, error) {
-	subdomain := s.GenerateSubdomain()
+func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reader, size int64, siteId string) ([]string, []string, error) {
 	var uploaded, skipped []string
 
 	switch filepath.Ext(filename) {
 	case ".html":
-		if err := s.uploadSingleFile(ctx, subdomain, filename, file, size); err != nil {
-			return "", nil, nil, err
+		if err := s.uploadSingleFile(ctx, siteId, filename, file, size); err != nil {
+			return nil, nil, err
 		}
 		uploaded = []string{filename}
 	case ".zip":
 		var err error
-		uploaded, skipped, err = s.uploadZipArchive(ctx, subdomain, file, size)
+		uploaded, skipped, err = s.uploadZipArchive(ctx, siteId, file, size)
 		if err != nil {
-			return "", nil, nil, err
+			return nil, nil, err
 		}
 	default:
-		return "", nil, nil, ErrInvalidFileType
+		return nil, nil, ErrInvalidFileType
 	}
 
-	if err := s.CreateSubdomain(ctx, subdomain); err != nil {
-		return "", nil, nil, err
-	}
-
-	return subdomain + "." + s.baseDomain, uploaded, skipped, nil
+	return uploaded, skipped, nil
 }
 
-func (s *Service) uploadSingleFile(ctx context.Context, subdomain, filename string, file io.Reader, size int64) error {
+func (s *Service) uploadSingleFile(ctx context.Context, folder, filename string, file io.Reader, size int64) error {
 	if !isAllowedExtension(filename) {
 		return ErrInvalidFileType
 	}
-	return s.repo.PutObject(ctx, s.bucketName, subdomain+"/"+filename, file, size)
+	return s.repo.PutObject(ctx, s.bucketName, folder+"/"+filename, file, size)
 }
 
-func (s *Service) uploadZipArchive(ctx context.Context, subdomain string, file io.Reader, size int64) ([]string, []string, error) {
+func (s *Service) uploadZipArchive(ctx context.Context, folder string, file io.Reader, size int64) ([]string, []string, error) {
 	fileReaderAt, ok := file.(io.ReaderAt)
 	if !ok {
 		return nil, nil, errors.New("zip file must be seekable")
@@ -107,7 +90,7 @@ func (s *Service) uploadZipArchive(ctx context.Context, subdomain string, file i
 			continue
 		}
 
-		err = s.uploadSingleFile(ctx, subdomain, filename, fileReader, int64(f.UncompressedSize64))
+		err = s.uploadSingleFile(ctx, folder, filename, fileReader, int64(f.UncompressedSize64))
 		fileReader.Close()
 		if err != nil {
 			skippedFiles = append(skippedFiles, filename)
@@ -118,14 +101,6 @@ func (s *Service) uploadZipArchive(ctx context.Context, subdomain string, file i
 	}
 
 	return uploadedFiles, skippedFiles, nil
-}
-
-func (s *Service) GenerateSubdomain() string {
-	return randomBase64String(5)
-}
-
-func (s *Service) CreateSubdomain(ctx context.Context, subdomain string) error {
-	return s.domainService.AddSubdomain(ctx, s.baseDomain, subdomain, s.shorthandId)
 }
 
 func (s *Service) GetContentType(filename string) string {
@@ -163,13 +138,3 @@ func isAllowedExtension(filename string) bool {
 		return false
 	}
 }
-
-func randomBase64String(length int) string {
-	bytes := make([]byte, length+1)
-	rand.Read(bytes)
-	return strings.ToLower(base64.URLEncoding.EncodeToString(bytes)[:length])
-}
-
-var (
-	ErrInvalidFileType = errors.New("invalid file type")
-)
