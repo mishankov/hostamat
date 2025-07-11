@@ -23,7 +23,17 @@ func TestRepository_Migrate(t *testing.T) {
 }
 
 func TestRepository_ObjectExists(t *testing.T) {
+	mock := &mockS3{}
+	r := file.NewRepository(mock)
 
+	_, err := r.ObjectExists(context.Background(), "test-bucket", "test-file")
+	if err != nil {
+		t.Fatalf("ObjectExists() unexpected error: %v", err)
+	}
+
+	if mock.objectExistsCallCount != 1 {
+		t.Errorf("ObjectExists() expected to call s3.ObjectExists once, got %d calls", mock.objectExistsCallCount)
+	}
 }
 
 type mockS3 struct {
