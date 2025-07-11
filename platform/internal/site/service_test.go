@@ -82,7 +82,7 @@ func TestService_Get(t *testing.T) {
 
 	t.Run("non-existent site", func(t *testing.T) {
 		mockRepo := newMockRepository()
-		service := site.NewService(mockRepo)
+		service := site.NewService(mockRepo, "example.com")
 
 		_, err := service.Get(context.Background(), "non-existent-id")
 		if err == nil {
@@ -94,7 +94,7 @@ func TestService_Get(t *testing.T) {
 func TestService_GetList(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		mockRepo := newMockRepository()
-		service := site.NewService(mockRepo)
+		service := site.NewService(mockRepo, "example.com")
 
 		// Create test sites directly in mock
 		testSites := []*site.Site{
@@ -129,7 +129,7 @@ func TestService_GetList(t *testing.T) {
 
 	t.Run("empty list", func(t *testing.T) {
 		mockRepo := newMockRepository()
-		service := site.NewService(mockRepo)
+		service := site.NewService(mockRepo, "example.com")
 
 		sites, err := service.GetList(context.Background())
 		if err != nil {
