@@ -77,8 +77,11 @@ func TestRepository_Create(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := repo.Create(context.Background(), testSubdomain); err == nil {
+		err := repo.Create(context.Background(), testSubdomain)
+		if err == nil {
 			t.Error("expected error for duplicate id")
+		} else if !strings.Contains(err.Error(), "UNIQUE constraint failed") {
+			t.Errorf("expected constraint error, got %v", err)
 		}
 	})
 }

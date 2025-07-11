@@ -38,7 +38,7 @@ func (r *Repository) Get(ctx context.Context, id string) (*Subdomain, error) {
 	err := r.db.GetContext(ctx, &subdomain, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil
+			return nil, sql.ErrNoRows
 		}
 		return nil, fmt.Errorf("failed to get subdomain: %w", err)
 	}
