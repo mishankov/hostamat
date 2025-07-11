@@ -1,6 +1,7 @@
-package file
+package file_test
 
 import (
+	"platform/internal/file"
 	"context"
 	"errors"
 	"io"
@@ -66,7 +67,7 @@ func TestServeHandler_ServeHTTP(t *testing.T) {
 				},
 			}
 
-			handler := NewServeHandler(service)
+			handler := file.NewServeHandler(service)
 			req := httptest.NewRequest("GET", tt.path, nil)
 			req.Host = tt.host
 			w := httptest.NewRecorder()
