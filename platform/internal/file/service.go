@@ -47,11 +47,6 @@ func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reade
 	var uploaded, skipped []string
 
 	switch filepath.Ext(filename) {
-	case ".html":
-		if err := s.uploadSingleFile(ctx, siteId, filename, file, size); err != nil {
-			return nil, nil, err
-		}
-		uploaded = []string{filename}
 	case ".zip":
 		var err error
 		uploaded, skipped, err = s.uploadZipArchive(ctx, siteId, file, size)
@@ -59,7 +54,10 @@ func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reade
 			return nil, nil, err
 		}
 	default:
-		return nil, nil, ErrInvalidFileType
+		if err := s.uploadSingleFile(ctx, siteId, filename, file, size); err != nil {
+			return nil, nil, err
+		}
+		uploaded = []string{filename}
 	}
 
 	return uploaded, skipped, nil

@@ -43,6 +43,46 @@ func TestService_GetFile(t *testing.T) {
 	}
 }
 
+func TestService_UploadFile(t *testing.T) {
+	repo := &mockRepo{
+		storage: map[string]map[string]mockFile{
+			"bucket": {},
+		},
+	}
+	ss := &mockSiteService{
+		sites: map[string]*site.Site{
+			"my.domain": {
+				Id:        "site_id",
+				Subdomain: "my",
+				Domain:    "my.domain",
+			},
+		},
+	}
+
+	s := file.NewService(repo, ss, "bucket")
+
+	t.Run("single file upload success", func(t *testing.T) {
+		uploaded, skipped, err := s.UploadFile(context.TODO(), "index.html", &bytes.Buffer{}, 3, "site_id")
+
+		if err != nil {
+			t.Fatalf("error was not expected, got: %s", err)
+		}
+
+		if len(uploaded) != 1 {
+			t.Fatalf("expected to upload 1 file, got: %d", len(uploaded))
+		}
+
+		if uploaded[0] != "index.html" {
+			t.Fatalf("expected to upload index.html, got: %s", uploaded[0])
+		}
+
+		if len(skipped) != 0 {
+			t.Fatalf("expected to skip no files, got: %d", len(skipped))
+		}
+	})
+
+}
+
 type mockFile struct {
 	reader io.Reader
 	size   int64
