@@ -164,6 +164,18 @@ func (m *mockRepository) Get(ctx context.Context, id string) (*site.Site, error)
 	return s, nil
 }
 
+func (m *mockRepository) GetByDomain(ctx context.Context, domain string) (*site.Site, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	for _, site := range m.sites {
+		if site.Domain == domain {
+			return site, nil
+		}
+	}
+	return nil, nil
+}
+
 func (m *mockRepository) Create(ctx context.Context, site *site.Site) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()

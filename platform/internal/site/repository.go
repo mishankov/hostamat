@@ -51,6 +51,15 @@ func (r *Repository) Get(ctx context.Context, id string) (*Site, error) {
 	return &site, nil
 }
 
+func (r *Repository) GetByDomain(ctx context.Context, domain string) (*Site, error) {
+	var site Site
+	err := r.db.GetContext(ctx, &site, "SELECT * FROM "+tableName+" WHERE domain = $1", domain)
+	if err != nil {
+		return nil, err
+	}
+	return &site, nil
+}
+
 func (r *Repository) GetList(ctx context.Context) ([]*Site, error) {
 	var sites []*Site
 	err := r.db.SelectContext(ctx, &sites, "SELECT * FROM "+tableName)

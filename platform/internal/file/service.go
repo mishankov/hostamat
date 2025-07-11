@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"context"
 	"errors"
+	"hostamat/internal/site"
 	"io"
 	"path/filepath"
 	"strings"
@@ -15,20 +16,31 @@ type repository interface {
 	PutObject(ctx context.Context, bucketName, fileName string, file io.Reader, size int64) error
 }
 
-type Service struct {
-	repo       repository
-	bucketName string
+type siteService interface {
+	GetByDomain(context.Context, string) (*site.Site, error)
 }
 
-func NewService(repo repository, bucketName string) *Service {
+type Service struct {
+	repo        repository
+	siteService siteService
+	bucketName  string
+}
+
+func NewService(repo repository, siteService siteService, bucketName string) *Service {
 	return &Service{
-		repo:       repo,
-		bucketName: bucketName,
+		repo:        repo,
+		siteService: siteService,
+		bucketName:  bucketName,
 	}
 }
 
-func (s *Service) GetFile(ctx context.Context, fileName string) (io.Reader, error) {
-	return s.repo.GetObject(ctx, s.bucketName, fileName)
+func (s *Service) GetFile(ctx context.Context, fileName, domain string) (io.Reader, error) {
+	site, err := s.siteService.GetByDomain(ctx, domain)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.repo.GetObject(ctx, site.Id, fileName)
 }
 
 func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reader, size int64, siteId string) ([]string, []string, error) {
