@@ -9,7 +9,6 @@ import (
 
 type serveService interface {
 	GetFile(ctx context.Context, fileName string, domain string) (io.Reader, error)
-	GetContentType(filePath string) string
 }
 
 type ServeHandler struct {
@@ -38,6 +37,25 @@ func (h *ServeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", h.service.GetContentType(filePath))
+	w.Header().Set("Content-Type", h.getContentType(filePath))
 	io.Copy(w, file)
+}
+
+func (h *ServeHandler) getContentType(filename string) string {
+	switch {
+	case strings.HasSuffix(filename, ".html"):
+		return "text/html"
+	case strings.HasSuffix(filename, ".css"):
+		return "text/css"
+	case strings.HasSuffix(filename, ".js"):
+		return "application/javascript"
+	case strings.HasSuffix(filename, ".png"):
+		return "image/png"
+	case strings.HasSuffix(filename, ".jpg"), strings.HasSuffix(filename, ".jpeg"):
+		return "image/jpeg"
+	case strings.HasSuffix(filename, ".svg"):
+		return "image/svg+xml"
+	default:
+		return "application/octet-stream"
+	}
 }
