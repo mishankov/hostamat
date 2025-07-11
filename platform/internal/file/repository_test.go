@@ -8,12 +8,17 @@ import (
 )
 
 func TestRepository_Migrate(t *testing.T) {
-	r := file.NewRepository(&mockS3{})
+	mock := &mockS3{}
+	r := file.NewRepository(mock)
 
 	err := r.Migrate(context.Background(), "")
 
 	if err != nil {
 		t.Fatalf("error expected to be nil, got: %s", err)
+	}
+
+	if mock.makeBucketCallCount != 1 {
+		t.Fatalf("MakeBucket expected to be called once, got: %d", mock.makeBucketCallCount)
 	}
 }
 
