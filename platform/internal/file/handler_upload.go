@@ -30,6 +30,10 @@ func (h *UploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	siteId := r.Header.Get("H-Site-Id")
+	if siteId == "" {
+		http.Error(w, "Missing site id", http.StatusBadRequest)
+		return
+	}
 
 	r.ParseMultipartForm(10 << 20) // 10 MB
 	file, handler, err := r.FormFile("file")

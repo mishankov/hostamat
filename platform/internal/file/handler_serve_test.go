@@ -1,9 +1,9 @@
 package file_test
 
 import (
-	"platform/internal/file"
 	"context"
 	"errors"
+	"hostamat/internal/file"
 	"io"
 	"net/http"
 	"net/http/httptest"

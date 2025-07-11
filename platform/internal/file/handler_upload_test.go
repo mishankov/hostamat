@@ -5,12 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"hostamat/internal/file"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
-	"platform/internal/file"
-	"strings"
 	"testing"
 )
 
@@ -24,43 +23,43 @@ func (m *mockUploadService) UploadFile(ctx context.Context, filename string, fil
 
 func TestUploadHandler_ServeHTTP(t *testing.T) {
 	tests := []struct {
-		name           string
-		method         string
-		siteIdHeader   string
-		mockResponse   []string
-		mockSkipped    []string
-		mockError      error
-		expectedCode   int
-		expectedBody   map[string][]string
+		name         string
+		method       string
+		siteIdHeader string
+		mockResponse []string
+		mockSkipped  []string
+		mockError    error
+		expectedCode int
+		expectedBody map[string][]string
 	}{
 		{
-			name:          "successful upload",
-			method:        http.MethodPost,
-			siteIdHeader:  "test-site",
-			mockResponse:  []string{"file1.txt"},
-			mockSkipped:   []string{"file2.txt"},
-			expectedCode:  http.StatusOK,
+			name:         "successful upload",
+			method:       http.MethodPost,
+			siteIdHeader: "test-site",
+			mockResponse: []string{"file1.txt"},
+			mockSkipped:  []string{"file2.txt"},
+			expectedCode: http.StatusOK,
 			expectedBody: map[string][]string{
 				"uploadedFiles": {"file1.txt"},
 				"skippedFiles":  {"file2.txt"},
 			},
 		},
 		{
-			name:          "wrong method",
-			method:        http.MethodGet,
-			expectedCode:  http.StatusMethodNotAllowed,
+			name:         "wrong method",
+			method:       http.MethodGet,
+			expectedCode: http.StatusMethodNotAllowed,
 		},
 		{
-			name:          "missing site id",
-			method:        http.MethodPost,
-			expectedCode:  http.StatusBadRequest,
+			name:         "missing site id",
+			method:       http.MethodPost,
+			expectedCode: http.StatusBadRequest,
 		},
 		{
-			name:          "upload error",
-			method:        http.MethodPost,
-			siteIdHeader:  "test-site",
-			mockError:     errors.New("upload failed"),
-			expectedCode:  http.StatusBadRequest,
+			name:         "upload error",
+			method:       http.MethodPost,
+			siteIdHeader: "test-site",
+			mockError:    errors.New("upload failed"),
+			expectedCode: http.StatusBadRequest,
 		},
 	}
 
@@ -76,7 +75,7 @@ func TestUploadHandler_ServeHTTP(t *testing.T) {
 			}
 
 			handler := file.NewUploadHandler(service)
-			
+
 			// Create multipart form with test file
 			body := &bytes.Buffer{}
 			writer := multipart.NewWriter(body)
