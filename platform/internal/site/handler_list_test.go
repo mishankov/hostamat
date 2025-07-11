@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"hostamat/internal/site"
 )
@@ -62,10 +63,14 @@ func TestListSiteHandler_ServeHTTP(t *testing.T) {
 					{
 						Id:        "1",
 						Subdomain: "site1",
+						Domain:    "site1.example.com",
+						CreatedAt: time.Now(),
 					},
 					{
 						Id:        "2",
 						Subdomain: "site2",
+						Domain:    "site2.example.com", 
+						CreatedAt: time.Now(),
 					},
 				}, nil
 			},
