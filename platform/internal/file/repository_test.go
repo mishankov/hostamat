@@ -36,6 +36,34 @@ func TestRepository_ObjectExists(t *testing.T) {
 	}
 }
 
+func TestRepository_GetObject(t *testing.T) {
+	mock := &mockS3{}
+	r := file.NewRepository(mock)
+
+	_, err := r.GetObject(context.Background(), "test-bucket", "test-file")
+	if err != nil {
+		t.Fatalf("GetObject() unexpected error: %v", err)
+	}
+
+	if mock.getObjectCallCount != 1 {
+		t.Errorf("GetObject() expected to call s3.GetObject once, got %d calls", mock.getObjectCallCount)
+	}
+}
+
+func TestRepository_PutObject(t *testing.T) {
+	mock := &mockS3{}
+	r := file.NewRepository(mock)
+
+	err := r.PutObject(context.Background(), "test-bucket", "test-file", nil, 0)
+	if err != nil {
+		t.Fatalf("PutObject() unexpected error: %v", err)
+	}
+
+	if mock.putObjectCallCount != 1 {
+		t.Errorf("PutObject() expected to call s3.PutObject once, got %d calls", mock.putObjectCallCount)
+	}
+}
+
 type mockS3 struct {
 	makeBucketCallCount   int
 	objectExistsCallCount int
