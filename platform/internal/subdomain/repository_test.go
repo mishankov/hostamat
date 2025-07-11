@@ -3,7 +3,6 @@ package subdomain
 import (
 	"context"
 	"database/sql"
-	"strings"
 	"testing"
 
 	_ "github.com/glebarez/go-sqlite"
