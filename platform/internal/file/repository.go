@@ -2,6 +2,7 @@ package file
 
 import (
 	"context"
+	"hostamat/pkg/platforma/log"
 	"io"
 )
 
@@ -31,6 +32,7 @@ func (r *Repository) ObjectExists(ctx context.Context, bucketName, fileName stri
 }
 
 func (r *Repository) GetObject(ctx context.Context, bucketName, fileName string) (io.Reader, error) {
+	log.DebugContext(ctx, "get object from s3", "bucket", bucketName, "file", fileName)
 	return r.s3Client.GetObject(ctx, bucketName, fileName)
 }
 

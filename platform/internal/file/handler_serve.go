@@ -24,14 +24,12 @@ func NewServeHandler(service serveService) *ServeHandler {
 func (h *ServeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	subdomain := strings.Split(r.Host, ".")[0]
 	filePath := r.URL.Path
 	if filePath == "/" {
 		filePath = "/index.html"
 	}
 
-	fileName := subdomain + filePath
-	file, err := h.service.GetFile(ctx, fileName, r.Host)
+	file, err := h.service.GetFile(ctx, filePath, r.Host)
 	if err != nil {
 		http.Error(w, "File not found", http.StatusNotFound)
 		return

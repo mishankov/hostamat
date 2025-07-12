@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"hostamat/internal/site"
+	"hostamat/pkg/platforma/log"
 	"io"
 	"path/filepath"
 	"strings"
@@ -39,6 +40,10 @@ func (s *Service) GetFile(ctx context.Context, fileName, domain string) (io.Read
 	if err != nil {
 		return nil, err
 	}
+
+	fileName = strings.TrimPrefix(fileName, "/")
+
+	log.DebugContext(ctx, "get file", "site", site, "fileName", fileName)
 
 	return s.repo.GetObject(ctx, s.bucketName, site.Id+"/"+fileName)
 }
