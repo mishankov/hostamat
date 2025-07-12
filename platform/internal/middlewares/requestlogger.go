@@ -25,8 +25,11 @@ func NewRequestLogger(logger logger) *RequestLogger {
 // TODO: wrap ResponseWriter to log response code and headers
 func (m *RequestLogger) Wrap(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), log.TraceIdKey, uuid.NewString())
+		traceId := uuid.NewString()
+		ctx := context.WithValue(r.Context(), log.TraceIdKey, traceId)
 		r = r.WithContext(ctx)
+
+		w.Header().Set("H-Trace-Id", traceId)
 
 		headerAttrs := make([]slog.Attr, 0, len(r.Header))
 		for k, v := range r.Header {
