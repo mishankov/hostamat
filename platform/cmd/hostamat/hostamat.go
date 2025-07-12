@@ -30,6 +30,8 @@ func main() {
 	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, nil)
 	httpClient := httpclient.New(logger)
 
+	logger.DebugContext(ctx, "config", "config", conf)
+
 	// Setting default logger for platforma pkg
 	log.SetDefault(logger)
 
