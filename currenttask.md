@@ -1,23 +1,17 @@
 # Next
-- [ ] Move subdomain creation and registration in Caddy to site from file
-- [ ] Add and delete sites
-- [ ] Add and delete files
-- [ ] New flow of file uploads
+- [ ] Delete sites
+- [ ] Delete files
+- [ ] Trace Id as separate middleware
 
-# Refactor
-- [ ] CaddyAPI adapter -> domain *domain*
+# Bugs
 
-# APIs
+- [ ] Non existing files return 200, should 404
 
-- POST /uploadsession - creates a new upload session
-- DELETE /uploadsession + H-Upload-Session - finish an upload session
-- POST /files/api/upload  + H-Upload-Session - upload a file
+# Platforma
 
-# Platforma fixes
+- [ ] Trace Id as separate middleware
+- Use and UseFunc shold accept spreaded lists of middlewares
 
-- [x] Fix mandatory trailing slashes in URL
-- [x] In handle group apply middlewares in ServeHTTP
-- [x] HandleGroup -> HandlerGroup
 
 # Frontend tips
 ## Upload files
