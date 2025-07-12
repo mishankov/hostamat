@@ -84,7 +84,7 @@ func main() {
 
 	httpServer.Handle("/healthcheck", healthcheckHandler)
 	httpServer.HandleGroup("/files/api", filesAPI)
-	httpServer.HandleGroup("/sites/api", siteHandlerGroup)
+	httpServer.Handle("/sites/api", siteHandlerGroup)
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
 
