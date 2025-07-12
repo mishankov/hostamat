@@ -46,9 +46,12 @@ func (s *Service) Get(ctx context.Context, id string) (*Subdomain, error) {
 func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
 	var err error
 
+	name := randomBase64String(5)
+
 	subdomain := &Subdomain{
-		Id:   uuid.NewString(),
-		Name: randomBase64String(5),
+		Id:         uuid.NewString(),
+		Name:       name,
+		FullDomain: name + "." + s.baseDomain,
 	}
 
 	err = s.repo.Create(ctx, subdomain)
