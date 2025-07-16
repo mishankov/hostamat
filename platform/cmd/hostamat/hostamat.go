@@ -54,7 +54,7 @@ func main() {
 	}
 
 	// Middlewares
-	traceId := pm.NewTraceId(nil, "Platforma-Trace-Id")
+	traceId := pm.NewTraceId(nil, "Hostamat-Trace-Id")
 	requestLogger := middlewares.NewRequestLogger(logger)
 
 	// Domain service setup
