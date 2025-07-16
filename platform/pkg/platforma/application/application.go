@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hostamat/pkg/platforma/log"
 	"sync"
+	"time"
 )
 
 // ErrStartupTaskFailed represents an error that occurs when a startup task fails.
@@ -38,11 +39,16 @@ type startupTask struct {
 type Application struct {
 	startupTasks []startupTask
 	services     map[string]Runner
+	health       *ApplicationHealth
 }
 
 // New creates and returns a new Application instance.
 func New() *Application {
-	return &Application{services: make(map[string]Runner)}
+	return &Application{services: make(map[string]Runner), health: NewApplicationHealth()}
+}
+
+func (a *Application) Health() *ApplicationHealth {
+	return a.health
 }
 
 // OnStart registers a new startup task with the given runner and configuration.
@@ -53,6 +59,7 @@ func (a *Application) OnStart(task Runner, config StartupTaskConfig) {
 // Register adds a named service to the application.
 func (a *Application) Register(serviceName string, service Runner) {
 	a.services[serviceName] = service
+	a.health.Services[serviceName] = &ServiceHealth{Status: ServiceStatusNotStarted}
 }
 
 // Run executes all startup tasks and services in the application.
@@ -95,12 +102,18 @@ func (a *Application) Run(ctx context.Context) error {
 			}()
 
 			log.InfoContext(ctx, "starting service", "service", serviceName)
+			a.health.StartService(serviceName)
+			log.DebugContext(ctx, "health", "health", a.health)
+
 			err := service.Run(serviceCtx)
 			if err != nil {
+				a.health.FailService(serviceName, err)
 				log.ErrorContext(ctx, "error in service", "service", serviceName, "error", err)
 			}
 		}()
 	}
+
+	a.health.StartedAt = time.Now()
 
 	wg.Wait()
 

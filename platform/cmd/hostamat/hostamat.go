@@ -7,16 +7,16 @@ import (
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/s3"
 	"hostamat/internal/file"
-	"hostamat/internal/handlers"
 	"hostamat/internal/infra/db"
 	"hostamat/internal/middlewares"
 	"hostamat/internal/schedulers/cleanup"
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/pkg/platforma/application"
+	"hostamat/pkg/platforma/batteries/handlers"
+	pm "hostamat/pkg/platforma/batteries/middlewares"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
-	pm "hostamat/pkg/platforma/httpserver/middlewares"
 	"hostamat/pkg/platforma/log"
 	"hostamat/pkg/platforma/scheduler"
 	"os"
@@ -76,9 +76,6 @@ func main() {
 	uploadFileHandler := file.NewUploadHandler(fileService)
 	serveFileHandler := file.NewServeHandler(fileService)
 
-	// Handlers
-	healthcheckHandler := handlers.NewHealthcheckHandler()
-
 	// Handle groups
 	filesAPI := httpserver.NewHandlerGroup()
 	filesAPI.Handle("/upload", uploadFileHandler)
@@ -86,7 +83,6 @@ func main() {
 	// Services
 	httpServer := httpserver.New(logger, conf.Port, 10*time.Second)
 
-	httpServer.Handle("/healthcheck", healthcheckHandler)
 	httpServer.HandleGroup("/files/api", filesAPI)
 	httpServer.Handle("/sites/api", siteHandlerGroup)
 	// HandleGroup used here because client would request files by additional path
@@ -100,6 +96,8 @@ func main() {
 
 	// Application
 	app := application.New()
+	healthcheckHandler := handlers.NewHealthCheckHandler(app)
+	httpServer.Handle("/health", healthcheckHandler)
 
 	// Migrate DB
 	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {

@@ -7,11 +7,6 @@
 
 - [ ] Non existing files return 200, should 404
 
-# Platforma
-
-- [ ] Trace Id as separate middleware
-
-
 # Frontend tips
 ## Upload files
 
