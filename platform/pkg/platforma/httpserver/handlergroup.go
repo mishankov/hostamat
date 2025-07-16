@@ -16,13 +16,15 @@ func NewHandlerGroup() *HandlerGroup {
 }
 
 // Use adds a middleware to the HandlerGroup's middleware chain.
-func (hg *HandlerGroup) Use(middleware Middleware) {
-	hg.middlewares = append(hg.middlewares, middleware)
+func (hg *HandlerGroup) Use(middlewares ...Middleware) {
+	hg.middlewares = append(hg.middlewares, middlewares...)
 }
 
 // UseFunc adds a function as a middleware to the HandlerGroup's middleware chain.
-func (hg *HandlerGroup) UseFunc(middlewareFunc func(http.Handler) http.Handler) {
-	hg.middlewares = append(hg.middlewares, MiddlewareFunc(middlewareFunc))
+func (hg *HandlerGroup) UseFunc(middlewareFuncs ...func(http.Handler) http.Handler) {
+	for _, middlewareFunc := range middlewareFuncs {
+		hg.middlewares = append(hg.middlewares, MiddlewareFunc(middlewareFunc))
+	}
 }
 
 // Handle registers an http.Handler for the given pattern, applying all

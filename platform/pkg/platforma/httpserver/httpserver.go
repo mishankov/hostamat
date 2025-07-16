@@ -39,12 +39,14 @@ func (s *HttpServer) HandleGroup(pattern string, handler http.Handler) {
 	s.mux.Handle(pattern+"/", http.StripPrefix(pattern, handler))
 }
 
-func (s *HttpServer) Use(middleware Middleware) {
-	s.middlewares = append(s.middlewares, middleware)
+func (s *HttpServer) Use(middlewares ...Middleware) {
+	s.middlewares = append(s.middlewares, middlewares...)
 }
 
-func (s *HttpServer) UseFunc(middlewareFunc func(http.Handler) http.Handler) {
-	s.middlewares = append(s.middlewares, MiddlewareFunc(middlewareFunc))
+func (s *HttpServer) UseFunc(middlewareFuncs ...func(http.Handler) http.Handler) {
+	for _, middlewareFunc := range middlewareFuncs {
+		s.middlewares = append(s.middlewares, MiddlewareFunc(middlewareFunc))
+	}
 }
 
 func (s *HttpServer) Run(ctx context.Context) error {

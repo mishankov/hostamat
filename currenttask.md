@@ -10,7 +10,6 @@
 # Platforma
 
 - [ ] Trace Id as separate middleware
-- Use and UseFunc shold accept spreaded lists of middlewares
 
 
 # Frontend tips
