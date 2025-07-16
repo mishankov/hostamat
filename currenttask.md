@@ -1,7 +1,6 @@
 # Next
 - [ ] Delete sites
 - [ ] Delete files
-- [ ] Trace Id as separate middleware
 
 # Bugs
 
