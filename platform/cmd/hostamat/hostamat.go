@@ -16,6 +16,7 @@ import (
 	"hostamat/pkg/platforma/application"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
+	pm "hostamat/pkg/platforma/httpserver/middlewares"
 	"hostamat/pkg/platforma/log"
 	"hostamat/pkg/platforma/scheduler"
 	"os"
@@ -53,6 +54,7 @@ func main() {
 	}
 
 	// Middlewares
+	traceId := pm.NewTraceId(nil, "Platforma-Trace-Id")
 	requestLogger := middlewares.NewRequestLogger(logger)
 
 	// Domain service setup
@@ -90,7 +92,7 @@ func main() {
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
 
-	httpServer.Use(requestLogger)
+	httpServer.Use(traceId, requestLogger)
 
 	// Cleanup service to remove files from S3 and subdomains from Caddy
 	cleanupService := cleanup.New(s3Client, caddyAPI, conf.S3.Bucket, conf.Caddy.ShorthandId)

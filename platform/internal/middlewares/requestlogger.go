@@ -2,12 +2,9 @@ package middlewares
 
 import (
 	"context"
-	"hostamat/pkg/platforma/log"
 	"log/slog"
 	"net/http"
 	"strings"
-
-	"github.com/google/uuid"
 )
 
 type logger interface {
@@ -25,11 +22,7 @@ func NewRequestLogger(logger logger) *RequestLogger {
 // TODO: wrap ResponseWriter to log response code and headers
 func (m *RequestLogger) Wrap(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		traceId := uuid.NewString()
-		ctx := context.WithValue(r.Context(), log.TraceIdKey, traceId)
-		r = r.WithContext(ctx)
-
-		w.Header().Set("H-Trace-Id", traceId)
+		ctx := r.Context()
 
 		headerAttrs := make([]slog.Attr, 0, len(r.Header))
 		for k, v := range r.Header {
