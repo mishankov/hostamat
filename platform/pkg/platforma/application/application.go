@@ -37,17 +37,22 @@ type startupTask struct {
 
 // Application manages startup tasks and services for the application lifecycle.
 type Application struct {
-	startupTasks []startupTask
-	services     map[string]Runner
-	health       *ApplicationHealth
+	startupTasks   []startupTask
+	services       map[string]Runner
+	healthcheckers map[string]Healthchecker
+	health         *ApplicationHealth
 }
 
 // New creates and returns a new Application instance.
 func New() *Application {
-	return &Application{services: make(map[string]Runner), health: NewApplicationHealth()}
+	return &Application{services: make(map[string]Runner), healthcheckers: make(map[string]Healthchecker), health: NewApplicationHealth()}
 }
 
-func (a *Application) Health() *ApplicationHealth {
+// Health returns the current health status of the application.
+func (a *Application) Health(ctx context.Context) *ApplicationHealth {
+	for hcName, hc := range a.healthcheckers {
+		a.health.SetServiceData(hcName, hc.Healthcheck(ctx))
+	}
 	return a.health
 }
 
@@ -58,8 +63,14 @@ func (a *Application) OnStart(task Runner, config StartupTaskConfig) {
 
 // Register adds a named service to the application.
 func (a *Application) Register(serviceName string, service Runner) {
+
 	a.services[serviceName] = service
 	a.health.Services[serviceName] = &ServiceHealth{Status: ServiceStatusNotStarted}
+
+	healthcheckerService, ok := service.(Healthchecker)
+	if ok {
+		a.healthcheckers[serviceName] = healthcheckerService
+	}
 }
 
 // Run executes all startup tasks and services in the application.

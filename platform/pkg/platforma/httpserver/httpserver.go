@@ -79,3 +79,9 @@ func (s *HttpServer) Run(ctx context.Context) error {
 
 	return nil
 }
+
+func (s *HttpServer) Healthcheck(ctx context.Context) any {
+	return map[string]any{
+		"port": s.port,
+	}
+}

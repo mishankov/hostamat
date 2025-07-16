@@ -15,9 +15,10 @@ const (
 
 type ServiceHealth struct {
 	Status    ServiceStatus `json:"status"`
-	StartedAt time.Time     `json:"startedAt"`
-	StoppedAt time.Time     `json:"stoppedAt,omitempty"`
+	StartedAt *time.Time    `json:"startedAt"`
+	StoppedAt *time.Time    `json:"stoppedAt,omitempty"`
 	Error     string        `json:"error,omitempty"`
+	Data      any           `json:"data,omitempty"`
 }
 
 type ApplicationHealth struct {
@@ -32,7 +33,9 @@ func NewApplicationHealth() *ApplicationHealth {
 func (h *ApplicationHealth) StartService(serviceName string) {
 	if service, ok := h.Services[serviceName]; ok {
 		service.Status = ServiceStatusStarted
-		service.StartedAt = time.Now()
+
+		st := time.Now()
+		service.StartedAt = &st
 
 		h.Services[serviceName] = service
 	}
@@ -41,9 +44,19 @@ func (h *ApplicationHealth) StartService(serviceName string) {
 func (h *ApplicationHealth) FailService(serviceName string, err error) {
 	if service, ok := h.Services[serviceName]; ok {
 		service.Status = ServiceStatusError
-		service.StoppedAt = time.Now()
+
+		st := time.Now()
+		service.StoppedAt = &st
+
 		service.Error = err.Error()
 
+		h.Services[serviceName] = service
+	}
+}
+
+func (h *ApplicationHealth) SetServiceData(serviceName string, data any) {
+	if service, ok := h.Services[serviceName]; ok {
+		service.Data = data
 		h.Services[serviceName] = service
 	}
 }

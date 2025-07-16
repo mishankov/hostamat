@@ -1,13 +1,14 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"hostamat/pkg/platforma/application"
 	"net/http"
 )
 
 type healther interface {
-	Health() *application.ApplicationHealth
+	Health(context.Context) *application.ApplicationHealth
 }
 
 type HealthCheckHandler struct {
@@ -19,7 +20,7 @@ func NewHealthCheckHandler(app healther) *HealthCheckHandler {
 }
 
 func (h *HealthCheckHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	health := h.app.Health()
+	health := h.app.Health(r.Context())
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
