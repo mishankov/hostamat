@@ -35,6 +35,7 @@ func (h *ServeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", h.getContentType(filePath))
 	io.Copy(w, file)
 }
