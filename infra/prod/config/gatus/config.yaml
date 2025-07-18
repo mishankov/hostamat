@@ -19,3 +19,5 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
       - "[RESPONSE_TIME] < 300"
+      - "[DOMAIN_EXPIRATION] > 720h"
+      - "[CERTIFICATE_EXPIRATION] > 240h"
