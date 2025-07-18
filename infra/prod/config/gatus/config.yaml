@@ -1,0 +1,21 @@
+endpoints:
+  - name: API
+    url: "http://109.73.205.129:1001/healthcheck"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"
+
+  - name: Caddy
+    url: "http://109.73.205.129:2019/reverse_proxy/upstreams"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"
+
+  - name: Landing
+    url: "https://6a1b8c3f4e2d5a7b9c0d1e2f3a4b5c6d.ru/"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"

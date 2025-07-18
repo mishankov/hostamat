@@ -1,6 +1,6 @@
 services:
   dozzle:
-    image: 'amir20/dozzle:latest'
+    image: amir20/dozzle:latest
     container_name: dozzle
     environment:
       - DOZZLE_ENABLE_ACTIONS=true
@@ -14,10 +14,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./config/dozzle/users.yml:/data/users.yml:ro
 
-  uptime-kuma:
-    image: louislam/uptime-kuma:1
-    container_name: uptime-kuma
+  gatus:
+    image: ghcr.io/twin/gatus:latest
+    container_name: gatus
     ports:
-      - 3001:3001
+      - 8082:8080
     volumes:
-      - ./container-data/uptime-kuma:/app/data
+      - ./config/gatus:/config
