@@ -1,5 +1,5 @@
 <script>
-  import { Toolbar } from "bits-ui";
+  import { Toolbar, Tooltip } from "bits-ui";
 
   import Upload from "phosphor-svelte/lib/Upload";
   import Download from "phosphor-svelte/lib/Download";
@@ -51,20 +51,26 @@
               <Toolbar.Root>
                 {#snippet child()}
                   <Toolbar.Button>
-                    {#snippet child()}
-                      <Upload />
+                    {#snippet child({ props })}
+                      <div title="Загрузить сайт" {...props}>
+                        <Upload />
+                      </div>
                     {/snippet}
                   </Toolbar.Button>
 
                   <Toolbar.Button>
-                    {#snippet child()}
-                      <Download />
+                    {#snippet child({ props })}
+                      <div title="Скачать сайт" {...props}>
+                        <Download />
+                      </div>  
                     {/snippet}
                   </Toolbar.Button>
 
                   <Toolbar.Button>
-                    {#snippet child()}
-                     <Trash />
+                    {#snippet child({ props })}
+                      <div title="Удалить сайт" {...props}>
+                        <Trash />
+                      </div> 
                     {/snippet}
                   </Toolbar.Button>
                 {/snippet}
