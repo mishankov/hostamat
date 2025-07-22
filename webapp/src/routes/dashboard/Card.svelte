@@ -10,9 +10,10 @@
 
 <style>
   .card {
-    border: 0.5px solid #bbb;
+    width: fit-content;
+
+    border: 0.5px solid #555;
     border-radius: 5px;
-    padding: 10px;
 
     background-color: #1a1a1a;
 

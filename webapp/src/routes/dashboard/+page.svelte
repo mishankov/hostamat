@@ -1,4 +1,11 @@
 <script>
+  import { Toolbar } from "bits-ui";
+
+  import Upload from "phosphor-svelte/lib/Upload";
+  import Download from "phosphor-svelte/lib/Download";
+  import Trash from "phosphor-svelte/lib/Trash";
+  import Copy from "phosphor-svelte/lib/Copy";
+
 	import Separator from "./Separator.svelte";
   import Card from "./Card.svelte";
 
@@ -29,7 +36,10 @@
       <Card>
         {#snippet child()}
           <div class="site-content">
-            <a href="https://{site.url}" target="_blank" class="site-url">{site.url}</a>
+            <div class="site-url-container">
+              <a href="https://{site.url}" target="_blank" class="site-url">{site.url}</a> 
+              <Copy />
+            </div>
             <p class="site-data">
               Дата последней загрузки: {site.date}
             </p>
@@ -38,7 +48,27 @@
             </p>
 
             <div class="site-toolbar">
+              <Toolbar.Root>
+                {#snippet child()}
+                  <Toolbar.Button>
+                    {#snippet child()}
+                      <Upload />
+                    {/snippet}
+                  </Toolbar.Button>
 
+                  <Toolbar.Button>
+                    {#snippet child()}
+                      <Download />
+                    {/snippet}
+                  </Toolbar.Button>
+
+                  <Toolbar.Button>
+                    {#snippet child()}
+                     <Trash />
+                    {/snippet}
+                  </Toolbar.Button>
+                {/snippet}
+              </Toolbar.Root>
             </div>
           </div>
         {/snippet}
@@ -83,6 +113,19 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 10px;
+  }
+
+  .site-url-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    padding-bottom: 10px;
   }
 
   a.site-url {
@@ -90,23 +133,32 @@
     color: #fff;
     text-decoration: none;
     text-decoration: underline;
-
-    padding-bottom: 10px;
   }
 
   p.site-data {
     font-size: 12px;
     color: #bbb;
   }
+
+  .site-toolbar {
+    width: fit-content;
+    align-self: flex-end;
+    padding-top: 10px;
+
+    display: flex;
+    gap: 5px;
+  }
   
   .add-site {
     height: 100%;
-    width: 100%;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
   .add-site-icon {
