@@ -38,7 +38,8 @@
     color: #ffffff;
     background-color: #1A1A1A;
 
-    border: 2px solid #ffffff;
+    border-width: 1px;
+    border-style: solid;
     border-radius: 15px;
 
     padding: 12px 20px;
@@ -47,22 +48,28 @@
     transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
   }
 
+  .primary {
+    background-color: #1A1A1A;
+    color: #ffffff;
+    border-color: #ffffff;
+  }
+
   .confirm {
     background-color: hsla(110, 100%, 50%, 0.25);
-    border: 2px solid hsla(110, 100%, 50%, 1);
+    border-color: hsla(110, 100%, 50%, 1);
     color: hsla(110, 100%, 50%, 1);
   }
 
   .decline {
     background-color: hsla(338, 100%, 50%, 0.25);
-    border: 2px solid hsla(338, 100%, 50%, 1);
     color: hsla(338, 100%, 50%, 1);
+    border-color: hsla(338, 100%, 50%, 1);
   }
 
   .action {
     background-color: hsla(200, 100%, 50%, 0.25);
-    border: 2px solid hsla(200, 100%, 50%, 1);
     color: hsla(200, 100%, 50%, 1);
+    border-color: hsla(200, 100%, 50%, 1);
   }
 
   button:hover {
