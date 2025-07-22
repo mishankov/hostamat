@@ -52,7 +52,7 @@
                 {#snippet child()}
                   <Toolbar.Button>
                     {#snippet child({ props })}
-                      <div title="Загрузить сайт" {...props}>
+                      <div class="site-toolbar-action" title="Загрузить сайт" {...props}>
                         <Upload />
                       </div>
                     {/snippet}
@@ -60,7 +60,7 @@
 
                   <Toolbar.Button>
                     {#snippet child({ props })}
-                      <div title="Скачать сайт" {...props}>
+                      <div class="site-toolbar-action" title="Скачать сайт" {...props}>
                         <Download />
                       </div>  
                     {/snippet}
@@ -68,7 +68,7 @@
 
                   <Toolbar.Button>
                     {#snippet child({ props })}
-                      <div title="Удалить сайт" {...props}>
+                      <div class="site-toolbar-action" title="Удалить сайт" {...props}>
                         <Trash />
                       </div> 
                     {/snippet}
@@ -153,6 +153,21 @@
 
     display: flex;
     gap: 5px;
+  }
+
+  .site-toolbar-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+    padding: 5px;
+
+    transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+  }
+
+  .site-toolbar-action:hover {
+    background-color: #555;
   }
   
   .add-site {
