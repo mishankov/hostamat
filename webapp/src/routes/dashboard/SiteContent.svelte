@@ -36,7 +36,7 @@
 
     <div class="site-toolbar-action" title="Удалить сайт">
       <Trash onclick={() => deleteModal.showModal()} />
-      <Modal bind:ref={deleteModal}>
+      <Modal bind:ref={deleteModal} kind="danger">
         {#snippet content(ref)}
           <div class="delete-modal">
             <p>Вы уверены, что хотите удалить сайт {site.url}?</p>
@@ -110,6 +110,6 @@
   .delete-modal {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
   }
 </style>

@@ -4,24 +4,26 @@
   let {
     ref = $bindable(),
     content,
+    kind = "primary"
   } : {
     ref?: HTMLDialogElement,
     content?: Snippet<[HTMLDialogElement]>,
+    kind?: "primary" | "danger"
   } = $props()
 </script>
 
-<dialog bind:this={ref}>
+<dialog bind:this={ref} class={kind}>
   {@render content?.(ref)}
 </dialog>
 
 <style>
-  
   dialog {
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
     
-    border: 0.5px solid #555;
+    border-width: 0.5px;
+    border-style: solid;
     border-radius: 5px;
 
     padding: 20px;
@@ -29,7 +31,30 @@
     background-color: #1a1a1a;
     color: #fff;
 
-    transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+    transition: all 200ms cubic-bezier(.23, 1, 0.32, 1);
+  }
+
+  .primary {
+    border-color: #555;
+  }
+
+  .danger {
+    border-color: hsla(338, 100%, 50%, 1);
+  }
+
+  dialog[open] {
+    animation: fadein 300ms ease-in forwards;
+  }
+
+  @keyframes fadein {
+    0% {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-50%) scale(.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-50%) scale(1);
+    }
   }
 
   ::backdrop {
