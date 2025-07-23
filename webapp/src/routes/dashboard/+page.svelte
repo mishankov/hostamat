@@ -3,6 +3,7 @@
   import Download from "phosphor-svelte/lib/Download";
   import Trash from "phosphor-svelte/lib/Trash";
   import Copy from "phosphor-svelte/lib/Copy";
+  import Plus from "phosphor-svelte/lib/Plus";
 
 	import Separator from "./Separator.svelte";
   import Card from "./Card.svelte";
@@ -66,7 +67,7 @@
     <Card>
         {#snippet child()}
           <div class="add-site">
-            <p class="add-site-icon">+</p>
+            <p class="add-site-icon"><Plus /></p>
             <p class="add-site-text">Добавить сайт</p>
           </div>
         {/snippet}
@@ -79,8 +80,8 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-
-    max-width: 1200px;
+    
+    width: clamp(500px, 50%, 1200px);
 
     border: 0.5px solid #555;
     border-radius: 15px;
