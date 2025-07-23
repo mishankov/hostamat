@@ -1,12 +1,15 @@
-<script>
+<script lang="ts">
   import Upload from "phosphor-svelte/lib/Upload";
   import Download from "phosphor-svelte/lib/Download";
   import Trash from "phosphor-svelte/lib/Trash";
   import Copy from "phosphor-svelte/lib/Copy";
   import Plus from "phosphor-svelte/lib/Plus";
 
+  import Button from "$lib/components/Button.svelte";
+
 	import Separator from "./Separator.svelte";
   import Card from "./Card.svelte";
+	import Modal from "./Modal.svelte";
 
   let sites = [
     {
@@ -21,6 +24,8 @@
       version: "v3"
     }
   ]
+
+  let deleteModal: HTMLDialogElement
 </script>
 
 <div class="dashboard">
@@ -56,7 +61,17 @@
               </div>  
 
               <div class="site-toolbar-action" title="Удалить сайт">
-                <Trash />
+                <Trash onclick={() => deleteModal.showModal()} />
+                <Modal bind:ref={deleteModal}>
+                  {#snippet content(ref)}
+                    <p>Вы уверены, что хотите удалить сайт {site.url}?</p>
+
+                    <form method="dialog">
+                      <Button text="Отмена" kind="primary" />
+                      <Button text="Удалить" kind="decline" />
+                    </form>
+                  {/snippet}
+                </Modal>
               </div> 
             </div>
           </div>
