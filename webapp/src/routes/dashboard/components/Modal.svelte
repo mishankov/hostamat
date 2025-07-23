@@ -14,8 +14,13 @@
   {@render content?.(ref)}
 </dialog>
 
-<style scoped>
+<style>
+  
   dialog {
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    
     border: 0.5px solid #555;
     border-radius: 5px;
 
@@ -25,5 +30,9 @@
     color: #fff;
 
     transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+  }
+
+  ::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
   }
 </style>
