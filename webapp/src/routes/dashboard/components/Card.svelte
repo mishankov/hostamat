@@ -20,9 +20,4 @@
 
     transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
   }
-
-  .card:hover {
-    box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
-    transform: scale(1.01);
-  }
 </style>

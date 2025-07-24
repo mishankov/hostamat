@@ -31,11 +31,10 @@
     <div class="site-toolbar-action" title="Загрузить сайт">
       <Upload onclick={() => uploadModal?.open()} />
       <Modal bind:this={uploadModal} kind="primary">
-        {#snippet content()}
-          <div class="upload-modal">
-            <FileUploader multiple={true} />
-          </div>
-        {/snippet}
+        <div class="upload-modal">
+          <h3>Загрузить файлы для {site.url}</h3>
+          <FileUploader multiple={true} />
+        </div>
       </Modal>
     </div>
 
@@ -46,15 +45,13 @@
     <div class="site-toolbar-action" title="Удалить сайт">
       <Trash onclick={() => deleteModal?.open()} />
       <Modal bind:this={deleteModal} kind="danger">
-        {#snippet content()}
-          <div class="delete-modal">
-            <p>Вы уверены, что хотите удалить сайт {site.url}?</p>
-            <form method="dialog">
-              <Button kind="primary">Отмена</Button>
-              <Button kind="danger">Удалить</Button>
-            </form>
-          </div>
-        {/snippet}
+        <div class="delete-modal">
+          <p>Вы уверены, что хотите удалить сайт {site.url}?</p>
+          <form method="dialog">
+            <Button kind="primary">Отмена</Button>
+            <Button kind="danger">Удалить</Button>
+          </form>
+        </div>
       </Modal>
     </div> 
   </div>
@@ -119,12 +116,17 @@
   .upload-modal {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
   }
 
   .delete-modal {
     display: flex;
     flex-direction: column;
+    gap: 20px;
+  }
+
+  .delete-modal > form {
+    display: flex;
     gap: 10px;
   }
 </style>

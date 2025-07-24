@@ -157,9 +157,9 @@
   }
   
   function formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return '0 байт';
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ['байт', 'Кбайт', 'Мбайт', 'Гбайт'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
@@ -298,11 +298,11 @@
 
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
   }
   
   .drop-zone {
-    border: 2px dashed #555;
+    border: 1px dashed hsla(200, 100%, 50%, 1);
     border-radius: 8px;
     padding: 2rem;
     text-align: center;
@@ -324,6 +324,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
+    border-bottom: 0.5px solid #555;
   }
   
   .files-header h3 {
@@ -356,14 +357,14 @@
   
   .file-name {
     display: block;
-    font-weight: 500;
+    font-weight: 800;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   
   .file-size {
-    font-size: 0.875rem;
+    color: #555;
   }
   
   .progress-container {
@@ -436,7 +437,6 @@
   }
   
   .actions {
-    margin-top: 1.5rem;
     text-align: center;
   }
 </style>

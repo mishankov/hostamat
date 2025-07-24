@@ -2,7 +2,7 @@
   import Plus from "phosphor-svelte/lib/Plus";
 
 	import Separator from "./components/Separator.svelte";
-  import Card from "./components/Card.svelte";
+  import FloatingCard from "./components/FloatingCard.svelte";
 	import SiteContent from "./SiteContent.svelte";
 
   let sites = $state([
@@ -29,12 +29,13 @@
  
   <div class="site-list">
     {#each sites as site (site.id)}
-      <Card>
+      <FloatingCard>
         <SiteContent site={site} />
-      </Card>
+      </FloatingCard>
     {/each}
 
-    <Card>
+    <FloatingCard>
+      <!-- TODO: should prob fix  -->
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <div class="add-site" role="button" tabindex="0" onclick={() => sites.push({
         id: `site-${sites.length + 1}`,
@@ -45,7 +46,7 @@
         <p class="add-site-icon"><Plus /></p>
         <p class="add-site-text">Добавить сайт</p>
       </div>
-    </Card>
+    </FloatingCard>
   </div>
 </div>
 

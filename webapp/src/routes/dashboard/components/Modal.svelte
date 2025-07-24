@@ -2,10 +2,10 @@
 	import type { Snippet } from "svelte";
 
   let {
-    content,
+    children,
     kind = "primary"
   } : {
-    content?: Snippet,
+    children?: Snippet,
     kind?: "primary" | "danger"
   } = $props()
 
@@ -19,7 +19,7 @@
     }
   }}>
   <div class="modal-content">
-    {@render content?.()}
+    {@render children?.()}
   </div>
 </dialog>
 
