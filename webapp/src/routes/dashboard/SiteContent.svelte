@@ -10,6 +10,7 @@
     site
   } = $props()
 
+  let uploadModal = $state<HTMLDialogElement>();
   let deleteModal = $state<HTMLDialogElement>();
 </script>
 
@@ -27,7 +28,17 @@
 
   <div class="site-toolbar">
     <div class="site-toolbar-action" title="Загрузить сайт">
-      <Upload />
+      <Upload onclick={() => uploadModal?.showModal()} />
+      <Modal bind:ref={uploadModal} kind="primary">
+        {#snippet content(ref)}
+          <div class="upload-modal">
+            <p>Загрузить сайт</p>
+            <form method="dialog">
+              <Button text="Загрузить" kind="primary" />
+            </form>
+          </div>
+        {/snippet}
+      </Modal>
     </div>
 
     <div class="site-toolbar-action" title="Скачать сайт">
@@ -105,6 +116,12 @@
 
   .site-toolbar-action:hover {
     background-color: #555;
+  }
+
+  .upload-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .delete-modal {
