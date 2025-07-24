@@ -10,7 +10,7 @@
     site
   } = $props()
 
-  let deleteModal: HTMLDialogElement
+  let deleteModal = $state<HTMLDialogElement>();
 </script>
 
 <div class="site-content">
@@ -35,7 +35,7 @@
     </div>  
 
     <div class="site-toolbar-action" title="Удалить сайт">
-      <Trash onclick={() => deleteModal.showModal()} />
+      <Trash onclick={() => deleteModal?.showModal()} />
       <Modal bind:ref={deleteModal} kind="danger">
         {#snippet content(ref)}
           <div class="delete-modal">
