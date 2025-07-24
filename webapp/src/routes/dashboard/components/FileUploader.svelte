@@ -221,7 +221,9 @@
     <div class="selected-files">
       <div class="files-header">
         <h3>Selected Files ({selectedFiles.length})</h3>
-        <Button text="Очистить" kind="danger" onclick={clearAll} />
+        <Button kind="danger" onclick={clearAll}>
+          Очистить
+        </Button>
       </div>
       
       <div class="files-list">
@@ -287,7 +289,12 @@
   {/if}
   
   <div class="actions">
-    <Button text="Загрузить" kind="action" onclick={uploadFiles} disabled={disabled || uploading || selectedFiles.length === 0} />
+    <Button 
+      kind="action" 
+      onclick={uploadFiles} 
+      disabled={disabled || uploading || selectedFiles.length === 0}>
+      Загрузить
+    </Button>
   </div>
 </div>
 

@@ -50,8 +50,8 @@
           <div class="delete-modal">
             <p>Вы уверены, что хотите удалить сайт {site.url}?</p>
             <form method="dialog">
-              <Button text="Отмена" kind="primary" />
-              <Button text="Удалить" kind="danger" />
+              <Button kind="primary">Отмена</Button>
+              <Button kind="danger">Удалить</Button>
             </form>
           </div>
         {/snippet}

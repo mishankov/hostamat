@@ -4,30 +4,24 @@
   type ButtonKind = "primary" | "confirm" | "danger" | "action"
 
   type ButtonProps = {
-    text?: string
     kind?: ButtonKind
     disabled?: boolean
     ref?: any
-    child?: any
+    children?: any
     onclick?: (e: Event) => void
   }
 
   let {
     kind = "primary",
-    text = "",
-    child = null,
     disabled = false,
+    children = undefined,
     ref = $bindable(null),
     onclick = undefined,
   }: ButtonProps = $props()
 </script>
 
 <button {disabled} bind:this={ref} class="{kind}" onclick={onclick}>
-  {#if child != null}
-    {@render child()}
-  {:else}
-    {text}
-  {/if}
+  {@render children?.()}
 </button>
 
 <style>
