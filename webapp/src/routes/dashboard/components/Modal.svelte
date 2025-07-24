@@ -2,18 +2,19 @@
 	import type { Snippet } from "svelte";
 
   let {
-    ref = $bindable(),
     content,
     kind = "primary"
   } : {
-    ref?: HTMLDialogElement,
-    content?: Snippet<[HTMLDialogElement]>,
+    content?: Snippet,
     kind?: "primary" | "danger"
   } = $props()
+
+  let dialog = $state<HTMLDialogElement>();
+  export const open = () => dialog?.showModal()
 </script>
 
-<dialog bind:this={ref} class={kind}>
-  {@render content?.(ref)}
+<dialog bind:this={dialog} class={kind}>
+  {@render content?.()}
 </dialog>
 
 <style>

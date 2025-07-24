@@ -10,8 +10,8 @@
     site
   } = $props()
 
-  let uploadModal = $state<HTMLDialogElement>();
-  let deleteModal = $state<HTMLDialogElement>();
+  let uploadModal = $state<Modal>()
+  let deleteModal = $state<Modal>()
 </script>
 
 <div class="site-content">
@@ -28,9 +28,9 @@
 
   <div class="site-toolbar">
     <div class="site-toolbar-action" title="Загрузить сайт">
-      <Upload onclick={() => uploadModal?.showModal()} />
-      <Modal bind:ref={uploadModal} kind="primary">
-        {#snippet content(ref)}
+      <Upload onclick={() => uploadModal?.open()} />
+      <Modal bind:this={uploadModal} kind="primary">
+        {#snippet content()}
           <div class="upload-modal">
             <p>Загрузить сайт</p>
             <form method="dialog">
@@ -46,9 +46,9 @@
     </div>  
 
     <div class="site-toolbar-action" title="Удалить сайт">
-      <Trash onclick={() => deleteModal?.showModal()} />
-      <Modal bind:ref={deleteModal} kind="danger">
-        {#snippet content(ref)}
+      <Trash onclick={() => deleteModal?.open()} />
+      <Modal bind:this={deleteModal} kind="danger">
+        {#snippet content()}
           <div class="delete-modal">
             <p>Вы уверены, что хотите удалить сайт {site.url}?</p>
             <form method="dialog">
