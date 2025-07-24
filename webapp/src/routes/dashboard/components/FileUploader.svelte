@@ -439,25 +439,4 @@
     margin-top: 1.5rem;
     text-align: center;
   }
-  
-  .upload-btn {
-    padding: 0.75rem 2rem;
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .upload-btn:hover:not(:disabled) {
-    background-color: #2563eb;
-  }
-  
-  .upload-btn:disabled {
-    background-color: #cbd5e1;
-    cursor: not-allowed;
-  }
 </style>
