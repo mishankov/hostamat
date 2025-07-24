@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "bits-ui";
 
-  type ButtonKind = "primary" | "confirm" | "decline" | "action"
+  type ButtonKind = "primary" | "confirm" | "danger" | "action"
 
   type ButtonProps = {
     text?: string
@@ -60,7 +60,7 @@
     color: hsla(110, 100%, 50%, 1);
   }
 
-  .decline {
+  .danger {
     background-color: hsla(338, 100%, 50%, 0.25);
     color: hsla(338, 100%, 50%, 1);
     border-color: hsla(338, 100%, 50%, 1);

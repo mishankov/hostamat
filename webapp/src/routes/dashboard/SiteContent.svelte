@@ -42,7 +42,7 @@
             <p>Вы уверены, что хотите удалить сайт {site.url}?</p>
             <form method="dialog">
               <Button text="Отмена" kind="primary" />
-              <Button text="Удалить" kind="decline" />
+              <Button text="Удалить" kind="danger" />
             </form>
           </div>
         {/snippet}

@@ -16,7 +16,7 @@
   <div style="display: flex; gap: 10px">
     <Button text="Primary" kind="primary" />
     <Button text="Confirm" kind="confirm" />
-    <Button text="Decline" kind="decline" />
+    <Button text="Danger" kind="danger" />
     <Button text="Action" kind="action" />
   </div>
 
