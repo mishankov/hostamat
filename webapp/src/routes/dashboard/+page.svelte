@@ -5,7 +5,7 @@
   import Card from "./components/Card.svelte";
 	import SiteContent from "./SiteContent.svelte";
 
-  let sites = [
+  let sites = $state([
     {
       id: "site-1",
       url: "abc-xy-z.hostamat.ru",
@@ -17,7 +17,7 @@
       date: "2025-02-01",
       version: "v3"
     }
-  ]
+  ])
 </script>
 
 <div class="dashboard">
@@ -30,19 +30,21 @@
   <div class="site-list">
     {#each sites as site (site.id)}
       <Card>
-        {#snippet child()}
-          <SiteContent site={site} />
-        {/snippet}
+        <SiteContent site={site} />
       </Card>
     {/each}
 
     <Card>
-        {#snippet child()}
-          <div class="add-site">
-            <p class="add-site-icon"><Plus /></p>
-            <p class="add-site-text">Добавить сайт</p>
-          </div>
-        {/snippet}
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <div class="add-site" role="button" tabindex="0" onclick={() => sites.push({
+        id: `site-${sites.length + 1}`,
+        url: "new-site.hostamat.ru",
+        date: "2025-03-01",
+        version: "v1"
+      })}>
+        <p class="add-site-icon"><Plus /></p>
+        <p class="add-site-text">Добавить сайт</p>
+      </div>
     </Card>
   </div>
 </div>
@@ -67,6 +69,7 @@
 
   .site-list {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
   }
   

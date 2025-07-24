@@ -1,11 +1,12 @@
 <script lang="ts">
   let {
-    child
+    children,
+    ...restProps
   } = $props()
 </script>
 
-<div class="card">
-  {@render child()}
+<div class="card" {...restProps}>
+  {@render children()}
 </div>
 
 <style>
