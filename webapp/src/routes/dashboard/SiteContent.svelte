@@ -5,6 +5,7 @@
 	import Upload from "phosphor-svelte/lib/Upload";
 	import Modal from "./components/Modal.svelte";
 	import Button from "$lib/components/Button.svelte";
+	import FileUploader from "./components/FileUploader.svelte";
 
   let {
     site
@@ -32,10 +33,7 @@
       <Modal bind:this={uploadModal} kind="primary">
         {#snippet content()}
           <div class="upload-modal">
-            <p>Загрузить сайт</p>
-            <form method="dialog">
-              <Button text="Загрузить" kind="primary" />
-            </form>
+            <FileUploader multiple={true} />
           </div>
         {/snippet}
       </Modal>
