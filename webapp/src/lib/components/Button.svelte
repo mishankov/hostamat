@@ -45,6 +45,8 @@
     padding: 12px 20px;
 
     text-align: center;
+    user-select: none;
+
     transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
   }
 
@@ -72,14 +74,20 @@
     border-color: hsla(200, 100%, 50%, 1);
   }
 
-  button:hover {
+  button:hover:enabled {
     box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
     transform: translateY(-1px);
   }
 
-  button:active {
+  button:active:enabled {
     box-shadow: none;
     transform: translateY(+1px);
+  }
+
+  button:disabled {
+    background-color: #555;
+    color: #fff;
+    border-color: #fff;
   }
 </style>
 
