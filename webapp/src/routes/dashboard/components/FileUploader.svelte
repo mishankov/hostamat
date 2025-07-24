@@ -1,5 +1,8 @@
 <script lang="ts">
 	import Button from "$lib/components/Button.svelte";
+	import Upload from "phosphor-svelte/lib/Upload";
+  import X from "phosphor-svelte/lib/X";
+	import Card from "./Card.svelte";
 
   interface Props {
     uploadUrl?: string;
@@ -188,11 +191,7 @@
     onkeydown={handleKeyDown}
   >
     <div class="drop-zone-content">
-      <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-        <polyline points="17,8 12,3 7,8"/>
-        <line x1="12" y1="3" x2="12" y2="15"/>
-      </svg>
+      <Upload size="80px"/>
       <p class="drop-text">
         <strong>Нажми тут для выбора файлов</strong> или перетащи их
       </p>
@@ -218,33 +217,28 @@
   />
   
   {#if selectedFiles.length > 0}
-    <div class="selected-files">
-      <div class="files-header">
-        <h3>Selected Files ({selectedFiles.length})</h3>
-        <Button kind="danger" onclick={clearAll}>
-          Очистить
-        </Button>
-      </div>
-      
-      <div class="files-list">
-        {#each selectedFiles as file, index}
-          <div class="file-item">
-            <div class="file-info">
-              <span class="file-name">{file.name}</span>
-              <span class="file-size">{formatFileSize(file.size)}</span>
+    <Card style="width: 100%;">
+      <div class="selected-files">
+        <div class="files-header">
+          <h3>Выбранные файлы ({selectedFiles.length})</h3>
+          <Button kind="danger" onclick={clearAll}>
+            Очистить
+          </Button>
+        </div>
+        
+        <div class="files-list">
+          {#each selectedFiles as file, index}
+            <div class="file-item">
+              <div class="file-info">
+                <span class="file-name">{file.name}</span>
+                <span class="file-size">{formatFileSize(file.size)}</span>
+              </div>
+              <X onclick={() => removeFile(index)}/>
             </div>
-            <button 
-              type="button" 
-              class="remove-btn"
-              onclick={() => removeFile(index)}
-              aria-label="Remove file"
-            >
-              ×
-            </button>
-          </div>
-        {/each}
+          {/each}
+        </div>
       </div>
-    </div>
+    </Card>
   {/if}
   
   {#if uploading}
@@ -301,27 +295,23 @@
 <style>
   .file-upload-container {
     max-width: 500px;
-    margin: 0 auto;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
   
   .drop-zone {
-    border: 2px dashed #cbd5e1;
+    border: 2px dashed #555;
     border-radius: 8px;
     padding: 2rem;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    background-color: #f8fafc;
-  }
-  
-  .drop-zone:hover {
-    border-color: #3b82f6;
-    background-color: #eff6ff;
   }
   
   .drop-zone:focus {
-    outline: 2px solid #3b82f6;
+    outline: 0.5px solid hsla(200, 100%, 50%, 1);
     outline-offset: 2px;
   }
   
@@ -329,62 +319,17 @@
     pointer-events: none;
   }
   
-  .upload-icon {
-    width: 48px;
-    height: 48px;
-    margin: 0 auto 1rem;
-    color: #64748b;
-  }
-  
-  .drop-text {
-    margin: 0 0 0.5rem;
-    color: #1e293b;
-    font-size: 1rem;
-  }
-  
-  .drop-subtext {
-    margin: 0;
-    color: #64748b;
-    font-size: 0.875rem;
-  }
-  
-  .selected-files {
-    margin-top: 1.5rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
   .files-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background-color: #f1f5f9;
-    border-bottom: 1px solid #e2e8f0;
   }
   
   .files-header h3 {
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
-    color: #1e293b;
-  }
-  
-  .clear-btn {
-    padding: 0.25rem 0.75rem;
-    font-size: 0.875rem;
-    color: #64748b;
-    background: none;
-    border: 1px solid #cbd5e1;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .clear-btn:hover {
-    color: #ef4444;
-    border-color: #ef4444;
   }
   
   .files-list {
@@ -397,7 +342,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 1rem;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #555;
   }
   
   .file-item:last-child {
@@ -412,7 +357,6 @@
   .file-name {
     display: block;
     font-weight: 500;
-    color: #1e293b;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -420,28 +364,6 @@
   
   .file-size {
     font-size: 0.875rem;
-    color: #64748b;
-  }
-  
-  .remove-btn {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    color: #64748b;
-    font-size: 18px;
-    line-height: 1;
-    transition: all 0.2s ease;
-  }
-  
-  .remove-btn:hover {
-    background-color: #fee2e2;
-    color: #ef4444;
   }
   
   .progress-container {
