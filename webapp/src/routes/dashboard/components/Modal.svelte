@@ -13,8 +13,14 @@
   export const open = () => dialog?.showModal()
 </script>
 
-<dialog bind:this={dialog} class={kind}>
-  {@render content?.()}
+<dialog bind:this={dialog} class={kind} onclick={(e: MouseEvent) => {
+    if (e.target === dialog) {
+      dialog?.close()
+    }
+  }}>
+  <div class="modal-content">
+    {@render content?.()}
+  </div>
 </dialog>
 
 <style>
@@ -27,7 +33,7 @@
     border-style: solid;
     border-radius: 5px;
 
-    padding: 20px;
+    padding: 0;
 
     background-color: #1a1a1a;
     color: #fff;
@@ -60,5 +66,9 @@
 
   ::backdrop {
     background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  div.modal-content {
+    padding: 20px;
   }
 </style>
