@@ -29,9 +29,6 @@
     appearance: none;
     width: fit-content;
 
-    color: #ffffff;
-    background-color: #1A1A1A;
-
     border-width: 1px;
     border-style: solid;
     border-radius: 15px;
@@ -45,31 +42,31 @@
   }
 
   .primary {
-    background-color: #1A1A1A;
-    color: #ffffff;
-    border-color: #ffffff;
+    background-color: var(--color-primary-dim);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
   }
 
   .confirm {
-    background-color: hsla(110, 100%, 50%, 0.25);
-    border-color: hsla(110, 100%, 50%, 1);
-    color: hsla(110, 100%, 50%, 1);
+    background-color: var(--color-confirm-dim);
+    color: var(--color-confirm);
+    border-color: var(--color-confirm);
   }
 
   .danger {
-    background-color: hsla(338, 100%, 50%, 0.25);
-    color: hsla(338, 100%, 50%, 1);
-    border-color: hsla(338, 100%, 50%, 1);
+    background-color: var(--color-danger-dim);
+    color: var(--color-danger);
+    border-color: var(--color-danger);
   }
 
   .action {
-    background-color: hsla(200, 100%, 50%, 0.25);
-    color: hsla(200, 100%, 50%, 1);
-    border-color: hsla(200, 100%, 50%, 1);
+    background-color: var(--color-action-dim);
+    color: var(--color-action);
+    border-color: var(--color-action);
   }
 
   button:hover:enabled {
-    box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+    box-shadow: var(--shadow);
     transform: translateY(-1px);
   }
 

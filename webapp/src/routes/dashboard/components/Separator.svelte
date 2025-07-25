@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { Separator } from "bits-ui";
-
   let {
     orientation = "horizontal"
   } : {
@@ -16,10 +14,10 @@
   }
 
   .horizontal {
-    border-top: 0.5px solid #555;
+    border-top: var(--border-regular);
   }
 
   .vertical {
-    border-left: 0.5px solid #555;
+    border-left: var(--border-regular);
   }
 </style>

@@ -29,24 +29,23 @@
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
     
-    border-width: 0.5px;
-    border-style: solid;
-    border-radius: 5px;
+    border: var(--border-regular);
+    border-radius: var(--border-radius-regular);
 
     padding: 0;
 
-    background-color: #1a1a1a;
-    color: #fff;
+    background-color: var(--color-background-object);
+    color: var(--color-text);
 
-    transition: all 200ms cubic-bezier(.23, 1, 0.32, 1);
+    transition: var(--transition);
   }
 
   .primary {
-    border-color: #555;
+    border-color: var(--color-border);
   }
 
   .danger {
-    border-color: hsla(338, 100%, 50%, 1);
+    border-color: var(--color-danger);
   }
 
   dialog[open] {

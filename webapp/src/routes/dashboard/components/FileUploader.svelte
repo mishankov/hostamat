@@ -302,16 +302,16 @@
   }
   
   .drop-zone {
-    border: 1px dashed hsla(200, 100%, 50%, 1);
-    border-radius: 8px;
+    border: 1px dashed var(--color-action);
+    border-radius: var(--border-radius-regular);
     padding: 2rem;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: var(--transition);
   }
   
   .drop-zone:focus {
-    outline: 0.5px solid hsla(200, 100%, 50%, 1);
+    outline: var(--border-width) var(--border-style) var(--color-action);
     outline-offset: 2px;
   }
   
@@ -324,7 +324,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    border-bottom: 0.5px solid #555;
+    border-bottom: var(--border-regular);
   }
   
   .files-header h3 {
@@ -343,7 +343,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 1rem;
-    border-bottom: 1px solid #555;
+    border-bottom: var(--border-regular);
   }
   
   .file-item:last-child {

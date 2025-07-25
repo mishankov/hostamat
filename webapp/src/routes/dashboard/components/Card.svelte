@@ -14,16 +14,16 @@
   .card {
     width: fit-content;
 
-    border: 0.5px solid #555;
-    border-radius: 5px;
+    border: var(--border-regular);
+    border-radius: var(--border-radius-regular);
 
-    background-color: #1a1a1a;
+    background-color: var(--color-background-object);
 
-    transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+    transition: var(--transition);
   }
 
   .floating:hover {
-    box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+    box-shadow: var(--shadow);
     transform: scale(1.01);
   }
 </style>
