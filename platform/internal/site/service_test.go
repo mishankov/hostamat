@@ -198,6 +198,17 @@ func (m *mockRepository) GetList(ctx context.Context) ([]*site.Site, error) {
 	return sites, nil
 }
 
+func (m *mockRepository) Update(ctx context.Context, site *site.Site) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if _, exists := m.sites[site.Id]; !exists {
+		return errors.New("not found")
+	}
+	m.sites[site.Id] = site
+	return nil
+}
+
 type errorProneMockRepository struct {
 	mockRepository
 	shouldError bool

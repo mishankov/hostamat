@@ -13,6 +13,7 @@ type repository interface {
 	GetByDomain(ctx context.Context, domain string) (*Site, error)
 	GetList(ctx context.Context) ([]*Site, error)
 	Create(ctx context.Context, site *Site) error
+	Update(ctx context.Context, site *Site) error
 }
 
 type subdomainService interface {
@@ -64,4 +65,15 @@ func (s *Service) GetByDomain(ctx context.Context, domain string) (*Site, error)
 
 func (s *Service) GetList(ctx context.Context) ([]*Site, error) {
 	return s.repository.GetList(ctx)
+}
+
+func (s *Service) UpdateVersion(ctx context.Context, id string) error {
+	site, err := s.repository.Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	site.Version++
+	site.UpdatedAt = time.Now()
+	return s.repository.Update(ctx, site)
 }

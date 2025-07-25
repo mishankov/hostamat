@@ -26,7 +26,9 @@ func (r *Repository) Migrate() error {
 			id VARCHAR(255) PRIMARY KEY,
 			subdomain VARCHAR(255) NOT NULL,
 			domain VARCHAR(255) NOT NULL,
-			created_at TIMESTAMP NOT NULL
+			created_at TIMESTAMP NOT NULL,
+			updated_at TIMESTAMP NOT NULL,
+			version INT NOT NULL
 		)
 	`
 	_, err := r.db.Exec(query)
@@ -35,8 +37,8 @@ func (r *Repository) Migrate() error {
 
 func (r *Repository) Create(ctx context.Context, site *Site) error {
 	query := `
-		INSERT INTO ` + tableName + ` (id, subdomain, domain, created_at)
-		VALUES (:id, :subdomain, :domain, :created_at)
+		INSERT INTO ` + tableName + ` (id, subdomain, domain, created_at, updated_at, version)
+		VALUES (:id, :subdomain, :domain, :created_at, :updated_at, :version)
 	`
 	_, err := r.db.NamedExecContext(ctx, query, site)
 	return err
@@ -67,4 +69,14 @@ func (r *Repository) GetList(ctx context.Context) ([]*Site, error) {
 		return nil, err
 	}
 	return sites, nil
+}
+
+func (r *Repository) Update(ctx context.Context, site *Site) error {
+	query := `
+		UPDATE ` + tableName + `
+		SET subdomain = :subdomain, domain = :domain, updated_at = :updated_at, version = :version
+		WHERE id = :id
+	`
+	_, err := r.db.NamedExecContext(ctx, query, site)
+	return err
 }

@@ -5,9 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"hostamat/internal/site"
+
 	_ "github.com/glebarez/go-sqlite"
 	"github.com/jmoiron/sqlx"
-	"hostamat/internal/site"
 )
 
 func TestMigrate(t *testing.T) {
@@ -27,7 +28,7 @@ func TestMigrate(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		expectedColumns := []string{"id", "subdomain", "domain", "created_at"}
+		expectedColumns := []string{"id", "subdomain", "domain", "created_at", "updated_at", "version"}
 
 		if len(columns) != len(expectedColumns) {
 			t.Fatalf("Expected %d columns, got %d", len(expectedColumns), len(columns))
