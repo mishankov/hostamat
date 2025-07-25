@@ -6,6 +6,7 @@
 	import Modal from "./components/Modal.svelte";
 	import Button from "$lib/components/Button.svelte";
 	import FileUploader from "./components/FileUploader.svelte";
+	import IconButton from "./components/IconButton.svelte";
 
   let {
     site
@@ -18,7 +19,9 @@
 <div class="site-content">
   <div class="site-url-container">
     <a href="https://{site.url}" target="_blank" class="site-url">{site.url}</a> 
-    <Copy />
+    <IconButton title="Скопировать URL" onclick={()=>{}}>
+      <Copy />
+    </IconButton>
   </div>
   <p class="site-data">
     Дата последней загрузки: {site.date}
@@ -28,32 +31,32 @@
   </p>
 
   <div class="site-toolbar">
-    <div class="site-toolbar-action" title="Загрузить сайт">
-      <Upload onclick={() => uploadModal?.open()} />
-      <Modal bind:this={uploadModal} kind="primary">
-        <div class="upload-modal">
-          <h3>Загрузить файлы для {site.url}</h3>
-          <FileUploader multiple={true} />
-        </div>
-      </Modal>
-    </div>
+    <IconButton onclick={() => uploadModal?.open()} title="Загрузить сайт">
+      <Upload />
+    </IconButton>
+    <Modal bind:this={uploadModal} kind="primary">
+      <div class="upload-modal">
+        <h3>Загрузить файлы для {site.url}</h3>
+        <FileUploader multiple={true} />
+      </div>
+    </Modal>
 
-    <div class="site-toolbar-action" title="Скачать сайт">
+    <IconButton title="Скачать сайт" onclick={()=>{}}>
       <Download />
-    </div>  
+    </IconButton> 
 
-    <div class="site-toolbar-action" title="Удалить сайт">
-      <Trash onclick={() => deleteModal?.open()} />
-      <Modal bind:this={deleteModal} kind="danger">
-        <div class="delete-modal">
-          <p>Вы уверены, что хотите удалить сайт {site.url}?</p>
-          <form method="dialog">
-            <Button kind="primary">Отмена</Button>
-            <Button kind="danger">Удалить</Button>
-          </form>
-        </div>
-      </Modal>
-    </div> 
+    <IconButton title="Удалить сайт" onclick={() => deleteModal?.open()}>
+      <Trash />
+    </IconButton>
+  <Modal bind:this={deleteModal} kind="danger">
+    <div class="delete-modal">
+      <p>Вы уверены, что хотите удалить сайт {site.url}?</p>
+      <form method="dialog">
+        <Button kind="primary">Отмена</Button>
+          <Button kind="danger">Удалить</Button>
+        </form>
+      </div>
+    </Modal>
   </div>
 </div>
 
@@ -72,7 +75,7 @@
   .site-url-container {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 3px;
 
     padding-bottom: 10px;
   }
@@ -96,21 +99,6 @@
 
     display: flex;
     gap: 5px;
-  }
-
-  .site-toolbar-action {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 15px;
-    padding: 5px;
-
-    transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
-  }
-
-  .site-toolbar-action:hover {
-    background-color: #555;
   }
 
   .upload-modal {
