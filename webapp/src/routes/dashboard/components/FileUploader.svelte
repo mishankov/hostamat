@@ -3,6 +3,7 @@
 	import Upload from "phosphor-svelte/lib/Upload";
   import X from "phosphor-svelte/lib/X";
 	import Card from "./Card.svelte";
+	import IconButton from "./IconButton.svelte";
 
   interface Props {
     uploadUrl?: string;
@@ -233,7 +234,10 @@
                 <span class="file-name">{file.name}</span>
                 <span class="file-size">{formatFileSize(file.size)}</span>
               </div>
-              <X onclick={() => removeFile(index)}/>
+              
+              <IconButton onclick={() => removeFile(index)} title="Удалить">
+                <X />
+              </IconButton>
             </div>
           {/each}
         </div>
