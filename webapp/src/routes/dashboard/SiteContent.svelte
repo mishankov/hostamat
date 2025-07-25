@@ -19,7 +19,7 @@
 <div class="site-content">
   <div class="site-url-container">
     <a href="https://{site.url}" target="_blank" class="site-url">{site.url}</a> 
-    <IconButton title="Скопировать URL" onclick={()=>{}}>
+    <IconButton title="Скопировать URL" onclick={()=>{navigator.clipboard.writeText(`https://${site.url}`)}}>
       <Copy />
     </IconButton>
   </div>
@@ -48,15 +48,15 @@
     <IconButton title="Удалить сайт" onclick={() => deleteModal?.open()}>
       <Trash />
     </IconButton>
-  <Modal bind:this={deleteModal} kind="danger">
-    <div class="delete-modal">
-      <p>Вы уверены, что хотите удалить сайт {site.url}?</p>
-      <form method="dialog">
-        <Button kind="primary">Отмена</Button>
-          <Button kind="danger">Удалить</Button>
-        </form>
-      </div>
-    </Modal>
+    <Modal bind:this={deleteModal} kind="danger">
+      <div class="delete-modal">
+        <p>Вы уверены, что хотите удалить сайт {site.url}?</p>
+        <form method="dialog">
+          <Button kind="primary">Отмена</Button>
+            <Button kind="danger">Удалить</Button>
+          </form>
+        </div>
+      </Modal>
   </div>
 </div>
 
