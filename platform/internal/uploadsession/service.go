@@ -3,6 +3,7 @@ package uploadsession
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -10,7 +11,7 @@ import (
 type repository interface {
 	Create(ctx context.Context, session *UploadSession) error
 	Get(ctx context.Context, id string) (*UploadSession, error)
-	UpdateStatus(ctx context.Context, id string, status Status) error
+	Update(ctx context.Context, session *UploadSession) error
 }
 
 type Service struct {
@@ -52,5 +53,14 @@ func (s *Service) Close(ctx context.Context, id string) error {
 		return nil // already closed
 	}
 
-	return s.repo.UpdateStatus(ctx, id, StatusClosed)
+	// Create updated session with current timestamp
+	updatedSession := &UploadSession{
+		Id:        session.Id,
+		SiteId:    session.SiteId,
+		Status:    StatusClosed,
+		CreatedAt: session.CreatedAt,
+		UpdatedAt: time.Now(),
+	}
+
+	return s.repo.Update(ctx, updatedSession)
 }
