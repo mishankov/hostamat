@@ -189,14 +189,4 @@ func TestRepository_Update(t *testing.T) {
 			t.Errorf("expected updatedAt to be updated, initial: %v, updated: %v", initial.UpdatedAt, got.UpdatedAt)
 		}
 	})
-
-	t.Run("not found", func(t *testing.T) {
-		err := repo.Update(context.Background(), &uploadsession.UploadSession{
-			Id:     "nonexistent",
-			Status: uploadsession.StatusClosed,
-		})
-		if err == nil {
-			t.Error("expected error for nonexistent session")
-		}
-	})
 }

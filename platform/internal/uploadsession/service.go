@@ -53,14 +53,8 @@ func (s *Service) Close(ctx context.Context, id string) error {
 		return nil // already closed
 	}
 
-	// Create updated session with current timestamp
-	updatedSession := &UploadSession{
-		Id:        session.Id,
-		SiteId:    session.SiteId,
-		Status:    StatusClosed,
-		CreatedAt: session.CreatedAt,
-		UpdatedAt: time.Now(),
-	}
+	session.Status = StatusClosed
+	session.UpdatedAt = time.Now()
 
-	return s.repo.Update(ctx, updatedSession)
+	return s.repo.Update(ctx, session)
 }
