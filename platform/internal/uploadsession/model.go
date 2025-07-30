@@ -2,8 +2,6 @@ package uploadsession
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Status string
