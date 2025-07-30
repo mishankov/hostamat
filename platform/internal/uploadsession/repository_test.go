@@ -136,7 +136,7 @@ func TestRepository_Get(t *testing.T) {
 	})
 }
 
-func TestRepository_UpdateStatus(t *testing.T) {
+func TestRepository_Update(t *testing.T) {
 	db := testDB(t)
 	repo := uploadsession.NewRepository(db)
 	if err := repo.Migrate(); err != nil {
@@ -154,7 +154,7 @@ func TestRepository_UpdateStatus(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// Get initial timestamps
+		// Get initial session
 		initial, err := repo.Get(context.Background(), testSession.Id)
 		if err != nil {
 			t.Fatal(err)
@@ -163,25 +163,38 @@ func TestRepository_UpdateStatus(t *testing.T) {
 		// Wait briefly to ensure timestamp would change
 		time.Sleep(10 * time.Millisecond)
 
-		if err := repo.UpdateStatus(context.Background(), testSession.Id, uploadsession.StatusClosed); err != nil {
-			t.Fatalf("UpdateStatus() error = %v", err)
+		// Create updated session
+		updatedSession := &uploadsession.UploadSession{
+			Id:        initial.Id,
+			SiteId:    initial.SiteId,
+			Status:    uploadsession.StatusClosed,
+			CreatedAt: initial.CreatedAt,
+			UpdatedAt: time.Now(),
 		}
 
-		updated, err := repo.Get(context.Background(), testSession.Id)
+		if err := repo.Update(context.Background(), updatedSession); err != nil {
+			t.Fatalf("Update() error = %v", err)
+		}
+
+		// Verify changes
+		got, err := repo.Get(context.Background(), testSession.Id)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if updated.Status != uploadsession.StatusClosed {
-			t.Errorf("expected status %q, got %q", uploadsession.StatusClosed, updated.Status)
+		if got.Status != uploadsession.StatusClosed {
+			t.Errorf("expected status %q, got %q", uploadsession.StatusClosed, got.Status)
 		}
-		if !updated.UpdatedAt.After(initial.UpdatedAt) {
-			t.Errorf("expected updatedAt to be updated, initial: %v, updated: %v", initial.UpdatedAt, updated.UpdatedAt)
+		if !got.UpdatedAt.After(initial.UpdatedAt) {
+			t.Errorf("expected updatedAt to be updated, initial: %v, updated: %v", initial.UpdatedAt, got.UpdatedAt)
 		}
 	})
 
 	t.Run("not found", func(t *testing.T) {
-		err := repo.UpdateStatus(context.Background(), "nonexistent", uploadsession.StatusClosed)
+		err := repo.Update(context.Background(), &uploadsession.UploadSession{
+			Id:     "nonexistent",
+			Status: uploadsession.StatusClosed,
+		})
 		if err == nil {
 			t.Error("expected error for nonexistent session")
 		}
