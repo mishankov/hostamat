@@ -75,10 +75,12 @@ func main() {
 	fileService := file.NewService(fileRepo, siteService, conf.S3.Bucket)
 	uploadFileHandler := file.NewUploadHandler(fileService)
 	serveFileHandler := file.NewServeHandler(fileService)
+	deleteHandler := file.NewDeleteHandler(fileService)
 
 	// Handle groups
 	filesAPI := httpserver.NewHandlerGroup()
-	filesAPI.Handle("/upload", uploadFileHandler)
+	filesAPI.Handle("POST /", uploadFileHandler)
+	filesAPI.Handle("DELETE /", deleteHandler)
 
 	// Services
 	httpServer := httpserver.New(logger, conf.Port, 10*time.Second)
