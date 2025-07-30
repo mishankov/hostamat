@@ -56,10 +56,10 @@ func (r *Repository) Get(ctx context.Context, id string) (*UploadSession, error)
 	return &session, nil
 }
 
-func (r *Repository) UpdateStatus(ctx context.Context, id string, status Status) error {
-	const query = `UPDATE ` + tableName + ` SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`
+func (r *Repository) Update(ctx context.Context, session *UploadSession) error {
+	query := `UPDATE ` + tableName + ` SET status = :status, updated_at = :updated_at WHERE id = :id`
 
-	_, err := r.db.ExecContext(ctx, query, status, id)
+	_, err := r.db.NamedExecContext(ctx, query, session)
 	if err != nil {
 		return fmt.Errorf("failed to update upload session status: %w", err)
 	}
