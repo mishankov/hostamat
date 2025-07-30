@@ -368,7 +368,7 @@
   }
   
   .file-size {
-    color: #555;
+    color: #aaa;
   }
   
   .progress-container {
