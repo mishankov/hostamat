@@ -27,13 +27,13 @@ func (h *DeleteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	folder := r.URL.Query().Get("folder")
-	if folder == "" {
-		http.Error(w, "Missing folder parameter", http.StatusBadRequest)
+	siteId := r.Header.Get("H-Site-Id")
+	if siteId == "" {
+		http.Error(w, "Missing H-Site-Id header", http.StatusBadRequest)
 		return
 	}
 
-	if err := h.service.DeleteFromFolder(ctx, folder); err != nil {
+	if err := h.service.DeleteFromFolder(ctx, siteId); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

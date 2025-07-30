@@ -22,14 +22,14 @@ func TestDeleteHandler_ServeHTTP(t *testing.T) {
 	tests := []struct {
 		name         string
 		method       string
-		folderParam  string
+		siteIdHeader string
 		mockError    error
 		expectedCode int
 	}{
 		{
 			name:         "successful delete",
 			method:       http.MethodDelete,
-			folderParam:  "test-folder",
+			siteIdHeader: "test-site-id",
 			expectedCode: http.StatusNoContent,
 		},
 		{
@@ -38,14 +38,14 @@ func TestDeleteHandler_ServeHTTP(t *testing.T) {
 			expectedCode: http.StatusMethodNotAllowed,
 		},
 		{
-			name:         "missing folder param",
+			name:         "missing H-Site-Id header",
 			method:       http.MethodDelete,
 			expectedCode: http.StatusBadRequest,
 		},
 		{
 			name:         "delete error",
 			method:       http.MethodDelete,
-			folderParam:  "test-folder",
+			siteIdHeader: "test-site-id",
 			mockError:    errors.New("delete failed"),
 			expectedCode: http.StatusInternalServerError,
 		},
@@ -63,7 +63,10 @@ func TestDeleteHandler_ServeHTTP(t *testing.T) {
 			}
 
 			handler := file.NewDeleteHandler(service)
-			req := httptest.NewRequest(tt.method, "/delete?folder="+tt.folderParam, nil)
+			req := httptest.NewRequest(tt.method, "/delete", nil)
+			if tt.siteIdHeader != "" {
+				req.Header.Set("H-Site-Id", tt.siteIdHeader)
+			}
 			w := httptest.NewRecorder()
 
 			handler.ServeHTTP(w, req)
