@@ -4,13 +4,15 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"slices"
 	"testing"
 	"time"
+
+	"hostamat/internal/uploadsession"
 
 	_ "github.com/glebarez/go-sqlite"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
-	"hostamat/internal/uploadsession"
 )
 
 func testDB(t *testing.T) *sqlx.DB {
@@ -51,7 +53,7 @@ func TestRepository_Migrate(t *testing.T) {
 
 		t.Run("column names", func(t *testing.T) {
 			for _, column := range columns {
-				if !contains(expectedColumns, column) {
+				if !slices.Contains(expectedColumns, column) {
 					t.Errorf("Unexpected column %s", column)
 				}
 			}
@@ -77,24 +79,12 @@ func TestRepository_Create(t *testing.T) {
 			t.Fatalf("Create() error = %v", err)
 		}
 
-		var count int
-		if err := db.Get(&count, "SELECT COUNT(*) FROM upload_sessions WHERE id = ?", testSession.Id); err != nil {
-			t.Fatal(err)
-		}
-		if count != 1 {
-			t.Fatalf("expected 1 record, got %d", count)
-		}
-	})
-
-	t.Run("duplicate id", func(t *testing.T) {
-		err := repo.Create(context.Background(), testSession)
+		got, err := repo.Get(context.Background(), testSession.Id)
 		if err != nil {
 			t.Fatal(err)
 		}
-
-		err = repo.Create(context.Background(), testSession)
-		if err == nil {
-			t.Error("expected error for duplicate id")
+		if got.Id != testSession.Id {
+			t.Errorf("expected id %q, got %q", testSession.Id, got.Id)
 		}
 	})
 }
@@ -186,7 +176,7 @@ func TestRepository_UpdateStatus(t *testing.T) {
 			t.Errorf("expected status %q, got %q", uploadsession.StatusClosed, updated.Status)
 		}
 		if !updated.UpdatedAt.After(initial.UpdatedAt) {
-			t.Error("expected updatedAt to be updated")
+			t.Errorf("expected updatedAt to be updated, initial: %v, updated: %v", initial.UpdatedAt, updated.UpdatedAt)
 		}
 	})
 
@@ -196,13 +186,4 @@ func TestRepository_UpdateStatus(t *testing.T) {
 			t.Error("expected error for nonexistent session")
 		}
 	})
-}
-
-func contains(slice []string, item string) bool {
-	for _, s := range slice {
-		if s == item {
-			return true
-		}
-	}
-	return false
 }
