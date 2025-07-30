@@ -15,6 +15,7 @@ type repository interface {
 	ObjectExists(ctx context.Context, bucketName, fileName string) (bool, error)
 	GetObject(ctx context.Context, bucketName, fileName string) (io.Reader, error)
 	PutObject(ctx context.Context, bucketName, fileName string, file io.Reader, size int64) error
+	DeleteFromFolder(ctx context.Context, bucketName, folderName string) error
 }
 
 type siteService interface {
@@ -66,6 +67,10 @@ func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reade
 	}
 
 	return uploaded, skipped, nil
+}
+
+func (s *Service) DeleteFromFolder(ctx context.Context, folder string) error {
+	return s.repo.DeleteFromFolder(ctx, s.bucketName, folder)
 }
 
 func (s *Service) uploadSingleFile(ctx context.Context, folder, filename string, file io.Reader, size int64) error {

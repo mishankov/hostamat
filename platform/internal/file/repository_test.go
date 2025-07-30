@@ -69,6 +69,7 @@ type mockS3 struct {
 	objectExistsCallCount int
 	getObjectCallCount    int
 	putObjectCallCount    int
+	cleanFolderCallCount  int
 }
 
 func (m *mockS3) MakeBucket(ctx context.Context, bucketName string) error {
@@ -88,5 +89,10 @@ func (m *mockS3) GetObject(ctx context.Context, bucketName, fileName string) (io
 
 func (m *mockS3) PutObject(ctx context.Context, bucketName, fileName string, file io.Reader, size int64) error {
 	m.putObjectCallCount++
+	return nil
+}
+
+func (m *mockS3) CleanFolder(ctx context.Context, bucketName, folderName string) error {
+	m.cleanFolderCallCount++
 	return nil
 }

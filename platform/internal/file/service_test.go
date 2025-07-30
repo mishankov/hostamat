@@ -160,6 +160,11 @@ func (m *mockRepo) PutObject(ctx context.Context, bucketName, fileName string, f
 	return nil
 }
 
+func (m *mockRepo) DeleteFromFolder(ctx context.Context, bucketName, folderName string) error {
+	delete(m.storage[bucketName], folderName)
+	return nil
+}
+
 type mockSiteService struct {
 	sites map[string]*site.Site
 }

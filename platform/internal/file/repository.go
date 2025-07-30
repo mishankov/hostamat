@@ -12,6 +12,7 @@ type s3 interface {
 	ObjectExists(ctx context.Context, bucketName, fileName string) (bool, error)
 	GetObject(ctx context.Context, bucketName, fileName string) (io.Reader, error)
 	PutObject(ctx context.Context, bucketName, fileName string, file io.Reader, size int64) error
+	CleanFolder(ctx context.Context, bucketName, folderName string) error
 }
 
 type Repository struct {
@@ -50,4 +51,8 @@ func (r *Repository) GetObject(ctx context.Context, bucketName, fileName string)
 
 func (r *Repository) PutObject(ctx context.Context, bucketName, fileName string, file io.Reader, size int64) error {
 	return r.s3Client.PutObject(ctx, bucketName, fileName, file, size)
+}
+
+func (r *Repository) DeleteFromFolder(ctx context.Context, bucketName, folderName string) error {
+	return r.s3Client.CleanFolder(ctx, bucketName, folderName)
 }

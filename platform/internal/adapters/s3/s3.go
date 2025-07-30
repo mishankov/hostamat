@@ -58,6 +58,27 @@ func (s3 *S3) CleanBucket(ctx context.Context, bucketName string) error {
 	return nil
 }
 
+func (s3 *S3) CleanFolder(ctx context.Context, bucketName, folderName string) error {
+	// List all objects in the folder
+	objectsCh := s3.client.ListObjects(ctx, bucketName, minio.ListObjectsOptions{
+		Prefix:    folderName,
+		Recursive: true,
+	})
+
+	// Remove all objects
+	for obj := range objectsCh {
+		if obj.Err != nil {
+			return fmt.Errorf("error listing objects: %w", obj.Err)
+		}
+		err := s3.client.RemoveObject(ctx, bucketName, obj.Key, minio.RemoveObjectOptions{})
+		if err != nil {
+			return fmt.Errorf("error removing object %s: %w", obj.Key, err)
+		}
+	}
+
+	return nil
+}
+
 func (s3 *S3) ObjectExists(ctx context.Context, bucketName, fileName string) (bool, error) {
 	_, err := s3.client.StatObject(ctx, bucketName, fileName, minio.StatObjectOptions{})
 	if err != nil {
