@@ -85,7 +85,7 @@ func main() {
 	// Services
 	httpServer := httpserver.New(logger, conf.Port, 10*time.Second)
 
-	httpServer.HandleGroup("/files/api", filesAPI)
+	httpServer.Handle("/files/api", filesAPI)
 	httpServer.Handle("/sites/api", siteHandlerGroup)
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
