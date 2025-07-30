@@ -114,7 +114,6 @@ func (a *Application) Run(ctx context.Context) error {
 
 			log.InfoContext(ctx, "starting service", "service", serviceName)
 			a.health.StartService(serviceName)
-			log.DebugContext(ctx, "health", "health", a.health)
 
 			err := service.Run(serviceCtx)
 			if err != nil {
