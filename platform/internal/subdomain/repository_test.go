@@ -74,6 +74,7 @@ func TestRepository_Create(t *testing.T) {
 		}
 
 		var count int
+		// TODO: fix to use repository method to get subdomain
 		if err := db.Get(&count, "SELECT COUNT(*) FROM subdomains WHERE id = ?", "test-id"); err != nil {
 			t.Fatal(err)
 		}
