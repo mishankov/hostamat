@@ -18,13 +18,13 @@
 
 <div class="site-content">
   <div class="site-url-container">
-    <a href="https://{site.url}" target="_blank" class="site-url">{site.url}</a> 
-    <IconButton title="Скопировать URL" onclick={()=>{navigator.clipboard.writeText(`https://${site.url}`)}}>
+    <a href="https://{site.domain}" target="_blank" class="site-url">{site.domain}</a> 
+    <IconButton title="Скопировать URL" onclick={()=>{navigator.clipboard.writeText(`https://${site.domain}`)}}>
       <Copy />
     </IconButton>
   </div>
   <p class="site-data">
-    Дата последней загрузки: {site.date}
+    Дата последней загрузки: {site.updatedAt}
   </p>
   <p class="site-data">
     Версия: {site.version}

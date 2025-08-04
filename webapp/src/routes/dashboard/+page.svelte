@@ -5,19 +5,9 @@
 	import SiteContent from "./SiteContent.svelte";
 	import Card from "./components/Card.svelte";
 
-  let sites = $state([
-    {
-      id: "site-1",
-      url: "abc-xy-z.hostamat.ru",
-      date: "2025-01-01",
-      version: "v22"
-    }, {
-      id: "site-2",
-      url: "xyz-ab-c.hostamat.ru",
-      date: "2025-02-01",
-      version: "v3"
-    }
-  ])
+  import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
 </script>
 
 <div class="dashboard">
@@ -28,25 +18,33 @@
   </div>
  
   <div class="site-list">
-    {#each sites as site (site.id)}
-      <Card floating>
-        <SiteContent site={site} />
-      </Card>
-    {/each}
+    {#await data.sites}
+      <p>Loading...</p>
+    {:then sites}
+      {#each sites as site (site.id)}
+        <Card floating>
+          <SiteContent site={site} />
+        </Card>
+      {/each}
+    
 
     <Card floating>
       <!-- TODO: should prob fix  -->
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <div class="add-site" role="button" tabindex="0" onclick={() => sites.push({
         id: `site-${sites.length + 1}`,
-        url: "new-site.hostamat.ru",
-        date: "2025-03-01",
+        domain: "new-site.hostamat.ru",
+        updatedAt: "2025-03-01",
         version: "v1"
       })}>
         <p class="add-site-icon"><Plus /></p>
         <p class="add-site-text">Добавить сайт</p>
       </div>
     </Card>
+
+    {:catch error}
+      <p>Error loading sites: {error.message}</p>
+    {/await}
   </div>
 </div>
 
