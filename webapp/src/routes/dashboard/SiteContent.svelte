@@ -7,10 +7,15 @@
 	import Button from "$lib/components/Button.svelte";
 	import FileUploader from "./components/FileUploader.svelte";
 	import IconButton from "./components/IconButton.svelte";
+  import { type Site } from './types';
+
+  interface Props {
+    site: Site
+  }
 
   let {
     site
-  } = $props()
+  }: Props = $props()
 
   let uploadModal = $state<Modal>()
   let deleteModal = $state<Modal>()
@@ -36,7 +41,7 @@
     </IconButton>
     <Modal bind:this={uploadModal} kind="primary">
       <div class="upload-modal">
-        <h3>Загрузить файлы для {site.url}</h3>
+        <h3>Загрузить файлы для {site.domain}</h3>
         <FileUploader multiple={true} />
       </div>
     </Modal>
@@ -50,7 +55,7 @@
     </IconButton>
     <Modal bind:this={deleteModal} kind="danger">
       <div class="delete-modal">
-        <p>Вы уверены, что хотите удалить сайт {site.url}?</p>
+        <p>Вы уверены, что хотите удалить сайт {site.domain}?</p>
         <form method="dialog">
           <Button kind="primary">Отмена</Button>
             <Button kind="danger">Удалить</Button>
