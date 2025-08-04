@@ -7,7 +7,14 @@
 
   import type { PageProps } from './$types';
 
+  import { type Site } from './types';
+
 	let { data }: PageProps = $props();
+  let sites = $state<Site[]>([]);
+
+  (async () => {
+    sites = await data.sites;
+  })()
 </script>
 
 <div class="dashboard">
@@ -20,7 +27,7 @@
   <div class="site-list">
     {#await data.sites}
       <p>Loading...</p>
-    {:then sites}
+    {:then _}
       {#each sites as site (site.id)}
         <Card floating>
           <SiteContent site={site} />

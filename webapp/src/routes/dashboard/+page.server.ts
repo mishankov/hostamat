@@ -1,12 +1,5 @@
 import type { PageServerLoad } from './$types';
-
-interface Site {
-  id: string;
-  subdomain: string;
-  domain: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { type Site } from './types';
 
 export const load = (async ({ fetch }) => {
   const response = await fetch("/api/listSites");
