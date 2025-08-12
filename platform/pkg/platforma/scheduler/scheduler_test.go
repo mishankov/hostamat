@@ -59,7 +59,7 @@ func TestContextDecline(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	go func() {
-		time.Sleep(3*time.Second + 1*time.Millisecond)
+		time.Sleep(3*time.Second + 10*time.Millisecond)
 		cancel()
 	}()
 

@@ -61,6 +61,10 @@ func (a *Application) OnStart(task Runner, config StartupTaskConfig) {
 	a.startupTasks = append(a.startupTasks, startupTask{task, config})
 }
 
+func (a *Application) OnStartFunc(task RunnerFunc, config StartupTaskConfig) {
+	a.startupTasks = append(a.startupTasks, startupTask{task, config})
+}
+
 // Register adds a named service to the application.
 func (a *Application) Register(serviceName string, service Runner) {
 

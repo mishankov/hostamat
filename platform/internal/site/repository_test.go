@@ -14,7 +14,7 @@ import (
 func TestMigrate(t *testing.T) {
 	db := testDB()
 	repo := site.NewRepository(db)
-	repo.Migrate()
+	repo.Migrate(context.Background())
 
 	t.Run("table exists", func(t *testing.T) {
 		rows, err := db.Query("SELECT * FROM sites")
@@ -45,7 +45,7 @@ func TestMigrate(t *testing.T) {
 func TestCreate(t *testing.T) {
 	db := testDB()
 	repo := site.NewRepository(db)
-	repo.Migrate()
+	repo.Migrate(context.Background())
 
 	t.Run("successful creation", func(t *testing.T) {
 		testSite := &site.Site{
@@ -94,7 +94,7 @@ func TestCreate(t *testing.T) {
 func TestGet(t *testing.T) {
 	db := testDB()
 	repo := site.NewRepository(db)
-	repo.Migrate()
+	repo.Migrate(context.Background())
 
 	t.Run("non-existent site", func(t *testing.T) {
 		_, err := repo.Get(context.Background(), "nonexistent")
@@ -137,7 +137,7 @@ func TestGet(t *testing.T) {
 func TestGetList(t *testing.T) {
 	db := testDB()
 	repo := site.NewRepository(db)
-	repo.Migrate()
+	repo.Migrate(context.Background())
 
 	// Create test sites
 	testSites := []*site.Site{

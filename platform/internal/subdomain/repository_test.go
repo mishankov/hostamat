@@ -24,7 +24,7 @@ func TestRepository_Migrate(t *testing.T) {
 	db := testDB(t)
 	repo := subdomain.NewRepository(db)
 
-	if err := repo.Migrate(); err != nil {
+	if err := repo.Migrate(context.Background()); err != nil {
 		t.Fatalf("Migrate() error = %v", err)
 	}
 
@@ -61,7 +61,7 @@ func TestRepository_Migrate(t *testing.T) {
 func TestRepository_Create(t *testing.T) {
 	db := testDB(t)
 	repo := subdomain.NewRepository(db)
-	if err := repo.Migrate(); err != nil {
+	if err := repo.Migrate(context.Background()); err != nil {
 		t.Fatal(err)
 	}
 
@@ -123,7 +123,7 @@ func TestRepository_Create(t *testing.T) {
 func TestRepository_Get(t *testing.T) {
 	db := testDB(t)
 	repo := subdomain.NewRepository(db)
-	if err := repo.Migrate(); err != nil {
+	if err := repo.Migrate(context.Background()); err != nil {
 		t.Fatal(err)
 	}
 

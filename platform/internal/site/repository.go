@@ -20,7 +20,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 	}
 }
 
-func (r *Repository) Migrate() error {
+func (r *Repository) Migrate(ctx context.Context) error {
 	query := `
 		CREATE TABLE IF NOT EXISTS ` + tableName + ` (
 			id VARCHAR(255) PRIMARY KEY,
@@ -31,7 +31,7 @@ func (r *Repository) Migrate() error {
 			version INT NOT NULL
 		)
 	`
-	_, err := r.db.Exec(query)
+	_, err := r.db.ExecContext(ctx, query)
 	return err
 }
 

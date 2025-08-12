@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/s3"
@@ -102,27 +101,11 @@ func main() {
 	httpServer.Handle("/health", healthcheckHandler)
 
 	// Migrate DB
-	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
-		var err error
-
-		// TODO: Migrates shiuld accept ctx
-		err = subdomainRepo.Migrate()
-		if err != nil {
-			return fmt.Errorf("failed to migrate subdomain repo: %w", err)
-		}
-
-		err = siteRepo.Migrate()
-		if err != nil {
-			return fmt.Errorf("failed to migrate site repo: %w", err)
-		}
-
-		err = fileRepo.Migrate(ctx, conf.S3.Bucket)
-		if err != nil {
-			return fmt.Errorf("failed to migrate file repo: %w", err)
-		}
-
-		return nil
-	}), application.StartupTaskConfig{Name: "migrateRepos", AbortOnError: true})
+	app.OnStartFunc(subdomainRepo.Migrate, application.StartupTaskConfig{Name: "migrateSubdomain", AbortOnError: true})
+	app.OnStartFunc(siteRepo.Migrate, application.StartupTaskConfig{Name: "migrateSite", AbortOnError: true})
+	app.OnStartFunc(func(ctx context.Context) error {
+		return fileRepo.Migrate(ctx, conf.S3.Bucket)
+	}, application.StartupTaskConfig{Name: "migrateFile", AbortOnError: true})
 
 	// Ensure that caddy has desired configuration
 	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
