@@ -1,0 +1,32 @@
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  # Infra
+
+  test-infra:
+    dir: infra/test
+    cmds:
+      - docker compose up proxymini caddy minio -d
+  
+  # Backend
+
+  backend:
+    deps: [test-infra]
+    dir: infra/test
+    cmds:
+      - docker compose up hostamat
+
+  test-backend:
+    dir: platform
+    cmds:
+      - go test ./... -v -cover
+
+  # Webapps
+
+  webapp:
+    dir: webapp
+    cmds:
+      - npm run dev
