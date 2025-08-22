@@ -6,10 +6,15 @@ vars:
 tasks:
   # Infra
 
+  update-test-infra:
+    dir: infra/test
+    cmds:
+      - docker compose pull
+
   test-infra:
     dir: infra/test
     cmds:
-      - docker compose up proxymini caddy minio -d
+      - docker compose up proxymini caddy minio -d --remove-orphans
   
   # Backend
 
