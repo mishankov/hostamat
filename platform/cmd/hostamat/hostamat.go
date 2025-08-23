@@ -5,18 +5,19 @@ import (
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/s3"
-
-	"hostamat/internal/handlers"
-	"hostamat/internal/handlers/servefilehandler"
-	"hostamat/internal/handlers/uploadfilehandler"
+	"hostamat/internal/file"
+	"hostamat/internal/infra/db"
 	"hostamat/internal/middlewares"
 	"hostamat/internal/schedulers/cleanup"
+	"hostamat/internal/site"
+	"hostamat/internal/subdomain"
 	"hostamat/pkg/platforma/application"
+	"hostamat/pkg/platforma/batteries/handlers"
+	pm "hostamat/pkg/platforma/batteries/middlewares"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
 	"hostamat/pkg/platforma/log"
 	"hostamat/pkg/platforma/scheduler"
-	"net/http"
 	"os"
 	"time"
 )
@@ -29,11 +30,13 @@ func main() {
 	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, nil)
 	httpClient := httpclient.New(logger)
 
+	logger.DebugContext(ctx, "config", "config", conf)
+
 	// Setting default logger for platforma pkg
 	log.SetDefault(logger)
 
 	// API adapters
-	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL)
+	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL, "srv0") // Default server name
 
 	// S3 client
 	s3Client, err := s3.New(conf.S3.BaseURL, conf.S3.Login, conf.S3.Password, false)
@@ -42,26 +45,54 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Database
+	db, err := db.CreateDB("hostamat.db")
+	if err != nil {
+		logger.Error("failed to create database", "error", err)
+		os.Exit(1)
+	}
+
 	// Middlewares
+	traceId := pm.NewTraceId(nil, "Hostamat-Trace-Id")
 	requestLogger := middlewares.NewRequestLogger(logger)
 
-	// Handlers
-	healthcheckHandler := handlers.NewHealthcheckHandler()
-	uploadFileHandler := uploadfilehandler.New(logger, caddyAPI, s3Client, conf.S3.Bucket, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
-	serveFileHandler := servefilehandler.New(logger, s3Client, conf.S3.Bucket)
+	// Domain service setup
+	subdomainRepo := subdomain.NewRepository(db)
+	subdomainService := subdomain.NewService(subdomainRepo, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
+
+	// Site service setup
+	siteRepo := site.NewRepository(db)
+	siteService := site.NewService(siteRepo, subdomainService)
+	siteCreateHandle := site.NewCreateSiteHandler(siteService)
+	siteListHandler := site.NewListSiteHandler(siteService)
+	siteDeleteHandler := site.NewDeleteSiteHandler(siteService)
+
+	siteHandlerGroup := httpserver.NewHandlerGroup()
+	siteHandlerGroup.Handle("POST /", siteCreateHandle)
+	siteHandlerGroup.Handle("GET /", siteListHandler)
+	siteHandlerGroup.Handle("DELETE /", siteDeleteHandler)
+
+	// File service setup
+	fileRepo := file.NewRepository(s3Client)
+	fileService := file.NewService(fileRepo, siteService, conf.S3.Bucket)
+	serveFileHandler := file.NewServeHandler(fileService)
+	uploadFileHandler := file.NewUploadHandler(fileService)
+	deleteHandler := file.NewDeleteHandler(fileService)
 
 	// Handle groups
-	filesAPI := httpserver.NewHandleGroup()
-	filesAPI.Handle("/upload", uploadFileHandler)
+	filesAPI := httpserver.NewHandlerGroup()
+	filesAPI.Handle("POST /", uploadFileHandler)
+	filesAPI.Handle("DELETE /", deleteHandler)
 
 	// Services
-	httpServer := httpserver.New(logger, conf.Port, 10*time.Second, map[string]http.Handler{
-		"/healthcheck":      healthcheckHandler,
-		"/files/api":        filesAPI,
-		conf.FileServerPath: serveFileHandler,
-	})
+	httpServer := httpserver.New(logger, conf.Port, 10*time.Second)
 
-	httpServer.Use(requestLogger)
+	httpServer.Handle("/files/api", filesAPI)
+	httpServer.Handle("/sites/api", siteHandlerGroup)
+	// HandleGroup used here because client would request files by additional path
+	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
+
+	httpServer.Use(traceId, requestLogger)
 
 	// Cleanup service to remove files from S3 and subdomains from Caddy
 	cleanupService := cleanup.New(s3Client, caddyAPI, conf.S3.Bucket, conf.Caddy.ShorthandId)
@@ -69,11 +100,15 @@ func main() {
 
 	// Application
 	app := application.New()
+	healthcheckHandler := handlers.NewHealthCheckHandler(app)
+	httpServer.Handle("/health", healthcheckHandler)
 
-	// Ensure that bucket exists before starting application
-	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
-		return s3Client.MakeBucket(ctx, conf.S3.Bucket)
-	}), application.StartupTaskConfig{Name: "createBucket", AbortOnError: true})
+	// Migrate DB
+	app.OnStartFunc(subdomainRepo.Migrate, application.StartupTaskConfig{Name: "migrateSubdomain", AbortOnError: true})
+	app.OnStartFunc(siteRepo.Migrate, application.StartupTaskConfig{Name: "migrateSite", AbortOnError: true})
+	app.OnStartFunc(func(ctx context.Context) error {
+		return fileRepo.Migrate(ctx, conf.S3.Bucket)
+	}, application.StartupTaskConfig{Name: "migrateFile", AbortOnError: true})
 
 	// Ensure that caddy has desired configuration
 	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
@@ -82,9 +117,7 @@ func main() {
 			return nil
 		}
 
-		err = caddyAPI.CreateBaseConfig(ctx, conf.FileServerHost, conf.FileServerPath, conf.Caddy.ShorthandId)
-
-		return nil
+		return caddyAPI.CreateBaseConfig(ctx, conf.FileServerHost, conf.FileServerPath, conf.Caddy.ShorthandId)
 	}), application.StartupTaskConfig{Name: "prepareCaddy", AbortOnError: true})
 
 	app.Register("http", httpServer)

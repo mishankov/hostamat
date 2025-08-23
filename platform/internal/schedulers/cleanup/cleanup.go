@@ -28,5 +28,7 @@ func (c *Cleanup) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to delete Caddy subdomains: %w", err)
 	}
 
+	// TODO: clear DB
+
 	return nil
 }

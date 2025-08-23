@@ -1,15 +1,10 @@
 [[proxy]]
-prefix = "/files/api/upload"
-target = "http://host.docker.internal:1001/files/api/upload"
-
-[[proxy]]
-prefix = "/timeweb"
-target = "https://api.timeweb.cloud/api/v1"
+prefix = "/backend"
+target = "http://hostamat:1001"
 
 [[proxy]]
 prefix = "/caddy"
-target = "http://host.docker.internal:2019"
-
+target = "http://caddy:2019"
 
 [[proxy]]
 prefix = "/minio"

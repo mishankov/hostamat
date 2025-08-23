@@ -23,21 +23,30 @@ type HttpServer struct {
 	middlewares     []Middleware
 }
 
-func New(logger logger, port string, shutdownTimeout time.Duration, handleGroups map[string]http.Handler) *HttpServer {
-	mux := http.NewServeMux()
-	for pattern, handleGroup := range handleGroups {
-		mux.Handle(pattern+"/", http.StripPrefix(pattern, handleGroup))
+func New(logger logger, port string, shutdownTimeout time.Duration) *HttpServer {
+	return &HttpServer{logger: logger, mux: http.NewServeMux(), port: port, shutdownTimeout: shutdownTimeout}
+}
+
+func (s *HttpServer) Handle(pattern string, handler http.Handler) {
+	s.mux.Handle(pattern, handler)
+}
+
+func (s *HttpServer) HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request)) {
+	s.mux.HandleFunc(pattern, http.HandlerFunc(handler))
+}
+
+func (s *HttpServer) HandleGroup(pattern string, handler http.Handler) {
+	s.mux.Handle(pattern+"/", http.StripPrefix(pattern, handler))
+}
+
+func (s *HttpServer) Use(middlewares ...Middleware) {
+	s.middlewares = append(s.middlewares, middlewares...)
+}
+
+func (s *HttpServer) UseFunc(middlewareFuncs ...func(http.Handler) http.Handler) {
+	for _, middlewareFunc := range middlewareFuncs {
+		s.middlewares = append(s.middlewares, MiddlewareFunc(middlewareFunc))
 	}
-
-	return &HttpServer{logger: logger, mux: mux, port: port, shutdownTimeout: shutdownTimeout}
-}
-
-func (s *HttpServer) Use(middleware Middleware) {
-	s.middlewares = append(s.middlewares, middleware)
-}
-
-func (s *HttpServer) UseFunc(middlewareFunc func(http.Handler) http.Handler) {
-	s.middlewares = append(s.middlewares, MiddlewareFunc(middlewareFunc))
 }
 
 func (s *HttpServer) Run(ctx context.Context) error {
@@ -69,4 +78,10 @@ func (s *HttpServer) Run(ctx context.Context) error {
 	s.logger.InfoContext(ctx, "graceful shutdown complete.")
 
 	return nil
+}
+
+func (s *HttpServer) Healthcheck(ctx context.Context) any {
+	return map[string]any{
+		"port": s.port,
+	}
 }

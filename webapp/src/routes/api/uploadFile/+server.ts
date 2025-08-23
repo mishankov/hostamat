@@ -3,16 +3,21 @@ import { Config } from '$lib/config';
 
 export const POST: RequestHandler = async ({ request }) => {
   try {
-    const backendUrl = Config.files.uploadUrl;
-    const response = await fetch(backendUrl, {
+    const headers = new Headers(request.headers);
+    
+    // Forward the request to backend
+    const response = await fetch(Config.files.uploadUrl, {
       method: 'POST',
-      headers: request.headers,
+      headers,
       body: request.body,
       // @ts-ignore
-      duplex: 'half', 
+      duplex: 'half',
     });
 
-    return new Response(response.body, { status: response.status, headers: response.headers });
+    return new Response(response.body, { 
+      status: response.status,
+      headers: response.headers
+    });
   } catch (error) {
     console.error('Proxy error:', error);
     return new Response('Proxy error', { status: 500 });

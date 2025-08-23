@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hostamat/pkg/platforma/log"
 	"sync"
+	"time"
 )
 
 // ErrStartupTaskFailed represents an error that occurs when a startup task fails.
@@ -36,13 +37,23 @@ type startupTask struct {
 
 // Application manages startup tasks and services for the application lifecycle.
 type Application struct {
-	startupTasks []startupTask
-	services     map[string]Runner
+	startupTasks   []startupTask
+	services       map[string]Runner
+	healthcheckers map[string]Healthchecker
+	health         *ApplicationHealth
 }
 
 // New creates and returns a new Application instance.
 func New() *Application {
-	return &Application{services: make(map[string]Runner)}
+	return &Application{services: make(map[string]Runner), healthcheckers: make(map[string]Healthchecker), health: NewApplicationHealth()}
+}
+
+// Health returns the current health status of the application.
+func (a *Application) Health(ctx context.Context) *ApplicationHealth {
+	for hcName, hc := range a.healthcheckers {
+		a.health.SetServiceData(hcName, hc.Healthcheck(ctx))
+	}
+	return a.health
 }
 
 // OnStart registers a new startup task with the given runner and configuration.
@@ -50,9 +61,20 @@ func (a *Application) OnStart(task Runner, config StartupTaskConfig) {
 	a.startupTasks = append(a.startupTasks, startupTask{task, config})
 }
 
+func (a *Application) OnStartFunc(task RunnerFunc, config StartupTaskConfig) {
+	a.startupTasks = append(a.startupTasks, startupTask{task, config})
+}
+
 // Register adds a named service to the application.
 func (a *Application) Register(serviceName string, service Runner) {
+
 	a.services[serviceName] = service
+	a.health.Services[serviceName] = &ServiceHealth{Status: ServiceStatusNotStarted}
+
+	healthcheckerService, ok := service.(Healthchecker)
+	if ok {
+		a.healthcheckers[serviceName] = healthcheckerService
+	}
 }
 
 // Run executes all startup tasks and services in the application.
@@ -95,12 +117,17 @@ func (a *Application) Run(ctx context.Context) error {
 			}()
 
 			log.InfoContext(ctx, "starting service", "service", serviceName)
+			a.health.StartService(serviceName)
+
 			err := service.Run(serviceCtx)
 			if err != nil {
+				a.health.FailService(serviceName, err)
 				log.ErrorContext(ctx, "error in service", "service", serviceName, "error", err)
 			}
 		}()
 	}
+
+	a.health.StartedAt = time.Now()
 
 	wg.Wait()
 

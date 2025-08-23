@@ -5,6 +5,7 @@
     maxFileSize?: number;
     multiple?: boolean;
     disabled?: boolean;
+    additionalHeaders?: Record<string, string>;
     onfilesselected?: (event: { files: File[] }) => void;
     onfileuploaded?: (event: { file: File; result: any }) => void;
     onuploadcomplete?: (event: { fileCount: number }) => void;
@@ -14,9 +15,10 @@
   let {
     uploadUrl = '/api/upload',
     acceptedTypes = '',
-    maxFileSize = 10 * 1024 * 1024, // 10MB default
+    maxFileSize = 20 * 1024 * 1024, // 20MB default
     multiple = false,
     disabled = false,
+    additionalHeaders = {},
     onfilesselected,
     onfileuploaded,
     onuploadcomplete,
@@ -93,8 +95,14 @@
         const formData = new FormData();
         formData.append('file', file);
         
+        const headers = new Headers();
+        Object.entries(additionalHeaders).forEach(([key, value]) => {
+          headers.set(key, value);
+        });
+
         const response = await fetch(uploadUrl, {
           method: 'POST',
+          headers,
           body: formData
         });
         
