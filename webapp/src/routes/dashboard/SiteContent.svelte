@@ -8,7 +8,6 @@
 	import FileUploader from "./components/FileUploader.svelte";
 	import IconButton from "./components/IconButton.svelte";
   import { type Site } from './types';
-	import { invalidate } from "$app/navigation";
 
   interface Props {
     site: Site

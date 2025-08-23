@@ -8,6 +8,7 @@
   import type { PageProps } from './$types';
 
   import { type Site } from './types';
+	import { invalidateAll } from "$app/navigation";
 
 	let { data }: PageProps = $props();
   let sites = $state<Site[]>([]);
@@ -29,13 +30,13 @@
       <p>Loading...</p>
     {:then _}
       {#each sites as site (site.id)}
-        <Card floating>
+        <Card floating style="height: 100px;">
           <SiteContent site={site} />
         </Card>
       {/each}
     
 
-    <Card floating>
+    <Card floating style="height: 100px;">
       <!-- TODO: should prob fix  -->
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <div class="add-site" role="button" tabindex="0" onclick={async () => {
@@ -43,8 +44,8 @@
               method: 'POST',
             })
 
-            // TODO: find better way to update UI
-            window.location.reload()
+            await invalidateAll()
+            sites = await data.sites;
       }}>
         <p class="add-site-icon"><Plus /></p>
         <p class="add-site-text">Добавить сайт</p>
@@ -63,7 +64,7 @@
     flex-direction: column;
     gap: 10px;
     
-    width: clamp(500px, 50%, 1200px);
+    width: clamp(500px, 75%, 1200px);
 
     border: 0.5px solid #555;
     border-radius: 15px;
