@@ -37,7 +37,9 @@
     <Modal bind:this={uploadModal} kind="primary">
       <div class="upload-modal">
         <h3>Загрузить файлы для {site.domain}</h3>
-        <FileUploader multiple={true} />
+        <FileUploader multiple={true} uploadUrl="/api/uploadFile" additionalHeaders={{
+          'H-Site-Id': site.id
+        }}/>
       </div>
     </Modal>
 

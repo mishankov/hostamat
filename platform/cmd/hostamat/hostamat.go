@@ -75,8 +75,8 @@ func main() {
 	// File service setup
 	fileRepo := file.NewRepository(s3Client)
 	fileService := file.NewService(fileRepo, siteService, conf.S3.Bucket)
-	uploadFileHandler := file.NewUploadHandler(fileService)
 	serveFileHandler := file.NewServeHandler(fileService)
+	uploadFileHandler := file.NewUploadHandler(fileService)
 	deleteHandler := file.NewDeleteHandler(fileService)
 
 	// Handle groups
