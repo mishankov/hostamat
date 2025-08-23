@@ -209,6 +209,17 @@ func (m *mockRepository) Update(ctx context.Context, site *site.Site) error {
 	return nil
 }
 
+func (m *mockRepository) Delete(ctx context.Context, id string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if _, exists := m.sites[id]; !exists {
+		return errors.New("not found")
+	}
+	delete(m.sites, id)
+	return nil
+}
+
 type errorProneMockRepository struct {
 	mockRepository
 	shouldError bool

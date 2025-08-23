@@ -80,3 +80,8 @@ func (r *Repository) Update(ctx context.Context, site *Site) error {
 	_, err := r.db.NamedExecContext(ctx, query, site)
 	return err
 }
+
+func (r *Repository) Delete(ctx context.Context, id string) error {
+	_, err := r.db.ExecContext(ctx, "DELETE FROM "+tableName+" WHERE id = $1", id)
+	return err
+}

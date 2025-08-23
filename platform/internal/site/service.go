@@ -14,6 +14,7 @@ type repository interface {
 	GetList(ctx context.Context) ([]*Site, error)
 	Create(ctx context.Context, site *Site) error
 	Update(ctx context.Context, site *Site) error
+	Delete(ctx context.Context, id string) error
 }
 
 type subdomainService interface {
@@ -67,13 +68,6 @@ func (s *Service) GetList(ctx context.Context) ([]*Site, error) {
 	return s.repository.GetList(ctx)
 }
 
-func (s *Service) UpdateVersion(ctx context.Context, id string) error {
-	site, err := s.repository.Get(ctx, id)
-	if err != nil {
-		return err
-	}
-
-	site.Version++
-	site.UpdatedAt = time.Now()
-	return s.repository.Update(ctx, site)
+func (s *Service) Delete(ctx context.Context, id string) error {
+	return s.repository.Delete(ctx, id)
 }
