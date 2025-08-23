@@ -8,6 +8,7 @@
 	import FileUploader from "./components/FileUploader.svelte";
 	import IconButton from "./components/IconButton.svelte";
   import { type Site } from './types';
+	import { invalidate } from "$app/navigation";
 
   interface Props {
     site: Site
@@ -52,10 +53,19 @@
         <p>Вы уверены, что хотите удалить сайт {site.domain}?</p>
         <form method="dialog">
           <Button kind="primary">Отмена</Button>
-            <Button kind="danger">Удалить</Button>
-          </form>
-        </div>
-      </Modal>
+          <Button kind="danger" onclick={async () => {
+            const response = await fetch('/api/deleteSite', {
+              method: 'POST',
+              headers: {
+                'H-Site-Id': site.id
+              }
+            })
+
+            window.location.reload()
+          }}>Удалить</Button>
+        </form>
+      </div>
+    </Modal>
   </div>
 </div>
 
