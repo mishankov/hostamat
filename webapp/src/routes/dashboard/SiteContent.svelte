@@ -28,12 +28,6 @@
       <Copy />
     </IconButton>
   </div>
-  <p class="site-data">
-    Дата последней загрузки: {site.updatedAt}
-  </p>
-  <p class="site-data">
-    Версия: {site.version}
-  </p>
 
   <div class="site-toolbar">
     <IconButton onclick={() => uploadModal?.open()} title="Загрузить сайт">
@@ -90,11 +84,6 @@
     color: #fff;
     text-decoration: none;
     text-decoration: underline;
-  }
-
-  p.site-data {
-    font-size: 12px;
-    color: #bbb;
   }
 
   .site-toolbar {
