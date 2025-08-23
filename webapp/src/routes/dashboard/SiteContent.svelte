@@ -63,6 +63,7 @@
               }
             })
 
+            // TODO: find better way to update UI
             window.location.reload()
           }}>Удалить</Button>
         </form>

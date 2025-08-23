@@ -43,6 +43,7 @@
               method: 'POST',
             })
 
+            // TODO: find better way to update UI
             window.location.reload()
       }}>
         <p class="add-site-icon"><Plus /></p>
