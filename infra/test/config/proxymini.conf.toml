@@ -1,8 +1,3 @@
-TODO = "remove this rule"
-[[proxy]]
-prefix = "/files/api/upload"
-target = "http://host.docker.internal:1001/files/api/upload"
-
 [[proxy]]
 prefix = "/backend"
 target = "http://hostamat:1001"
