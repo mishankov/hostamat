@@ -1,6 +1,6 @@
 endpoints:
   - name: API
-    url: "http://109.73.205.129:1001/healthcheck"
+    url: "http://109.73.205.129:1001/health"
     interval: 5m
     conditions:
       - "[STATUS] == 200"
