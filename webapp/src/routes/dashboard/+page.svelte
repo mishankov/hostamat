@@ -38,12 +38,13 @@
     <Card floating>
       <!-- TODO: should prob fix  -->
       <!-- svelte-ignore a11y_click_events_have_key_events -->
-      <div class="add-site" role="button" tabindex="0" onclick={() => sites.push({
-        id: `site-${sites.length + 1}`,
-        domain: "new-site.hostamat.ru",
-        updatedAt: "2025-03-01",
-        version: "v1"
-      })}>
+      <div class="add-site" role="button" tabindex="0" onclick={async () => {
+        const response = await fetch('/api/createSite', {
+              method: 'POST',
+            })
+
+            window.location.reload()
+      }}>
         <p class="add-site-icon"><Plus /></p>
         <p class="add-site-text">Добавить сайт</p>
       </div>
