@@ -85,7 +85,7 @@ func main() {
 	filesAPI.Handle("DELETE /", deleteHandler)
 
 	// Services
-	httpServer := httpserver.New(logger, conf.Port, 10*time.Second)
+	httpServer := httpserver.New(conf.Port, 10*time.Second)
 
 	httpServer.Handle("/files/api", filesAPI)
 	httpServer.Handle("/sites/api", siteHandlerGroup)

@@ -3,6 +3,7 @@ package httpserver
 import (
 	"context"
 	"errors"
+	"hostamat/pkg/platforma/log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -10,21 +11,15 @@ import (
 	"time"
 )
 
-type logger interface {
-	InfoContext(ctx context.Context, msg string, args ...any)
-	ErrorContext(ctx context.Context, msg string, args ...any)
-}
-
 type HttpServer struct {
-	logger          logger
 	mux             *http.ServeMux
 	port            string
 	shutdownTimeout time.Duration
 	middlewares     []Middleware
 }
 
-func New(logger logger, port string, shutdownTimeout time.Duration) *HttpServer {
-	return &HttpServer{logger: logger, mux: http.NewServeMux(), port: port, shutdownTimeout: shutdownTimeout}
+func New(port string, shutdownTimeout time.Duration) *HttpServer {
+	return &HttpServer{mux: http.NewServeMux(), port: port, shutdownTimeout: shutdownTimeout}
 }
 
 func (s *HttpServer) Handle(pattern string, handler http.Handler) {
@@ -56,12 +51,12 @@ func (s *HttpServer) Run(ctx context.Context) error {
 	}
 
 	go func() {
-		s.logger.InfoContext(ctx, "starting http server", "address", server.Addr)
+		log.InfoContext(ctx, "starting http server", "address", server.Addr)
 
 		if err := server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-			s.logger.ErrorContext(ctx, "HTTP server error", "error", err)
+			log.ErrorContext(ctx, "HTTP server error", "error", err)
 		}
-		s.logger.InfoContext(ctx, "stopped serving new connections.")
+		log.InfoContext(ctx, "stopped serving new connections.")
 	}()
 
 	sigChan := make(chan os.Signal, 1)
@@ -72,10 +67,10 @@ func (s *HttpServer) Run(ctx context.Context) error {
 	defer shutdownRelease()
 
 	if err := server.Shutdown(shutdownCtx); err != nil {
-		s.logger.ErrorContext(ctx, "HTTP shutdown error", "error", err)
+		log.ErrorContext(ctx, "HTTP shutdown error", "error", err)
 		return err
 	}
-	s.logger.InfoContext(ctx, "graceful shutdown complete.")
+	log.InfoContext(ctx, "graceful shutdown complete.")
 
 	return nil
 }
