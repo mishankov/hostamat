@@ -28,7 +28,7 @@ func main() {
 	// Basic components
 	conf := config.New()
 	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, nil)
-	httpClient := httpclient.New(logger)
+	httpClient := httpclient.New()
 
 	logger.DebugContext(ctx, "config", "config", conf)
 
@@ -85,7 +85,7 @@ func main() {
 	filesAPI.Handle("DELETE /", deleteHandler)
 
 	// Services
-	httpServer := httpserver.New(logger, conf.Port, 10*time.Second)
+	httpServer := httpserver.New(conf.Port, 10*time.Second)
 
 	httpServer.Handle("/files/api", filesAPI)
 	httpServer.Handle("/sites/api", siteHandlerGroup)

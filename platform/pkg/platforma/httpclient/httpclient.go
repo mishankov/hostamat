@@ -1,29 +1,24 @@
 package httpclient
 
 import (
-	"context"
+	"hostamat/pkg/platforma/log"
 	"net/http"
 	"strings"
 )
 
-type logger interface {
-	DebugContext(ctx context.Context, msg string, args ...any)
-}
-
 type Client struct {
 	client *http.Client
-	logger logger
 }
 
-func New(logger logger) *Client {
+func New() *Client {
 	// TODO: probably need better http client
-	return &Client{http.DefaultClient, logger}
+	return &Client{http.DefaultClient}
 }
 
 func (c *Client) Do(req *http.Request) (*http.Response, error) {
-	c.logger.DebugContext(req.Context(), "request started", "url", req.URL, "headers", maskedHeaders(req.Header))
+	log.DebugContext(req.Context(), "request started", "url", req.URL, "headers", maskedHeaders(req.Header))
 	resp, err := c.client.Do(req)
-	c.logger.DebugContext(req.Context(), "request made", "status", resp.Status, "headers", maskedHeaders(resp.Header))
+	log.DebugContext(req.Context(), "request made", "status", resp.Status, "headers", maskedHeaders(resp.Header))
 
 	return resp, err
 }
