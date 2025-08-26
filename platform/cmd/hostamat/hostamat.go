@@ -12,8 +12,8 @@ import (
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/pkg/platforma/application"
-	"hostamat/pkg/platforma/batteries/handlers"
-	pm "hostamat/pkg/platforma/batteries/middlewares"
+	"hostamat/pkg/platforma/batteries/healthcheck"
+	"hostamat/pkg/platforma/batteries/traceid"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
 	"hostamat/pkg/platforma/log"
@@ -53,7 +53,7 @@ func main() {
 	}
 
 	// Middlewares
-	traceId := pm.NewTraceId(nil, "Hostamat-Trace-Id")
+	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
 	requestLogger := middlewares.NewRequestLogger(logger)
 
 	// Domain service setup
@@ -100,7 +100,7 @@ func main() {
 
 	// Application
 	app := application.New()
-	healthcheckHandler := handlers.NewHealthCheckHandler(app)
+	healthcheckHandler := healthcheck.NewHealthCheckHandler(app)
 	httpServer.Handle("/health", healthcheckHandler)
 
 	// Migrate DB
