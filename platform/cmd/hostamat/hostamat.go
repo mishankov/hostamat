@@ -96,7 +96,7 @@ func main() {
 
 	// Cleanup service to remove files from S3 and subdomains from Caddy
 	cleanupService := cleanup.New(s3Client, caddyAPI, conf.S3.Bucket, conf.Caddy.ShorthandId)
-	cleanupJob := scheduler.New(logger, 30*time.Minute, cleanupService)
+	cleanupJob := scheduler.New(30*time.Minute, cleanupService)
 
 	// Application
 	app := application.New()

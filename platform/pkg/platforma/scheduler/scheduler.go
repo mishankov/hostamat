@@ -9,24 +9,18 @@ import (
 	"github.com/google/uuid"
 )
 
-type logger interface {
-	InfoContext(ctx context.Context, msg string, args ...any)
-	ErrorContext(ctx context.Context, msg string, args ...any)
-}
-
 // SchedulerAction defines the function signature for actions executed by the scheduler.
 type SchedulerAction func(context.Context) error
 
 // Scheduler represents a periodic task runner that executes an action at fixed intervals.
 type Scheduler struct {
-	logger logger             // The logger for logging messages
 	period time.Duration      // The interval between action executions
 	runner application.Runner // The runner to execute periodically
 }
 
 // New creates a new Scheduler instance with the specified period and action.
-func New(logger logger, period time.Duration, runner application.Runner) *Scheduler {
-	return &Scheduler{logger: logger, period: period, runner: runner}
+func New(period time.Duration, runner application.Runner) *Scheduler {
+	return &Scheduler{period: period, runner: runner}
 }
 
 // Run starts the scheduler and executes the runner at the configured interval.
@@ -39,14 +33,14 @@ func (s *Scheduler) Run(ctx context.Context) error {
 		select {
 		case <-ticker.C:
 			runCtx := context.WithValue(ctx, log.TraceIdKey, uuid.NewString())
-			s.logger.InfoContext(runCtx, "scheduler task started")
+			log.InfoContext(runCtx, "scheduler task started")
 
 			err := s.runner.Run(runCtx)
 			if err != nil {
-				s.logger.ErrorContext(runCtx, "error in scheduler", "error", err)
+				log.ErrorContext(runCtx, "error in scheduler", "error", err)
 			}
 
-			s.logger.InfoContext(runCtx, "scheduler task finished")
+			log.InfoContext(runCtx, "scheduler task finished")
 		case <-ctx.Done():
 			return ctx.Err()
 		}
