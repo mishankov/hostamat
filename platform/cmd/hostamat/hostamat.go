@@ -6,7 +6,6 @@ import (
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/s3"
 	"hostamat/internal/file"
-	"hostamat/internal/infra/db"
 	"hostamat/internal/middlewares"
 	"hostamat/internal/schedulers/cleanup"
 	"hostamat/internal/site"
@@ -14,12 +13,15 @@ import (
 	"hostamat/pkg/platforma/application"
 	"hostamat/pkg/platforma/batteries/healthcheck"
 	"hostamat/pkg/platforma/batteries/traceid"
+	"hostamat/pkg/platforma/database"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
 	"hostamat/pkg/platforma/log"
 	"hostamat/pkg/platforma/scheduler"
 	"os"
 	"time"
+
+	_ "github.com/glebarez/go-sqlite"
 )
 
 func main() {
@@ -46,7 +48,7 @@ func main() {
 	}
 
 	// Database
-	db, err := db.CreateDB("hostamat.db")
+	db, err := database.New("sqlite", "hostamat.db")
 	if err != nil {
 		logger.Error("failed to create database", "error", err)
 		os.Exit(1)
@@ -104,8 +106,6 @@ func main() {
 	httpServer.Handle("/health", healthcheckHandler)
 
 	// Migrate DB
-	app.OnStartFunc(subdomainRepo.Migrate, application.StartupTaskConfig{Name: "migrateSubdomain", AbortOnError: true})
-	app.OnStartFunc(siteRepo.Migrate, application.StartupTaskConfig{Name: "migrateSite", AbortOnError: true})
 	app.OnStartFunc(func(ctx context.Context) error {
 		return fileRepo.Migrate(ctx, conf.S3.Bucket)
 	}, application.StartupTaskConfig{Name: "migrateFile", AbortOnError: true})
@@ -120,8 +120,12 @@ func main() {
 		return caddyAPI.CreateBaseConfig(ctx, conf.FileServerHost, conf.FileServerPath, conf.Caddy.ShorthandId)
 	}), application.StartupTaskConfig{Name: "prepareCaddy", AbortOnError: true})
 
-	app.Register("http", httpServer)
-	app.Register("cleanup", cleanupJob)
+	app.RegisterDatabase("default", db)
+	app.RegisterRepository("default", "site", siteRepo)
+	app.RegisterRepository("default", "subdomain", subdomainRepo)
+
+	app.RegisterService("http", httpServer)
+	app.RegisterService("cleanup", cleanupJob)
 
 	if err := app.Run(ctx); err != nil {
 		logger.Error("Applicaton finished with error", "error", err)

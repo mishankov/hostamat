@@ -2,20 +2,25 @@ package subdomain
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
-
-	"github.com/jmoiron/sqlx"
 )
 
 const (
 	tableName = "subdomains"
 )
 
-type Repository struct {
-	db *sqlx.DB
+type db interface {
+	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
+	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
+	NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error)
 }
 
-func NewRepository(db *sqlx.DB) *Repository {
+type Repository struct {
+	db db
+}
+
+func NewRepository(db db) *Repository {
 	return &Repository{db: db}
 }
 
