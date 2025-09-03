@@ -105,7 +105,7 @@ func main() {
 	healthcheckHandler := healthcheck.NewHealthCheckHandler(app)
 	httpServer.Handle("/health", healthcheckHandler)
 
-	// Migrate DB
+	// Migrate File storage
 	app.OnStartFunc(func(ctx context.Context) error {
 		return fileRepo.Migrate(ctx, conf.S3.Bucket)
 	}, application.StartupTaskConfig{Name: "migrateFile", AbortOnError: true})

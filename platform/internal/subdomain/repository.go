@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"hostamat/internal/subdomain/internal/migrations"
+	"hostamat/pkg/platforma/database"
 )
 
 const (
@@ -24,16 +26,8 @@ func NewRepository(db db) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) Migrate(ctx context.Context) error {
-	query := `
-		CREATE TABLE IF NOT EXISTS ` + tableName + ` (
-			id VARCHAR(255) PRIMARY KEY,
-			name VARCHAR(255) NOT NULL UNIQUE,
-			full_domain VARCHAR(255) NOT NULL
-		)
-	`
-	_, err := r.db.ExecContext(ctx, query)
-	return err
+func (r *Repository) Schema() ([]database.Migration, database.Schema) {
+	return migrations.Migrations, migrations.Schema
 }
 
 func (r *Repository) Get(ctx context.Context, id string) (*Subdomain, error) {
