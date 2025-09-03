@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"hostamat/pkg/platforma/log"
 	"slices"
 	"time"
 
@@ -55,6 +56,7 @@ func (db *Database) Migrate(ctx context.Context) error {
 				if _, err := db.ExecContext(ctx, query); err != nil {
 					return err
 				}
+				log.InfoContext(ctx, "schema applied", "repository", repoName)
 			}
 
 			// Log that schema applied
@@ -62,7 +64,7 @@ func (db *Database) Migrate(ctx context.Context) error {
 				return err
 			}
 
-			return nil
+			continue
 		}
 
 		for _, migration := range repoMigrations {
@@ -80,6 +82,8 @@ func (db *Database) Migrate(ctx context.Context) error {
 				if _, err := db.ExecContext(ctx, query); err != nil {
 					return err
 				}
+
+				log.InfoContext(ctx, "applied migration %s for repository %s", migration.ID, repoName)
 			}
 
 			// Log that migration applied
