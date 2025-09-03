@@ -31,7 +31,10 @@ func (db *Database) RegisterRepository(name string, repository any) {
 }
 
 func (db *Database) Migrate(ctx context.Context) error {
-	// TODO: ensure that table exists
+	if _, err := db.ExecContext(ctx, "CREATE TABLE IF NOT EXISTS platforma_migrations (repository TEXT, id TEXT, timestamp DATETIME)"); err != nil {
+		return err
+	}
+
 	// Select data from platforma_migrations table
 	var migrationsState []migrations
 	err := db.SelectContext(ctx, &migrationsState, "SELECT * FROM platforma_migrations")
