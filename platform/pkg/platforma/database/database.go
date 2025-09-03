@@ -78,7 +78,6 @@ func (db *Database) Migrate(ctx context.Context) error {
 			}
 
 			for _, query := range migration.Queries {
-				// TODO: check last migration ID
 				if _, err := db.ExecContext(ctx, query); err != nil {
 					return err
 				}
