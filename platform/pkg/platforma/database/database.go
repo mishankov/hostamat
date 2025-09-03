@@ -12,7 +12,7 @@ import (
 type Database struct {
 	*sqlx.DB
 	repositories map[string]any
-	migrators    map[string]migrator
+	migrators    map[string]shemer
 }
 
 func New(driver, connection string) (*Database, error) {
@@ -20,13 +20,13 @@ func New(driver, connection string) (*Database, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Database{DB: db, repositories: make(map[string]any), migrators: make(map[string]migrator)}, nil
+	return &Database{DB: db, repositories: make(map[string]any), migrators: make(map[string]shemer)}, nil
 }
 
 func (db *Database) RegisterRepository(name string, repository any) {
 	db.repositories[name] = repository
 
-	if migr, ok := repository.(migrator); ok {
+	if migr, ok := repository.(shemer); ok {
 		db.migrators[name] = migr
 	}
 }

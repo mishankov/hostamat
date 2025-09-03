@@ -17,6 +17,6 @@ type Schema struct {
 	Queries []string
 }
 
-type migrator interface {
+type shemer interface {
 	Schema() ([]Migration, Schema)
 }
