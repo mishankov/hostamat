@@ -68,6 +68,13 @@ func (db *Database) Migrate(ctx context.Context) error {
 				return err
 			}
 
+			// If schema is applied, log that all migrations are also applied
+			for _, migration := range repoMigrations {
+				if _, err := db.ExecContext(ctx, "INSERT INTO platforma_migrations (repository, id, timestamp) VALUES (?, ?, ?)", repoName, migration.ID, time.Now()); err != nil {
+					return err
+				}
+			}
+
 			continue
 		}
 
