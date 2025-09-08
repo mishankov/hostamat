@@ -43,6 +43,9 @@ func (db *Database) Migrate(ctx context.Context) error {
 		return err
 	}
 
+	appliedMigrations := []Migration{}
+	migrationErr := error(nil)
+
 	for repoName, migr := range db.migrators {
 		repoMigrations, repoSchema := migr.Schema()
 
@@ -54,7 +57,8 @@ func (db *Database) Migrate(ctx context.Context) error {
 		if !repoHasMigrations {
 			for _, query := range repoSchema.Queries {
 				if _, err := db.ExecContext(ctx, query); err != nil {
-					return err
+					migrationErr = err
+					break
 				}
 				log.InfoContext(ctx, "schema applied", "repository", repoName)
 			}
@@ -68,6 +72,8 @@ func (db *Database) Migrate(ctx context.Context) error {
 		}
 
 		for _, migration := range repoMigrations {
+			migration.repository = repoName
+
 			// Check if migration has been applied
 			migrationHasApplied := slices.ContainsFunc(migrationsState, func(m migrations) bool {
 				return m.Repository == repoName && m.MigrationId == migration.ID
@@ -77,20 +83,38 @@ func (db *Database) Migrate(ctx context.Context) error {
 				continue
 			}
 
-			for _, query := range migration.Queries {
-				if _, err := db.ExecContext(ctx, query); err != nil {
-					return err
-				}
-
-				log.InfoContext(ctx, "applied migration %s for repository %s", migration.ID, repoName)
+			if _, err := db.ExecContext(ctx, migration.Up); err != nil {
+				migrationErr = err
+				log.ErrorContext(ctx, "failed to apply migration %s for repository %s", migration.ID, repoName)
+				break
 			}
 
+			appliedMigrations = append(appliedMigrations, migration)
+			log.InfoContext(ctx, "applied migration %s for repository %s", migration.ID, repoName)
+
 			// Log that migration applied
-			if _, err := db.ExecContext(ctx, "INSERT INTO platforma_migrations (repository, migration_id, timestamp) VALUES (?, ?, ?)", repoName, migration.ID, time.Now()); err != nil {
+			if _, err := db.ExecContext(ctx, "INSERT INTO platforma_migrations (repository, id, timestamp) VALUES (?, ?, ?)", repoName, migration.ID, time.Now()); err != nil {
+				return err
+			}
+		}
+
+		if migrationErr != nil {
+			break
+		}
+	}
+
+	if migrationErr != nil {
+		for _, migration := range slices.Backward(appliedMigrations) {
+			if _, err := db.ExecContext(ctx, migration.Down); err != nil {
+				log.ErrorContext(ctx, "failed to rollback migration %s for repository %s", migration.ID, migration.repository)
+				return err
+			}
+
+			if _, err := db.ExecContext(ctx, "DELETE FROM platforma_migrations WHERE repository = ? AND id = ?", migration.repository, migration.ID); err != nil {
 				return err
 			}
 		}
 	}
 
-	return nil
+	return migrationErr
 }

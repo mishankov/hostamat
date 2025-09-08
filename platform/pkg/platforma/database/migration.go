@@ -9,8 +9,10 @@ type migrations struct {
 }
 
 type Migration struct {
-	ID      string
-	Queries []string
+	ID         string
+	Up         string
+	Down       string
+	repository string
 }
 
 type Schema struct {
