@@ -7,10 +7,10 @@ import (
 )
 
 type db interface {
-	NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error)
-	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
-	SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
-	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
+	NamedExecContext(ctx context.Context, query string, arg any) (sql.Result, error)
+	GetContext(ctx context.Context, dest any, query string, args ...any) error
+	SelectContext(ctx context.Context, dest any, query string, args ...any) error
+	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
 }
 
 type Repository struct {
