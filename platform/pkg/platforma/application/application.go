@@ -3,36 +3,25 @@ package application
 import (
 	"context"
 	"fmt"
+	"hostamat/pkg/platforma/database"
 	"hostamat/pkg/platforma/log"
 	"sync"
 	"time"
 )
 
-// ErrStartupTaskFailed represents an error that occurs when a startup task fails.
-type ErrStartupTaskFailed struct {
+// ErrDatabaseMigrationFailed is an error type that represents a failed database migration.
+type ErrDatabaseMigrationFailed struct {
 	err error
 }
 
-// Error returns the formatted error message for ErrStartupTaskFailed.
-func (e *ErrStartupTaskFailed) Error() string {
-	return fmt.Sprintf("failed to run startup task: %v", e.err)
+// Error returns the formatted error message for ErrDatabaseMigrationFailed.
+func (e *ErrDatabaseMigrationFailed) Error() string {
+	return fmt.Sprintf("failed to migrate database: %v", e.err)
 }
 
-// Unwrap returns the underlying error for ErrStartupTaskFailed.
-func (e *ErrStartupTaskFailed) Unwrap() error {
+// Unwrap returns the underlying error for ErrDatabaseMigrationFailed.
+func (e *ErrDatabaseMigrationFailed) Unwrap() error {
 	return e.err
-}
-
-// StartupTaskConfig contains configuration options for a startup task.
-type StartupTaskConfig struct {
-	Name         string // Name of the startup task
-	AbortOnError bool   // Whether to abort application startup if this task fails
-}
-
-// startupTask represents an individual startup task with its runner and configuration.
-type startupTask struct {
-	runner Runner
-	config StartupTaskConfig
 }
 
 // Application manages startup tasks and services for the application lifecycle.
@@ -40,12 +29,13 @@ type Application struct {
 	startupTasks   []startupTask
 	services       map[string]Runner
 	healthcheckers map[string]Healthchecker
+	databases      map[string]*database.Database
 	health         *ApplicationHealth
 }
 
 // New creates and returns a new Application instance.
 func New() *Application {
-	return &Application{services: make(map[string]Runner), healthcheckers: make(map[string]Healthchecker), health: NewApplicationHealth()}
+	return &Application{services: make(map[string]Runner), healthcheckers: make(map[string]Healthchecker), databases: make(map[string]*database.Database), health: NewApplicationHealth()}
 }
 
 // Health returns the current health status of the application.
@@ -65,8 +55,18 @@ func (a *Application) OnStartFunc(task RunnerFunc, config StartupTaskConfig) {
 	a.startupTasks = append(a.startupTasks, startupTask{task, config})
 }
 
-// Register adds a named service to the application.
-func (a *Application) Register(serviceName string, service Runner) {
+// RegisterDatabase adds a database to the application.
+func (a *Application) RegisterDatabase(dbName string, db *database.Database) {
+	a.databases[dbName] = db
+}
+
+// RegisterRepository adds a repository to the application.
+func (a *Application) RegisterRepository(dbName string, repoName string, repository any) {
+	a.databases[dbName].RegisterRepository(repoName, repository)
+}
+
+// RegisterService adds a named service to the application.
+func (a *Application) RegisterService(serviceName string, service Runner) {
 
 	a.services[serviceName] = service
 	a.health.Services[serviceName] = &ServiceHealth{Status: ServiceStatusNotStarted}
@@ -85,6 +85,15 @@ func (a *Application) Run(ctx context.Context) error {
 	}
 
 	log.InfoContext(ctx, "Starting application", "startupTasks", len(a.startupTasks))
+
+	for dbName, db := range a.databases {
+		log.InfoContext(ctx, "migrating database", "database", dbName)
+		err := db.Migrate(ctx)
+		if err != nil {
+			log.ErrorContext(ctx, "error in database migration", "error", err, "database", dbName)
+			return &ErrDatabaseMigrationFailed{err: err}
+		}
+	}
 
 	for i, task := range a.startupTasks {
 		log.InfoContext(ctx, "running task", "task", task.config.Name, "index", i)

@@ -2,37 +2,34 @@ package site
 
 import (
 	"context"
-
-	"github.com/jmoiron/sqlx"
+	"database/sql"
+	"hostamat/internal/site/internal/migrations"
+	"hostamat/pkg/platforma/database"
 )
 
 const (
 	tableName = "sites"
 )
 
-type Repository struct {
-	db *sqlx.DB
+type db interface {
+	NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error)
+	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
+	SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
+	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
 }
 
-func NewRepository(db *sqlx.DB) *Repository {
+type Repository struct {
+	db db
+}
+
+func NewRepository(db db) *Repository {
 	return &Repository{
 		db: db,
 	}
 }
 
-func (r *Repository) Migrate(ctx context.Context) error {
-	query := `
-		CREATE TABLE IF NOT EXISTS ` + tableName + ` (
-			id VARCHAR(255) PRIMARY KEY,
-			subdomain VARCHAR(255) NOT NULL,
-			domain VARCHAR(255) NOT NULL,
-			created_at TIMESTAMP NOT NULL,
-			updated_at TIMESTAMP NOT NULL,
-			version INT NOT NULL
-		)
-	`
-	_, err := r.db.ExecContext(ctx, query)
-	return err
+func (r *Repository) Schema() ([]database.Migration, database.Schema) {
+	return migrations.Migrations, migrations.Schema
 }
 
 func (r *Repository) Create(ctx context.Context, site *Site) error {
