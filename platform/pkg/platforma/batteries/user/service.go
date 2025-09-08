@@ -14,6 +14,12 @@ type repository interface {
 	Create(ctx context.Context, user *User) error
 }
 
+type contextKey string
+
+const (
+	currentUserKey contextKey = "user"
+)
+
 type Service struct {
 	repo repository
 }
@@ -57,4 +63,17 @@ func (s *Service) Login(ctx context.Context, username, password string) (*User, 
 	}
 
 	return user, nil
+}
+
+func (s *Service) GetCurrentUserFromContext(ctx context.Context) (*User, error) {
+	user, ok := ctx.Value(currentUserKey).(*User)
+	if !ok {
+		return nil, fmt.Errorf("user not found in context")
+	}
+
+	return user, nil
+}
+
+func (s *Service) SetCurrentUserToContext(ctx context.Context, user *User) context.Context {
+	return context.WithValue(ctx, currentUserKey, user)
 }
