@@ -83,7 +83,7 @@ func (db *Database) Migrate(ctx context.Context) error {
 
 			// Check if migration has been applied
 			migrationHasApplied := slices.ContainsFunc(migrationsState, func(m migrations) bool {
-				return m.Repository == repoName && m.MigrationId == migration.ID
+				return m.Repository == repoName && m.MigrationId.String == migration.ID
 			})
 
 			if migrationHasApplied {
