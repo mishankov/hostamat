@@ -13,6 +13,7 @@ import (
 	"hostamat/pkg/platforma/application"
 	"hostamat/pkg/platforma/batteries/healthcheck"
 	"hostamat/pkg/platforma/batteries/traceid"
+	"hostamat/pkg/platforma/batteries/user"
 	"hostamat/pkg/platforma/database"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
@@ -86,11 +87,22 @@ func main() {
 	filesAPI.Handle("POST /", uploadFileHandler)
 	filesAPI.Handle("DELETE /", deleteHandler)
 
+	// User service setup
+	userRepo := user.NewRepository(db)
+	userService := user.NewService(userRepo)
+	registerHandler := user.NewRegisterHandler(userService)
+	loginHandler := user.NewLoginHandler(userService)
+
+	userAPI := httpserver.NewHandlerGroup()
+	userAPI.Handle("POST /register", registerHandler)
+	userAPI.Handle("POST /login", loginHandler)
+
 	// Services
 	httpServer := httpserver.New(conf.Port, 10*time.Second)
 
 	httpServer.Handle("/files/api", filesAPI)
 	httpServer.Handle("/sites/api", siteHandlerGroup)
+	httpServer.HandleGroup("/users/api", userAPI)
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
 
@@ -123,6 +135,7 @@ func main() {
 	app.RegisterDatabase("default", db)
 	app.RegisterRepository("default", "site", siteRepo)
 	app.RegisterRepository("default", "subdomain", subdomainRepo)
+	app.RegisterRepository("default", "user", userRepo)
 
 	app.RegisterService("http", httpServer)
 	app.RegisterService("cleanup", cleanupJob)

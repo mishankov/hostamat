@@ -1,0 +1,22 @@
+meta {
+  name: Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:1001/users/api/register
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "login": "vasya",
+    "password": "1235"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
