@@ -10,7 +10,7 @@ import (
 )
 
 type repository interface {
-	Get(ctx context.Context, id string) (*User, error)
+	GetByUsername(ctx context.Context, username string) (*User, error)
 	Create(ctx context.Context, user *User) error
 }
 
@@ -52,7 +52,7 @@ func (s *Service) Create(ctx context.Context, username, password string) error {
 }
 
 func (s *Service) Login(ctx context.Context, username, password string) (*User, error) {
-	user, err := s.repo.Get(ctx, username)
+	user, err := s.repo.GetByUsername(ctx, username)
 	if err != nil {
 		return nil, fmt.Errorf("user not found: %w", err)
 	}

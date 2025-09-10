@@ -50,6 +50,15 @@ func (r *Repository) Get(ctx context.Context, id string) (*User, error) {
 	return &user, nil
 }
 
+func (r *Repository) GetByUsername(ctx context.Context, username string) (*User, error) {
+	var user User
+	err := r.db.GetContext(ctx, &user, "SELECT * FROM users WHERE username = $1", username)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (r *Repository) Create(ctx context.Context, user *User) error {
 	query := `
 		INSERT INTO users (id, username, password, salt, created, updated, status)
