@@ -107,7 +107,7 @@ func main() {
 
 	httpServer.Handle("/files/api", filesAPI)
 	httpServer.Handle("/sites/api", siteHandlerGroup)
-	httpServer.HandleGroup("/users/api", userAPI)
+	httpServer.HandleGroup("/auth", userAPI)
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
 
