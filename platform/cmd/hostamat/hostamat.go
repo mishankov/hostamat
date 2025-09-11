@@ -11,6 +11,7 @@ import (
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/pkg/platforma/application"
+	"hostamat/pkg/platforma/batteries/auth"
 	"hostamat/pkg/platforma/batteries/healthcheck"
 	"hostamat/pkg/platforma/batteries/session"
 	"hostamat/pkg/platforma/batteries/traceid"
@@ -31,7 +32,8 @@ func main() {
 
 	// Basic components
 	conf := config.New()
-	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, nil)
+	// TODO: user doe not logs
+	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, map[string]any{"user": user.CurrentUserKey})
 	httpClient := httpclient.New()
 
 	logger.DebugContext(ctx, "config", "config", conf)
@@ -55,10 +57,6 @@ func main() {
 		logger.Error("failed to create database", "error", err)
 		os.Exit(1)
 	}
-
-	// Middlewares
-	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
-	requestLogger := middlewares.NewRequestLogger(logger)
 
 	// Domain service setup
 	subdomainRepo := subdomain.NewRepository(db)
@@ -102,11 +100,21 @@ func main() {
 	userAPI.Handle("POST /register", registerHandler)
 	userAPI.Handle("POST /login", loginHandler)
 
-	// Services
+	// Middlewares
+	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
+	requestLogger := middlewares.NewRequestLogger(logger)
+	authMiddleware := auth.NewAuthenticationMiddleware(sessionService, userService)
+
+	// HTTP server
 	httpServer := httpserver.New(conf.Port, 10*time.Second)
 
-	httpServer.Handle("/files/api", filesAPI)
-	httpServer.Handle("/sites/api", siteHandlerGroup)
+	apiGroup := httpserver.NewHandlerGroup()
+	apiGroup.Use(authMiddleware)
+
+	apiGroup.Handle("/files", filesAPI)
+	apiGroup.Handle("/sites", siteHandlerGroup)
+
+	httpServer.HandleGroup("/api", apiGroup)
 	httpServer.HandleGroup("/auth", userAPI)
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)

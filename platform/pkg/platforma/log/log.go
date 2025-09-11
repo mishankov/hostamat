@@ -31,6 +31,7 @@ const (
 	TraceIdKey     contextKey = "traceId"
 	ServiceNameKey contextKey = "serviceName"
 	SartupTaskKey  contextKey = "satrtupTask"
+	CurrentUserKey contextKey = "user"
 )
 
 type contextHandler struct {

@@ -7,11 +7,11 @@ import (
 )
 
 type AuthenticationMiddleware struct {
-	sessionService session.Service
-	userService    user.Service
+	sessionService *session.Service
+	userService    *user.Service
 }
 
-func NewAuthenticationMiddleware(sessionService session.Service, userService user.Service) *AuthenticationMiddleware {
+func NewAuthenticationMiddleware(sessionService *session.Service, userService *user.Service) *AuthenticationMiddleware {
 	return &AuthenticationMiddleware{sessionService: sessionService, userService: userService}
 }
 
@@ -19,7 +19,7 @@ func (m *AuthenticationMiddleware) Wrap(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("session")
 		if err != nil {
-			next.ServeHTTP(w, r)
+			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 

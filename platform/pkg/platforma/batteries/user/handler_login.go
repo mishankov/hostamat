@@ -31,14 +31,15 @@ func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.service.Login(r.Context(), req.Login, req.Password)
+	session, err := h.service.Login(r.Context(), req.Login, req.Password)
 	if err != nil {
 		http.Error(w, "Invalid login or password", http.StatusUnauthorized)
 		return
 	}
 
+	w.Header().Set("Set-Cookie", "session="+session.ID)
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(user); err != nil {
+	if err := json.NewEncoder(w).Encode(session); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		return
 	}

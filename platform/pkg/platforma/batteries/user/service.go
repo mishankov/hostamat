@@ -23,7 +23,7 @@ type sessionService interface {
 type contextKey string
 
 const (
-	currentUserKey contextKey = "user"
+	CurrentUserKey contextKey = "user"
 )
 
 type Service struct {
@@ -90,7 +90,7 @@ func (s *Service) Login(ctx context.Context, username, password string) (*sessio
 }
 
 func (s *Service) GetCurrentUserFromContext(ctx context.Context) (*User, error) {
-	user, ok := ctx.Value(currentUserKey).(*User)
+	user, ok := ctx.Value(CurrentUserKey).(*User)
 	if !ok {
 		return nil, fmt.Errorf("user not found in context")
 	}
@@ -99,5 +99,5 @@ func (s *Service) GetCurrentUserFromContext(ctx context.Context) (*User, error) 
 }
 
 func (s *Service) SetCurrentUserToContext(ctx context.Context, user *User) context.Context {
-	return context.WithValue(ctx, currentUserKey, user)
+	return context.WithValue(ctx, CurrentUserKey, user)
 }
