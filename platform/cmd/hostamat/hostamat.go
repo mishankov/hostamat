@@ -12,6 +12,7 @@ import (
 	"hostamat/internal/subdomain"
 	"hostamat/pkg/platforma/application"
 	"hostamat/pkg/platforma/batteries/healthcheck"
+	"hostamat/pkg/platforma/batteries/session"
 	"hostamat/pkg/platforma/batteries/traceid"
 	"hostamat/pkg/platforma/batteries/user"
 	"hostamat/pkg/platforma/database"
@@ -87,9 +88,13 @@ func main() {
 	filesAPI.Handle("POST /", uploadFileHandler)
 	filesAPI.Handle("DELETE /", deleteHandler)
 
+	// Session service setup
+	sessionRepo := session.NewRepository(db)
+	sessionService := session.NewService(sessionRepo)
+
 	// User service setup
 	userRepo := user.NewRepository(db)
-	userService := user.NewService(userRepo)
+	userService := user.NewService(userRepo, sessionService)
 	registerHandler := user.NewRegisterHandler(userService)
 	loginHandler := user.NewLoginHandler(userService)
 
@@ -136,6 +141,7 @@ func main() {
 	app.RegisterRepository("default", "site", siteRepo)
 	app.RegisterRepository("default", "subdomain", subdomainRepo)
 	app.RegisterRepository("default", "user", userRepo)
+	app.RegisterRepository("default", "session", sessionRepo)
 
 	app.RegisterService("http", httpServer)
 	app.RegisterService("cleanup", cleanupJob)

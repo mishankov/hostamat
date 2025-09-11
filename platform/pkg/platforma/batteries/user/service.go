@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"fmt"
+	"hostamat/pkg/platforma/batteries/session"
 	"time"
 
 	"github.com/google/uuid"
@@ -14,6 +15,10 @@ type repository interface {
 	Create(ctx context.Context, user *User) error
 }
 
+type sessionService interface {
+	Create(ctx context.Context, session *session.Session) error
+}
+
 type contextKey string
 
 const (
@@ -21,12 +26,14 @@ const (
 )
 
 type Service struct {
-	repo repository
+	repo       repository
+	sessionSvc sessionService
 }
 
-func NewService(repo repository) *Service {
+func NewService(repo repository, sessionSvc sessionService) *Service {
 	return &Service{
-		repo: repo,
+		repo:       repo,
+		sessionSvc: sessionSvc,
 	}
 }
 
@@ -51,7 +58,7 @@ func (s *Service) Create(ctx context.Context, username, password string) error {
 	return s.repo.Create(ctx, user)
 }
 
-func (s *Service) Login(ctx context.Context, username, password string) (*User, error) {
+func (s *Service) Login(ctx context.Context, username, password string) (*session.Session, error) {
 	user, err := s.repo.GetByUsername(ctx, username)
 	if err != nil {
 		return nil, fmt.Errorf("user not found: %w", err)
@@ -62,7 +69,19 @@ func (s *Service) Login(ctx context.Context, username, password string) (*User, 
 		return nil, fmt.Errorf("invalid password: %w", err)
 	}
 
-	return user, nil
+	session := &session.Session{
+		ID:      uuid.New().String(),
+		User:    user.ID,
+		Created: time.Now(),
+		Expires: time.Now().Add(100 * 24 * time.Hour),
+	}
+
+	err = s.sessionSvc.Create(ctx, session)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create session: %w", err)
+	}
+
+	return session, nil
 }
 
 func (s *Service) GetCurrentUserFromContext(ctx context.Context) (*User, error) {

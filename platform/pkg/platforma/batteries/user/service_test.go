@@ -3,6 +3,7 @@ package user_test
 import (
 	"context"
 	"errors"
+	"hostamat/pkg/platforma/batteries/session"
 	"hostamat/pkg/platforma/batteries/user"
 	"testing"
 )
@@ -10,7 +11,8 @@ import (
 func TestLogin(t *testing.T) {
 	ctx := context.Background()
 	repo := &mockRepository{users: map[string]*user.User{}}
-	service := user.NewService(repo)
+	sessionSvc := &mockSessionService{}
+	service := user.NewService(repo, sessionSvc)
 
 	username := "testUser"
 	password := "testPassword"
@@ -28,6 +30,19 @@ func TestLogin(t *testing.T) {
 	if user == nil {
 		t.Fatalf("user is nil")
 	}
+
+	if sessionSvc.callCreateCount != 1 {
+		t.Fatalf("session service create method not called")
+	}
+}
+
+type mockSessionService struct {
+	callCreateCount int
+}
+
+func (m *mockSessionService) Create(ctx context.Context, session *session.Session) error {
+	m.callCreateCount++
+	return nil
 }
 
 type mockRepository struct {
