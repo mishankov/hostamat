@@ -11,6 +11,7 @@ import (
 )
 
 type repository interface {
+	Get(ctx context.Context, id string) (*User, error)
 	GetByUsername(ctx context.Context, username string) (*User, error)
 	Create(ctx context.Context, user *User) error
 }
@@ -35,6 +36,10 @@ func NewService(repo repository, sessionSvc sessionService) *Service {
 		repo:       repo,
 		sessionSvc: sessionSvc,
 	}
+}
+
+func (s *Service) Get(ctx context.Context, id string) (*User, error) {
+	return s.repo.Get(ctx, id)
 }
 
 func (s *Service) Create(ctx context.Context, username, password string) error {

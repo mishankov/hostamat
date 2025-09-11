@@ -10,7 +10,7 @@ import (
 
 func TestLogin(t *testing.T) {
 	ctx := context.Background()
-	repo := &mockRepository{users: map[string]*user.User{}}
+	repo := &mockRepository{usersByUsername: map[string]*user.User{}, usersById: map[string]*user.User{}}
 	sessionSvc := &mockSessionService{}
 	service := user.NewService(repo, sessionSvc)
 
@@ -46,15 +46,20 @@ func (m *mockSessionService) Create(ctx context.Context, session *session.Sessio
 }
 
 type mockRepository struct {
-	users map[string]*user.User
+	usersByUsername map[string]*user.User
+	usersById       map[string]*user.User
+}
+
+func (m *mockRepository) Get(ctx context.Context, id string) (*user.User, error) {
+	if user, ok := m.usersById[id]; ok {
+		return user, nil
+	}
+
+	return nil, errors.New("user not found")
 }
 
 func (m *mockRepository) GetByUsername(ctx context.Context, username string) (*user.User, error) {
-	if m.users == nil {
-		m.users = make(map[string]*user.User)
-	}
-
-	if user, ok := m.users[username]; ok {
+	if user, ok := m.usersByUsername[username]; ok {
 		return user, nil
 	}
 
@@ -62,6 +67,7 @@ func (m *mockRepository) GetByUsername(ctx context.Context, username string) (*u
 }
 
 func (m *mockRepository) Create(ctx context.Context, user *user.User) error {
-	m.users[user.Username] = user
+	m.usersByUsername[user.Username] = user
+	m.usersById[user.ID] = user
 	return nil
 }
