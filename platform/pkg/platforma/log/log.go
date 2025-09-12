@@ -30,14 +30,14 @@ type contextKey string
 const (
 	TraceIdKey     contextKey = "traceId"
 	ServiceNameKey contextKey = "serviceName"
-	SartupTaskKey  contextKey = "satrtupTask"
+	StartupTaskKey contextKey = "startupTask"
 	UserIdKey      contextKey = "userId"
 )
 
 var defaultKeys = []contextKey{
 	TraceIdKey,
 	ServiceNameKey,
-	SartupTaskKey,
+	StartupTaskKey,
 	UserIdKey,
 }
 

@@ -98,7 +98,7 @@ func (a *Application) Run(ctx context.Context) error {
 	for i, task := range a.startupTasks {
 		log.InfoContext(ctx, "running task", "task", task.config.Name, "index", i)
 
-		taskCtx := context.WithValue(ctx, log.SartupTaskKey, task.config.Name)
+		taskCtx := context.WithValue(ctx, log.StartupTaskKey, task.config.Name)
 
 		err := task.runner.Run(taskCtx)
 		if err != nil {
