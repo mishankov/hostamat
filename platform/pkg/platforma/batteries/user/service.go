@@ -17,6 +17,7 @@ type repository interface {
 }
 
 type sessionService interface {
+	Get(ctx context.Context, id string) (*session.Session, error)
 	Create(ctx context.Context, session *session.Session) error
 }
 
@@ -34,6 +35,15 @@ func NewService(repo repository, sessionSvc sessionService) *Service {
 
 func (s *Service) Get(ctx context.Context, id string) (*User, error) {
 	return s.repo.Get(ctx, id)
+}
+
+func (s *Service) GetBySessionId(ctx context.Context, sessionId string) (*User, error) {
+	session, err := s.sessionSvc.Get(ctx, sessionId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get session: %w", err)
+	}
+
+	return s.repo.Get(ctx, session.User)
 }
 
 func (s *Service) Create(ctx context.Context, username, password string) error {

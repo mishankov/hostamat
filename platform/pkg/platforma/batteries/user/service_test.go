@@ -40,6 +40,10 @@ type mockSessionService struct {
 	callCreateCount int
 }
 
+func (m *mockSessionService) Get(ctx context.Context, id string) (*session.Session, error) {
+	return nil, nil
+}
+
 func (m *mockSessionService) Create(ctx context.Context, session *session.Session) error {
 	m.callCreateCount++
 	return nil

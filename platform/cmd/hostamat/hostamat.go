@@ -94,10 +94,12 @@ func main() {
 	userService := user.NewService(userRepo, sessionService)
 	registerHandler := user.NewRegisterHandler(userService)
 	loginHandler := user.NewLoginHandler(userService)
+	getUserHandler := user.NewGetHandler(userService)
 
 	userAPI := httpserver.NewHandlerGroup()
 	userAPI.Handle("POST /register", registerHandler)
 	userAPI.Handle("POST /login", loginHandler)
+	userAPI.Handle("GET /me", getUserHandler)
 
 	// Middlewares
 	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
