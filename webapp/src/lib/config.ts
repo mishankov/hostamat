@@ -7,5 +7,10 @@ export const Config = {
   sites: {
     createUrl: `${env.API_BASE || 'http://localhost:1001'}/api/sites`,
     listUrl: `${env.API_BASE || 'http://localhost:1001'}/api/sites`
+  },
+  auth: {
+    loginUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/login`,
+    registerUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/register`,
+    meUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/me`
   }
 } as const;
