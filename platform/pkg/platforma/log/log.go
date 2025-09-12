@@ -34,6 +34,13 @@ const (
 	CurrentUserKey contextKey = "user"
 )
 
+var defaultKeys = []contextKey{
+	TraceIdKey,
+	ServiceNameKey,
+	SartupTaskKey,
+	CurrentUserKey,
+}
+
 type contextHandler struct {
 	slog.Handler
 	additionKeys map[string]any
@@ -41,16 +48,10 @@ type contextHandler struct {
 
 // Handle processes the log record by adding context values before passing it to the underlying handler.
 func (h *contextHandler) Handle(ctx context.Context, r slog.Record) error {
-	if traceId, ok := ctx.Value(TraceIdKey).(string); ok {
-		r.AddAttrs(slog.String("traceId", traceId))
-	}
-
-	if serviceName, ok := ctx.Value(ServiceNameKey).(string); ok {
-		r.AddAttrs(slog.String("serviceName", serviceName))
-	}
-
-	if startupTask, ok := ctx.Value(SartupTaskKey).(string); ok {
-		r.AddAttrs(slog.String("startupTask", startupTask))
+	for _, key := range defaultKeys {
+		if value, ok := ctx.Value(key).(string); ok {
+			r.AddAttrs(slog.String(string(key), value))
+		}
 	}
 
 	for keyString, key := range h.additionKeys {
