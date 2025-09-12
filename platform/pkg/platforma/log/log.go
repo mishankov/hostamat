@@ -31,14 +31,14 @@ const (
 	TraceIdKey     contextKey = "traceId"
 	ServiceNameKey contextKey = "serviceName"
 	SartupTaskKey  contextKey = "satrtupTask"
-	CurrentUserKey contextKey = "user"
+	UserIdKey      contextKey = "userId"
 )
 
 var defaultKeys = []contextKey{
 	TraceIdKey,
 	ServiceNameKey,
 	SartupTaskKey,
-	CurrentUserKey,
+	UserIdKey,
 }
 
 type contextHandler struct {

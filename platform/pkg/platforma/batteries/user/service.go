@@ -20,12 +20,6 @@ type sessionService interface {
 	Create(ctx context.Context, session *session.Session) error
 }
 
-type contextKey string
-
-const (
-	CurrentUserKey contextKey = "user"
-)
-
 type Service struct {
 	repo       repository
 	sessionSvc sessionService
@@ -87,17 +81,4 @@ func (s *Service) Login(ctx context.Context, username, password string) (*sessio
 	}
 
 	return session, nil
-}
-
-func (s *Service) GetCurrentUserFromContext(ctx context.Context) (string, error) {
-	id, ok := ctx.Value(CurrentUserKey).(string)
-	if !ok {
-		return "", fmt.Errorf("user not found in context")
-	}
-
-	return id, nil
-}
-
-func (s *Service) SetCurrentUserToContext(ctx context.Context, id string) context.Context {
-	return context.WithValue(ctx, CurrentUserKey, id)
 }
