@@ -32,7 +32,6 @@ func main() {
 
 	// Basic components
 	conf := config.New()
-	// TODO: user doe not logs
 	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, map[string]any{"user": user.CurrentUserKey})
 	httpClient := httpclient.New()
 

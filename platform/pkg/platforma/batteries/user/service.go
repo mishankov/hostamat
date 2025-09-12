@@ -89,15 +89,15 @@ func (s *Service) Login(ctx context.Context, username, password string) (*sessio
 	return session, nil
 }
 
-func (s *Service) GetCurrentUserFromContext(ctx context.Context) (*User, error) {
-	user, ok := ctx.Value(CurrentUserKey).(*User)
+func (s *Service) GetCurrentUserFromContext(ctx context.Context) (string, error) {
+	id, ok := ctx.Value(CurrentUserKey).(string)
 	if !ok {
-		return nil, fmt.Errorf("user not found in context")
+		return "", fmt.Errorf("user not found in context")
 	}
 
-	return user, nil
+	return id, nil
 }
 
-func (s *Service) SetCurrentUserToContext(ctx context.Context, user *User) context.Context {
-	return context.WithValue(ctx, CurrentUserKey, user)
+func (s *Service) SetCurrentUserToContext(ctx context.Context, id string) context.Context {
+	return context.WithValue(ctx, CurrentUserKey, id)
 }

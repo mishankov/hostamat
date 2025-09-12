@@ -35,9 +35,9 @@ func (m *AuthenticationMiddleware) Wrap(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := m.userService.SetCurrentUserToContext(r.Context(), user)
-		r = r.WithContext(ctx)
+		ctxWithUser := m.userService.SetCurrentUserToContext(r.Context(), user.ID)
+		requestWithUser := r.WithContext(ctxWithUser)
 
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, requestWithUser)
 	})
 }

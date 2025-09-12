@@ -39,7 +39,6 @@ func NewRequestLogger(logger logger) *RequestLogger {
 // TODO: wrap ResponseWriter to log response code and headers
 func (m *RequestLogger) Wrap(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
 		ww := &responseWrapper{ResponseWriter: w}
 
 		headerAttrs := make([]slog.Attr, 0, len(r.Header))
@@ -47,7 +46,7 @@ func (m *RequestLogger) Wrap(h http.Handler) http.Handler {
 			headerAttrs = append(headerAttrs, slog.String(k, strings.Join(v, ", ")))
 		}
 		m.logger.DebugContext(
-			ctx, "handler invoke started",
+			r.Context(), "handler invoke started",
 			"path", r.URL.Path, "method", r.Method, "remote", r.RemoteAddr, "headers",
 			slog.Attr{Key: "headers", Value: slog.GroupValue(headerAttrs...)},
 		)
@@ -55,7 +54,7 @@ func (m *RequestLogger) Wrap(h http.Handler) http.Handler {
 		h.ServeHTTP(ww, r)
 
 		m.logger.DebugContext(
-			ctx, "handler invoke finished",
+			r.Context(), "handler invoke finished",
 			"status", ww.statusCode, "headers", ww.headers, "body", string(ww.body),
 		)
 	})
