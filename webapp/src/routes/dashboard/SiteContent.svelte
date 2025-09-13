@@ -3,7 +3,7 @@
 	import Download from "phosphor-svelte/lib/Download";
 	import Trash from "phosphor-svelte/lib/Trash";
 	import Upload from "phosphor-svelte/lib/Upload";
-	import Modal from "./components/Modal.svelte";
+	import Modal from "../../lib/components/Modal.svelte";
 	import Button from "$lib/components/Button.svelte";
 	import FileUploader from "./components/FileUploader.svelte";
 	import IconButton from "./components/IconButton.svelte";

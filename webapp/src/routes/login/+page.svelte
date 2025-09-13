@@ -1,6 +1,6 @@
 <script>
 	import Button from "$lib/components/Button.svelte";
-	import Card from "../dashboard/components/Card.svelte";
+	import Card from "../../lib/components/Card.svelte";
 </script>
 
 <main>

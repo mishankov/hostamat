@@ -2,7 +2,7 @@
 	import Button from "$lib/components/Button.svelte";
 	import Upload from "phosphor-svelte/lib/Upload";
   import X from "phosphor-svelte/lib/X";
-	import Card from "./Card.svelte";
+	import Card from "../../../lib/components/Card.svelte";
 	import IconButton from "./IconButton.svelte";
 
   interface Props {

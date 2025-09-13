@@ -1,9 +1,9 @@
 <script lang="ts">
   import Plus from "phosphor-svelte/lib/Plus";
 
-	import Separator from "./components/Separator.svelte";
+	import Separator from "../../lib/components/Separator.svelte";
 	import SiteContent from "./SiteContent.svelte";
-	import Card from "./components/Card.svelte";
+	import Card from "../../lib/components/Card.svelte";
 
   import type { PageProps } from './$types';
 
