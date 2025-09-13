@@ -1,12 +1,14 @@
 <script lang="ts">
+  type CardKind = "primary" | "confirm" | "danger" | "action"
   let {
     children,
     floating = false,
+    kind = "primary",
     ...restProps
   } = $props()
 </script>
 
-<div class={["card", floating && "floating"]} {...restProps}>
+<div class={["card", floating && "floating", kind]} {...restProps}>
   {@render children()}
 </div>
 
@@ -20,6 +22,26 @@
     background-color: var(--color-background-object);
 
     transition: var(--transition);
+  }
+
+  .primary {
+    border-color: var(--color-primary);
+
+  }
+
+  .confirm {
+    border-color: var(--color-confirm);
+    background-color: var(--color-confirm-dim);
+  }
+
+  .danger {
+    border-color: var(--color-danger);
+    background-color: var(--color-danger-dim);
+  }
+
+  .action {
+    border-color: var(--color-action);
+    background-color: var(--color-action-dim);
   }
 
   .floating:hover {

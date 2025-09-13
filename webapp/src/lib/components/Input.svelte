@@ -57,7 +57,7 @@
 
   label {
     position: absolute;
-    left: 20px;
+    left: 10px;
     top: 50%;
     transform: translateY(-50%);
 
@@ -74,7 +74,7 @@
   input:focus + label,
   input:not(:placeholder-shown) + label {
     top: 0;
-    transform: translateY(-50%) translateX(-30%) scale(0.85);
+    transform: translateY(-50%) translateX(-10%) scale(0.85);
     background-color: var(--color-primary-dim);
     color: var(--color-primary);
   }

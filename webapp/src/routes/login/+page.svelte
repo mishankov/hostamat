@@ -6,6 +6,8 @@
 
   let login = $state("")
   let password = $state("")
+  let error = $state("Тест (удалить)")
+  let loginButtonDisabled = $derived(!(login.length > 0 && password.length > 0))
 
   const loginAction = async () => {
     const res = await fetch("/api/login", {
@@ -19,6 +21,12 @@
     if (res.ok) {
       window.location.href = "/dashboard";
     }
+
+    if (res.status === 401) {
+      error = "Неверный логин или пароль";
+    } else {
+      error = "Ошибка сервера";
+    }
   }
 </script>
 
@@ -27,11 +35,19 @@
     <div class="login-form">
       <h1>Привет! 👋</h1>
 
+      {#if error || true}
+        <div class="error">
+          <Card kind="danger" style="height: 100%; width: 100%;">
+            <div class="error-text">{error}</div>
+          </Card>
+        </div>
+      {/if}
+
       <Input id="login" type="text" label="Логин" bind:value={login} />
       <Input id="password" type="password" label="Пароль" bind:value={password} />
       
       <div class="actions">
-        <Button kind="action" onclick={loginAction}>Войти</Button>
+        <Button kind="action" onclick={loginAction} disabled={loginButtonDisabled}>Войти</Button>
         <Button link="/register">Создать аккаунт</Button>
       </div>
     </div>  
@@ -57,9 +73,23 @@
     justify-content: center;
     align-items: center;
     
-    gap: 10px;
+    gap: 15px;
 
     padding: 20px;
+  }
+
+  .error {
+    width: 100%;
+    height: 50px;
+  }
+
+  .error-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    
+    padding: 10px;
   }
 
   .actions {
