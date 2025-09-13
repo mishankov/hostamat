@@ -1,16 +1,18 @@
 <script>
 	import Button from "$lib/components/Button.svelte";
 	import Card from "../dashboard/components/Card.svelte";
-
 </script>
+
 <main>
-  
   <Card>
     <div class="login-form">
       <h1>Привет! 👋</h1>
+
       <input type="text" placeholder="Логин" />
       <input type="password" placeholder="Пароль" />
-      <Button>Войти</Button>
+      
+      <Button kind="action">Войти</Button>
+      <Button link="/register">Зарегистрироваться</Button>
     </div>
   </Card>
 </main>
