@@ -1,12 +1,13 @@
 <script>
 	import Button from "$lib/components/Button.svelte";
 	import Card from "$lib/components/Card.svelte";
+	import Error from "$lib/components/Error.svelte";
 	import Input from "$lib/components/Input.svelte";
 	import { redirect } from "@sveltejs/kit";
 
   let login = $state("")
   let password = $state("")
-  let error = $state("Тест (удалить)")
+  let error = $state("")
   let loginButtonDisabled = $derived(!(login.length > 0 && password.length > 0))
 
   const loginAction = async () => {
@@ -35,13 +36,7 @@
     <div class="login-form">
       <h1>Привет! 👋</h1>
 
-      {#if error || true}
-        <div class="error">
-          <Card kind="danger" style="height: 100%; width: 100%;">
-            <div class="error-text">{error}</div>
-          </Card>
-        </div>
-      {/if}
+      <Error {error} />
 
       <Input id="login" type="text" label="Логин" bind:value={login} />
       <Input id="password" type="password" label="Пароль" bind:value={password} />
@@ -76,20 +71,6 @@
     gap: 15px;
 
     padding: 20px;
-  }
-
-  .error {
-    width: 100%;
-    height: 50px;
-  }
-
-  .error-text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-    
-    padding: 10px;
   }
 
   .actions {
