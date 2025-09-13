@@ -18,12 +18,22 @@
   }: InputProps = $props()
 </script>
 
-{#if label}
-  <label for={id}>{label}</label>
-{/if}
-<input {id} {type} bind:value={value} bind:this={ref} />
+<div class="input-container">
+  <!-- Empty placeholder to utilize :placeholder-shown pseudo class -->
+  <input {id} {type} bind:value={value} bind:this={ref} placeholder=" " />
+  {#if label}
+    <label for={id}>{label}</label>
+  {/if}
+</div>
 
 <style>
+  .input-container {
+    width: 100%;
+
+    position: relative;
+    display: inline-block;
+  }
+
   input {
     padding: 12px 20px;
 
@@ -44,6 +54,25 @@
   }
 
   label {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    padding: 0 4px;
+
+    background-color: transparent;
+    color: #555;
+
+    pointer-events: none;
+
+    transition: var(--transition);
+  }
+
+  input:focus + label,
+  input:not(:placeholder-shown) + label {
+    top: 0;
+    transform: translateY(-50%);
     background-color: var(--color-primary-dim);
     color: var(--color-primary);
   }
