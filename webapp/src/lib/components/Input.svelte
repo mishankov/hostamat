@@ -35,6 +35,8 @@
   }
 
   input {
+    width: 100%;
+
     padding: 12px 20px;
 
     background-color: var(--color-primary-dim);
@@ -72,7 +74,7 @@
   input:focus + label,
   input:not(:placeholder-shown) + label {
     top: 0;
-    transform: translateY(-50%);
+    transform: translateY(-50%) translateX(-30%) scale(0.85);
     background-color: var(--color-primary-dim);
     color: var(--color-primary);
   }

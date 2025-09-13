@@ -30,8 +30,10 @@
       <Input id="login" type="text" label="Логин" bind:value={login} />
       <Input id="password" type="password" label="Пароль" bind:value={password} />
       
-      <Button kind="action" onclick={loginAction}>Войти</Button>
-      <Button link="/register">Создать аккаунт</Button>
+      <div class="actions">
+        <Button kind="action" onclick={loginAction}>Войти</Button>
+        <Button link="/register">Создать аккаунт</Button>
+      </div>
     </div>  
   </Card>
 </main>
@@ -48,12 +50,25 @@
   }
 
   .login-form {
+    width: 300px;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    
     gap: 10px;
 
     padding: 20px;
+  }
+
+  .actions {
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding-top: 10px;
   }
 </style>
