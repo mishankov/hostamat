@@ -11,7 +11,7 @@
   let loginButtonDisabled = $derived(!(login.length > 0 && password.length > 0))
 
   const loginAction = async () => {
-    const res = await fetch("/api/login", {
+    const res = await fetch("/api/auth/login", {
       method: "POST",
       body: JSON.stringify({
         login,
