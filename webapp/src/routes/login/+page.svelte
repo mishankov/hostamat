@@ -31,7 +31,7 @@
       <Input id="password" type="password" label="Пароль" bind:value={password} />
       
       <Button kind="action" onclick={loginAction}>Войти</Button>
-      <Button link="/register">Зарегистрироваться</Button>
+      <Button link="/register">Создать аккаунт</Button>
     </div>  
   </Card>
 </main>
