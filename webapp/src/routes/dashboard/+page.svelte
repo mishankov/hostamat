@@ -30,7 +30,7 @@
       <p>Loading...</p>
     {:then _}
       {#each sites as site (site.id)}
-        <Card floating style="height: 100px;">
+        <Card style="height: 100px;">
           <SiteContent site={site} />
         </Card>
       {/each}

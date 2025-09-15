@@ -1,0 +1,50 @@
+<script lang="ts">
+  let {
+    size = 100,
+    background = "var(--color-background-object)"
+  } = $props()
+
+  let strokeWidth = 5
+</script>
+
+<svg 
+  width={size}
+  viewBox="0 0 100 100"
+>
+  <rect class="back"
+    x="30" y="10"
+    rx="10" ry="10"
+    width="60" height="60"
+    stroke-width={strokeWidth}
+  />
+
+  <rect class="front"
+    x="5" y="25"
+    rx="10" ry="10"
+    width="60" height="60"
+    stroke-width={strokeWidth}
+  />
+</svg>
+
+<style>
+  rect {
+    stroke: var(--color-primary);
+    transition: all 500ms;
+  }
+
+  rect.back {
+    fill: transparent;
+  }
+
+  svg:hover rect {
+    stroke: var(--color-primary);
+  }
+  
+  svg:hover rect.back {
+    transform: translateX(5px) translateY(-5px);
+  }
+
+  svg:active rect.front {
+    fill: var(--color-primary);
+  }
+</style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Copy from "phosphor-svelte/lib/Copy";
+	// import Copy from "phosphor-svelte/lib/Copy";
 	import Download from "phosphor-svelte/lib/Download";
 	import Trash from "phosphor-svelte/lib/Trash";
 	import Upload from "phosphor-svelte/lib/Upload";
@@ -8,6 +8,8 @@
 	import FileUploader from "./components/FileUploader.svelte";
 	import IconButton from "./components/IconButton.svelte";
   import { type Site } from './types';
+
+  import Copy from "$lib/icons/Copy.svelte";
 
   interface Props {
     site: Site
@@ -25,7 +27,7 @@
   <div class="site-url-container">
     <a href="https://{site.domain}" target="_blank" class="site-url">{site.domain}</a> 
     <IconButton title="Скопировать URL" onclick={()=>{navigator.clipboard.writeText(`https://${site.domain}`)}}>
-      <Copy />
+      <Copy size={20} />
     </IconButton>
   </div>
 
