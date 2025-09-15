@@ -3,7 +3,6 @@
 	import Card from "$lib/components/Card.svelte";
 	import Error from "$lib/components/Error.svelte";
 	import Input from "$lib/components/Input.svelte";
-	import { redirect } from "@sveltejs/kit";
 
   let login = $state("")
   let password = $state("")
@@ -11,6 +10,7 @@
   let loginButtonDisabled = $derived(!(login.length > 0 && password.length > 0))
 
   const loginAction = async () => {
+    error = "";
     const res = await fetch("/api/auth/login", {
       method: "POST",
       body: JSON.stringify({
@@ -21,6 +21,7 @@
 
     if (res.ok) {
       window.location.href = "/dashboard";
+      return;
     }
 
     if (res.status === 401) {
