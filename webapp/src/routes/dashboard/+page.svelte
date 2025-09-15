@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Plus from "phosphor-svelte/lib/Plus";
 
 	import Separator from "../../lib/components/Separator.svelte";
 	import SiteContent from "./SiteContent.svelte";
@@ -9,6 +8,8 @@
 
   import { type Site } from './types';
 	import { invalidateAll } from "$app/navigation";
+
+  import Plus from "$lib/icons/Plus.svelte";
 
 	let { data }: PageProps = $props();
   let sites = $state<Site[]>([]);
@@ -47,7 +48,7 @@
             await invalidateAll()
             sites = await data.sites;
       }}>
-        <p class="add-site-icon"><Plus /></p>
+        <p class="add-site-icon"><Plus size={40} /></p>
         <p class="add-site-text">Добавить сайт</p>
       </div>
     </Card>
