@@ -1,10 +1,13 @@
 import type { RequestHandler } from './$types';
 import { Config } from '$lib/config';
 
-export const POST: RequestHandler = async () => {
+export const POST: RequestHandler = async ({ request }) => {
   try {
     const response = await fetch(Config.sites.createUrl, {
-      method: 'POST'
+      method: 'POST',
+      headers: {
+        'Cookie': request.headers.get('Cookie') || ''
+      }
     });
 
     return new Response(response.body, { 
