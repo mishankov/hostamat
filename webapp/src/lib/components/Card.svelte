@@ -25,8 +25,7 @@
   }
 
   .primary {
-    border-color: var(--color-primary);
-
+    border-color: var(--color-border);
   }
 
   .confirm {
