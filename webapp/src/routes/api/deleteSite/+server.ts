@@ -6,7 +6,8 @@ export const POST: RequestHandler = async ({ request }) => {
     const response = await fetch(Config.sites.createUrl, {
       method: 'DELETE',
       headers: {
-        'H-Site-Id': request.headers.get('H-Site-Id') || ''
+        'H-Site-Id': request.headers.get('H-Site-Id') || '',
+        'Cookie': request.headers.get('Cookie') || ''
       }
     });
 
