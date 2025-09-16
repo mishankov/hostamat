@@ -31,13 +31,13 @@
       <p>Loading...</p>
     {:then _}
       {#each sites as site (site.id)}
-        <Card style="height: 100px;">
+        <Card style="height: 110px;">
           <SiteContent site={site} />
         </Card>
       {/each}
     
 
-    <Card floating style="height: 100px;">
+    <Card floating style="height: 110px;">
       <!-- TODO: should prob fix  -->
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <div class="add-site" role="button" tabindex="0" onclick={async () => {

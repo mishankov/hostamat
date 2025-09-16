@@ -1,7 +1,5 @@
 <script lang="ts">
-	// import Copy from "phosphor-svelte/lib/Copy";
 	import Download from "phosphor-svelte/lib/Download";
-	import Trash from "phosphor-svelte/lib/Trash";
 	import Upload from "phosphor-svelte/lib/Upload";
 	import Modal from "../../lib/components/Modal.svelte";
 	import Button from "$lib/components/Button.svelte";
@@ -10,6 +8,7 @@
   import { type Site } from './types';
 
   import Copy from "$lib/icons/Copy.svelte";
+	import Trash from "$lib/icons/Trash.svelte";
 
   interface Props {
     site: Site
@@ -49,7 +48,7 @@
     </IconButton> 
 
     <IconButton title="Удалить сайт" onclick={() => deleteModal?.open()}>
-      <Trash />
+      <Trash size={20} />
     </IconButton>
     <Modal bind:this={deleteModal} kind="danger">
       <div class="delete-modal">
