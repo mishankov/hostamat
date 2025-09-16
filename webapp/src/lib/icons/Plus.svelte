@@ -9,15 +9,15 @@
   viewBox="-50 -50 100 100"
 >
   <line
-    x1="0" y1="-25"
-    x2="0" y2="25"
+    x1="0" y1="-30"
+    x2="0" y2="30"
     stroke="var(--color-primary)"
     stroke-width="5"
   />
 
   <line
-    x1="-25" y1="0"
-    x2="25" y2="0"
+    x1="-30" y1="0"
+    x2="30" y2="0"
     stroke="var(--color-primary)"
     stroke-width="5"
   />
