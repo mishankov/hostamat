@@ -16,6 +16,7 @@
     rx="10" ry="10"
     width="60" height="60"
     stroke-width={strokeWidth}
+    style="--color-background: {background}"
   />
 
   <rect class="front"
@@ -23,6 +24,7 @@
     rx="10" ry="10"
     width="60" height="60"
     stroke-width={strokeWidth}
+    style="--color-background: {background}"
   />
 </svg>
 
@@ -32,8 +34,8 @@
     transition: all 500ms;
   }
 
-  rect.back {
-    fill: transparent;
+  rect {
+    fill: var(--color-background);
   }
 
   svg:hover rect {
