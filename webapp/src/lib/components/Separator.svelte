@@ -14,10 +14,12 @@
   }
 
   .horizontal {
+    width: 100%;
     border-top: var(--border-regular);
   }
 
   .vertical {
+    height: 100%;
     border-left: var(--border-regular);
   }
 </style>
