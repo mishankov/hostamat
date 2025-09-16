@@ -6,6 +6,7 @@
 	import Separator from "$lib/components/Separator.svelte";
 	import Copy from "$lib/icons/Copy.svelte";
 	import Plus from "$lib/icons/Plus.svelte";
+	import Trash from "$lib/icons/Trash.svelte";
 </script>
 
 <div style="display:flex; flex-direction:column; gap:20px; padding:10px;">
@@ -89,14 +90,9 @@
 
   <h1>Icons</h1>
   <div style="display: flex; gap: 10px">
-    <div>
-      <h2>Plus</h2>
-      <Plus />
-    </div>
-    <div>
-      <h2>Copy</h2>
-      <Copy />
-    </div>
+    <div><h2>Plus</h2><Plus /></div>
+    <div><h2>Copy</h2> <Copy /></div>
+    <div><h2>Trash</h2> <Trash /></div>
   </div>
 </div>
 
