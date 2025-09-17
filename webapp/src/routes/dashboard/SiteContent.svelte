@@ -1,14 +1,11 @@
 <script lang="ts">
-	import Download from "phosphor-svelte/lib/Download";
-	import Upload from "phosphor-svelte/lib/Upload";
 	import Modal from "../../lib/components/Modal.svelte";
 	import Button from "$lib/components/Button.svelte";
 	import FileUploader from "./components/FileUploader.svelte";
 	import IconButton from "./components/IconButton.svelte";
   import { type Site } from './types';
 
-  import Copy from "$lib/icons/Copy.svelte";
-	import Trash from "$lib/icons/Trash.svelte";
+  import  { Copy, Download, Trash, Upload } from "$lib/icons";
 
   interface Props {
     site: Site
@@ -32,7 +29,7 @@
 
   <div class="site-toolbar">
     <IconButton onclick={() => uploadModal?.open()} title="Загрузить сайт">
-      <Upload />
+      <Upload size={20} />
     </IconButton>
     <Modal bind:this={uploadModal} kind="primary">
       <div class="upload-modal">
@@ -44,7 +41,7 @@
     </Modal>
 
     <IconButton title="Скачать сайт" onclick={()=>{}}>
-      <Download />
+      <Download size={20} />
     </IconButton> 
 
     <IconButton title="Удалить сайт" onclick={() => deleteModal?.open()}>
