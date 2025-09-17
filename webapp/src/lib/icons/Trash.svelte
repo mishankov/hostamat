@@ -19,6 +19,8 @@
       "
       stroke="currentColor"
       stroke-width="5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
       fill="none"
     />
 
@@ -27,6 +29,8 @@
       x2="30" y2="-20"
       stroke="currentColor"
       stroke-width="5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
       fill="none"
     />
    </g>
@@ -36,6 +40,8 @@
     x2="-8" y2="20"
     stroke="currentColor"
     stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
   />
 
   <line 
@@ -43,6 +49,8 @@
     x2="8" y2="20"
     stroke="currentColor"
     stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
   />
 
   <polyline class="can"
@@ -54,6 +62,8 @@
     "
     stroke="currentColor"
     stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
     fill="none"
   />
 </svg>

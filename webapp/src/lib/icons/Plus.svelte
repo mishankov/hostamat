@@ -13,6 +13,8 @@
     x2="0" y2="30"
     stroke="var(--color-primary)"
     stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
   />
 
   <line
@@ -20,6 +22,8 @@
     x2="30" y2="0"
     stroke="var(--color-primary)"
     stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
   />
 </svg>
 
