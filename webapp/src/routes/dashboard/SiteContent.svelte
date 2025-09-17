@@ -1,11 +1,10 @@
 <script lang="ts">
-	import Modal from "../../lib/components/Modal.svelte";
-	import Button from "$lib/components/Button.svelte";
+	import { Button, Modal } from "$lib/components";
+  import  { Copy, Download, Trash, Upload } from "$lib/icons";
+
 	import FileUploader from "./components/FileUploader.svelte";
 	import IconButton from "./components/IconButton.svelte";
   import { type Site } from './types';
-
-  import  { Copy, Download, Trash, Upload } from "$lib/icons";
 
   interface Props {
     site: Site
