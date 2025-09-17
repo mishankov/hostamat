@@ -29,17 +29,6 @@
       0 15
       0 -30
       15 -20
-    "
-    stroke="var(--color-primary)"
-    stroke-width="5"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    fill="none"
-  />
-
-  <polyline class="arrow"
-    points="
-      0 15
       0 -30
       -15 -20
     "
