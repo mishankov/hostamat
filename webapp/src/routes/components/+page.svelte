@@ -4,11 +4,7 @@
 	import Error from "$lib/components/Error.svelte";
 	import Input from "$lib/components/Input.svelte";
 	import Separator from "$lib/components/Separator.svelte";
-	import Copy from "$lib/icons/Copy.svelte";
-	import Download from "$lib/icons/Download.svelte";
-	import Plus from "$lib/icons/Plus.svelte";
-	import Trash from "$lib/icons/Trash.svelte";
-	import Upload from "$lib/icons/Upload.svelte";
+  import { Copy, Download, Plus, Trash, Upload } from "$lib/icons";
 </script>
 
 <div style="display:flex; flex-direction:column; gap:20px; padding:10px;">
