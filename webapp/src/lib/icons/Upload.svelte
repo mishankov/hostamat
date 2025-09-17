@@ -28,9 +28,9 @@
     points="
       0 15
       0 -30
-      15 -20
+      10 -20
       0 -30
-      -15 -20
+      -10 -20
     "
     stroke="var(--color-primary)"
     stroke-width="5"
@@ -49,6 +49,6 @@
   }
 
   svg:active .arrow {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
 </style>

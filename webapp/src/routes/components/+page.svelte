@@ -5,6 +5,7 @@
 	import Input from "$lib/components/Input.svelte";
 	import Separator from "$lib/components/Separator.svelte";
 	import Copy from "$lib/icons/Copy.svelte";
+	import Download from "$lib/icons/Download.svelte";
 	import Plus from "$lib/icons/Plus.svelte";
 	import Trash from "$lib/icons/Trash.svelte";
 	import Upload from "$lib/icons/Upload.svelte";
@@ -95,6 +96,7 @@
     <div><h2>Copy</h2> <Copy /></div>
     <div><h2>Trash</h2> <Trash /></div>
     <div><h2>Upload</h2> <Upload /></div>
+    <div><h2>Download</h2> <Download /></div>
   </div>
 </div>
 
