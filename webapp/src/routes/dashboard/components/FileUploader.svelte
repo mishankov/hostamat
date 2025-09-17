@@ -1,8 +1,6 @@
 <script lang="ts">
-	import Button from "$lib/components/Button.svelte";
-	import Upload from "phosphor-svelte/lib/Upload";
-  import X from "phosphor-svelte/lib/X";
-	import Card from "../../../lib/components/Card.svelte";
+	import { Button, Card } from "$lib/components";
+	import  { Upload, X } from "$lib/icons";
 	import IconButton from "./IconButton.svelte";
 
   interface Props {
@@ -192,7 +190,7 @@
     onkeydown={handleKeyDown}
   >
     <div class="drop-zone-content">
-      <Upload size="80px"/>
+      <Upload size={80} />
       <p class="drop-text">
         <strong>Нажми тут для выбора файлов</strong> или перетащи их
       </p>
@@ -236,7 +234,7 @@
               </div>
               
               <IconButton onclick={() => removeFile(index)} title="Удалить">
-                <X />
+                <X size={20} />
               </IconButton>
             </div>
           {/each}

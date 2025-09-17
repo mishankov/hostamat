@@ -1,6 +1,6 @@
 <script lang="ts">
   import  { Button, Card, Error, Input, Separator} from "$lib/components";
-  import { Copy, Download, Plus, Trash, Upload } from "$lib/icons";
+  import { Copy, Download, Plus, Trash, Upload, X } from "$lib/icons";
 </script>
 
 <div style="display:flex; flex-direction:column; gap:20px; padding:10px;">
@@ -89,6 +89,7 @@
     <div><h2>Trash</h2> <Trash /></div>
     <div><h2>Upload</h2> <Upload /></div>
     <div><h2>Download</h2> <Download /></div>
+    <div><h2>X</h2> <X /></div>
   </div>
 </div>
 

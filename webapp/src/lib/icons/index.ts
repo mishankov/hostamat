@@ -3,5 +3,6 @@ import Download from './Download.svelte'
 import Plus from './Plus.svelte'
 import Trash from './Trash.svelte'
 import Upload from './Upload.svelte'
+import X from './X.svelte'
 
-export { Copy, Download, Plus, Trash, Upload }
+export { Copy, Download, Plus, Trash, Upload, X }
