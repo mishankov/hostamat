@@ -7,6 +7,7 @@
 	import Copy from "$lib/icons/Copy.svelte";
 	import Plus from "$lib/icons/Plus.svelte";
 	import Trash from "$lib/icons/Trash.svelte";
+	import Upload from "$lib/icons/Upload.svelte";
 </script>
 
 <div style="display:flex; flex-direction:column; gap:20px; padding:10px;">
@@ -93,6 +94,7 @@
     <div><h2>Plus</h2><Plus /></div>
     <div><h2>Copy</h2> <Copy /></div>
     <div><h2>Trash</h2> <Trash /></div>
+    <div><h2>Upload</h2> <Upload /></div>
   </div>
 </div>
 
