@@ -1,9 +1,5 @@
 <script lang="ts">
-	import Button from "$lib/components/Button.svelte";
-	import Card from "$lib/components/Card.svelte";
-	import Error from "$lib/components/Error.svelte";
-	import Input from "$lib/components/Input.svelte";
-	import Separator from "$lib/components/Separator.svelte";
+  import  { Button, Card, Error, Input, Separator} from "$lib/components";
   import { Copy, Download, Plus, Trash, Upload } from "$lib/icons";
 </script>
 
