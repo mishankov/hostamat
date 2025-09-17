@@ -35,7 +35,7 @@
 <main>
   <Card>
     <div class="login-form">
-      <h1>Привет! 👋</h1>
+      <h1>Вход</h1>
 
       <Error {error} />
 
