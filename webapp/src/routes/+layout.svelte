@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button, Card, Link } from '$lib/components';
+	import Separator from '$lib/components/Separator.svelte';
   import type { LayoutProps } from './$types';
 
   let { data, children }: LayoutProps = $props();
@@ -14,8 +15,6 @@
   <Card>
     <div class="header-card">
       <Link href="/"><span class="logo">ХОСТАМАТ</span></Link>
-
-      
       <Link href="/about">О сервисе</Link>
 
       {#if data.isAuthenticated == true}
@@ -50,6 +49,7 @@
     padding: 10px;
 
     height: 75px;
+    width: clamp(500px, 50vw, 1200px);
   }
 
   span.logo {

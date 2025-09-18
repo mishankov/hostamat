@@ -21,10 +21,6 @@
 
 <div class="dashboard">
   <h1>Твои сайты</h1>
-
-  <div class="separator">
-     <Separator/>
-  </div>
  
   <div class="site-list">
     {#await data.sites}
@@ -67,14 +63,7 @@
     
     width: clamp(500px, 75%, 1200px);
 
-    border: 0.5px solid #555;
-    border-radius: 15px;
-
     padding: 20px;
-  }
-
-  .separator {
-    padding-bottom: 20px;
   }
 
   .site-list {
