@@ -1,6 +1,7 @@
 <script lang="ts">
   let {
     size = 100,
+    color = "var(--color-primary)"
   } = $props()
 </script>
 
@@ -13,24 +14,25 @@
     cx="0"
     cy="0"
     r="40"
-    stroke="var(--color-primary)"
+    stroke={color}
     stroke-width="5"
-    stroke-dasharray="60 20"
+    stroke-dasharray="60 188"
+    stroke-dashoffset="0"
     stroke-linecap="round"
     fill="none"
   />
 </svg>
 
 <style>
-  .spinner {
-    animation: rotate 2s linear infinite;
+  circle {
+    animation: rotate 1.4s linear infinite;
   }
 
   @keyframes rotate {
-    from {
+    0% {
       transform: rotate(0deg);
     }
-    to {
+    100% {
       transform: rotate(360deg);
     }
   }

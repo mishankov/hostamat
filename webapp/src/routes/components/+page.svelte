@@ -86,11 +86,11 @@
   <div style="display: flex; gap: 10px">
     <div><h2>Plus</h2><Plus /></div>
     <div><h2>Copy</h2> <Copy /></div>
-    <div><h2>Spinner</h2> <Spinner /></div>
     <div><h2>Trash</h2> <Trash /></div>
     <div><h2>Upload</h2> <Upload /></div>
     <div><h2>Download</h2> <Download /></div>
     <div><h2>X</h2> <X /></div>
+    <div><h2>Spinner</h2> <Spinner /></div>
   </div>
 </div>
 
