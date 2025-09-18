@@ -19,6 +19,7 @@ type repository interface {
 type sessionService interface {
 	Get(ctx context.Context, id string) (*session.Session, error)
 	Create(ctx context.Context, session *session.Session) error
+	Delete(ctx context.Context, id string) error
 }
 
 type Service struct {
@@ -91,4 +92,8 @@ func (s *Service) Login(ctx context.Context, username, password string) (*sessio
 	}
 
 	return session, nil
+}
+
+func (s *Service) Logout(ctx context.Context, sessionId string) error {
+	return s.sessionSvc.Delete(ctx, sessionId)
 }

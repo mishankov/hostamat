@@ -94,11 +94,13 @@ func main() {
 	userService := user.NewService(userRepo, sessionService)
 	registerHandler := user.NewRegisterHandler(userService)
 	loginHandler := user.NewLoginHandler(userService)
+	logoutHandler := user.NewLogoutHandler(userService)
 	getUserHandler := user.NewGetHandler(userService)
 
 	userAPI := httpserver.NewHandlerGroup()
 	userAPI.Handle("POST /register", registerHandler)
 	userAPI.Handle("POST /login", loginHandler)
+	userAPI.Handle("POST /logout", logoutHandler)
 	userAPI.Handle("GET /me", getUserHandler)
 
 	// Middlewares

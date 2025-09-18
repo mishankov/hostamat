@@ -49,6 +49,10 @@ func (m *mockSessionService) Create(ctx context.Context, session *session.Sessio
 	return nil
 }
 
+func (m *mockSessionService) Delete(ctx context.Context, id string) error {
+	return nil
+}
+
 type mockRepository struct {
 	usersByUsername map[string]*user.User
 	usersById       map[string]*user.User

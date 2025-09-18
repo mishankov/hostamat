@@ -37,7 +37,13 @@ func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Set-Cookie", "session="+session.ID+"; Path=/")
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session",
+		Value:    session.ID,
+		Path:     "/",
+		HttpOnly: true,
+	})
+
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(session); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
