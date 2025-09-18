@@ -20,6 +20,7 @@ export const load = (async ({ fetch, request }) => {
       'Cookie': request.headers.get('Cookie') || ''
     }
   });
+  
   if (!response.ok) {
     return { sites: [] };
   }
