@@ -70,7 +70,7 @@ func (s *HttpServer) Run(ctx context.Context) error {
 		log.ErrorContext(ctx, "HTTP shutdown error", "error", err)
 		return err
 	}
-	log.InfoContext(ctx, "graceful shutdown complete.")
+	log.InfoContext(ctx, "graceful shutdown completed.")
 
 	return nil
 }
