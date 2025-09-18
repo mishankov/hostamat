@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Card } from '$lib/components';
+	import { Button, Card, Link } from '$lib/components';
   import type { LayoutProps } from './$types';
 
   let { data, children }: LayoutProps = $props();
@@ -13,9 +13,10 @@
 <header>
   <Card>
     <div class="header-card">
-      <a href="/">ХОСТАМАТ</a>
+      <Link href="/"><span class="logo">ХОСТАМАТ</span></Link>
 
-      <a href="/about">О сервисе</a>
+      
+      <Link href="/about">О сервисе</Link>
 
       {#if data.isAuthenticated == true}
         <Button onclick={logout}>Выйти</Button>
@@ -49,5 +50,10 @@
     padding: 10px;
 
     height: 75px;
+  }
+
+  span.logo {
+    font-size: larger;
+    font-weight: bold;
   }
 </style>

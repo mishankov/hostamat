@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Modal } from "$lib/components";
+	import { Button, Link, Modal } from "$lib/components";
   import  { Copy, Download, Trash, Upload } from "$lib/icons";
 
 	import FileUploader from "./components/FileUploader.svelte";
@@ -20,7 +20,7 @@
 
 <div class="site-content">
   <div class="site-url-container">
-    <a href="https://{site.domain}" target="_blank" class="site-url">{site.domain}</a> 
+    <Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.domain}</Link> 
     <IconButton title="Скопировать URL" onclick={()=>{navigator.clipboard.writeText(`https://${site.domain}`)}}>
       <Copy size={20} />
     </IconButton>
@@ -86,13 +86,6 @@
     gap: 3px;
 
     padding-bottom: 10px;
-  }
-
-  a.site-url {
-    font-size: 20px;
-    color: #fff;
-    text-decoration: none;
-    text-decoration: underline;
   }
 
   .site-toolbar {
