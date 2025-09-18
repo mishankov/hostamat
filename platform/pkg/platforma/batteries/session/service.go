@@ -23,3 +23,7 @@ func (s *Service) Get(ctx context.Context, id string) (*Session, error) {
 func (s *Service) GetByUserId(ctx context.Context, id string) (*Session, error) {
 	return s.repo.GetByUserId(ctx, id)
 }
+
+func (s *Service) Delete(ctx context.Context, id string) error {
+	return s.repo.Delete(ctx, id)
+}

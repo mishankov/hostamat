@@ -64,3 +64,12 @@ func (r *Repository) Create(ctx context.Context, session *Session) error {
 	_, err := r.db.NamedExecContext(ctx, query, session)
 	return err
 }
+
+func (r *Repository) Delete(ctx context.Context, id string) error {
+	query := `
+		DELETE FROM sessions WHERE id = $1
+	`
+	_, err := r.db.ExecContext(ctx, query, id)
+
+	return err
+}
