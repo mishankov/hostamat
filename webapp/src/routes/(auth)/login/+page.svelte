@@ -38,48 +38,19 @@
   }
 }} />
 
-<main>
-  <Card>
-    <div class="login-form">
-      <h1>Вход</h1>
+<h1>Вход</h1>
 
-      <Error {error} />
+<Error {error} />
 
-      <Input id="login" type="text" label="Логин" bind:value={login} />
-      <Input id="password" type="password" label="Пароль" bind:value={password} />
-      
-      <div class="actions">
-        <Button kind="action" onclick={loginAction} disabled={loginButtonDisabled}>Войти</Button>
-        <Button link="/register">Создать аккаунт</Button>
-      </div>
-    </div>  
-  </Card>
-</main>
+<Input id="login" type="text" label="Логин" bind:value={login} />
+<Input id="password" type="password" label="Пароль" bind:value={password} />
+
+<div class="actions">
+  <Button kind="action" onclick={loginAction} disabled={loginButtonDisabled}>Войти</Button>
+  <Button link="/register">Создать аккаунт</Button>
+</div>
 
 <style>
-  main {
-    height: calc(100% - 75px);
-    width: 100vw;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .login-form {
-    width: 300px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    
-    gap: 15px;
-
-    padding: 20px;
-  }
-
   .actions {
     width: 100%;
 
