@@ -9,3 +9,4 @@
 - Repository tests should only test database interaction logic.
 - Service tests should only test business logic.
 - Handlers tests should only test http (or other protocol) interaction logic.
+- Do not test logging
