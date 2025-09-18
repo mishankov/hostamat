@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Button, Card, Link } from '$lib/components';
-	import Separator from '$lib/components/Separator.svelte';
   import type { LayoutProps } from './$types';
 
   let { data, children }: LayoutProps = $props();
