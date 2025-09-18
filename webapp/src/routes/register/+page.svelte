@@ -54,7 +54,7 @@
 
 <style>
   main {
-    height: 100vh;
+    height: calc(100% - 75px);
     width: 100vw;
 
     display: flex;

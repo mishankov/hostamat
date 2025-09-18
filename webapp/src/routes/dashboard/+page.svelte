@@ -19,43 +19,55 @@
   })()
 </script>
 
-<div class="dashboard">
-  <h1>Твои сайты</h1>
- 
-  <div class="site-list">
-    {#await data.sites}
-      <p>Loading...</p>
-    {:then _}
-      {#each sites as site (site.id)}
-        <Card style="height: 110px;">
-          <SiteContent site={site} />
-        </Card>
-      {/each}
-    
+<main>
+  <div class="dashboard">
+    <h1>Твои сайты</h1>
+  
+    <div class="site-list">
+      {#await data.sites}
+        <p>Loading...</p>
+      {:then _}
+        {#each sites as site (site.id)}
+          <Card style="height: 110px;">
+            <SiteContent site={site} />
+          </Card>
+        {/each}
+      
 
-    <Card floating style="height: 110px;">
-      <!-- TODO: should prob fix  -->
-      <!-- svelte-ignore a11y_click_events_have_key_events -->
-      <div class="add-site" role="button" tabindex="0" onclick={async () => {
-        const response = await fetch('/api/createSite', {
-              method: 'POST',
-            })
+      <Card floating style="height: 110px;">
+        <!-- TODO: should prob fix  -->
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <div class="add-site" role="button" tabindex="0" onclick={async () => {
+          const response = await fetch('/api/createSite', {
+                method: 'POST',
+              })
 
-            await invalidateAll()
-            sites = await data.sites;
-      }}>
-        <p class="add-site-icon"><Plus size={40} /></p>
-        <p class="add-site-text">Добавить сайт</p>
-      </div>
-    </Card>
+              await invalidateAll()
+              sites = await data.sites;
+        }}>
+          <p class="add-site-icon"><Plus size={40} /></p>
+          <p class="add-site-text">Добавить сайт</p>
+        </div>
+      </Card>
 
-    {:catch error}
-      <p>Error loading sites: {error.message}</p>
-    {/await}
+      {:catch error}
+        <p>Error loading sites: {error.message}</p>
+      {/await}
+    </div>
   </div>
-</div>
+</main>
+
 
 <style>
+  main {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  
   .dashboard {
     display: flex;
     flex-direction: column;

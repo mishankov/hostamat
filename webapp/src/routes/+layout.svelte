@@ -11,18 +11,18 @@
 </script>
 
 <header>
-  <Card>
-    <div class="header-card">
+  <div class="header-card">
+    <div class="nav-links">
       <Link href="/"><span class="logo">ХОСТАМАТ</span></Link>
       <Link href="/about">О сервисе</Link>
-
-      {#if data.isAuthenticated == true}
-        <Button onclick={logout}>Выйти</Button>
-      {:else}
-        <Button link="/login">Войти</Button>
-      {/if}
     </div>
-  </Card>
+
+    {#if data.isAuthenticated == true}
+      <Button onclick={logout}>Выйти</Button>
+    {:else}
+      <Button link="/login">Войти</Button>
+    {/if}
+  </div>
 </header>
 
 {@render children()}
@@ -36,19 +36,29 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+
+    background-color: var(--color-background-object);
+    border-bottom: var(--border-regular);
   }
 
   .header-card {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: 10px;
 
-    padding: 10px;
+    padding: 20px;
 
     height: 75px;
-    width: clamp(500px, 50vw, 1200px);
+    width: clamp(500px, 75%, 1200px);
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    gap: 20px;
   }
 
   span.logo {

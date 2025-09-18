@@ -14,7 +14,7 @@
 
 <style>
   .card {
-    width: fit-content;
+    min-width: fit-content;
 
     border: var(--border-regular);
     border-radius: var(--border-radius-regular);
