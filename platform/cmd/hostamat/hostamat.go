@@ -104,6 +104,7 @@ func main() {
 	userAPI.Handle("GET /me", getUserHandler)
 
 	// Middlewares
+	recoverMiddleware := httpserver.NewRecoverMiddleware()
 	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
 	requestLogger := middlewares.NewRequestLogger(logger)
 	authMiddleware := auth.NewAuthenticationMiddleware(sessionService, userService)
@@ -122,7 +123,7 @@ func main() {
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
 
-	httpServer.Use(traceId, requestLogger)
+	httpServer.Use(recoverMiddleware, traceId, requestLogger)
 
 	// Cleanup service to remove files from S3 and subdomains from Caddy
 	cleanupService := cleanup.New(s3Client, caddyAPI, conf.S3.Bucket, conf.Caddy.ShorthandId)
