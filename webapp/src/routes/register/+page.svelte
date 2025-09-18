@@ -7,7 +7,7 @@
   let login = $state("")
   let password = $state("")
   let error = $state("")
-  let loginButtonDisabled = $derived(!(login.length > 0 && password.length > 0))
+  let registerButtonDisabled = $derived(!(login.length > 0 && password.length > 0))
 
   const registerAction = async () => {
     error = "";
@@ -28,6 +28,12 @@
   }
 </script>
 
+<svelte:window on:keydown={(e) => {
+  if (e.key === "Enter" && !registerButtonDisabled) {
+    registerAction();
+  }
+}} />
+
 <main>
   <Card>
     <div class="form">
@@ -39,7 +45,7 @@
       <Input id="password" type="password" label="Пароль" bind:value={password} />
       
       <div class="actions">
-        <Button kind="action" onclick={registerAction} disabled={loginButtonDisabled}>Создать</Button>
+        <Button kind="action" onclick={registerAction} disabled={registerButtonDisabled}>Создать</Button>
         <Button link="/login">Войти</Button>
       </div>
     </div>  

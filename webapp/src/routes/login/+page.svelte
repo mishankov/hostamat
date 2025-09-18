@@ -32,6 +32,12 @@
   }
 </script>
 
+<svelte:window on:keydown={(e) => {
+  if (e.key === "Enter" && !loginButtonDisabled) {
+    loginAction();
+  }
+}} />
+
 <main>
   <Card>
     <div class="login-form">
