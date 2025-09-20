@@ -4,7 +4,9 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"errors"
 	"fmt"
+	"hostamat/pkg/platforma/batteries/auth"
 	"strings"
 
 	"github.com/google/uuid"
@@ -37,19 +39,31 @@ func NewService(repo repository, webserver webserver, baseDomain, shorthandId st
 
 func (s *Service) Get(ctx context.Context, id string) (*Subdomain, error) {
 	subdomain, err := s.repo.Get(ctx, id)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to get subdomain: %w", err)
 	}
+
+	if !s.checkAccess(ctx, subdomain) {
+		return nil, errors.New("access denied")
+	}
+
 	return subdomain, nil
 }
 
 func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
 	var err error
 
+	user := auth.UserFromContext(ctx)
+	if user == nil {
+		return nil, errors.New("access denied")
+	}
+
 	name := randomBase64String(5)
 
 	subdomain := &Subdomain{
 		Id:         uuid.NewString(),
+		User:       user.ID,
 		Name:       name,
 		FullDomain: name + "." + s.baseDomain,
 	}
@@ -65,6 +79,19 @@ func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
 	}
 
 	return subdomain, nil
+}
+
+func (s *Service) checkAccess(ctx context.Context, subdomain *Subdomain) bool {
+	user := auth.UserFromContext(ctx)
+	if user == nil {
+		return false
+	}
+
+	if subdomain.User == user.ID {
+		return true
+	}
+
+	return false
 }
 
 func randomBase64String(length int) string {
