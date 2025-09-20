@@ -92,12 +92,12 @@ func (db *Database) Migrate(ctx context.Context) error {
 
 			if _, err := db.ExecContext(ctx, migration.Up); err != nil {
 				migrationErr = err
-				log.ErrorContext(ctx, "failed to apply migration %s for repository %s", migration.ID, repoName)
+				log.ErrorContext(ctx, "failed to apply migration for repository", "migration", migration.ID, "repository", repoName)
 				break
 			}
 
 			appliedMigrations = append(appliedMigrations, migration)
-			log.InfoContext(ctx, "applied migration %s for repository %s", migration.ID, repoName)
+			log.InfoContext(ctx, "applied migration for repository", "migration", migration.ID, "repository", repoName)
 
 			// Log that migration applied
 			if _, err := db.ExecContext(ctx, "INSERT INTO platforma_migrations (repository, id, timestamp) VALUES (?, ?, ?)", repoName, migration.ID, time.Now()); err != nil {
