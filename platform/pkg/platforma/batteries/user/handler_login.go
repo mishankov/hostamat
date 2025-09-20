@@ -31,21 +31,26 @@ func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := h.service.Login(r.Context(), req.Login, req.Password)
+	sessionId, err := h.service.CreateSessionFromUsernameAndPassword(r.Context(), req.Login, req.Password)
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if sessionId == "" {
 		http.Error(w, "Invalid login or password", http.StatusUnauthorized)
 		return
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session",
-		Value:    session.ID,
+		Name:     h.service.CookieName(),
+		Value:    sessionId,
 		Path:     "/",
 		HttpOnly: true,
 	})
 
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(session); err != nil {
+	if err := json.NewEncoder(w).Encode(sessionId); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		return
 	}

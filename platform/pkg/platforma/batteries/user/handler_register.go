@@ -32,7 +32,7 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Register user
-	if err := h.service.Create(r.Context(), req.Login, req.Password); err != nil {
+	if err := h.service.CreateWithLoginAndPassword(r.Context(), req.Login, req.Password); err != nil {
 		http.Error(w, "Failed to register user", http.StatusInternalServerError)
 		return
 	}

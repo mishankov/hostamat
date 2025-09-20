@@ -23,18 +23,25 @@ func (h *GetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	cookie, err := r.Cookie("session")
+	cookie, err := r.Cookie(h.service.CookieName())
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	user, err := h.service.GetBySessionId(ctx, cookie.Value)
+	user, err := h.service.GetFromSession(ctx, cookie.Value)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	if user == nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
+
+	// TODO: do not send all user information, map to different struct
 	json.NewEncoder(w).Encode(user)
 }

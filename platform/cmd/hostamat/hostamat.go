@@ -91,7 +91,7 @@ func main() {
 
 	// User service setup
 	userRepo := user.NewRepository(db)
-	userService := user.NewService(userRepo, sessionService)
+	userService := user.NewService(userRepo, sessionService, "hsessionid")
 	registerHandler := user.NewRegisterHandler(userService)
 	loginHandler := user.NewLoginHandler(userService)
 	logoutHandler := user.NewLogoutHandler(userService)
@@ -107,7 +107,7 @@ func main() {
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
 	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
 	requestLogger := middlewares.NewRequestLogger(logger)
-	authMiddleware := auth.NewAuthenticationMiddleware(sessionService, userService)
+	authMiddleware := auth.NewAuthenticationMiddleware(userService)
 
 	// HTTP server
 	httpServer := httpserver.New(conf.Port, 10*time.Second)

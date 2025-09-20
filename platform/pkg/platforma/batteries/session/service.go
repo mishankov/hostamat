@@ -1,6 +1,12 @@
 package session
 
-import "context"
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Service struct {
 	repo *Repository
@@ -24,6 +30,31 @@ func (s *Service) GetByUserId(ctx context.Context, id string) (*Session, error) 
 	return s.repo.GetByUserId(ctx, id)
 }
 
-func (s *Service) Delete(ctx context.Context, id string) error {
+func (s *Service) DeleteSession(ctx context.Context, id string) error {
 	return s.repo.Delete(ctx, id)
+}
+
+func (s *Service) GetUserIdFromSessionId(ctx context.Context, id string) (string, error) {
+	session, err := s.repo.Get(ctx, id)
+	if err != nil {
+		return "", fmt.Errorf("failed to get session: %w", err)
+	}
+
+	return session.User, nil
+}
+
+func (s *Service) CreateSessionForUser(ctx context.Context, userId string) (string, error) {
+	session := &Session{
+		ID:      uuid.NewString(),
+		User:    userId,
+		Created: time.Now(),
+		Expires: time.Now().Add(100 * 24 * time.Hour),
+	}
+
+	err := s.repo.Create(ctx, session)
+	if err != nil {
+		return "", fmt.Errorf("failed to create session: %w", err)
+	}
+
+	return session.ID, nil
 }

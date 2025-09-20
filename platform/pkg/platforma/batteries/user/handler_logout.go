@@ -23,7 +23,7 @@ func (h *LogoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Extract session cookie
-	cookie, err := r.Cookie("session")
+	cookie, err := r.Cookie(h.service.CookieName())
 	if err != nil {
 		// No session cookie found, still return success
 		w.WriteHeader(http.StatusOK)
@@ -32,14 +32,14 @@ func (h *LogoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Delete session from database
-	if err := h.service.Logout(r.Context(), cookie.Value); err != nil {
+	if err := h.service.DeleteSession(r.Context(), cookie.Value); err != nil {
 		http.Error(w, "Failed to logout", http.StatusInternalServerError)
 		return
 	}
 
 	// Clear session cookie by setting it to expire immediately
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session",
+		Name:     h.service.CookieName(),
 		Value:    "",
 		Path:     "/",
 		Expires:  time.Unix(0, 0),
