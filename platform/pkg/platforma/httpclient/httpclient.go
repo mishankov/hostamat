@@ -18,6 +18,10 @@ func New() *Client {
 func (c *Client) Do(req *http.Request) (*http.Response, error) {
 	log.DebugContext(req.Context(), "request started", "url", req.URL, "headers", maskedHeaders(req.Header))
 	resp, err := c.client.Do(req)
+	if err != nil {
+		log.DebugContext(req.Context(), "request failed", "error", err)
+		return nil, err
+	}
 	log.DebugContext(req.Context(), "request made", "status", resp.Status, "headers", maskedHeaders(resp.Header))
 
 	return resp, err

@@ -2,18 +2,27 @@ package auth
 
 import (
 	"context"
+	"net/http"
+
 	"hostamat/pkg/platforma/batteries/session"
 	"hostamat/pkg/platforma/batteries/user"
 	"hostamat/pkg/platforma/log"
-	"net/http"
 )
 
-type AuthenticationMiddleware struct {
-	sessionService *session.Service
-	userService    *user.Service
+type sessionService interface {
+	Get(ctx context.Context, id string) (*session.Session, error)
 }
 
-func NewAuthenticationMiddleware(sessionService *session.Service, userService *user.Service) *AuthenticationMiddleware {
+type userService interface {
+	Get(ctx context.Context, id string) (*user.User, error)
+}
+
+type AuthenticationMiddleware struct {
+	sessionService sessionService
+	userService    userService
+}
+
+func NewAuthenticationMiddleware(sessionService sessionService, userService userService) *AuthenticationMiddleware {
 	return &AuthenticationMiddleware{sessionService: sessionService, userService: userService}
 }
 
