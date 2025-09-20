@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"hostamat/internal/site"
+	"hostamat/pkg/platforma/batteries/auth"
+	"hostamat/pkg/platforma/batteries/user"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -39,7 +41,7 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 			},
 		})
 
-		req := httptest.NewRequest("POST", "/", strings.NewReader(`{"subdomain":"example"}`))
+		req := withUserRequest("POST", "/", `{"subdomain":"example"}`, "test-user")
 		w := httptest.NewRecorder()
 
 		handler.ServeHTTP(w, req)
@@ -54,13 +56,14 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 			createFn: func(_ context.Context) (*site.Site, error) {
 				return &site.Site{
 					Id:        "1",
+					User:      "test-user",
 					Subdomain: "my",
 					Domain:    "my.example.com",
 				}, nil
 			},
 		})
 
-		req := httptest.NewRequest("POST", "/", strings.NewReader(`{"subdomain":"example"}`))
+		req := withUserRequest("POST", "/", `{"subdomain":"example"}`, "test-user")
 		w := httptest.NewRecorder()
 
 		handler.ServeHTTP(w, req)
@@ -81,6 +84,9 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 		if response.Id != "1" {
 			t.Errorf("Expected id %q, got %q", "1", response.Id)
 		}
+		if response.User != "test-user" {
+			t.Errorf("Expected user %q, got %q", "test-user", response.User)
+		}
 		if response.Subdomain != "my" {
 			t.Errorf("Expected subdomain %q, got %q", "my", response.Subdomain)
 		}
@@ -88,6 +94,14 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 			t.Errorf("Expected domain %q, got %q", "my.example.com", response.Domain)
 		}
 	})
+}
+
+func withUserRequest(method, url, body string, userID string) *http.Request {
+	req := httptest.NewRequest(method, url, strings.NewReader(body))
+	ctx := context.WithValue(req.Context(), auth.UserContextKey, &user.User{
+		ID: userID,
+	})
+	return req.WithContext(ctx)
 }
 
 type mockServiceCreate struct {

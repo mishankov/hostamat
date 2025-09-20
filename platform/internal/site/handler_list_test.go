@@ -4,12 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"hostamat/internal/site"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
-
-	"hostamat/internal/site"
 )
 
 func TestListSiteHandler_ServeHTTP(t *testing.T) {

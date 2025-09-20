@@ -1,190 +1,263 @@
 package site_test
 
-// TODO: uncomment
+import (
+	"context"
+	"database/sql"
+	"errors"
+	"testing"
+	"time"
 
-// import (
-// 	"context"
-// 	"testing"
-// 	"time"
+	"hostamat/internal/site"
+	"hostamat/pkg/platforma/database"
 
-// 	"hostamat/internal/site"
+	_ "github.com/glebarez/go-sqlite"
+	"github.com/jmoiron/sqlx"
+)
 
-// 	_ "github.com/glebarez/go-sqlite"
-// 	"github.com/jmoiron/sqlx"
-// )
+func testDB(t *testing.T) *sqlx.DB {
+	db, err := sqlx.Open("sqlite", ":memory:")
+	if err != nil {
+		t.Fatalf("failed to create test db: %v", err)
+	}
+	return db
+}
 
-// func TestMigrate(t *testing.T) {
-// 	db := testDB()
-// 	repo := site.NewRepository(db)
-// 	repo.Migrate(context.Background())
+func setupTestDB(t *testing.T) (*sqlx.DB, *site.Repository) {
+	db := testDB(t)
+	repo := site.NewRepository(db)
 
-// 	t.Run("table exists", func(t *testing.T) {
-// 		rows, err := db.Query("SELECT * FROM sites")
-// 		if err != nil {
-// 			t.Fatal(err)
-// 		}
-// 		defer rows.Close()
+	// Setup database with migrations
+	dbObj, err := database.New("sqlite", ":memory:")
+	if err != nil {
+		t.Fatalf("failed to create database: %v", err)
+	}
+	dbObj.DB = db // Use our test db
+	dbObj.RegisterRepository("sites", repo)
 
-// 		columns, err := rows.Columns()
-// 		if err != nil {
-// 			t.Fatal(err)
-// 		}
+	if err := dbObj.Migrate(context.Background()); err != nil {
+		t.Fatalf("failed to migrate: %v", err)
+	}
 
-// 		expectedColumns := []string{"id", "subdomain", "domain", "created_at", "updated_at", "version"}
+	return db, repo
+}
 
-// 		if len(columns) != len(expectedColumns) {
-// 			t.Fatalf("Expected %d columns, got %d", len(expectedColumns), len(columns))
-// 		}
+func TestRepository_Create(t *testing.T) {
+	db, repo := setupTestDB(t)
 
-// 		for i, column := range columns {
-// 			if column != expectedColumns[i] {
-// 				t.Errorf("Expected column %s, got %s", expectedColumns[i], column)
-// 			}
-// 		}
-// 	})
-// }
+	t.Run("successful creation", func(t *testing.T) {
+		testSite := &site.Site{
+			Id:        "create-test-id",
+			User:      "test-user",
+			Subdomain: "example",
+			Domain:    "example.example.com",
+			CreatedAt: time.Now(),
+		}
 
-// func TestCreate(t *testing.T) {
-// 	db := testDB()
-// 	repo := site.NewRepository(db)
-// 	repo.Migrate(context.Background())
+		err := repo.Create(context.Background(), testSite)
+		if err != nil {
+			t.Fatalf("Create failed: %v", err)
+		}
 
-// 	t.Run("successful creation", func(t *testing.T) {
-// 		testSite := &site.Site{
-// 			Id:        "create-test-id",
-// 			Subdomain: "example",
-// 			CreatedAt: time.Now(),
-// 		}
+		// Verify the site was actually created
+		var count int
+		err = db.Get(&count, "SELECT COUNT(*) FROM sites WHERE id = ?", testSite.Id)
+		if err != nil {
+			t.Fatalf("Failed to verify creation: %v", err)
+		}
+		if count != 1 {
+			t.Errorf("Expected 1 record, got %d", count)
+		}
+	})
 
-// 		err := repo.Create(context.Background(), testSite)
-// 		if err != nil {
-// 			t.Fatalf("Create failed: %v", err)
-// 		}
+	t.Run("duplicate id", func(t *testing.T) {
+		testSite := &site.Site{
+			Id:        "duplicate-id",
+			User:      "test-user",
+			Subdomain: "example",
+			Domain:    "example.example.com",
+			CreatedAt: time.Now(),
+		}
 
-// 		// Verify the site was actually created
-// 		var count int
-// 		err = db.Get(&count, "SELECT COUNT(*) FROM sites WHERE id = ?", testSite.Id)
-// 		if err != nil {
-// 			t.Fatalf("Failed to verify creation: %v", err)
-// 		}
-// 		if count != 1 {
-// 			t.Errorf("Expected 1 record, got %d", count)
-// 		}
-// 	})
+		// First create should succeed
+		err := repo.Create(context.Background(), testSite)
+		if err != nil {
+			t.Fatalf("First create failed: %v", err)
+		}
 
-// 	t.Run("duplicate id", func(t *testing.T) {
-// 		testSite := &site.Site{
-// 			Id:        "duplicate-id",
-// 			Subdomain: "example",
-// 			CreatedAt: time.Now(),
-// 		}
+		// Second create with same ID should fail
+		err = repo.Create(context.Background(), testSite)
+		if err == nil {
+			t.Error("Expected error for duplicate ID")
+		}
+	})
+}
 
-// 		// First create should succeed
-// 		err := repo.Create(context.Background(), testSite)
-// 		if err != nil {
-// 			t.Fatalf("First create failed: %v", err)
-// 		}
+func TestRepository_Get(t *testing.T) {
+	_, repo := setupTestDB(t)
 
-// 		// Second create with same ID should fail
-// 		err = repo.Create(context.Background(), testSite)
-// 		if err == nil {
-// 			t.Error("Expected error for duplicate ID")
-// 		}
-// 	})
-// }
+	t.Run("non-existent site", func(t *testing.T) {
+		_, err := repo.Get(context.Background(), "nonexistent")
+		if err == nil {
+			t.Error("Expected error for non-existent site")
+		}
+	})
 
-// func TestGet(t *testing.T) {
-// 	db := testDB()
-// 	repo := site.NewRepository(db)
-// 	repo.Migrate(context.Background())
+	t.Run("existing site", func(t *testing.T) {
+		// Create test site
+		testSite := &site.Site{
+			Id:        "test-id",
+			User:      "test-user",
+			Subdomain: "example",
+			Domain:    "example.example.com",
+			CreatedAt: time.Now(),
+		}
+		err := repo.Create(context.Background(), testSite)
+		if err != nil {
+			t.Fatalf("Failed to create test site: %v", err)
+		}
 
-// 	t.Run("non-existent site", func(t *testing.T) {
-// 		_, err := repo.Get(context.Background(), "nonexistent")
-// 		if err == nil {
-// 			t.Error("Expected error for non-existent site")
-// 		}
-// 	})
+		// Get and verify
+		got, err := repo.Get(context.Background(), "test-id")
+		if err != nil {
+			t.Fatalf("Failed to get site: %v", err)
+		}
 
-// 	t.Run("existing site", func(t *testing.T) {
-// 		// Create test site
-// 		testSite := &site.Site{
-// 			Id:        "test-id",
-// 			Subdomain: "example",
-// 			CreatedAt: time.Now(),
-// 		}
-// 		err := repo.Create(context.Background(), testSite)
-// 		if err != nil {
-// 			t.Fatalf("Failed to create test site: %v", err)
-// 		}
+		// Compare all fields
+		if got.Id != testSite.Id {
+			t.Errorf("Expected ID %q, got %q", testSite.Id, got.Id)
+		}
+		if got.User != testSite.User {
+			t.Errorf("Expected user %q, got %q", testSite.User, got.User)
+		}
+		if got.Subdomain != testSite.Subdomain {
+			t.Errorf("Expected subdomain %q, got %q", testSite.Subdomain, got.Subdomain)
+		}
+		if got.Domain != testSite.Domain {
+			t.Errorf("Expected domain %q, got %q", testSite.Domain, got.Domain)
+		}
+		if !got.CreatedAt.Equal(testSite.CreatedAt) {
+			t.Errorf("Expected CreatedAt %v, got %v", testSite.CreatedAt, got.CreatedAt)
+		}
+	})
+}
 
-// 		// Get and verify
-// 		got, err := repo.Get(context.Background(), "test-id")
-// 		if err != nil {
-// 			t.Fatalf("Failed to get site: %v", err)
-// 		}
+func TestRepository_GetList(t *testing.T) {
+	_, repo := setupTestDB(t)
 
-// 		// Compare all fields
-// 		if got.Id != testSite.Id {
-// 			t.Errorf("Expected ID %q, got %q", testSite.Id, got.Id)
-// 		}
-// 		if got.Subdomain != testSite.Subdomain {
-// 			t.Errorf("Expected subdomain %q, got %q", testSite.Subdomain, got.Subdomain)
-// 		}
-// 		if !got.CreatedAt.Equal(testSite.CreatedAt) {
-// 			t.Errorf("Expected CreatedAt %v, got %v", testSite.CreatedAt, got.CreatedAt)
-// 		}
-// 	})
-// }
+	// Create test sites for different users
+	testSites := []*site.Site{
+		{
+			Id:        "1",
+			User:      "user1",
+			Subdomain: "site1",
+			Domain:    "site1.example.com",
+			CreatedAt: time.Now(),
+		},
+		{
+			Id:        "2",
+			User:      "user1",
+			Subdomain: "site2",
+			Domain:    "site2.example.com",
+			CreatedAt: time.Now(),
+		},
+		{
+			Id:        "3",
+			User:      "user2",
+			Subdomain: "site3",
+			Domain:    "site3.example.com",
+			CreatedAt: time.Now(),
+		},
+	}
 
-// func TestGetList(t *testing.T) {
-// 	db := testDB()
-// 	repo := site.NewRepository(db)
-// 	repo.Migrate(context.Background())
+	for _, s := range testSites {
+		if err := repo.Create(context.Background(), s); err != nil {
+			t.Fatalf("Failed to create test site: %v", err)
+		}
+	}
 
-// 	// Create test sites
-// 	testSites := []*site.Site{
-// 		{
-// 			Id:        "1",
-// 			Subdomain: "site1",
-// 			CreatedAt: time.Now(),
-// 		},
-// 		{
-// 			Id:        "2",
-// 			Subdomain: "site2",
-// 			CreatedAt: time.Now(),
-// 		},
-// 	}
+	t.Run("get list for user1", func(t *testing.T) {
+		// Test GetList for user1
+		sites, err := repo.GetList(context.Background(), "user1")
+		if err != nil {
+			t.Fatalf("GetList failed: %v", err)
+		}
 
-// 	for _, s := range testSites {
-// 		if err := repo.Create(context.Background(), s); err != nil {
-// 			t.Fatalf("Failed to create test site: %v", err)
-// 		}
-// 	}
+		if len(sites) != 2 {
+			t.Fatalf("Expected 2 sites for user1, got %d", len(sites))
+		}
 
-// 	// Test GetList
-// 	sites, err := repo.GetList(context.Background())
-// 	if err != nil {
-// 		t.Fatalf("GetList failed: %v", err)
-// 	}
+		// Verify only user1's sites are returned
+		for _, s := range sites {
+			if s.User != "user1" {
+				t.Errorf("Expected only user1 sites, got user %q", s.User)
+			}
+		}
+	})
 
-// 	if len(sites) != len(testSites) {
-// 		t.Fatalf("Expected %d sites, got %d", len(testSites), len(sites))
-// 	}
+	t.Run("get list for user2", func(t *testing.T) {
+		// Test GetList for user2
+		sites, err := repo.GetList(context.Background(), "user2")
+		if err != nil {
+			t.Fatalf("GetList failed: %v", err)
+		}
 
-// 	for i, s := range sites {
-// 		if s.Id != testSites[i].Id {
-// 			t.Errorf("Expected ID %q, got %q", testSites[i].Id, s.Id)
-// 		}
-// 		if s.Subdomain != testSites[i].Subdomain {
-// 			t.Errorf("Expected subdomain %q, got %q", testSites[i].Subdomain, s.Subdomain)
-// 		}
-// 	}
-// }
+		if len(sites) != 1 {
+			t.Fatalf("Expected 1 site for user2, got %d", len(sites))
+		}
 
-// func testDB() *sqlx.DB {
-// 	db, err := sqlx.Open("sqlite", ":memory:")
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	return db
-// }
+		if sites[0].User != "user2" {
+			t.Errorf("Expected user2, got user %q", sites[0].User)
+		}
+	})
+
+	t.Run("get list for non-existent user", func(t *testing.T) {
+		// Test GetList for user with no sites
+		sites, err := repo.GetList(context.Background(), "nonexistent-user")
+		if err != nil {
+			t.Fatalf("GetList failed: %v", err)
+		}
+
+		if len(sites) != 0 {
+			t.Fatalf("Expected 0 sites for nonexistent user, got %d", len(sites))
+		}
+	})
+}
+
+func TestRepository_GetByDomain(t *testing.T) {
+	_, repo := setupTestDB(t)
+
+	t.Run("non-existent domain", func(t *testing.T) {
+		_, err := repo.GetByDomain(context.Background(), "nonexistent.example.com")
+		if err != nil && !errors.Is(err, sql.ErrNoRows) {
+			t.Errorf("Expected sql.ErrNoRows or nil, got %v", err)
+		}
+	})
+
+	t.Run("existing domain", func(t *testing.T) {
+		// Create test site
+		testSite := &site.Site{
+			Id:        "test-id",
+			User:      "test-user",
+			Subdomain: "example",
+			Domain:    "example.example.com",
+			CreatedAt: time.Now(),
+		}
+		err := repo.Create(context.Background(), testSite)
+		if err != nil {
+			t.Fatalf("Failed to create test site: %v", err)
+		}
+
+		// Get by domain and verify
+		got, err := repo.GetByDomain(context.Background(), "example.example.com")
+		if err != nil {
+			t.Fatalf("Failed to get site by domain: %v", err)
+		}
+
+		if got.Id != testSite.Id {
+			t.Errorf("Expected ID %q, got %q", testSite.Id, got.Id)
+		}
+		if got.Domain != testSite.Domain {
+			t.Errorf("Expected domain %q, got %q", testSite.Domain, got.Domain)
+		}
+	})
+}
