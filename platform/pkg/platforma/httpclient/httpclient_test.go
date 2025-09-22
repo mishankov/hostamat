@@ -5,12 +5,15 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"hostamat/pkg/platforma/httpclient"
 )
 
+const timeout = 10 * time.Second
+
 func TestNew(t *testing.T) {
-	client := httpclient.New()
+	client := httpclient.New(timeout)
 	if client == nil {
 		t.Error("New() should return a non-nil client")
 	}
@@ -23,7 +26,7 @@ func TestDo_Success(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := httpclient.New()
+	client := httpclient.New(timeout)
 	req, err := http.NewRequestWithContext(context.Background(), "GET", server.URL, nil)
 	if err != nil {
 		t.Fatalf("failed to create request: %v", err)
@@ -42,7 +45,7 @@ func TestDo_Success(t *testing.T) {
 
 func TestDo_Error(t *testing.T) {
 	// Create a request to a non-existent server
-	client := httpclient.New()
+	client := httpclient.New(timeout)
 	req, err := http.NewRequestWithContext(context.Background(), "GET", "http://localhost:9999/nonexistent", nil)
 	if err != nil {
 		t.Fatalf("failed to create request: %v", err)

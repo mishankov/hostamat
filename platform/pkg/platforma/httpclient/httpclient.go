@@ -4,15 +4,19 @@ import (
 	"hostamat/pkg/platforma/log"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Client struct {
 	client *http.Client
 }
 
-func New() *Client {
-	// TODO: probably need better http client
-	return &Client{http.DefaultClient}
+func New(timeout time.Duration) *Client {
+	c := &Client{&http.Client{
+		Timeout: timeout,
+	}}
+
+	return c
 }
 
 func (c *Client) Do(req *http.Request) (*http.Response, error) {

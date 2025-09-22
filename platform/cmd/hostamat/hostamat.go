@@ -33,7 +33,7 @@ func main() {
 	// Basic components
 	conf := config.New()
 	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, nil)
-	httpClient := httpclient.New()
+	httpClient := httpclient.New(10 * time.Second)
 
 	logger.DebugContext(ctx, "config", "config", conf)
 
