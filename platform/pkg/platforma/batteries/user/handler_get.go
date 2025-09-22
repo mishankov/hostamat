@@ -42,6 +42,11 @@ func (h *GetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	// TODO: do not send all user information, map to different struct
-	json.NewEncoder(w).Encode(user)
+	var resp = struct {
+		Username string `json:"username"`
+	}{
+		Username: user.Username,
+	}
+
+	json.NewEncoder(w).Encode(resp)
 }
