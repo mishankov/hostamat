@@ -1,15 +1,12 @@
 <script lang="ts">
-
-	import Separator from "../../lib/components/Separator.svelte";
-	import SiteContent from "./SiteContent.svelte";
-	import Card from "../../lib/components/Card.svelte";
-
   import type { PageProps } from './$types';
-
-  import { type Site } from './types';
 	import { invalidateAll } from "$app/navigation";
-
-  import Plus from "$lib/icons/Plus.svelte";
+  
+	import { Card, Error } from "$lib/components";
+	import { Spinner, Plus } from "$lib/icons";
+  
+  import { type Site } from './types';
+	import SiteContent from "./SiteContent.svelte";
 
 	let { data }: PageProps = $props();
   let sites = $state<Site[]>([]);
@@ -25,7 +22,7 @@
   
     <div class="site-list">
       {#await data.sites}
-        <p>Loading...</p>
+        <Spinner />
       {:then _}
         {#each sites as site (site.id)}
           <Card style="height: 110px;">
@@ -49,7 +46,7 @@
       </Card>
 
       {:catch error}
-        <p>Error loading sites: {error.message}</p>
+        <Error error="Ошибка при загрузке сайтов: {error.message}" />
       {/await}
     </div>
   </div>
