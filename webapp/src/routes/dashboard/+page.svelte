@@ -1,14 +1,12 @@
 <script lang="ts">
-  import Plus from "phosphor-svelte/lib/Plus";
-
-	import Separator from "./components/Separator.svelte";
-	import SiteContent from "./SiteContent.svelte";
-	import Card from "./components/Card.svelte";
-
   import type { PageProps } from './$types';
-
-  import { type Site } from './types';
 	import { invalidateAll } from "$app/navigation";
+  
+	import { Card, Error } from "$lib/components";
+	import { Spinner, Plus } from "$lib/icons";
+  
+  import { type Site } from './types';
+	import SiteContent from "./SiteContent.svelte";
 
 	let { data }: PageProps = $props();
   let sites = $state<Site[]>([]);
@@ -18,47 +16,53 @@
   })()
 </script>
 
-<div class="dashboard">
-  <h1>Твои сайты</h1>
+<main>
+  <div class="dashboard">
+    <h1>Твои сайты</h1>
+  
+    <div class="site-list">
+      {#await data.sites}
+        <Spinner />
+      {:then _}
+        {#each sites as site (site.id)}
+          <Card style="height: 110px;">
+            <SiteContent site={site} />
+          </Card>
+        {/each}
+      
 
-  <div class="separator">
-     <Separator/>
+      <Card floating style="height: 110px;">
+        <button class="add-site" onclick={async () => {
+          const response = await fetch('/api/createSite', {
+                method: 'POST',
+              })
+
+              await invalidateAll()
+              sites = await data.sites;
+        }}>
+          <p class="add-site-icon"><Plus size={40} /></p>
+          <p class="add-site-text">Добавить сайт</p>
+        </button>
+      </Card>
+
+      {:catch error}
+        <Error error="Ошибка при загрузке сайтов: {error.message}" />
+      {/await}
+    </div>
   </div>
- 
-  <div class="site-list">
-    {#await data.sites}
-      <p>Loading...</p>
-    {:then _}
-      {#each sites as site (site.id)}
-        <Card floating style="height: 100px;">
-          <SiteContent site={site} />
-        </Card>
-      {/each}
-    
+</main>
 
-    <Card floating style="height: 100px;">
-      <!-- TODO: should prob fix  -->
-      <!-- svelte-ignore a11y_click_events_have_key_events -->
-      <div class="add-site" role="button" tabindex="0" onclick={async () => {
-        const response = await fetch('/api/createSite', {
-              method: 'POST',
-            })
-
-            await invalidateAll()
-            sites = await data.sites;
-      }}>
-        <p class="add-site-icon"><Plus /></p>
-        <p class="add-site-text">Добавить сайт</p>
-      </div>
-    </Card>
-
-    {:catch error}
-      <p>Error loading sites: {error.message}</p>
-    {/await}
-  </div>
-</div>
 
 <style>
+  main {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  
   .dashboard {
     display: flex;
     flex-direction: column;
@@ -66,14 +70,7 @@
     
     width: clamp(500px, 75%, 1200px);
 
-    border: 0.5px solid #555;
-    border-radius: 15px;
-
     padding: 20px;
-  }
-
-  .separator {
-    padding-bottom: 20px;
   }
 
   .site-list {
@@ -83,6 +80,8 @@
   }
   
   .add-site {
+    all: unset;
+
     height: 100%;
 
     display: flex;

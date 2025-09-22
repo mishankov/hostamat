@@ -2,10 +2,16 @@ import { env } from '$env/dynamic/private';
 
 export const Config = {
   files: {
-    uploadUrl: `${env.API_BASE || 'http://localhost:1001'}/files/api`
+    uploadUrl: `${env.API_BASE || 'http://localhost:1001'}/api/files`
   },
   sites: {
-    createUrl: `${env.API_BASE || 'http://localhost:1001'}/sites/api`,
-    listUrl: `${env.API_BASE || 'http://localhost:1001'}/sites/api`
+    createUrl: `${env.API_BASE || 'http://localhost:1001'}/api/sites`,
+    listUrl: `${env.API_BASE || 'http://localhost:1001'}/api/sites`
+  },
+  auth: {
+    loginUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/login`,
+    logoutUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/logout`,
+    registerUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/register`,
+    meUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/me`
   }
 } as const;

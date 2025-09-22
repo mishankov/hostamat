@@ -9,6 +9,8 @@ import (
 
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
+	"hostamat/pkg/platforma/batteries/auth"
+	"hostamat/pkg/platforma/batteries/user"
 )
 
 func TestService_Create(t *testing.T) {
@@ -16,7 +18,8 @@ func TestService_Create(t *testing.T) {
 		mockRepo := newMockRepository()
 		service := site.NewService(mockRepo, &mockDomainService{})
 
-		createdSite, err := service.Create(context.Background())
+		ctx := withUserContext(context.Background(), "test-user")
+		createdSite, err := service.Create(ctx)
 		if err != nil {
 			t.Fatalf("Create failed: %v", err)
 		}
@@ -26,6 +29,9 @@ func TestService_Create(t *testing.T) {
 		}
 		if createdSite.Subdomain != "id" {
 			t.Errorf("Expected subdomain %q, got %q", "id", createdSite.Subdomain)
+		}
+		if createdSite.User != "test-user" {
+			t.Errorf("Expected user %q, got %q", "test-user", createdSite.User)
 		}
 		if createdSite.CreatedAt.IsZero() {
 			t.Error("Expected CreatedAt to be set")
@@ -44,9 +50,20 @@ func TestService_Create(t *testing.T) {
 		}
 		service := site.NewService(mockRepo, &mockDomainService{})
 
-		_, err := service.Create(context.Background())
+		ctx := withUserContext(context.Background(), "test-user")
+		_, err := service.Create(ctx)
 		if err == nil {
 			t.Error("Expected error from repository")
+		}
+	})
+
+	t.Run("no user context", func(t *testing.T) {
+		mockRepo := newMockRepository()
+		service := site.NewService(mockRepo, &mockDomainService{})
+
+		_, err := service.Create(context.Background())
+		if err == nil {
+			t.Error("Expected error when no user in context")
 		}
 	})
 }
@@ -59,6 +76,7 @@ func TestService_Get(t *testing.T) {
 		// Create test site directly in mock
 		testSite := &site.Site{
 			Id:        "test-get-id",
+			User:      "test-user",
 			Subdomain: "example",
 			CreatedAt: time.Now(),
 		}
@@ -67,7 +85,8 @@ func TestService_Get(t *testing.T) {
 		}
 
 		// Test Get
-		got, err := service.Get(context.Background(), "test-get-id")
+		ctx := withUserContext(context.Background(), "test-user")
+		got, err := service.Get(ctx, "test-get-id")
 		if err != nil {
 			t.Fatalf("Get failed: %v", err)
 		}
@@ -84,9 +103,55 @@ func TestService_Get(t *testing.T) {
 		mockRepo := newMockRepository()
 		service := site.NewService(mockRepo, &mockDomainService{})
 
-		_, err := service.Get(context.Background(), "non-existent-id")
+		ctx := withUserContext(context.Background(), "test-user")
+		_, err := service.Get(ctx, "non-existent-id")
 		if err == nil {
 			t.Error("Expected error for non-existent site")
+		}
+	})
+
+	t.Run("access denied - wrong user", func(t *testing.T) {
+		mockRepo := newMockRepository()
+		service := site.NewService(mockRepo, &mockDomainService{})
+
+		// Create test site with different user
+		testSite := &site.Site{
+			Id:        "test-get-id",
+			User:      "other-user",
+			Subdomain: "example",
+			CreatedAt: time.Now(),
+		}
+		if err := mockRepo.Create(context.Background(), testSite); err != nil {
+			t.Fatalf("Failed to setup test site: %v", err)
+		}
+
+		// Test Get with different user
+		ctx := withUserContext(context.Background(), "test-user")
+		_, err := service.Get(ctx, "test-get-id")
+		if err == nil {
+			t.Error("Expected access denied error")
+		}
+	})
+
+	t.Run("access denied - no user context", func(t *testing.T) {
+		mockRepo := newMockRepository()
+		service := site.NewService(mockRepo, &mockDomainService{})
+
+		// Create test site
+		testSite := &site.Site{
+			Id:        "test-get-id",
+			User:      "test-user",
+			Subdomain: "example",
+			CreatedAt: time.Now(),
+		}
+		if err := mockRepo.Create(context.Background(), testSite); err != nil {
+			t.Fatalf("Failed to setup test site: %v", err)
+		}
+
+		// Test Get without user context
+		_, err := service.Get(context.Background(), "test-get-id")
+		if err == nil {
+			t.Error("Expected access denied error")
 		}
 	})
 }
@@ -100,11 +165,13 @@ func TestService_GetList(t *testing.T) {
 		testSites := []*site.Site{
 			{
 				Id:        "1",
+				User:      "test-user",
 				Subdomain: "site1",
 				CreatedAt: time.Now(),
 			},
 			{
 				Id:        "2",
+				User:      "test-user",
 				Subdomain: "site2",
 				CreatedAt: time.Now(),
 			},
@@ -117,7 +184,8 @@ func TestService_GetList(t *testing.T) {
 		}
 
 		// Test GetList
-		sites, err := service.GetList(context.Background())
+		ctx := withUserContext(context.Background(), "test-user")
+		sites, err := service.GetList(ctx)
 		if err != nil {
 			t.Fatalf("GetList failed: %v", err)
 		}
@@ -131,13 +199,65 @@ func TestService_GetList(t *testing.T) {
 		mockRepo := newMockRepository()
 		service := site.NewService(mockRepo, &mockDomainService{})
 
-		sites, err := service.GetList(context.Background())
+		ctx := withUserContext(context.Background(), "test-user")
+		sites, err := service.GetList(ctx)
 		if err != nil {
 			t.Fatalf("GetList failed: %v", err)
 		}
 
 		if len(sites) != 0 {
 			t.Errorf("Expected empty list, got %d items", len(sites))
+		}
+	})
+
+	t.Run("filtered by user", func(t *testing.T) {
+		mockRepo := newMockRepository()
+		service := site.NewService(mockRepo, &mockDomainService{})
+
+		// Create test sites for different users
+		testSites := []*site.Site{
+			{
+				Id:        "1",
+				User:      "test-user",
+				Subdomain: "site1",
+				CreatedAt: time.Now(),
+			},
+			{
+				Id:        "2",
+				User:      "other-user",
+				Subdomain: "site2",
+				CreatedAt: time.Now(),
+			},
+		}
+
+		for _, s := range testSites {
+			if err := mockRepo.Create(context.Background(), s); err != nil {
+				t.Fatalf("Failed to setup test site: %v", err)
+			}
+		}
+
+		// Test GetList for test-user
+		ctx := withUserContext(context.Background(), "test-user")
+		sites, err := service.GetList(ctx)
+		if err != nil {
+			t.Fatalf("GetList failed: %v", err)
+		}
+
+		if len(sites) != 1 {
+			t.Fatalf("Expected 1 site, got %d", len(sites))
+		}
+		if sites[0].Id != "1" {
+			t.Errorf("Expected site ID 1, got %s", sites[0].Id)
+		}
+	})
+
+	t.Run("access denied - no user context", func(t *testing.T) {
+		mockRepo := newMockRepository()
+		service := site.NewService(mockRepo, &mockDomainService{})
+
+		_, err := service.GetList(context.Background())
+		if err == nil {
+			t.Error("Expected access denied error")
 		}
 	})
 }
@@ -187,13 +307,15 @@ func (m *mockRepository) Create(ctx context.Context, site *site.Site) error {
 	return nil
 }
 
-func (m *mockRepository) GetList(ctx context.Context) ([]*site.Site, error) {
+func (m *mockRepository) GetList(ctx context.Context, userId string) ([]*site.Site, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
 	sites := make([]*site.Site, 0, len(m.sites))
 	for _, s := range m.sites {
-		sites = append(sites, s)
+		if s.User == userId {
+			sites = append(sites, s)
+		}
 	}
 	return sites, nil
 }
@@ -230,6 +352,12 @@ func (m *errorProneMockRepository) Create(ctx context.Context, site *site.Site) 
 		return errors.New("forced repository error")
 	}
 	return m.mockRepository.Create(ctx, site)
+}
+
+func withUserContext(ctx context.Context, userID string) context.Context {
+	return context.WithValue(ctx, auth.UserContextKey, &user.User{
+		ID: userID,
+	})
 }
 
 type mockDomainService struct{}

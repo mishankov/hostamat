@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { Button } from "bits-ui";
-
   type ButtonKind = "primary" | "confirm" | "danger" | "action"
 
   type ButtonProps = {
     kind?: ButtonKind
     disabled?: boolean
+    link?: string
     ref?: any
     children?: any
     onclick?: (e: Event) => void
@@ -14,15 +13,24 @@
   let {
     kind = "primary",
     disabled = false,
+    link = "",
     children = undefined,
     ref = $bindable(null),
     onclick = undefined,
   }: ButtonProps = $props()
 </script>
 
-<button {disabled} bind:this={ref} class="{kind}" onclick={onclick}>
-  {@render children?.()}
-</button>
+{#if link}
+  <a href={link}>
+    <button {disabled} bind:this={ref} class="{kind}" onclick={onclick}>
+      {@render children?.()}
+    </button>
+  </a>
+{:else}
+  <button {disabled} bind:this={ref} class="{kind}" onclick={onclick}>
+    {@render children?.()}
+  </button>
+{/if}
 
 <style>
   button {

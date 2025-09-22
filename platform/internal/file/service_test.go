@@ -169,6 +169,23 @@ type mockSiteService struct {
 	sites map[string]*site.Site
 }
 
+func (m *mockSiteService) Get(ctx context.Context, siteId string) (*site.Site, error) {
+	for _, site := range m.sites {
+		if site.Id == siteId {
+			return site, nil
+		}
+	}
+	return nil, errors.New("site not found")
+}
+
+func (m *mockSiteService) GetIdByDomain(ctx context.Context, domain string) (string, error) {
+	site, ok := m.sites[domain]
+	if !ok {
+		return "", errors.New("site not found")
+	}
+	return site.Id, nil
+}
+
 func (m *mockSiteService) GetByDomain(ctx context.Context, domain string) (*site.Site, error) {
 	return m.sites[domain], nil
 }

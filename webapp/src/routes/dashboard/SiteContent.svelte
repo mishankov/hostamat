@@ -1,10 +1,7 @@
 <script lang="ts">
-	import Copy from "phosphor-svelte/lib/Copy";
-	import Download from "phosphor-svelte/lib/Download";
-	import Trash from "phosphor-svelte/lib/Trash";
-	import Upload from "phosphor-svelte/lib/Upload";
-	import Modal from "./components/Modal.svelte";
-	import Button from "$lib/components/Button.svelte";
+	import { Button, Link, Modal } from "$lib/components";
+  import  { Copy, Download, Trash, Upload } from "$lib/icons";
+
 	import FileUploader from "./components/FileUploader.svelte";
 	import IconButton from "./components/IconButton.svelte";
   import { type Site } from './types';
@@ -23,15 +20,15 @@
 
 <div class="site-content">
   <div class="site-url-container">
-    <a href="https://{site.domain}" target="_blank" class="site-url">{site.domain}</a> 
+    <Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.domain}</Link> 
     <IconButton title="Скопировать URL" onclick={()=>{navigator.clipboard.writeText(`https://${site.domain}`)}}>
-      <Copy />
+      <Copy size={20} />
     </IconButton>
   </div>
 
   <div class="site-toolbar">
     <IconButton onclick={() => uploadModal?.open()} title="Загрузить сайт">
-      <Upload />
+      <Upload size={20} />
     </IconButton>
     <Modal bind:this={uploadModal} kind="primary">
       <div class="upload-modal">
@@ -43,11 +40,11 @@
     </Modal>
 
     <IconButton title="Скачать сайт" onclick={()=>{}}>
-      <Download />
+      <Download size={20} />
     </IconButton> 
 
     <IconButton title="Удалить сайт" onclick={() => deleteModal?.open()}>
-      <Trash />
+      <Trash size={20} />
     </IconButton>
     <Modal bind:this={deleteModal} kind="danger">
       <div class="delete-modal">
@@ -62,7 +59,6 @@
               }
             })
 
-            // TODO: find better way to update UI
             window.location.reload()
           }}>Удалить</Button>
         </form>
@@ -89,13 +85,6 @@
     gap: 3px;
 
     padding-bottom: 10px;
-  }
-
-  a.site-url {
-    font-size: 20px;
-    color: #fff;
-    text-decoration: none;
-    text-decoration: underline;
   }
 
   .site-toolbar {

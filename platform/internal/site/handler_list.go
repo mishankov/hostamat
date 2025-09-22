@@ -3,6 +3,7 @@ package site
 import (
 	"context"
 	"encoding/json"
+	"hostamat/pkg/platforma/log"
 	"net/http"
 )
 
@@ -27,6 +28,8 @@ func (h *ListSiteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
+	log.DebugContext(ctx, "list sites")
 
 	sites, err := h.service.GetList(ctx)
 	if err != nil {

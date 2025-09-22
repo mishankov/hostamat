@@ -11,8 +11,11 @@ import (
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/pkg/platforma/application"
+	"hostamat/pkg/platforma/batteries/auth"
 	"hostamat/pkg/platforma/batteries/healthcheck"
+	"hostamat/pkg/platforma/batteries/session"
 	"hostamat/pkg/platforma/batteries/traceid"
+	"hostamat/pkg/platforma/batteries/user"
 	"hostamat/pkg/platforma/database"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
@@ -30,7 +33,7 @@ func main() {
 	// Basic components
 	conf := config.New()
 	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, nil)
-	httpClient := httpclient.New()
+	httpClient := httpclient.New(10 * time.Second)
 
 	logger.DebugContext(ctx, "config", "config", conf)
 
@@ -53,10 +56,6 @@ func main() {
 		logger.Error("failed to create database", "error", err)
 		os.Exit(1)
 	}
-
-	// Middlewares
-	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
-	requestLogger := middlewares.NewRequestLogger(logger)
 
 	// Domain service setup
 	subdomainRepo := subdomain.NewRepository(db)
@@ -86,15 +85,45 @@ func main() {
 	filesAPI.Handle("POST /", uploadFileHandler)
 	filesAPI.Handle("DELETE /", deleteHandler)
 
-	// Services
+	// Session service setup
+	sessionRepo := session.NewRepository(db)
+	sessionService := session.NewService(sessionRepo)
+
+	// User service setup
+	userRepo := user.NewRepository(db)
+	userService := user.NewService(userRepo, sessionService, "hsessionid")
+	registerHandler := user.NewRegisterHandler(userService)
+	loginHandler := user.NewLoginHandler(userService)
+	logoutHandler := user.NewLogoutHandler(userService)
+	getUserHandler := user.NewGetHandler(userService)
+
+	userAPI := httpserver.NewHandlerGroup()
+	userAPI.Handle("POST /register", registerHandler)
+	userAPI.Handle("POST /login", loginHandler)
+	userAPI.Handle("POST /logout", logoutHandler)
+	userAPI.Handle("GET /me", getUserHandler)
+
+	// Middlewares
+	recoverMiddleware := httpserver.NewRecoverMiddleware()
+	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
+	requestLogger := middlewares.NewRequestLogger(logger)
+	authMiddleware := auth.NewAuthenticationMiddleware(userService)
+
+	// HTTP server
 	httpServer := httpserver.New(conf.Port, 10*time.Second)
 
-	httpServer.Handle("/files/api", filesAPI)
-	httpServer.Handle("/sites/api", siteHandlerGroup)
+	apiGroup := httpserver.NewHandlerGroup()
+	apiGroup.Use(authMiddleware)
+
+	apiGroup.Handle("/files", filesAPI)
+	apiGroup.Handle("/sites", siteHandlerGroup)
+
+	httpServer.HandleGroup("/api", apiGroup)
+	httpServer.HandleGroup("/auth", userAPI)
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
 
-	httpServer.Use(traceId, requestLogger)
+	httpServer.Use(recoverMiddleware, traceId, requestLogger)
 
 	// Cleanup service to remove files from S3 and subdomains from Caddy
 	cleanupService := cleanup.New(s3Client, caddyAPI, conf.S3.Bucket, conf.Caddy.ShorthandId)
@@ -123,6 +152,8 @@ func main() {
 	app.RegisterDatabase("default", db)
 	app.RegisterRepository("default", "site", siteRepo)
 	app.RegisterRepository("default", "subdomain", subdomainRepo)
+	app.RegisterRepository("default", "user", userRepo)
+	app.RegisterRepository("default", "session", sessionRepo)
 
 	app.RegisterService("http", httpServer)
 	app.RegisterService("cleanup", cleanupJob)

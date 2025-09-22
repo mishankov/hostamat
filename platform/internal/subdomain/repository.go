@@ -31,7 +31,7 @@ func (r *Repository) Schema() ([]database.Migration, database.Schema) {
 }
 
 func (r *Repository) Get(ctx context.Context, id string) (*Subdomain, error) {
-	const query = `SELECT id, name FROM ` + tableName + ` WHERE id = $1`
+	const query = `SELECT * FROM ` + tableName + ` WHERE id = $1`
 
 	var subdomain Subdomain
 	err := r.db.GetContext(ctx, &subdomain, query, id)
@@ -43,7 +43,7 @@ func (r *Repository) Get(ctx context.Context, id string) (*Subdomain, error) {
 }
 
 func (r *Repository) Create(ctx context.Context, subdomain *Subdomain) error {
-	const query = `INSERT INTO ` + tableName + ` (id, name, full_domain) VALUES (:id, :name, :full_domain)`
+	const query = `INSERT INTO ` + tableName + ` (id, user, name, full_domain) VALUES (:id, :user, :name, :full_domain)`
 
 	_, err := r.db.NamedExecContext(ctx, query, subdomain)
 	if err != nil {

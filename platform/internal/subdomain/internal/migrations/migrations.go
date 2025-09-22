@@ -2,7 +2,13 @@ package migrations
 
 import "hostamat/pkg/platforma/database"
 
-var Migrations = []database.Migration{}
+var Migrations = []database.Migration{
+	{
+		ID:   "add_user_column",
+		Up:   `ALTER TABLE subdomains ADD COLUMN user VARCHAR(255)`,
+		Down: `ALTER TABLE subdomains DROP COLUMN user`,
+	},
+}
 
 var Schema = database.Schema{
 	Queries: []string{
