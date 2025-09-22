@@ -1,3 +1,2 @@
-- [ ] Fix file service tests
 - [ ] Add file deletion before uploading
 - [ ] Postgres
