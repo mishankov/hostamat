@@ -1,2 +1,3 @@
 - [ ] Add file deletion before uploading
 - [ ] Postgres
+- [ ] How do I test that schema matches all migrations. Or should I test repos on schema and migrations?
