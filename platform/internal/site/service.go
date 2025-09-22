@@ -77,6 +77,15 @@ func (s *Service) Get(ctx context.Context, id string) (*Site, error) {
 	return site, nil
 }
 
+func (s *Service) GetIdByDomain(ctx context.Context, domain string) (string, error) {
+	site, err := s.repository.GetByDomain(ctx, domain)
+	if err != nil {
+		return "", err
+	}
+
+	return site.Id, nil
+}
+
 func (s *Service) GetByDomain(ctx context.Context, domain string) (*Site, error) {
 	site, err := s.repository.GetByDomain(ctx, domain)
 	if err != nil {

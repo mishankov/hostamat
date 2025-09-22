@@ -19,6 +19,7 @@ type repository interface {
 }
 
 type siteService interface {
+	GetIdByDomain(context.Context, string) (string, error)
 	GetByDomain(context.Context, string) (*site.Site, error)
 }
 
@@ -37,16 +38,16 @@ func NewService(repo repository, siteService siteService, bucketName string) *Se
 }
 
 func (s *Service) GetFile(ctx context.Context, fileName, domain string) (io.Reader, error) {
-	site, err := s.siteService.GetByDomain(ctx, domain)
+	siteId, err := s.siteService.GetIdByDomain(ctx, domain)
 	if err != nil {
 		return nil, err
 	}
 
 	fileName = strings.TrimPrefix(fileName, "/")
 
-	log.DebugContext(ctx, "get file", "site", site, "fileName", fileName)
+	log.DebugContext(ctx, "get file", "site", siteId, "fileName", fileName)
 
-	return s.repo.GetObject(ctx, s.bucketName, site.Id+"/"+fileName)
+	return s.repo.GetObject(ctx, s.bucketName, siteId+"/"+fileName)
 }
 
 func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reader, size int64, siteId string) ([]string, []string, error) {
