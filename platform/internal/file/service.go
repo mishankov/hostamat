@@ -77,8 +77,14 @@ func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reade
 	return uploaded, skipped, nil
 }
 
-func (s *Service) DeleteFromFolder(ctx context.Context, folder string) error {
-	return s.repo.DeleteFromFolder(ctx, s.bucketName, folder)
+func (s *Service) DeleteFromFolder(ctx context.Context, siteId string) error {
+	// Check acces to site by trying to get it
+	_, err := s.siteService.Get(ctx, siteId)
+	if err != nil {
+		return err
+	}
+
+	return s.repo.DeleteFromFolder(ctx, s.bucketName, siteId)
 }
 
 func (s *Service) uploadSingleFile(ctx context.Context, folder, filename string, file io.Reader, size int64) error {
