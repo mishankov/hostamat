@@ -19,6 +19,7 @@ type repository interface {
 }
 
 type siteService interface {
+	Get(context.Context, string) (*site.Site, error)
 	GetIdByDomain(context.Context, string) (string, error)
 	GetByDomain(context.Context, string) (*site.Site, error)
 }
@@ -51,6 +52,12 @@ func (s *Service) GetFile(ctx context.Context, fileName, domain string) (io.Read
 }
 
 func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reader, size int64, siteId string) ([]string, []string, error) {
+	// Check acces to site by trying to get it
+	_, err := s.siteService.Get(ctx, siteId)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	var uploaded, skipped []string
 
 	switch filepath.Ext(filename) {
