@@ -35,9 +35,7 @@
       
 
       <Card floating style="height: 110px;">
-        <!-- TODO: should prob fix  -->
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <div class="add-site" role="button" tabindex="0" onclick={async () => {
+        <button class="add-site" onclick={async () => {
           const response = await fetch('/api/createSite', {
                 method: 'POST',
               })
@@ -47,7 +45,7 @@
         }}>
           <p class="add-site-icon"><Plus size={40} /></p>
           <p class="add-site-text">Добавить сайт</p>
-        </div>
+        </button>
       </Card>
 
       {:catch error}
@@ -85,6 +83,8 @@
   }
   
   .add-site {
+    all: unset;
+
     height: 100%;
 
     display: flex;
