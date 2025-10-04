@@ -35,7 +35,7 @@
         <h3>Загрузить файлы для {site.domain}</h3>
         <Card kind="action">
           <div style="padding:10px">
-            При загрузке новых файлов старые будут удалены
+            При загрузке новых файлов все старые файлы будут удалены
           </div>
         </Card>
         <FileUploader multiple={true} uploadUrl="/api/uploadFile" additionalHeaders={{
