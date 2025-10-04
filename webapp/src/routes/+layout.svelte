@@ -14,6 +14,7 @@
   <div class="header-card">
     <div class="nav-links">
       <Link href="/"><span class="logo">ХОСТАМАТ</span></Link>
+      <Link href="/dashboard">Дашборд</Link>
       <Link href="/about">О сервисе</Link>
     </div>
 
