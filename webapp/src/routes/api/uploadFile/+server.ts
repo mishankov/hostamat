@@ -4,6 +4,15 @@ import { Config } from '$lib/config';
 export const POST: RequestHandler = async ({ request }) => {
   try {
     const headers = new Headers(request.headers);
+
+    const respDeleteFiles = await fetch(Config.files.uploadUrl, {
+      method: 'DELETE',
+      headers,
+    });
+
+    if (!respDeleteFiles.ok) {
+      return new Response('Delete error', { status: 400 });
+    }
     
     // Forward the request to backend
     const response = await fetch(Config.files.uploadUrl, {

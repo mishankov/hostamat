@@ -9,8 +9,10 @@ export const load = (async ({request, fetch}) => {
   });
 
   if (meResponse.status !== 200) {
-    return { isAuthenticated: false};
+    return { isAuthenticated: false };
   }
 
-  return { isAuthenticated: true};
+  const data = await meResponse.json()
+
+  return { isAuthenticated: true, username: data.username};
 }) satisfies LayoutServerLoad;

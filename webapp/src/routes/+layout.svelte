@@ -14,14 +14,18 @@
   <div class="header-card">
     <div class="nav-links">
       <Link href="/"><span class="logo">ХОСТАМАТ</span></Link>
+      <Link href="/dashboard">Дашборд</Link>
       <Link href="/about">О сервисе</Link>
     </div>
 
-    {#if data.isAuthenticated == true}
-      <Button onclick={logout}>Выйти</Button>
-    {:else}
-      <Button link="/login">Войти</Button>
-    {/if}
+    <div class="user-info">
+      {#if data.isAuthenticated == true}
+        <Link href="/profile">{data.username}</Link>
+        <Button onclick={logout}>Выйти</Button>
+      {:else}
+        <Button link="/login">Войти</Button>
+      {/if}
+    </div>
   </div>
 </header>
 
@@ -58,6 +62,13 @@
     display: flex;
     flex-direction: row;
     align-items: end;
+    gap: 20px;
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     gap: 20px;
   }
 
