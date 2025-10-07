@@ -47,6 +47,7 @@ func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Value:    sessionId,
 		Path:     "/",
 		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	w.WriteHeader(http.StatusOK)
