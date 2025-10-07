@@ -6,7 +6,8 @@ export const POST: RequestHandler = async ({ request }) => {
     const response = await fetch(Config.sites.createUrl, {
       method: 'POST',
       headers: {
-        'Cookie': request.headers.get('Cookie') || ''
+        'Cookie': request.headers.get('Cookie') || '',
+        'Content-Type': 'application/json',
       }
     });
 

@@ -6,7 +6,8 @@ export const GET: RequestHandler = async ({ request }) => {
     const response = await fetch(Config.sites.listUrl, {
       method: 'GET',
       headers: {
-        'Cookie': request.headers.get('Cookie') || ''
+        'Cookie': request.headers.get('Cookie') || '',
+        'Content-Type': 'application/json',
       }
     });
 

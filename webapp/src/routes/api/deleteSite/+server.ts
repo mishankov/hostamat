@@ -7,7 +7,8 @@ export const POST: RequestHandler = async ({ request }) => {
       method: 'DELETE',
       headers: {
         'H-Site-Id': request.headers.get('H-Site-Id') || '',
-        'Cookie': request.headers.get('Cookie') || ''
+        'Cookie': request.headers.get('Cookie') || '',
+        'Content-Type': 'application/json',
       }
     });
 

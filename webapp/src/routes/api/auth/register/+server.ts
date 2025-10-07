@@ -4,6 +4,9 @@ export const POST = async ({ request }) => {
   try {
     const response = await fetch(Config.auth.registerUrl, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: request.body,
       // @ts-ignore
       duplex: 'half',
