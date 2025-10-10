@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/s3"
@@ -24,7 +25,7 @@ import (
 	"os"
 	"time"
 
-	_ "github.com/glebarez/go-sqlite"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -51,7 +52,8 @@ func main() {
 	}
 
 	// Database
-	db, err := database.New("sqlite", "hostamat.db")
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", conf.DB.User, conf.DB.Password, conf.DB.Host, conf.DB.Port, conf.DB.DB)
+	db, err := database.New("postgres", connStr)
 	if err != nil {
 		logger.Error("failed to create database", "error", err)
 		os.Exit(1)

@@ -17,6 +17,14 @@ type s3 struct {
 	Bucket   string
 }
 
+type db struct {
+	Host     string
+	Port     string
+	DB       string
+	User     string
+	Password string
+}
+
 type logger struct {
 	Level slog.Level
 
@@ -32,6 +40,7 @@ type Config struct {
 	Logger           logger
 	Caddy            caddy
 	S3               s3
+	DB               db
 }
 
 func New() *Config {
@@ -49,6 +58,13 @@ func New() *Config {
 			Login:    os.Getenv("HOSTAMAT_S3_LOGIN"),
 			Password: os.Getenv("HOSTAMAT_S3_PASSWORD"),
 			Bucket:   os.Getenv("HOSTAMAT_S3_BUCKET"),
+		},
+		DB: db{
+			Host:     os.Getenv("HOSTAMAT_POSTGRES_HOST"),
+			Port:     os.Getenv("HOSTAMAT_POSTGRES_Port"),
+			DB:       os.Getenv("HOSTAMAT_POSTGRES_DB"),
+			User:     os.Getenv("HOSTAMAT_POSTGRES_USER"),
+			Password: os.Getenv("HOSTAMAT_POSTGRES_PASSWORD"),
 		},
 		Logger: logger{
 			Level: func() slog.Level {

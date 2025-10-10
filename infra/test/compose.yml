@@ -33,6 +33,18 @@ services:
       - MINIO_ROOT_PASSWORD=CHANGEME123
     command: server /data --console-address ":9001"   # Launch command
 
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=hostamat
+      - POSTGRES_USER=hostamat
+      - POSTGRES_PASSWORD=hostamat
+    expose: 
+      - 5432
+    ports: 
+      - "5432:5432"
+
   hostamat:
     build:
       context: ../../platform
@@ -49,6 +61,12 @@ services:
 
       - HOSTAMAT_CADDY_URL=http://proxymini:1000/caddy
       - HOSTAMAT_CADDY_SHORTHAND_ID=hostamat_proxy
+
+      - HOSTAMAT_POSTGRES_HOST=db
+      - HOSTAMAT_POSTGRES_PORT=5432
+      - HOSTAMAT_POSTGRES_DB=hostamat
+      - HOSTAMAT_POSTGRES_USER=hostamat
+      - HOSTAMAT_POSTGRES_PASSWORD=hostamat
   
       - HOSTAMAT_S3_URL=minio:9000
       - HOSTAMAT_S3_LOGIN=ROOTNAME
