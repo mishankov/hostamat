@@ -27,15 +27,15 @@ func (r *Repository) Schema() ([]database.Migration, database.Schema) {
 	return []database.Migration{}, database.Schema{
 		Queries: []string{
 			`
-			CREATE TABLE IF NOT EXISTS users (
-				id TEXT PRIMARY KEY,
-				username TEXT UNIQUE,
-				password TEXT,
-				salt TEXT,
-				created TIMESTAMP,
-				updated TIMESTAMP,
-				status TEXT
-			)
+				CREATE TABLE IF NOT EXISTS users (
+					id VARCHAR(255) PRIMARY KEY,
+					username VARCHAR(255) UNIQUE,
+					password TEXT,
+					salt TEXT,
+					created TIMESTAMP,
+					updated TIMESTAMP,
+					status VARCHAR(50)
+				)
 			`,
 		},
 	}

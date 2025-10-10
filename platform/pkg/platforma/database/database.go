@@ -32,7 +32,7 @@ func (db *Database) RegisterRepository(name string, repository any) {
 }
 
 func (db *Database) Migrate(ctx context.Context) error {
-	if _, err := db.ExecContext(ctx, "CREATE TABLE IF NOT EXISTS platforma_migrations (repository TEXT, id TEXT, timestamp DATETIME)"); err != nil {
+	if _, err := db.ExecContext(ctx, "CREATE TABLE IF NOT EXISTS platforma_migrations (repository TEXT, id TEXT, timestamp TIMESTAMP)"); err != nil {
 		return err
 	}
 
@@ -64,13 +64,13 @@ func (db *Database) Migrate(ctx context.Context) error {
 			}
 
 			// Log that schema applied
-			if _, err := db.ExecContext(ctx, "INSERT INTO platforma_migrations (repository, timestamp) VALUES (?, ?)", repoName, time.Now()); err != nil {
+			if _, err := db.ExecContext(ctx, "INSERT INTO platforma_migrations (repository, timestamp) VALUES ($1, $2)", repoName, time.Now()); err != nil {
 				return err
 			}
 
 			// If schema is applied, log that all migrations are also applied
 			for _, migration := range repoMigrations {
-				if _, err := db.ExecContext(ctx, "INSERT INTO platforma_migrations (repository, id, timestamp) VALUES (?, ?, ?)", repoName, migration.ID, time.Now()); err != nil {
+				if _, err := db.ExecContext(ctx, "INSERT INTO platforma_migrations (repository, id, timestamp) VALUES ($1, $2, $3)", repoName, migration.ID, time.Now()); err != nil {
 					return err
 				}
 			}
@@ -100,7 +100,7 @@ func (db *Database) Migrate(ctx context.Context) error {
 			log.InfoContext(ctx, "applied migration for repository", "migration", migration.ID, "repository", repoName)
 
 			// Log that migration applied
-			if _, err := db.ExecContext(ctx, "INSERT INTO platforma_migrations (repository, id, timestamp) VALUES (?, ?, ?)", repoName, migration.ID, time.Now()); err != nil {
+			if _, err := db.ExecContext(ctx, "INSERT INTO platforma_migrations (repository, id, timestamp) VALUES ($1, $2, $3)", repoName, migration.ID, time.Now()); err != nil {
 				return err
 			}
 		}
@@ -117,7 +117,7 @@ func (db *Database) Migrate(ctx context.Context) error {
 				return err
 			}
 
-			if _, err := db.ExecContext(ctx, "DELETE FROM platforma_migrations WHERE repository = ? AND id = ?", migration.repository, migration.ID); err != nil {
+			if _, err := db.ExecContext(ctx, "DELETE FROM platforma_migrations WHERE repository = $1 AND id = $2", migration.repository, migration.ID); err != nil {
 				return err
 			}
 		}

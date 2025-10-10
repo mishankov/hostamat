@@ -17,8 +17,8 @@ var Migrations = []database.Migration{
 	},
 	{
 		ID:   "add_user_column",
-		Up:   `ALTER TABLE sites ADD COLUMN user VARCHAR(255) NOT NULL`,
-		Down: `ALTER TABLE sites DROP COLUMN user`,
+		Up:   `ALTER TABLE sites ADD COLUMN "user" VARCHAR(255) NOT NULL`,
+		Down: `ALTER TABLE sites DROP COLUMN "user"`,
 	},
 }
 
@@ -26,7 +26,7 @@ var Schema = database.Schema{
 	Queries: []string{
 		`CREATE TABLE IF NOT EXISTS sites (
 			id VARCHAR(255) PRIMARY KEY,
-			user VARCHAR(255) NOT NULL,
+			"user" VARCHAR(255) NOT NULL,
 			subdomain VARCHAR(255) NOT NULL,
 			domain VARCHAR(255) NOT NULL,
 			created_at TIMESTAMP NOT NULL,
