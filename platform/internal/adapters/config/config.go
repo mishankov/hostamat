@@ -61,7 +61,7 @@ func New() *Config {
 		},
 		DB: db{
 			Host:     os.Getenv("HOSTAMAT_POSTGRES_HOST"),
-			Port:     os.Getenv("HOSTAMAT_POSTGRES_Port"),
+			Port:     os.Getenv("HOSTAMAT_POSTGRES_PORT"),
 			DB:       os.Getenv("HOSTAMAT_POSTGRES_DB"),
 			User:     os.Getenv("HOSTAMAT_POSTGRES_USER"),
 			Password: os.Getenv("HOSTAMAT_POSTGRES_PASSWORD"),
