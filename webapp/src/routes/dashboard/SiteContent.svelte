@@ -20,7 +20,7 @@
 
 <div class="site-content">
   <div class="site-url-container">
-    <Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.domain}</Link> 
+    <Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.domain.split(".")[0]}</Link> 
     <IconButton title="Скопировать URL" onclick={()=>{navigator.clipboard.writeText(`https://${site.domain}`)}}>
       <Copy size={20} />
     </IconButton>
