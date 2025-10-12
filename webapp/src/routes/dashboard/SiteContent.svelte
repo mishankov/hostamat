@@ -14,13 +14,15 @@
     site
   }: Props = $props()
 
+  const subdomain = site.domain.split(".")[0]
+
   let uploadModal = $state<Modal>()
   let deleteModal = $state<Modal>()
 </script>
 
 <div class="site-content">
   <div class="site-url-container">
-    <Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.domain}</Link> 
+    <Link href="https://{site.domain}" target="_blank" alwaysUnderline>{subdomain}</Link> 
     <IconButton title="Скопировать URL" onclick={()=>{navigator.clipboard.writeText(`https://${site.domain}`)}}>
       <Copy size={20} />
     </IconButton>
@@ -32,10 +34,10 @@
     </IconButton>
     <Modal bind:this={uploadModal} kind="primary">
       <div class="upload-modal">
-        <h3>Загрузить файлы для {site.domain}</h3>
+        <h3>Загрузить файлы для {subdomain}</h3>
         <Card kind="action">
           <div style="padding:10px">
-            При загрузке новых файлов все старые файлы будут удалены
+            При загрузке файлов все старые файлы будут удалены
           </div>
         </Card>
         <FileUploader multiple={true} uploadUrl="/api/uploadFile" additionalHeaders={{
@@ -53,7 +55,7 @@
     </IconButton>
     <Modal bind:this={deleteModal} kind="danger">
       <div class="delete-modal">
-        <p>Вы уверены, что хотите удалить сайт {site.domain}?</p>
+        <p>Вы уверены, что хотите удалить сайт {subdomain}?</p>
         <form method="dialog">
           <Button kind="primary">Отмена</Button>
           <Button kind="danger" onclick={async () => {

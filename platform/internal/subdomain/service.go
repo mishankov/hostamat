@@ -2,12 +2,11 @@ package subdomain
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"hostamat/pkg/platforma/batteries/auth"
-	"strings"
+	"math"
+	"math/rand"
 
 	"github.com/google/uuid"
 )
@@ -59,7 +58,7 @@ func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
 		return nil, errors.New("access denied")
 	}
 
-	name := randomBase64String(5)
+	name := generateName()
 
 	subdomain := &Subdomain{
 		Id:         uuid.NewString(),
@@ -94,8 +93,14 @@ func (s *Service) checkAccess(ctx context.Context, subdomain *Subdomain) bool {
 	return false
 }
 
-func randomBase64String(length int) string {
-	bytes := make([]byte, length+1)
-	rand.Read(bytes)
-	return strings.ToLower(base64.URLEncoding.EncodeToString(bytes)[:length])
+// name has this pattern: <adjective>-<noun>-<5 random numbers>
+func generateName() string {
+	adjective := adjectives[rand.Intn(len(adjectives))]
+	noun := nouns[rand.Intn(len(nouns))]
+	number := 0
+	for i := range 5 {
+		number += (rand.Intn(9) + 1) * int(math.Pow10(i))
+	}
+
+	return fmt.Sprintf("%s-%s-%d", adjective, noun, number)
 }
