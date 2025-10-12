@@ -24,8 +24,6 @@ import (
 	"hostamat/pkg/platforma/scheduler"
 	"os"
 	"time"
-
-	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -53,7 +51,7 @@ func main() {
 
 	// Database
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", conf.DB.User, conf.DB.Password, conf.DB.Host, conf.DB.Port, conf.DB.DB)
-	db, err := database.New("postgres", connStr)
+	db, err := database.New(connStr)
 	if err != nil {
 		logger.Error("failed to create database", "error", err)
 		os.Exit(1)

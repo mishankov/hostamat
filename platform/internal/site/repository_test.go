@@ -27,7 +27,7 @@ func setupTestDB(t *testing.T) (*sqlx.DB, *site.Repository) {
 	repo := site.NewRepository(db)
 
 	// Setup database with migrations
-	dbObj, err := database.New("sqlite", ":memory:")
+	dbObj, err := database.New(":memory:")
 	if err != nil {
 		t.Fatalf("failed to create database: %v", err)
 	}

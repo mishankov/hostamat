@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 type Database struct {
@@ -15,8 +16,8 @@ type Database struct {
 	migrators    map[string]shemer
 }
 
-func New(driver, connection string) (*Database, error) {
-	db, err := sqlx.Connect(driver, connection)
+func New(connection string) (*Database, error) {
+	db, err := sqlx.Connect("postgres", connection)
 	if err != nil {
 		return nil, err
 	}
