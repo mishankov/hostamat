@@ -14,7 +14,7 @@ tasks:
   test-infra:
     dir: infra/test
     cmds:
-      - docker compose up proxymini caddy minio -d --remove-orphans
+      - docker compose up proxymini caddy minio db -d --remove-orphans
   
   # Backend
 
