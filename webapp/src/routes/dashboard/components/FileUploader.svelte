@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, Card } from "$lib/components";
 	import  { Upload, X } from "$lib/icons";
-	import IconButton from "./IconButton.svelte";
+	import { IconButton } from "$lib/components";
 
   interface Props {
     uploadUrl?: string;

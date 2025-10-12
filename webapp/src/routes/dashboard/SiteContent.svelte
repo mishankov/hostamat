@@ -3,7 +3,7 @@
   import  { Copy, Download, Trash, Upload } from "$lib/icons";
 
 	import FileUploader from "./components/FileUploader.svelte";
-	import IconButton from "./components/IconButton.svelte";
+	import { IconButton } from "$lib/components";
   import { type Site } from './types';
 
   interface Props {
