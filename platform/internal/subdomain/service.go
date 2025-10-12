@@ -99,7 +99,7 @@ func generateName() string {
 	noun := nouns[rand.Intn(len(nouns))]
 	number := 0
 	for i := range 5 {
-		number += rand.Intn(10) * int(math.Pow10(i))
+		number += (rand.Intn(9) + 1) * int(math.Pow10(i))
 	}
 
 	return fmt.Sprintf("%s-%s-%d", adjective, noun, number)
