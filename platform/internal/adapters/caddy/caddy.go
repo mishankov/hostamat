@@ -180,6 +180,10 @@ func (capi *CaddyAPI) GetHostsFromShorthandId(ctx context.Context, shorthandId s
 }
 
 func (capi *CaddyAPI) RewriteHostsInShorthandId(ctx context.Context, shorthandId string, hosts []string) error {
+	if len(hosts) == 0 {
+		return capi.ClearSubdomains(ctx, shorthandId)
+	}
+
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(hosts); err != nil {
 		return fmt.Errorf("failed to encode request body: %w", err)
