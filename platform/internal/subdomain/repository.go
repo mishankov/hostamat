@@ -52,3 +52,14 @@ func (r *Repository) Create(ctx context.Context, subdomain *Subdomain) error {
 
 	return nil
 }
+
+func (r *Repository) Delete(ctx context.Context, id string) error {
+	const query = `DELETE FROM ` + tableName + ` WHERE id = $1`
+
+	_, err := r.db.ExecContext(ctx, query, id)
+	if err != nil {
+		return fmt.Errorf("failed to delete subdomain: %w", err)
+	}
+
+	return nil
+}

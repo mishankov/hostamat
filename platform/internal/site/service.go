@@ -21,6 +21,7 @@ type repository interface {
 
 type subdomainService interface {
 	Create(ctx context.Context) (*subdomain.Subdomain, error)
+	Delete(ctx context.Context, id string) error
 }
 
 type Service struct {
@@ -109,7 +110,12 @@ func (s *Service) GetList(ctx context.Context) ([]*Site, error) {
 }
 
 func (s *Service) Delete(ctx context.Context, id string) error {
-	_, err := s.Get(ctx, id)
+	site, err := s.Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	err = s.subdomainService.Delete(ctx, site.Subdomain)
 	if err != nil {
 		return err
 	}

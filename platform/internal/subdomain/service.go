@@ -7,6 +7,7 @@ import (
 	"hostamat/pkg/platforma/batteries/auth"
 	"math"
 	"math/rand"
+	"sync"
 
 	"github.com/google/uuid"
 )
@@ -14,13 +15,17 @@ import (
 type repository interface {
 	Get(ctx context.Context, id string) (*Subdomain, error)
 	Create(ctx context.Context, subdomain *Subdomain) error
+	Delete(ctx context.Context, id string) error
 }
 
 type webserver interface {
 	AddSubdomain(ctx context.Context, baseDomain, subdomain, shorthandId string) error
+	GetHostsFromShorthandId(ctx context.Context, shorthandId string) ([]string, error)
+	RewriteHostsInShorthandId(ctx context.Context, shorthandId string, hosts []string) error
 }
 
 type Service struct {
+	caddyMutex  sync.Mutex
 	repo        repository
 	webserver   webserver
 	baseDomain  string
@@ -72,12 +77,49 @@ func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
 		return nil, fmt.Errorf("failed to create subdomain: %w", err)
 	}
 
+	s.caddyMutex.Lock()
+	defer s.caddyMutex.Unlock()
+
 	err = s.webserver.AddSubdomain(ctx, s.baseDomain, subdomain.Name, s.shorthandId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to add sudomain to webserver: %w", err)
 	}
 
 	return subdomain, nil
+}
+
+func (s *Service) Delete(ctx context.Context, id string) error {
+	subdomain, err := s.Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	s.caddyMutex.Lock()
+	defer s.caddyMutex.Unlock()
+
+	hosts, err := s.webserver.GetHostsFromShorthandId(ctx, s.shorthandId)
+	if err != nil {
+		return err
+	}
+
+	var newHosts []string
+	for _, host := range hosts {
+		if host != subdomain.FullDomain {
+			newHosts = append(newHosts, host)
+		}
+	}
+
+	err = s.webserver.RewriteHostsInShorthandId(ctx, s.shorthandId, newHosts)
+	if err != nil {
+		return err
+	}
+
+	err = s.repo.Delete(ctx, id)
+	if err != nil {
+		return fmt.Errorf("failed to delete subdomain from database: %w", err)
+	}
+
+	return nil
 }
 
 func (s *Service) checkAccess(ctx context.Context, subdomain *Subdomain) bool {
