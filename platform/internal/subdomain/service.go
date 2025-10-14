@@ -15,6 +15,7 @@ import (
 type repository interface {
 	Get(ctx context.Context, id string) (*Subdomain, error)
 	Create(ctx context.Context, subdomain *Subdomain) error
+	Delete(ctx context.Context, id string) error
 }
 
 type webserver interface {
@@ -111,6 +112,11 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 	err = s.webserver.RewriteHostsInShorthandId(ctx, s.shorthandId, newHosts)
 	if err != nil {
 		return err
+	}
+
+	err = s.repo.Delete(ctx, id)
+	if err != nil {
+		return fmt.Errorf("failed to delete subdomain from database: %w", err)
 	}
 
 	return nil
