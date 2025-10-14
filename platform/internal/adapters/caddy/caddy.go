@@ -147,6 +147,74 @@ func (capi *CaddyAPI) AddSubdomain(ctx context.Context, baseDomain, subdomain, s
 	}
 }
 
+func (capi *CaddyAPI) GetHostsFromShorthandId(ctx context.Context, shorthandId string) ([]string, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", capi.apiBasePath+"/id/"+shorthandId+"/host", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := capi.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	switch {
+	case statusOk(resp.StatusCode):
+		var hosts []string
+		if err := json.NewDecoder(resp.Body).Decode(&hosts); err != nil {
+			return nil, fmt.Errorf("failed to decode response: %w", err)
+		}
+		return hosts, nil
+	case resp.StatusCode == 404:
+		return nil, ErrConfigNotFound
+	case statusBadRequest(resp.StatusCode):
+		return nil, ErrInvalidRequest
+	case statusServerError(resp.StatusCode):
+		return nil, ErrServerError
+	default:
+		return nil, ErrUnexpectedResponse
+	}
+}
+
+func (capi *CaddyAPI) RewriteHostsInShorthandId(ctx context.Context, shorthandId string, hosts []string) error {
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(hosts); err != nil {
+		return fmt.Errorf("failed to encode request body: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "PATCH",
+		capi.apiBasePath+"/id/"+shorthandId+"/host",
+		&buf,
+	)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := capi.httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	switch {
+	case statusOk(resp.StatusCode):
+		return nil
+	case resp.StatusCode == 404:
+		return ErrConfigNotFound
+	case statusBadRequest(resp.StatusCode):
+		return ErrInvalidRequest
+	case statusServerError(resp.StatusCode):
+		return ErrServerError
+	default:
+		return ErrUnexpectedResponse
+	}
+}
+
 func (capi *CaddyAPI) ClearSubdomains(ctx context.Context, shorthandId string) error {
 	reqDelete, err := http.NewRequestWithContext(ctx, "DELETE",
 		capi.apiBasePath+"/id/"+shorthandId+"/host",
