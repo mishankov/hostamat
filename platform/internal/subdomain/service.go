@@ -7,6 +7,7 @@ import (
 	"hostamat/pkg/platforma/batteries/auth"
 	"math"
 	"math/rand"
+	"sync"
 
 	"github.com/google/uuid"
 )
@@ -21,6 +22,7 @@ type webserver interface {
 }
 
 type Service struct {
+	caddyMutex  sync.Mutex
 	repo        repository
 	webserver   webserver
 	baseDomain  string
@@ -71,6 +73,9 @@ func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create subdomain: %w", err)
 	}
+
+	s.caddyMutex.Lock()
+	defer s.caddyMutex.Unlock()
 
 	err = s.webserver.AddSubdomain(ctx, s.baseDomain, subdomain.Name, s.shorthandId)
 	if err != nil {
