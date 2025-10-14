@@ -8,7 +8,6 @@ import (
 	"hostamat/internal/adapters/s3"
 	"hostamat/internal/file"
 	"hostamat/internal/middlewares"
-	"hostamat/internal/schedulers/cleanup"
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/pkg/platforma/application"
@@ -21,7 +20,6 @@ import (
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
 	"hostamat/pkg/platforma/log"
-	"hostamat/pkg/platforma/scheduler"
 	"os"
 	"time"
 )
@@ -125,10 +123,6 @@ func main() {
 
 	httpServer.Use(recoverMiddleware, traceId, requestLogger)
 
-	// Cleanup service to remove files from S3 and subdomains from Caddy
-	cleanupService := cleanup.New(s3Client, caddyAPI, conf.S3.Bucket, conf.Caddy.ShorthandId)
-	cleanupJob := scheduler.New(30*time.Minute, cleanupService)
-
 	// Application
 	app := application.New()
 	healthcheckHandler := healthcheck.NewHealthCheckHandler(app)
@@ -156,7 +150,6 @@ func main() {
 	app.RegisterRepository("default", "session", sessionRepo)
 
 	app.RegisterService("http", httpServer)
-	app.RegisterService("cleanup", cleanupJob)
 
 	if err := app.Run(ctx); err != nil {
 		logger.Error("Applicaton finished with error", "error", err)
