@@ -369,3 +369,7 @@ func (s *mockDomainService) Create(_ context.Context) (*subdomain.Subdomain, err
 		FullDomain: "name.example.com",
 	}, nil
 }
+
+func (s *mockDomainService) Delete(_ context.Context, _ string) error {
+	return nil
+}
