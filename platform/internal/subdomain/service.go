@@ -19,6 +19,8 @@ type repository interface {
 
 type webserver interface {
 	AddSubdomain(ctx context.Context, baseDomain, subdomain, shorthandId string) error
+	GetHostsFromShorthandId(ctx context.Context, shorthandId string) ([]string, error)
+	RewriteHostsInShorthandId(ctx context.Context, shorthandId string, hosts []string) error
 }
 
 type Service struct {
@@ -83,6 +85,35 @@ func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
 	}
 
 	return subdomain, nil
+}
+
+func (s *Service) Delete(ctx context.Context, id string) error {
+	subdomain, err := s.Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	s.caddyMutex.Lock()
+	defer s.caddyMutex.Unlock()
+
+	hosts, err := s.webserver.GetHostsFromShorthandId(ctx, s.shorthandId)
+	if err != nil {
+		return err
+	}
+
+	var newHosts []string
+	for _, host := range hosts {
+		if host != subdomain.FullDomain {
+			newHosts = append(newHosts, host)
+		}
+	}
+
+	err = s.webserver.RewriteHostsInShorthandId(ctx, s.shorthandId, newHosts)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Service) checkAccess(ctx context.Context, subdomain *Subdomain) bool {
