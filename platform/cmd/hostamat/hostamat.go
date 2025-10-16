@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/config"
@@ -89,7 +90,13 @@ func main() {
 
 	// User service setup
 	userRepo := user.NewRepository(db)
-	userService := user.NewService(userRepo, sessionService, "hsessionid")
+	userService := user.NewService(userRepo, sessionService, "hsessionid", func(password string) error {
+		if len(password) < 8 {
+			return errors.New("short password")
+		}
+
+		return nil
+	})
 	registerHandler := user.NewRegisterHandler(userService)
 	loginHandler := user.NewLoginHandler(userService)
 	logoutHandler := user.NewLogoutHandler(userService)

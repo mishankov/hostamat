@@ -2,6 +2,7 @@ package user
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -33,6 +34,11 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Register user
 	if err := h.service.CreateWithLoginAndPassword(r.Context(), req.Login, req.Password); err != nil {
+		if errors.Is(err, ErrInvalidPassword) {
+			http.Error(w, "Invalid password", http.StatusBadRequest)
+			return
+		}
+
 		http.Error(w, "Failed to register user", http.StatusInternalServerError)
 		return
 	}

@@ -2,6 +2,7 @@ package user
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -33,6 +34,10 @@ func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	sessionId, err := h.service.CreateSessionFromUsernameAndPassword(r.Context(), req.Login, req.Password)
 	if err != nil {
+		if errors.Is(err, ErrWrongUserOrPassword) {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
