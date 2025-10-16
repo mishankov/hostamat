@@ -6,7 +6,6 @@ import (
 	"errors"
 	"hostamat/internal/site"
 	"hostamat/pkg/platforma/batteries/auth"
-	"hostamat/pkg/platforma/batteries/user"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -98,7 +97,7 @@ func TestCreateSiteHandler_ServeHTTP(t *testing.T) {
 
 func withUserRequest(method, url, body string, userID string) *http.Request {
 	req := httptest.NewRequest(method, url, strings.NewReader(body))
-	ctx := context.WithValue(req.Context(), auth.UserContextKey, &user.User{
+	ctx := context.WithValue(req.Context(), auth.UserContextKey, &auth.User{
 		ID: userID,
 	})
 	return req.WithContext(ctx)

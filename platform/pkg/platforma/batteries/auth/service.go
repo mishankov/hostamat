@@ -1,4 +1,4 @@
-package user
+package auth
 
 import (
 	"context"
@@ -113,9 +113,9 @@ func (s *Service) CookieName() string {
 	return s.sessionCookieName
 }
 
-func (s *Service) ChangePassword(ctx context.Context, userId, currentPassword, newPassword string) error {
-	user, err := s.repo.Get(ctx, userId)
-	if user == nil || err != nil {
+func (s *Service) ChangePassword(ctx context.Context, currentPassword, newPassword string) error {
+	user := UserFromContext(ctx)
+	if user == nil {
 		return errors.New("user not found")
 	}
 
@@ -127,7 +127,7 @@ func (s *Service) ChangePassword(ctx context.Context, userId, currentPassword, n
 		}
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(currentPassword+":"+user.Salt))
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(currentPassword+":"+user.Salt))
 	if err != nil {
 		return ErrCurrentPasswordIncorrect
 	}
@@ -138,5 +138,5 @@ func (s *Service) ChangePassword(ctx context.Context, userId, currentPassword, n
 		return err
 	}
 
-	return s.repo.UpdatePassword(ctx, userId, string(hashedPassword), newSalt)
+	return s.repo.UpdatePassword(ctx, user.ID, string(hashedPassword), newSalt)
 }

@@ -8,12 +8,11 @@ import (
 	"testing"
 
 	"hostamat/pkg/platforma/batteries/auth"
-	"hostamat/pkg/platforma/batteries/user"
 )
 
 func TestAuthenticationMiddleware_ValidSession(t *testing.T) {
 	userSvc := &mockUserService{
-		users: map[string]*user.User{
+		users: map[string]*auth.User{
 			"valid-session-id": {ID: "user-id", Username: "testuser"},
 		},
 		cookieName: "session",
@@ -57,7 +56,7 @@ func TestAuthenticationMiddleware_NoSessionCookie(t *testing.T) {
 
 func TestAuthenticationMiddleware_InvalidSession(t *testing.T) {
 	userSvc := &mockUserService{
-		users:      map[string]*user.User{},
+		users:      map[string]*auth.User{},
 		cookieName: "session",
 	}
 	middleware := auth.NewAuthenticationMiddleware(userSvc)
@@ -101,7 +100,7 @@ func TestAuthenticationMiddleware_UserServiceError(t *testing.T) {
 
 func TestAuthenticationMiddleware_UserNotFound(t *testing.T) {
 	userSvc := &mockUserService{
-		users:      map[string]*user.User{},
+		users:      map[string]*auth.User{},
 		cookieName: "session",
 	}
 	middleware := auth.NewAuthenticationMiddleware(userSvc)
@@ -122,12 +121,12 @@ func TestAuthenticationMiddleware_UserNotFound(t *testing.T) {
 }
 
 type mockUserService struct {
-	users      map[string]*user.User
+	users      map[string]*auth.User
 	error      error
 	cookieName string
 }
 
-func (m *mockUserService) GetFromSession(ctx context.Context, sessionId string) (*user.User, error) {
+func (m *mockUserService) GetFromSession(ctx context.Context, sessionId string) (*auth.User, error) {
 	if m.error != nil {
 		return nil, m.error
 	}

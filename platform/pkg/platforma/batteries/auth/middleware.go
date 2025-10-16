@@ -4,12 +4,11 @@ import (
 	"context"
 	"net/http"
 
-	"hostamat/pkg/platforma/batteries/user"
 	"hostamat/pkg/platforma/log"
 )
 
 type userService interface {
-	GetFromSession(ctx context.Context, sessionId string) (*user.User, error)
+	GetFromSession(ctx context.Context, sessionId string) (*User, error)
 	CookieName() string
 }
 

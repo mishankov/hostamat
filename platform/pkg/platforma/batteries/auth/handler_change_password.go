@@ -1,4 +1,4 @@
-package user
+package auth
 
 import (
 	"encoding/json"
@@ -43,7 +43,7 @@ func (h *ChangePasswordHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	err = h.service.ChangePassword(r.Context(), user.ID, req.CurrentPassword, req.NewPassword)
+	err = h.service.ChangePassword(r.Context(), req.CurrentPassword, req.NewPassword)
 	if err != nil {
 		if errors.Is(err, ErrCurrentPasswordIncorrect) {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
