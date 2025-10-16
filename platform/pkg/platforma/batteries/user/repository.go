@@ -67,3 +67,13 @@ func (r *Repository) Create(ctx context.Context, user *User) error {
 	_, err := r.db.NamedExecContext(ctx, query, user)
 	return err
 }
+
+func (r *Repository) UpdatePassword(ctx context.Context, id, password, salt string) error {
+	query := `
+		UPDATE users 
+		SET password = $1, salt = $2, updated = CURRENT_TIMESTAMP
+		WHERE id = $3
+	`
+	_, err := r.db.ExecContext(ctx, query, password, salt, id)
+	return err
+}

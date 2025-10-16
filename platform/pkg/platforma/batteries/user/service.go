@@ -15,6 +15,7 @@ type repository interface {
 	Get(ctx context.Context, id string) (*User, error)
 	GetByUsername(ctx context.Context, username string) (*User, error)
 	Create(ctx context.Context, user *User) error
+	UpdatePassword(ctx context.Context, id, password, salt string) error
 }
 
 type authStorage interface {
@@ -110,4 +111,32 @@ func (s *Service) DeleteSession(ctx context.Context, sessionId string) error {
 
 func (s *Service) CookieName() string {
 	return s.sessionCookieName
+}
+
+func (s *Service) ChangePassword(ctx context.Context, userId, currentPassword, newPassword string) error {
+	user, err := s.repo.Get(ctx, userId)
+	if user == nil || err != nil {
+		return errors.New("user not found")
+	}
+
+	if s.passwordValidator != nil {
+		log.DebugContext(ctx, "validating new password")
+		err := s.passwordValidator(newPassword)
+		if err != nil {
+			return errors.Join(ErrInvalidPassword, err)
+		}
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(currentPassword+":"+user.Salt))
+	if err != nil {
+		return ErrCurrentPasswordIncorrect
+	}
+
+	newSalt := uuid.New().String()
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword+":"+newSalt), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	return s.repo.UpdatePassword(ctx, userId, string(hashedPassword), newSalt)
 }

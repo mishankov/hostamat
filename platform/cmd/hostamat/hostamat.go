@@ -101,12 +101,14 @@ func main() {
 	loginHandler := user.NewLoginHandler(userService)
 	logoutHandler := user.NewLogoutHandler(userService)
 	getUserHandler := user.NewGetHandler(userService)
+	changePasswordHandler := user.NewChangePasswordHandler(userService)
 
 	userAPI := httpserver.NewHandlerGroup()
 	userAPI.Handle("POST /register", registerHandler)
 	userAPI.Handle("POST /login", loginHandler)
 	userAPI.Handle("POST /logout", logoutHandler)
 	userAPI.Handle("GET /me", getUserHandler)
+	userAPI.Handle("POST /change-password", changePasswordHandler)
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
