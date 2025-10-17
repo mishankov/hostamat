@@ -10,7 +10,6 @@ import (
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/pkg/platforma/batteries/auth"
-	"hostamat/pkg/platforma/batteries/user"
 )
 
 func TestService_Create(t *testing.T) {
@@ -355,7 +354,7 @@ func (m *errorProneMockRepository) Create(ctx context.Context, site *site.Site) 
 }
 
 func withUserContext(ctx context.Context, userID string) context.Context {
-	return context.WithValue(ctx, auth.UserContextKey, &user.User{
+	return context.WithValue(ctx, auth.UserContextKey, &auth.User{
 		ID: userID,
 	})
 }

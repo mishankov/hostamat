@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/config"
@@ -15,7 +16,6 @@ import (
 	"hostamat/pkg/platforma/batteries/healthcheck"
 	"hostamat/pkg/platforma/batteries/session"
 	"hostamat/pkg/platforma/batteries/traceid"
-	"hostamat/pkg/platforma/batteries/user"
 	"hostamat/pkg/platforma/database"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
@@ -88,24 +88,32 @@ func main() {
 	sessionService := session.NewService(sessionRepo)
 
 	// User service setup
-	userRepo := user.NewRepository(db)
-	userService := user.NewService(userRepo, sessionService, "hsessionid")
-	registerHandler := user.NewRegisterHandler(userService)
-	loginHandler := user.NewLoginHandler(userService)
-	logoutHandler := user.NewLogoutHandler(userService)
-	getUserHandler := user.NewGetHandler(userService)
+	authRepo := auth.NewRepository(db)
+	authService := auth.NewService(authRepo, sessionService, "hsessionid", func(password string) error {
+		if len(password) < 8 {
+			return errors.New("short password")
+		}
 
-	userAPI := httpserver.NewHandlerGroup()
-	userAPI.Handle("POST /register", registerHandler)
-	userAPI.Handle("POST /login", loginHandler)
-	userAPI.Handle("POST /logout", logoutHandler)
-	userAPI.Handle("GET /me", getUserHandler)
+		return nil
+	})
+	authMiddleware := auth.NewAuthenticationMiddleware(authService)
+	registerHandler := auth.NewRegisterHandler(authService)
+	loginHandler := auth.NewLoginHandler(authService)
+	logoutHandler := auth.NewLogoutHandler(authService)
+	getUserHandler := auth.NewGetHandler(authService)
+	changePasswordHandler := authMiddleware.Wrap(auth.NewChangePasswordHandler(authService))
+
+	authAPI := httpserver.NewHandlerGroup()
+	authAPI.Handle("POST /register", registerHandler)
+	authAPI.Handle("POST /login", loginHandler)
+	authAPI.Handle("POST /logout", logoutHandler)
+	authAPI.Handle("GET /me", getUserHandler)
+	authAPI.Handle("POST /change-password", changePasswordHandler)
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
 	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
 	requestLogger := middlewares.NewRequestLogger(logger)
-	authMiddleware := auth.NewAuthenticationMiddleware(userService)
 
 	// HTTP server
 	httpServer := httpserver.New(conf.Port, 10*time.Second)
@@ -117,7 +125,7 @@ func main() {
 	apiGroup.Handle("/sites", siteHandlerGroup)
 
 	httpServer.HandleGroup("/api", apiGroup)
-	httpServer.HandleGroup("/auth", userAPI)
+	httpServer.HandleGroup("/auth", authAPI)
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
 
@@ -146,7 +154,7 @@ func main() {
 	app.RegisterDatabase("default", db)
 	app.RegisterRepository("default", "site", siteRepo)
 	app.RegisterRepository("default", "subdomain", subdomainRepo)
-	app.RegisterRepository("default", "user", userRepo)
+	app.RegisterRepository("default", "user", authRepo)
 	app.RegisterRepository("default", "session", sessionRepo)
 
 	app.RegisterService("http", httpServer)

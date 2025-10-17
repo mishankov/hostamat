@@ -1,8 +1,10 @@
-package user
+package auth
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"hostamat/pkg/platforma/log"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,6 +15,7 @@ type repository interface {
 	Get(ctx context.Context, id string) (*User, error)
 	GetByUsername(ctx context.Context, username string) (*User, error)
 	Create(ctx context.Context, user *User) error
+	UpdatePassword(ctx context.Context, id, password, salt string) error
 }
 
 type authStorage interface {
@@ -25,13 +28,15 @@ type Service struct {
 	repo              repository
 	authStorage       authStorage
 	sessionCookieName string
+	passwordValidator func(string) error
 }
 
-func NewService(repo repository, authStorage authStorage, sessionCookieName string) *Service {
+func NewService(repo repository, authStorage authStorage, sessionCookieName string, passwordValidator func(string) error) *Service {
 	return &Service{
 		repo:              repo,
 		authStorage:       authStorage,
 		sessionCookieName: sessionCookieName,
+		passwordValidator: passwordValidator,
 	}
 }
 
@@ -53,6 +58,14 @@ func (s *Service) GetFromSession(ctx context.Context, sessionId string) (*User, 
 }
 
 func (s *Service) CreateWithLoginAndPassword(ctx context.Context, username, password string) error {
+	if s.passwordValidator != nil {
+		log.DebugContext(ctx, "validating password")
+		err := s.passwordValidator(password)
+		if err != nil {
+			return errors.Join(ErrInvalidPassword, err)
+		}
+	}
+
 	salt := uuid.New().String()
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password+":"+salt), bcrypt.DefaultCost)
@@ -76,12 +89,12 @@ func (s *Service) CreateWithLoginAndPassword(ctx context.Context, username, pass
 func (s *Service) CreateSessionFromUsernameAndPassword(ctx context.Context, username, password string) (string, error) {
 	user, err := s.repo.GetByUsername(ctx, username)
 	if err != nil {
-		return "", fmt.Errorf("user not found: %w", err)
+		return "", ErrWrongUserOrPassword
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password+":"+user.Salt))
 	if err != nil {
-		return "", fmt.Errorf("invalid password: %w", err)
+		return "", ErrWrongUserOrPassword
 	}
 
 	session, err := s.authStorage.CreateSessionForUser(ctx, user.ID)
@@ -98,4 +111,32 @@ func (s *Service) DeleteSession(ctx context.Context, sessionId string) error {
 
 func (s *Service) CookieName() string {
 	return s.sessionCookieName
+}
+
+func (s *Service) ChangePassword(ctx context.Context, currentPassword, newPassword string) error {
+	user := UserFromContext(ctx)
+	if user == nil {
+		return errors.New("user not found")
+	}
+
+	if s.passwordValidator != nil {
+		log.DebugContext(ctx, "validating new password")
+		err := s.passwordValidator(newPassword)
+		if err != nil {
+			return errors.Join(ErrInvalidPassword, err)
+		}
+	}
+
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(currentPassword+":"+user.Salt))
+	if err != nil {
+		return ErrCurrentPasswordIncorrect
+	}
+
+	newSalt := uuid.New().String()
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword+":"+newSalt), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	return s.repo.UpdatePassword(ctx, user.ID, string(hashedPassword), newSalt)
 }

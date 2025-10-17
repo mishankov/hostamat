@@ -1,7 +1,8 @@
-package user
+package auth
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -17,7 +18,7 @@ func NewRegisterHandler(service *Service) *RegisterHandler {
 
 func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -27,20 +28,21 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
 	}
 
 	// Register user
 	if err := h.service.CreateWithLoginAndPassword(r.Context(), req.Login, req.Password); err != nil {
-		http.Error(w, "Failed to register user", http.StatusInternalServerError)
+		if errors.Is(err, ErrInvalidPassword) {
+			http.Error(w, "invalid password", http.StatusBadRequest)
+			return
+		}
+
+		http.Error(w, "failed to register user", http.StatusInternalServerError)
 		return
 	}
 
 	// Return success
 	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(map[string]string{"status": "ok"}); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-		return
-	}
 }

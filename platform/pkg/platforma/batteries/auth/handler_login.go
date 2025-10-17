@@ -1,7 +1,8 @@
-package user
+package auth
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -17,7 +18,7 @@ func NewLoginHandler(service *Service) *LoginHandler {
 
 func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -27,18 +28,23 @@ func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
 	}
 
 	sessionId, err := h.service.CreateSessionFromUsernameAndPassword(r.Context(), req.Login, req.Password)
 	if err != nil {
+		if errors.Is(err, ErrWrongUserOrPassword) {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if sessionId == "" {
-		http.Error(w, "Invalid login or password", http.StatusUnauthorized)
+		http.Error(w, "invalid login or password", http.StatusUnauthorized)
 		return
 	}
 
@@ -52,7 +58,7 @@ func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(sessionId); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		http.Error(w, "failed to encode response", http.StatusInternalServerError)
 		return
 	}
 }

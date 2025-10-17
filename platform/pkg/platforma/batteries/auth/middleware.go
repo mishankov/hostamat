@@ -4,12 +4,11 @@ import (
 	"context"
 	"net/http"
 
-	"hostamat/pkg/platforma/batteries/user"
 	"hostamat/pkg/platforma/log"
 )
 
 type userService interface {
-	GetFromSession(ctx context.Context, sessionId string) (*user.User, error)
+	GetFromSession(ctx context.Context, sessionId string) (*User, error)
 	CookieName() string
 }
 
@@ -31,7 +30,8 @@ func (m *AuthenticationMiddleware) Wrap(next http.Handler) http.Handler {
 
 		user, err := m.userService.GetFromSession(r.Context(), cookie.Value)
 		if err != nil {
-			http.Error(w, "Failed to get user", http.StatusInternalServerError)
+			http.Error(w, "failed to get user", http.StatusInternalServerError)
+			return
 		}
 
 		if user == nil {

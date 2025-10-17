@@ -24,7 +24,14 @@
       return;
     }
 
-    error = "Ошибка регистрации";
+    const data = await res.text()
+    if (data.trim() == "Invalid password") {
+      error = "Пароль не соответствует требованиям"
+    } else {
+      error = "Ошибка сервера";
+    }
+
+    
   }
 </script>
 
@@ -41,6 +48,12 @@
 <Input id="login" type="text" label="Логин" bind:value={login} />
 <Input id="password" type="password" label="Пароль" bind:value={password} />
 
+<Card kind="action">
+  <div class="password-rules">
+    Пароль должен быть длиннее 8 символов
+  </div>
+</Card>
+
 <div class="actions">
   <Button kind="action" onclick={registerAction} disabled={registerButtonDisabled}>Создать</Button>
   <Button link="/login">Войти</Button>
@@ -55,5 +68,9 @@
     gap: 10px;
 
     padding-top: 10px;
+  }
+
+  .password-rules {
+    padding: 10px;
   }
 </style>
