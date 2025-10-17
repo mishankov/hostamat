@@ -77,6 +77,13 @@ func (a *Application) RegisterService(serviceName string, service Runner) {
 	}
 }
 
+func (a *Application) RegisterDomain(name, dbName string, domain Domain) {
+	if dbName != "" {
+		repository := domain.GetRepository()
+		a.RegisterRepository(dbName, name+"_repository", repository)
+	}
+}
+
 // Run executes all startup tasks and services in the application.
 // It returns an error if any startup task configured to abort on error fails.
 func (a *Application) Run(ctx context.Context) error {

@@ -55,79 +55,46 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Domain service setup
-	subdomainRepo := subdomain.NewRepository(db)
-	subdomainService := subdomain.NewService(subdomainRepo, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
+	// Domain domain
+	subdomainDomain := subdomain.New(db, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
 
-	// Site service setup
-	siteRepo := site.NewRepository(db)
-	siteService := site.NewService(siteRepo, subdomainService)
-	siteCreateHandle := site.NewCreateSiteHandler(siteService)
-	siteListHandler := site.NewListSiteHandler(siteService)
-	siteDeleteHandler := site.NewDeleteSiteHandler(siteService)
+	// Site domain
+	siteDomain := site.New(db, subdomainDomain.Service)
 
-	siteHandlerGroup := httpserver.NewHandlerGroup()
-	siteHandlerGroup.Handle("POST /", siteCreateHandle)
-	siteHandlerGroup.Handle("GET /", siteListHandler)
-	siteHandlerGroup.Handle("DELETE /", siteDeleteHandler)
+	// File domain
+	fileDomain := file.New(s3Client, siteDomain.Service, conf.S3.Bucket)
 
-	// File service setup
-	fileRepo := file.NewRepository(s3Client)
-	fileService := file.NewService(fileRepo, siteService, conf.S3.Bucket)
-	serveFileHandler := file.NewServeHandler(fileService)
-	uploadFileHandler := file.NewUploadHandler(fileService)
-	deleteHandler := file.NewDeleteHandler(fileService)
+	// Session domain
+	sessionDomain := session.New(db)
 
-	// Handle groups
-	filesAPI := httpserver.NewHandlerGroup()
-	filesAPI.Handle("POST /", uploadFileHandler)
-	filesAPI.Handle("DELETE /", deleteHandler)
-
-	// Session service setup
-	sessionRepo := session.NewRepository(db)
-	sessionService := session.NewService(sessionRepo)
-
-	// User service setup
-	authRepo := auth.NewRepository(db)
-	authService := auth.NewService(authRepo, sessionService, "hsessionid", func(password string) error {
+	// Auth domain
+	authDomain := auth.New(db, sessionDomain.Service, "hsessionid", func(password string) error {
 		if len(password) < 8 {
 			return errors.New("short password")
 		}
 
 		return nil
 	})
-	authMiddleware := auth.NewAuthenticationMiddleware(authService)
-	registerHandler := auth.NewRegisterHandler(authService)
-	loginHandler := auth.NewLoginHandler(authService)
-	logoutHandler := auth.NewLogoutHandler(authService)
-	getUserHandler := auth.NewGetHandler(authService)
-	changePasswordHandler := authMiddleware.Wrap(auth.NewChangePasswordHandler(authService))
-
-	authAPI := httpserver.NewHandlerGroup()
-	authAPI.Handle("POST /register", registerHandler)
-	authAPI.Handle("POST /login", loginHandler)
-	authAPI.Handle("POST /logout", logoutHandler)
-	authAPI.Handle("GET /me", getUserHandler)
-	authAPI.Handle("POST /change-password", changePasswordHandler)
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
 	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
 	requestLogger := middlewares.NewRequestLogger(logger)
 
+	// API with authentication
+	apiGroup := httpserver.NewHandlerGroup()
+	apiGroup.Use(authDomain.Middleware)
+
+	apiGroup.Handle("/files", fileDomain.ChangeHandleGroup)
+	apiGroup.Handle("/sites", siteDomain.HandleGroup)
+
 	// HTTP server
 	httpServer := httpserver.New(conf.Port, 10*time.Second)
 
-	apiGroup := httpserver.NewHandlerGroup()
-	apiGroup.Use(authMiddleware)
-
-	apiGroup.Handle("/files", filesAPI)
-	apiGroup.Handle("/sites", siteHandlerGroup)
-
 	httpServer.HandleGroup("/api", apiGroup)
-	httpServer.HandleGroup("/auth", authAPI)
+	httpServer.HandleGroup("/auth", authDomain.HandleGroup)
 	// HandleGroup used here because client would request files by additional path
-	httpServer.HandleGroup(conf.FileServerPath, serveFileHandler)
+	httpServer.HandleGroup(conf.FileServerPath, fileDomain.ServeHandle)
 
 	httpServer.Use(recoverMiddleware, traceId, requestLogger)
 
@@ -138,7 +105,7 @@ func main() {
 
 	// Migrate File storage
 	app.OnStartFunc(func(ctx context.Context) error {
-		return fileRepo.Migrate(ctx, conf.S3.Bucket)
+		return fileDomain.Repository.Migrate(ctx, conf.S3.Bucket)
 	}, application.StartupTaskConfig{Name: "migrateFile", AbortOnError: true})
 
 	// Ensure that caddy has desired configuration
@@ -152,10 +119,12 @@ func main() {
 	}), application.StartupTaskConfig{Name: "prepareCaddy", AbortOnError: true})
 
 	app.RegisterDatabase("default", db)
-	app.RegisterRepository("default", "site", siteRepo)
-	app.RegisterRepository("default", "subdomain", subdomainRepo)
-	app.RegisterRepository("default", "user", authRepo)
-	app.RegisterRepository("default", "session", sessionRepo)
+
+	app.RegisterDomain("subdomain", "default", subdomainDomain)
+	app.RegisterDomain("site", "default", siteDomain)
+	app.RegisterDomain("file", "", fileDomain)
+	app.RegisterDomain("auth", "default", authDomain)
+	app.RegisterDomain("session", "default", sessionDomain)
 
 	app.RegisterService("http", httpServer)
 
