@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"encoding/json"
 	"net/http"
 	"time"
 )
@@ -18,7 +17,7 @@ func NewLogoutHandler(service *Service) *LogoutHandler {
 
 func (h *LogoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -27,13 +26,12 @@ func (h *LogoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// No session cookie found, still return success
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 		return
 	}
 
 	// Delete session from database
 	if err := h.service.DeleteSession(r.Context(), cookie.Value); err != nil {
-		http.Error(w, "Failed to logout", http.StatusInternalServerError)
+		http.Error(w, "failed to logout", http.StatusInternalServerError)
 		return
 	}
 
@@ -48,5 +46,4 @@ func (h *LogoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Return success response
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }

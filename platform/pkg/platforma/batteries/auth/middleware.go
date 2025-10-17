@@ -30,7 +30,8 @@ func (m *AuthenticationMiddleware) Wrap(next http.Handler) http.Handler {
 
 		user, err := m.userService.GetFromSession(r.Context(), cookie.Value)
 		if err != nil {
-			http.Error(w, "Failed to get user", http.StatusInternalServerError)
+			http.Error(w, "failed to get user", http.StatusInternalServerError)
+			return
 		}
 
 		if user == nil {
