@@ -55,19 +55,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Domain domain
+	// Domains
 	subdomainDomain := subdomain.New(db, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
-
-	// Site domain
 	siteDomain := site.New(db, subdomainDomain.Service)
-
-	// File domain
 	fileDomain := file.New(s3Client, siteDomain.Service, conf.S3.Bucket)
-
-	// Session domain
 	sessionDomain := session.New(db)
-
-	// Auth domain
 	authDomain := auth.New(db, sessionDomain.Service, "hsessionid", func(password string) error {
 		if len(password) < 8 {
 			return errors.New("short password")
