@@ -96,11 +96,12 @@ func main() {
 
 		return nil
 	})
+	authMiddleware := auth.NewAuthenticationMiddleware(authService)
 	registerHandler := auth.NewRegisterHandler(authService)
 	loginHandler := auth.NewLoginHandler(authService)
 	logoutHandler := auth.NewLogoutHandler(authService)
 	getUserHandler := auth.NewGetHandler(authService)
-	changePasswordHandler := auth.NewChangePasswordHandler(authService)
+	changePasswordHandler := authMiddleware.Wrap(auth.NewChangePasswordHandler(authService))
 
 	authAPI := httpserver.NewHandlerGroup()
 	authAPI.Handle("POST /register", registerHandler)
@@ -113,7 +114,6 @@ func main() {
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
 	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
 	requestLogger := middlewares.NewRequestLogger(logger)
-	authMiddleware := auth.NewAuthenticationMiddleware(authService)
 
 	// HTTP server
 	httpServer := httpserver.New(conf.Port, 10*time.Second)

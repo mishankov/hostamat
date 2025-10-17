@@ -32,18 +32,7 @@ func (h *ChangePasswordHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	user, err := h.service.GetFromSession(r.Context(), getSessionIdFromRequest(r, h.service.CookieName()))
-	if err != nil {
-		http.Error(w, "Failed to get user from session", http.StatusInternalServerError)
-		return
-	}
-
-	if user == nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
-	err = h.service.ChangePassword(r.Context(), req.CurrentPassword, req.NewPassword)
+	err := h.service.ChangePassword(r.Context(), req.CurrentPassword, req.NewPassword)
 	if err != nil {
 		if errors.Is(err, ErrCurrentPasswordIncorrect) {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
