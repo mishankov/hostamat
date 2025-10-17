@@ -28,6 +28,7 @@ func SetDefault(l logger) {
 type contextKey string
 
 const (
+	DomainNameKey  contextKey = "domainName"
 	TraceIdKey     contextKey = "traceId"
 	ServiceNameKey contextKey = "serviceName"
 	StartupTaskKey contextKey = "startupTask"
@@ -35,6 +36,7 @@ const (
 )
 
 var defaultKeys = []contextKey{
+	DomainNameKey,
 	TraceIdKey,
 	ServiceNameKey,
 	StartupTaskKey,
