@@ -11,7 +11,7 @@ import Card from "./Card.svelte";
   <div class="error">
     <Card kind="danger" style="height: 100%; width: 100%;">
       <div class="content">
-        <X size={20} />
+        <X size={20} color="var(--color-danger)"/>
         <div class="error-text">{error}</div>
       </div>
     </Card>
