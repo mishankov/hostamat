@@ -34,6 +34,11 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Register user
 	if err := h.service.CreateWithLoginAndPassword(r.Context(), req.Login, req.Password); err != nil {
+		if errors.Is(err, ErrInvalidUsername) {
+			http.Error(w, "invalid username", http.StatusBadRequest)
+			return
+		}
+
 		if errors.Is(err, ErrInvalidPassword) {
 			http.Error(w, "invalid password", http.StatusBadRequest)
 			return

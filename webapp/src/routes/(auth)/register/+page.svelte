@@ -7,7 +7,7 @@
   let login = $state("")
   let password = $state("")
   let error = $state("")
-  let registerButtonDisabled = $derived(!(login.length > 0 && password.length > 0))
+  let registerButtonDisabled = $derived(!(login.length >=5 && login.length <= 20 && password.length >= 8 && password.length <= 100))
 
   const registerAction = async () => {
     error = "";
@@ -25,13 +25,13 @@
     }
 
     const data = await res.text()
-    if (data.trim() == "Invalid password") {
+    if (data.trim() == "invalid password") {
       error = "Пароль не соответствует требованиям"
+    } else if (data.trim() == "invalid username") {
+      error = "Логин не соответствует требованиям"
     } else {
       error = "Ошибка сервера";
     }
-
-    
   }
 </script>
 
@@ -48,9 +48,10 @@
 <Input id="login" type="text" label="Логин" bind:value={login} />
 <Input id="password" type="password" label="Пароль" bind:value={password} />
 
-<Card kind="action">
+<Card kind="primary">
   <div class="password-rules">
-    Пароль должен быть длиннее 8 символов
+    <p>Логин должен быть от 5 до 20 символов</p>
+    <p>Пароль должен быть от 8 до 100 символов</p>
   </div>
 </Card>
 
@@ -72,5 +73,11 @@
 
   .password-rules {
     padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    color: var(--color-text-secondary)
   }
 </style>

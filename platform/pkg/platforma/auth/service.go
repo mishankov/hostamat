@@ -28,14 +28,24 @@ type Service struct {
 	repo              repository
 	authStorage       authStorage
 	sessionCookieName string
+	usernameValidator func(string) error
 	passwordValidator func(string) error
 }
 
-func NewService(repo repository, authStorage authStorage, sessionCookieName string, passwordValidator func(string) error) *Service {
+func NewService(repo repository, authStorage authStorage, sessionCookieName string, usernameValidator, passwordValidator func(string) error) *Service {
+	if usernameValidator == nil {
+		usernameValidator = defaultUsernameValidator
+	}
+
+	if passwordValidator == nil {
+		passwordValidator = defaultPasswordValidator
+	}
+
 	return &Service{
 		repo:              repo,
 		authStorage:       authStorage,
 		sessionCookieName: sessionCookieName,
+		usernameValidator: usernameValidator,
 		passwordValidator: passwordValidator,
 	}
 }
@@ -58,12 +68,14 @@ func (s *Service) GetFromSession(ctx context.Context, sessionId string) (*User, 
 }
 
 func (s *Service) CreateWithLoginAndPassword(ctx context.Context, username, password string) error {
-	if s.passwordValidator != nil {
-		log.DebugContext(ctx, "validating password")
-		err := s.passwordValidator(password)
-		if err != nil {
-			return errors.Join(ErrInvalidPassword, err)
-		}
+	err := s.usernameValidator(username)
+	if err != nil {
+		return errors.Join(ErrInvalidUsername, err)
+	}
+
+	err = s.passwordValidator(password)
+	if err != nil {
+		return errors.Join(ErrInvalidPassword, err)
 	}
 
 	salt := uuid.New().String()
@@ -139,4 +151,28 @@ func (s *Service) ChangePassword(ctx context.Context, currentPassword, newPasswo
 	}
 
 	return s.repo.UpdatePassword(ctx, user.ID, string(hashedPassword), newSalt)
+}
+
+func defaultPasswordValidator(password string) error {
+	if len(password) < 8 {
+		return errors.New("short password")
+	}
+
+	if len(password) > 100 {
+		return errors.New("long password")
+	}
+
+	return nil
+}
+
+func defaultUsernameValidator(username string) error {
+	if len(username) < 5 {
+		return errors.New("short username")
+	}
+
+	if len(username) > 20 {
+		return errors.New("long username")
+	}
+
+	return nil
 }
