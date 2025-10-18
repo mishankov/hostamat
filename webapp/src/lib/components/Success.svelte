@@ -11,7 +11,7 @@
   <div class="success">
     <Card kind="confirm" style="height: 100%; width: 100%;">
       <div class="content">
-        <Check size={25}/>
+        <Check size={25} color="var(--color-confirm)" />
         <div class="success-text">{message}</div>
       </div>
     </Card>

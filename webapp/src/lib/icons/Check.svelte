@@ -1,7 +1,7 @@
 <script lang="ts">
   let {
     size = 100,
-    color = "var(--color-confirm)"
+    color = "var(--color-primary)"
   } = $props()
 </script>
 
