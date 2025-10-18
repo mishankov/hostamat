@@ -13,7 +13,6 @@ import (
 	"hostamat/internal/subdomain"
 	"hostamat/pkg/platforma/application"
 	"hostamat/pkg/platforma/batteries/auth"
-	"hostamat/pkg/platforma/batteries/healthcheck"
 	"hostamat/pkg/platforma/batteries/session"
 	"hostamat/pkg/platforma/database"
 	"hostamat/pkg/platforma/httpclient"
@@ -91,7 +90,7 @@ func main() {
 
 	// Application
 	app := application.New()
-	healthcheckHandler := healthcheck.NewHealthCheckHandler(app)
+	healthcheckHandler := application.NewHealthCheckHandler(app)
 	httpServer.Handle("/health", healthcheckHandler)
 
 	// Migrate File storage
