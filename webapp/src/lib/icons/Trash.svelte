@@ -18,7 +18,7 @@
         10 -20
       "
       stroke="currentColor"
-      stroke-width="5"
+      stroke-width="7"
       stroke-linecap="round"
       stroke-linejoin="round"
       fill="none"
@@ -28,7 +28,7 @@
       x1="-30" y1="-20"
       x2="30" y2="-20"
       stroke="currentColor"
-      stroke-width="5"
+      stroke-width="7"
       stroke-linecap="round"
       stroke-linejoin="round"
       fill="none"
@@ -39,7 +39,7 @@
     x1="-8" y1="-10"
     x2="-8" y2="20"
     stroke="currentColor"
-    stroke-width="5"
+    stroke-width="7"
     stroke-linecap="round"
     stroke-linejoin="round"
   />
@@ -48,7 +48,7 @@
     x1="8" y1="-10"
     x2="8" y2="20"
     stroke="currentColor"
-    stroke-width="5"
+    stroke-width="7"
     stroke-linecap="round"
     stroke-linejoin="round"
   />
@@ -61,7 +61,7 @@
       25 -20
     "
     stroke="currentColor"
-    stroke-width="5"
+    stroke-width="7"
     stroke-linecap="round"
     stroke-linejoin="round"
     fill="none"

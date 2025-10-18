@@ -12,6 +12,7 @@ export const Config = {
     loginUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/login`,
     logoutUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/logout`,
     registerUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/register`,
+    changePasswordUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/change-password`,
     meUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/me`
   }
 } as const;

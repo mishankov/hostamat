@@ -4,7 +4,7 @@
     background = "var(--color-background-object)"
   } = $props()
 
-  let strokeWidth = 5
+  let strokeWidth = 7
 </script>
 
 <svg 

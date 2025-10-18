@@ -1,13 +1,67 @@
 <script lang="ts">
-	import { IconButton } from '$lib/components';
+	import { Button, Error, IconButton, Success } from '$lib/components';
+	import Input from '$lib/components/Input.svelte';
 	import { Copy } from '$lib/icons';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
+
+  let currentPassword = $state("")
+  let newPassword = $state("")
+  let newPasswordAgain = $state("")
+  let changePasswordButtonDisabled = $derived(
+    !(currentPassword.length > 0 &&
+      newPassword.length >= 8 && newPassword.length <= 100 && 
+      newPasswordAgain.length >= 8 && newPasswordAgain.length <= 100 && 
+      newPassword === newPasswordAgain)
+  )
+
+  let errorMessage = $state("")
+  let sucessMessage = $state("")
+
+  const clearMessages = () => {
+    errorMessage = ""
+    sucessMessage = ""
+  }
+
+  const clearPasswords = () => {
+    currentPassword = ""
+    newPassword = ""
+    newPasswordAgain = ""
+  }
+
+  const changePasswordAction = async () => {
+    clearMessages()
+    const res = await fetch("/api/auth/change-password", {
+      method: "POST",
+      body: JSON.stringify({
+        currentPassword,
+        newPassword,
+      }),
+    })
+
+    if (res.ok) {
+      sucessMessage = "Пароль успешно изменён!"
+      clearPasswords()
+      return
+    }
+
+    const data = await res.text()
+    if (res.status === 401) {
+      errorMessage = "Неверный текущий пароль"
+    } else if (data.trim() == "invalid password") {
+      errorMessage = "Пароль не соответствует требованиям"
+    } else {
+      errorMessage = "Ошибка сервера";
+    }
+  }
 </script>
 
 <main>
   <div class="profile">
+    <Error error={errorMessage} />
+    <Success message={sucessMessage} />
+
     <h1>Профиль</h1>
 
     <div class="profile-data">
@@ -20,6 +74,16 @@
           </IconButton>
         </div>
       </div>
+    </div>
+
+    <div class="change-password">
+      <h2>Смена пароля</h2>
+
+      <Input id="oldPassword" type="password" label="Текущий пароль" bind:value={currentPassword}/>
+      <Input id="newPassword" type="password" label="Новый пароль" bind:value={newPassword}/>
+      <Input id="newPasswordAgain" type="password" label="Новый пароль ещё раз" bind:value={newPasswordAgain}/>
+
+      <Button kind="danger" onclick={changePasswordAction} disabled={changePasswordButtonDisabled}>Сменить пароль</Button>
     </div>
   </div>
 </main>
@@ -37,7 +101,7 @@
   .profile {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
     
     width: clamp(500px, 75%, 1200px);
 
@@ -64,5 +128,13 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+  }
+
+  .change-password {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    max-width: 300px;
   }
 </style>

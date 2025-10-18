@@ -3,6 +3,7 @@ package auth
 import (
 	"encoding/json"
 	"errors"
+	"hostamat/pkg/platforma/log"
 	"net/http"
 )
 
@@ -33,6 +34,8 @@ func (h *ChangePasswordHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 	}
 
 	err := h.service.ChangePassword(r.Context(), req.CurrentPassword, req.NewPassword)
+	log.DebugContext(r.Context(), "error from change password", "error", err)
+
 	if err != nil {
 		if errors.Is(err, ErrCurrentPasswordIncorrect) {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -51,12 +54,4 @@ func (h *ChangePasswordHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		return
 	}
-}
-
-func getSessionIdFromRequest(r *http.Request, cookieName string) string {
-	cookie, err := r.Cookie(cookieName)
-	if err != nil {
-		return ""
-	}
-	return cookie.Value
 }

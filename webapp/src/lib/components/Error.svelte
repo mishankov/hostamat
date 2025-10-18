@@ -1,5 +1,6 @@
 <script lang="ts">
-	import Card from "./Card.svelte";
+	import { X } from "$lib/icons";
+import Card from "./Card.svelte";
 
   let {
     error = ""
@@ -9,7 +10,10 @@
 {#if error}
   <div class="error">
     <Card kind="danger" style="height: 100%; width: 100%;">
-      <div class="error-text">{error}</div>
+      <div class="content">
+        <X size={20} color="var(--color-danger)"/>
+        <div class="error-text">{error}</div>
+      </div>
     </Card>
   </div>
 {/if}
@@ -18,6 +22,14 @@
   .error {
     width: 100%;
     height: 50px;
+  }
+
+  .content {
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    padding-left: 10px;
   }
 
   .error-text {

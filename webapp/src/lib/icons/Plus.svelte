@@ -12,7 +12,7 @@
     x1="0" y1="-30"
     x2="0" y2="30"
     stroke="var(--color-primary)"
-    stroke-width="5"
+    stroke-width="7"
     stroke-linecap="round"
     stroke-linejoin="round"
   />
@@ -21,7 +21,7 @@
     x1="-30" y1="0"
     x2="30" y2="0"
     stroke="var(--color-primary)"
-    stroke-width="5"
+    stroke-width="7"
     stroke-linecap="round"
     stroke-linejoin="round"
   />

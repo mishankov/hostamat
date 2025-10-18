@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/config"
@@ -58,13 +57,7 @@ func main() {
 	siteDomain := site.New(db, subdomainDomain.Service)
 	fileDomain := file.New(s3Client, siteDomain.Service, conf.S3.Bucket)
 	sessionDomain := session.New(db)
-	authDomain := auth.New(db, sessionDomain.Service, "hsessionid", func(password string) error {
-		if len(password) < 8 {
-			return errors.New("short password")
-		}
-
-		return nil
-	})
+	authDomain := auth.New(db, sessionDomain.Service, "hsessionid", nil, nil)
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
