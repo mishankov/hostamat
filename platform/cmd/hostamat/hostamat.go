@@ -15,7 +15,6 @@ import (
 	"hostamat/pkg/platforma/batteries/auth"
 	"hostamat/pkg/platforma/batteries/healthcheck"
 	"hostamat/pkg/platforma/batteries/session"
-	"hostamat/pkg/platforma/batteries/traceid"
 	"hostamat/pkg/platforma/database"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
@@ -70,7 +69,7 @@ func main() {
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
-	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
+	traceId := httpserver.NewTraceIdMiddleware(nil, "Hostamat-Trace-Id")
 	requestLogger := middlewares.NewRequestLogger(logger)
 
 	// API with authentication
