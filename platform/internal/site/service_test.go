@@ -9,7 +9,7 @@ import (
 
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
-	"hostamat/pkg/platforma/batteries/auth"
+	"hostamat/pkg/platforma/auth"
 )
 
 func TestService_Create(t *testing.T) {

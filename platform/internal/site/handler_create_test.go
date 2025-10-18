@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"hostamat/internal/site"
-	"hostamat/pkg/platforma/batteries/auth"
+	"hostamat/pkg/platforma/auth"
 	"net/http"
 	"net/http/httptest"
 	"strings"

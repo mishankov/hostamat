@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"hostamat/pkg/platforma/batteries/auth"
+	"hostamat/pkg/platforma/auth"
 	"math"
 	"math/rand"
 	"sync"
