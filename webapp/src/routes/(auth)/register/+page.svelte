@@ -6,8 +6,13 @@
 
   let login = $state("")
   let password = $state("")
+  let passwordAgain = $state("")
   let error = $state("")
-  let registerButtonDisabled = $derived(!(login.length >=5 && login.length <= 20 && password.length >= 8 && password.length <= 100))
+  let registerButtonDisabled = $derived(
+    !(login.length >=5 && login.length <= 20 && 
+      password.length >= 8 && password.length <= 100 && 
+      password === passwordAgain)
+  )
 
   const registerAction = async () => {
     error = "";
@@ -47,6 +52,7 @@
 
 <Input id="login" type="text" label="Логин" bind:value={login} />
 <Input id="password" type="password" label="Пароль" bind:value={password} />
+<Input id="password" type="password" label="Пароль ещё раз" bind:value={passwordAgain} />
 
 <Card kind="primary">
   <div class="password-rules">
