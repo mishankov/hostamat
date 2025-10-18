@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Error, IconButton, Separator, Success } from '$lib/components';
+	import { Button, Error, IconButton, Success } from '$lib/components';
 	import Input from '$lib/components/Input.svelte';
 	import { Copy } from '$lib/icons';
   import type { PageProps } from './$types';
