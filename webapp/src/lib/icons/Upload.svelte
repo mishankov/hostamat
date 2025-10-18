@@ -18,7 +18,7 @@
       20 0
     "
     stroke="var(--color-primary)"
-    stroke-width="5"
+    stroke-width="7"
     stroke-linecap="round"
     stroke-linejoin="round"
     fill="none"
@@ -33,7 +33,7 @@
       -10 -20
     "
     stroke="var(--color-primary)"
-    stroke-width="5"
+    stroke-width="7"
     stroke-linecap="round"
     stroke-linejoin="round"
     fill="none"

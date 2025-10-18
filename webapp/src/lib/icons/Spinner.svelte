@@ -15,7 +15,7 @@
     cy="0"
     r="40"
     stroke={color}
-    stroke-width="5"
+    stroke-width="7"
     stroke-dasharray="60 188"
     stroke-dashoffset="0"
     stroke-linecap="round"

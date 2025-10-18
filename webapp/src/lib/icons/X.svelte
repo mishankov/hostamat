@@ -14,7 +14,7 @@
     x1="-30" y1="-30"
     x2="30" y2="30"
     stroke={color}
-    stroke-width="5"
+    stroke-width="7"
     stroke-linecap="round"
     stroke-linejoin="round"
   />
@@ -23,7 +23,7 @@
     x1="30" y1="-30"
     x2="-30" y2="30"
     stroke={color}
-    stroke-width="5"
+    stroke-width="7"
     stroke-linecap="round"
     stroke-linejoin="round"
   />
