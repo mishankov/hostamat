@@ -12,14 +12,12 @@ import (
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/pkg/platforma/application"
-	"hostamat/pkg/platforma/batteries/auth"
-	"hostamat/pkg/platforma/batteries/healthcheck"
-	"hostamat/pkg/platforma/batteries/session"
-	"hostamat/pkg/platforma/batteries/traceid"
+	"hostamat/pkg/platforma/auth"
 	"hostamat/pkg/platforma/database"
 	"hostamat/pkg/platforma/httpclient"
 	"hostamat/pkg/platforma/httpserver"
 	"hostamat/pkg/platforma/log"
+	"hostamat/pkg/platforma/session"
 	"os"
 	"time"
 )
@@ -70,7 +68,7 @@ func main() {
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
-	traceId := traceid.NewTraceId(nil, "Hostamat-Trace-Id")
+	traceId := httpserver.NewTraceIdMiddleware(nil, "Hostamat-Trace-Id")
 	requestLogger := middlewares.NewRequestLogger(logger)
 
 	// API with authentication
@@ -92,7 +90,7 @@ func main() {
 
 	// Application
 	app := application.New()
-	healthcheckHandler := healthcheck.NewHealthCheckHandler(app)
+	healthcheckHandler := application.NewHealthCheckHandler(app)
 	httpServer.Handle("/health", healthcheckHandler)
 
 	// Migrate File storage

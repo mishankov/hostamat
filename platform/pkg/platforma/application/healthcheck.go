@@ -1,14 +1,13 @@
-package healthcheck
+package application
 
 import (
 	"context"
 	"encoding/json"
-	"hostamat/pkg/platforma/application"
 	"net/http"
 )
 
 type healther interface {
-	Health(context.Context) *application.ApplicationHealth
+	Health(context.Context) *ApplicationHealth
 }
 
 type HealthCheckHandler struct {

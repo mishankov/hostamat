@@ -1,4 +1,4 @@
-package traceid
+package httpserver
 
 import (
 	"context"
@@ -17,7 +17,7 @@ type TraceId struct {
 // NewTraceId returns a new TraceId middleware.
 // If key is nil, log.TraceIdKey is used.
 // If header is empty, "Platforma-Trace-Id" is used.
-func NewTraceId(contextKey any, header string) *TraceId {
+func NewTraceIdMiddleware(contextKey any, header string) *TraceId {
 	if contextKey == nil {
 		contextKey = log.TraceIdKey
 	}
