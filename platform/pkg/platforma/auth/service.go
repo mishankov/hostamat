@@ -140,6 +140,7 @@ func (s *Service) ChangePassword(ctx context.Context, currentPassword, newPasswo
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(currentPassword+":"+user.Salt))
+	log.DebugContext(ctx, "password validation results", "error", err)
 	if err != nil {
 		return ErrCurrentPasswordIncorrect
 	}

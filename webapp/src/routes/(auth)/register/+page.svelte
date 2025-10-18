@@ -52,7 +52,7 @@
 
 <Input id="login" type="text" label="Логин" bind:value={login} />
 <Input id="password" type="password" label="Пароль" bind:value={password} />
-<Input id="password" type="password" label="Пароль ещё раз" bind:value={passwordAgain} />
+<Input id="passwordAgain" type="password" label="Пароль ещё раз" bind:value={passwordAgain} />
 
 <Card kind="primary">
   <div class="password-rules">
