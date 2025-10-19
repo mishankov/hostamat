@@ -1,7 +1,8 @@
 <script lang="ts">
-  import  { Button, Card, Error, Input, Separator} from "$lib/components";
+  import  { Button, Card, Error, Input, Link, Separator} from "$lib/components";
 	import Success from "$lib/components/Success.svelte";
   import { Copy, Download, Plus, Spinner, Trash, Upload, X } from "$lib/icons";
+	import Check from "$lib/icons/Check.svelte";
 </script>
 
 <div style="display:flex; flex-direction:column; gap:20px; padding:10px;">
@@ -28,6 +29,10 @@
   <div style="width: 300px;">
     <Input id="input" label="Input" />
   </div>
+
+  <h1>Link</h1>
+  <Link href="/components">Link</Link>
+  <Link href="/components" alwaysUnderline>Always underline link</Link>
 
   <h1>Cards</h1>
 
@@ -61,11 +66,13 @@
   
   <h2>Floating card</h2>
 
-  <Card floating>
-    <div style="padding: 10px;">
-      Floating card
-    </div>
-  </Card>
+  <div style="width: 300px;">
+    <Card floating>
+      <div style="padding: 10px;">
+        Floating card
+      </div>
+    </Card>
+  </div>
 
   <h2>Error card</h2>
   
@@ -96,7 +103,8 @@
     <div><h2>Trash</h2> <Trash /></div>
     <div><h2>Upload</h2> <Upload /></div>
     <div><h2>Download</h2> <Download /></div>
-    <div><h2>X</h2> <X /></div>
+    <div><h2>X</h2> <X animated/></div>
+    <div><h2>Check</h2> <Check /></div>
     <div><h2>Spinner</h2> <Spinner /></div>
   </div>
 </div>
