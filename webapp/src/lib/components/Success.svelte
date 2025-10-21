@@ -1,43 +1,55 @@
 <script lang="ts">
-	import { Check } from "$lib/icons";
+	import { X } from "$lib/icons";
+	import Check from "$lib/icons/Check.svelte";
   import Card from "./Card.svelte";
 
   let {
-    message = ""
+    children = null,
+    header = '',
+    message = ''
   } = $props()
 </script>
 
-{#if message}
-  <div class="success">
-    <Card kind="confirm" style="height: 100%; width: 100%;">
+<div class="success">
+  <Card kind="confirm" style="height: fit-content; width: 100%; padding: 10px;">
+    <div class="header">
+      <Check size={25} color="var(--color-confirm)" />
+      {#if header}
+        <h4>{header}</h4>
+      {:else if message}
+        <p>{message}</p>
+      {/if}
+    </div>
+    {#if children}
       <div class="content">
-        <Check size={25} color="var(--color-confirm)" />
-        <div class="success-text">{message}</div>
+        {@render children?.()}
       </div>
-    </Card>
-  </div>
-{/if}
+    {:else if message && header}
+      <div class="content">
+        {message}
+      </div>
+    {/if}
+  </Card>
+</div>
+
 
 <style>
   .success {
     width: 100%;
-    height: 50px;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
   }
 
   .content {
-    height: 100%;
     display: flex;
-    align-items: center;
-
-    padding-left: 10px;
-  }
-
-  .success-text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
+    align-items: start;
+    gap: 10px;
     
-    padding: 10px;
+    padding-top: 10px;
   }
 </style>

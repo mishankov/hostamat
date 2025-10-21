@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Card, Link, Modal } from "$lib/components";
+	import { Button, Card, Info, Link, Modal } from "$lib/components";
   import  { Copy, Download, Trash, Upload } from "$lib/icons";
 
 	import FileUploader from "./components/FileUploader.svelte";
@@ -35,11 +35,7 @@
     <Modal bind:this={uploadModal} kind="primary">
       <div class="upload-modal">
         <h3>Загрузить файлы для {subdomain}</h3>
-        <Card kind="action">
-          <div style="padding:10px">
-            При загрузке файлов все старые файлы будут удалены
-          </div>
-        </Card>
+        <Info message="При загрузке файлов все старые файлы будут удалены" />
         <FileUploader multiple={true} uploadUrl="/api/uploadFile" additionalHeaders={{
           'H-Site-Id': site.id
         }}/>

@@ -1,43 +1,54 @@
 <script lang="ts">
 	import { X } from "$lib/icons";
-import Card from "./Card.svelte";
+  import Card from "./Card.svelte";
 
   let {
-    error = ""
+    children = null,
+    header = '',
+    message = ''
   } = $props()
 </script>
 
-{#if error}
-  <div class="error">
-    <Card kind="danger" style="height: 100%; width: 100%;">
+<div class="error">
+  <Card kind="danger" style="height: fit-content; width: 100%; padding: 10px;">
+    <div class="header">
+      <X size={25} color="var(--color-danger)" />
+      {#if header}
+        <h4>{header}</h4>
+      {:else if message}
+        <p>{message}</p>
+      {/if}
+    </div>
+    {#if children}
       <div class="content">
-        <X size={20} color="var(--color-danger)"/>
-        <div class="error-text">{error}</div>
+        {@render children?.()}
       </div>
-    </Card>
-  </div>
-{/if}
+    {:else if message && header}
+      <div class="content">
+        {message}
+      </div>
+    {/if}
+  </Card>
+</div>
+
 
 <style>
   .error {
     width: 100%;
-    height: 50px;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
   }
 
   .content {
-    height: 100%;
     display: flex;
-    align-items: center;
-
-    padding-left: 10px;
-  }
-
-  .error-text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
+    align-items: start;
+    gap: 10px;
     
-    padding: 10px;
+    padding-top: 10px;
   }
 </style>

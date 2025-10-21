@@ -40,7 +40,7 @@
 
 <h1>Вход</h1>
 
-<Error {error} />
+<Error message={error} />
 
 <Input id="login" type="text" label="Логин" bind:value={login} />
 <Input id="password" type="password" label="Пароль" bind:value={password} />

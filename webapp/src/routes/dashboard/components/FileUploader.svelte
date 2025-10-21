@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Card } from "$lib/components";
+	import { Button, Card, Error, ProgressBar, Success } from "$lib/components";
 	import  { Upload, X } from "$lib/icons";
 	import { IconButton } from "$lib/components";
 
@@ -34,18 +34,25 @@
   let uploading: boolean = $state(false);
   let uploadProgress: number = $state(0);
   let error: string = $state('');
-  let link: string = $state('');
   let uploadedFiles: string[] = $state([]);
   let skippedFiles: string[] = $state([]);
+
+  function resetUploadState() {
+    uploadedFiles = [];
+    skippedFiles = [];
+    uploadProgress = 0;
+    error = '';
+  }
   
   function handleFileSelect(event: Event): void {
     const target = event.target as HTMLInputElement;
     if (!target.files) return;
     
+    resetUploadState();
+
     const files = Array.from(target.files);
     selectedFiles = files;
-    error = '';
-    link = '';
+
     
     // Validate file sizes
     const oversizedFiles = files.filter(file => file.size > maxFileSize);
@@ -59,6 +66,7 @@
   
   function handleDragOver(event: DragEvent): void {
     event.preventDefault();
+    resetUploadState();
     if (event.dataTransfer) {
       event.dataTransfer.dropEffect = 'copy';
     }
@@ -67,6 +75,8 @@
   function handleDrop(event: DragEvent): void {
     event.preventDefault();
     if (!event.dataTransfer) return;
+    
+    resetUploadState();
     
     const files = Array.from(event.dataTransfer.files);
     
@@ -77,21 +87,19 @@
     
     selectedFiles = files;
     error = '';
-    link = '';
     
     onfilesselected?.({ files });
   }
   
   async function uploadFiles(): Promise<void> {
     if (selectedFiles.length === 0) {
-      error = 'Please select files to upload';
+      error = 'Выбери файлы для загрузки';
       return;
     }
     
     uploading = true;
     uploadProgress = 0;
     error = '';
-    link = '';
     
     try {
       for (let i = 0; i < selectedFiles.length; i++) {
@@ -111,16 +119,16 @@
         });
         
         if (!response.ok) {
-          throw new Error(`Upload failed: ${response.statusText}`);
+          error = 'Ошибка при загрузке файла';
+          return;
         }
         
         const result = await response.json();
         uploadProgress = ((i + 1) / selectedFiles.length) * 100;
-        link = result.link
         
         // Store uploaded and skipped files
-        uploadedFiles = result.uploadedFiles || [];
-        skippedFiles = result.skippedFiles || [];
+        uploadedFiles = uploadedFiles.concat(result.uploadedFiles || []);
+        skippedFiles = skippedFiles.concat(result.skippedFiles || []);
 
         onfileuploaded?.({ file, result });
       }
@@ -132,12 +140,10 @@
       onuploadcomplete?.({ fileCount: uploadedCount });
       
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      error = errorMessage;
-      onuploaderror?.({ error: errorMessage });
+      error = 'Ошибка при загрузке файла';
+      onuploaderror?.({ error });
     } finally {
       uploading = false;
-      uploadProgress = 0;
     }
   }
   
@@ -150,7 +156,6 @@
     fileInput.files = dt.files;
     
     if (selectedFiles.length === 0) {
-      link = '';
       error = '';
     }
   }
@@ -167,7 +172,6 @@
     selectedFiles = [];
     fileInput.value = '';
     error = '';
-    link = '';
     uploadProgress = 0;
   }
   
@@ -179,6 +183,38 @@
 </script>
 
 <div class="file-upload-container">
+  {#if error}
+    <Error message={error} />
+  {/if}
+  
+
+  {#if uploadedFiles.length > 0 || skippedFiles.length > 0}
+    <Success header="Загрузка успешно завершена">
+      <div class="success-message">
+        {#if uploadedFiles.length > 0}
+          <div class="uploaded-files">
+            <p>Загруженные файлы:</p>
+            <ul>
+              {#each uploadedFiles as file}
+                <li>{file}</li>
+              {/each}
+            </ul>
+          </div>
+        {/if}
+        {#if skippedFiles.length > 0}
+          <div class="skipped-files">
+            <p>Пропущенные файлы:</p>
+            <ul>
+              {#each skippedFiles as file}
+                <li>{file}</li>
+              {/each}
+            </ul>
+          </div>
+        {/if}
+      </div>
+    </Success>
+  {/if}
+  
   <div 
     class="drop-zone" 
     class:drag-over={false}
@@ -242,47 +278,8 @@
       </div>
     </Card>
   {/if}
-  
-  {#if uploading}
-    <div class="progress-container">
-      <div class="progress-bar">
-        <div class="progress-fill" style="width: {uploadProgress}%"></div>
-      </div>
-      <span class="progress-text">Uploading... {Math.round(uploadProgress)}%</span>
-    </div>
-  {/if}
-  
-  {#if error}
-    <div class="message error">
-      {error}
-    </div>
-  {/if}
-  
-  {#if link}
-    <div class="message success">
-      <a href="https://{link}" target="_blank">{link}</a>
-      {#if uploadedFiles.length > 0}
-        <div class="uploaded-files">
-          <h4>Uploaded Files:</h4>
-          <ul>
-            {#each uploadedFiles as file}
-              <li>{file}</li>
-            {/each}
-          </ul>
-        </div>
-      {/if}
-      {#if skippedFiles.length > 0}
-        <div class="skipped-files">
-          <h4>Skipped Files:</h4>
-          <ul>
-            {#each skippedFiles as file}
-              <li>{file}</li>
-            {/each}
-          </ul>
-        </div>
-      {/if}
-    </div>
-  {/if}
+
+  <ProgressBar bind:uploadProgress />
   
   <div class="actions">
     <Button 
@@ -295,6 +292,12 @@
 </div>
 
 <style>
+  .success-message {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   .file-upload-container {
     max-width: 500px;
 
@@ -367,75 +370,6 @@
   
   .file-size {
     color: #aaa;
-  }
-  
-  .progress-container {
-    margin-top: 1rem;
-  }
-  
-  .progress-bar {
-    width: 100%;
-    height: 8px;
-    background-color: #e2e8f0;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  
-  .progress-fill {
-    height: 100%;
-    background-color: #3b82f6;
-    transition: width 0.3s ease;
-  }
-  
-  .progress-text {
-    display: block;
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: #64748b;
-    text-align: center;
-  }
-  
-  .message {
-    margin-top: 1rem;
-    padding: 0.75rem 1rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
-  }
-  
-  .message.error {
-    background-color: #fef2f2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
-  }
-  
-  .message.success {
-    background-color: #f0fdf4;
-    color: #16a34a;
-    border: 1px solid #bbf7d0;
-  }
-  
-  .uploaded-files,
-  .skipped-files {
-    margin-top: 1rem;
-  }
-  
-  .uploaded-files h4,
-  .skipped-files h4 {
-    margin: 0.5rem 0;
-    font-size: 0.875rem;
-    color: #1e293b;
-  }
-  
-  .uploaded-files ul,
-  .skipped-files ul {
-    margin: 0;
-    padding-left: 1.25rem;
-    font-size: 0.875rem;
-    color: #64748b;
-  }
-  
-  .skipped-files {
-    color: #d97706;
   }
   
   .actions {

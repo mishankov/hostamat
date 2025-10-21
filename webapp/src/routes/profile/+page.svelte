@@ -59,9 +59,14 @@
 
 <main>
   <div class="profile">
-    <Error error={errorMessage} />
-    <Success message={sucessMessage} />
-
+    {#if errorMessage}
+      <Error message={errorMessage} />
+    {/if}
+    
+    {#if sucessMessage}
+      <Success message={sucessMessage} />
+    {/if}
+    
     <h1>Профиль</h1>
 
     <div class="profile-data">
