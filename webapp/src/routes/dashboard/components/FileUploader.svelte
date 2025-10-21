@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Card, Error, Success } from "$lib/components";
+	import { Button, Card, Error, ProgressBar, Success } from "$lib/components";
 	import  { Upload, X } from "$lib/icons";
 	import { IconButton } from "$lib/components";
 
@@ -275,13 +275,8 @@
     </Card>
   {/if}
   
-  {#if uploading}
-    <div class="progress-container">
-      <div class="progress-bar">
-        <div class="progress-fill" style="width: {uploadProgress}%"></div>
-      </div>
-      <span class="progress-text">Uploading... {Math.round(uploadProgress)}%</span>
-    </div>
+  {#if uploading || true}
+    <ProgressBar bind:uploadProgress />
   {/if}
   
   <div class="actions">
@@ -373,32 +368,6 @@
   
   .file-size {
     color: #aaa;
-  }
-  
-  .progress-container {
-    margin-top: 1rem;
-  }
-  
-  .progress-bar {
-    width: 100%;
-    height: 8px;
-    background-color: #e2e8f0;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  
-  .progress-fill {
-    height: 100%;
-    background-color: #3b82f6;
-    transition: width 0.3s ease;
-  }
-  
-  .progress-text {
-    display: block;
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: #64748b;
-    text-align: center;
   }
   
   .actions {
