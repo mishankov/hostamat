@@ -188,7 +188,7 @@
   {/if}
   
 
-  {#if uploadedFiles.length > 0 || skippedFiles.length > 0}
+  {#if uploadProgress == 100}
     <Success header="Загрузка успешно завершена">
       <div class="success-message">
         {#if uploadedFiles.length > 0}
