@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { Check } from "$lib/icons";
+	import { X } from "$lib/icons";
+	import Check from "$lib/icons/Check.svelte";
   import Card from "./Card.svelte";
 
   let {
     children = null,
-    header = ''
+    header = '',
+    message = ''
   } = $props()
 </script>
 
@@ -12,11 +14,19 @@
   <Card kind="confirm" style="height: fit-content; width: 100%; padding: 10px;">
     <div class="header">
       <Check size={25} color="var(--color-confirm)" />
-      <h4>{header}</h4>
+      {#if header}
+        <h4>{header}</h4>
+      {:else if message}
+        <p>{message}</p>
+      {/if}
     </div>
     {#if children}
       <div class="content">
         {@render children?.()}
+      </div>
+    {:else if message && header}
+      <div class="content">
+        {message}
       </div>
     {/if}
   </Card>

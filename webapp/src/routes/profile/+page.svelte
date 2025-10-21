@@ -64,7 +64,7 @@
     {/if}
     
     {#if sucessMessage}
-      <Success header={sucessMessage} />
+      <Success message={sucessMessage} />
     {/if}
     
     <h1>Профиль</h1>
