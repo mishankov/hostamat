@@ -36,18 +36,23 @@
   let error: string = $state('');
   let uploadedFiles: string[] = $state([]);
   let skippedFiles: string[] = $state([]);
+
+  function resetUploadState() {
+    uploadedFiles = [];
+    skippedFiles = [];
+    uploadProgress = 0;
+    error = '';
+  }
   
   function handleFileSelect(event: Event): void {
     const target = event.target as HTMLInputElement;
     if (!target.files) return;
     
+    resetUploadState();
+
     const files = Array.from(target.files);
     selectedFiles = files;
-    error = '';
 
-    uploadedFiles = [];
-    skippedFiles = [];
-    uploadProgress = 0;
     
     // Validate file sizes
     const oversizedFiles = files.filter(file => file.size > maxFileSize);
@@ -61,6 +66,7 @@
   
   function handleDragOver(event: DragEvent): void {
     event.preventDefault();
+    resetUploadState();
     if (event.dataTransfer) {
       event.dataTransfer.dropEffect = 'copy';
     }
@@ -69,6 +75,8 @@
   function handleDrop(event: DragEvent): void {
     event.preventDefault();
     if (!event.dataTransfer) return;
+    
+    resetUploadState();
     
     const files = Array.from(event.dataTransfer.files);
     
