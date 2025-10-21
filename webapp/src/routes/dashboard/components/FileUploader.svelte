@@ -111,7 +111,8 @@
         });
         
         if (!response.ok) {
-          throw new Error(`Upload failed: ${response.statusText}`);
+          error = 'Ошибка при загрузке файла';
+          return;
         }
         
         const result = await response.json();
@@ -132,9 +133,8 @@
       onuploadcomplete?.({ fileCount: uploadedCount });
       
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      error = errorMessage;
-      onuploaderror?.({ error: errorMessage });
+      error = 'Ошибка при загрузке файла';
+      onuploaderror?.({ error });
     } finally {
       uploading = false;
       uploadProgress = 0;
