@@ -34,7 +34,6 @@
   let uploading: boolean = $state(false);
   let uploadProgress: number = $state(0);
   let error: string = $state('');
-  let link: string = $state('');
   let uploadedFiles: string[] = $state([]);
   let skippedFiles: string[] = $state([]);
   
@@ -45,7 +44,10 @@
     const files = Array.from(target.files);
     selectedFiles = files;
     error = '';
-    link = '';
+
+    uploadedFiles = [];
+    skippedFiles = [];
+    uploadProgress = 0;
     
     // Validate file sizes
     const oversizedFiles = files.filter(file => file.size > maxFileSize);
@@ -77,7 +79,6 @@
     
     selectedFiles = files;
     error = '';
-    link = '';
     
     onfilesselected?.({ files });
   }
@@ -91,7 +92,6 @@
     uploading = true;
     uploadProgress = 0;
     error = '';
-    link = '';
     
     try {
       for (let i = 0; i < selectedFiles.length; i++) {
@@ -117,11 +117,10 @@
         
         const result = await response.json();
         uploadProgress = ((i + 1) / selectedFiles.length) * 100;
-        link = result.link
         
         // Store uploaded and skipped files
-        uploadedFiles = result.uploadedFiles || [];
-        skippedFiles = result.skippedFiles || [];
+        uploadedFiles = uploadedFiles.concat(result.uploadedFiles || []);
+        skippedFiles = skippedFiles.concat(result.skippedFiles || []);
 
         onfileuploaded?.({ file, result });
       }
@@ -149,7 +148,6 @@
     fileInput.files = dt.files;
     
     if (selectedFiles.length === 0) {
-      link = '';
       error = '';
     }
   }
@@ -166,7 +164,6 @@
     selectedFiles = [];
     fileInput.value = '';
     error = '';
-    link = '';
     uploadProgress = 0;
   }
   
