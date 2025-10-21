@@ -137,7 +137,6 @@
       onuploaderror?.({ error });
     } finally {
       uploading = false;
-      uploadProgress = 0;
     }
   }
   
@@ -274,10 +273,8 @@
       </div>
     </Card>
   {/if}
-  
-  {#if uploading || true}
-    <ProgressBar bind:uploadProgress />
-  {/if}
+
+  <ProgressBar bind:uploadProgress />
   
   <div class="actions">
     <Button 
