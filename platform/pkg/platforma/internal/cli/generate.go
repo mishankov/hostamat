@@ -1,10 +1,14 @@
 package cli
 
 import (
+	"bytes"
 	"fmt"
 	"hostamat/pkg/platforma/log"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
+	"text/template"
 )
 
 func generateCommand(args []string) {
@@ -15,25 +19,33 @@ func generateCommand(args []string) {
 		domainName := args[1]
 		log.Info("generating domain", "domain", domainName)
 
-		err := write("./internal/"+domainName, "model.go", modelTemplate, domainName, title(domainName))
+		data := struct {
+			PackageName string
+			TypeName    string
+		}{
+			PackageName: domainName,
+			TypeName:    title(domainName),
+		}
+
+		err := writeFromTemplate("./internal/"+domainName, "model.go", "templates/domain/model.go.tmpl", data)
 		if err != nil {
 			log.Error("error", "error", err)
 			return
 		}
 
-		err = write("./internal/"+domainName, "repository.go", repositoryTemplate, domainName)
+		err = writeFromTemplate("./internal/"+domainName, "repository.go", "templates/domain/repository.go.tmpl", data)
 		if err != nil {
 			log.Error("error", "error", err)
 			return
 		}
 
-		err = write("./internal/"+domainName, "service.go", serviceTemplate, domainName)
+		err = writeFromTemplate("./internal/"+domainName, "service.go", "templates/domain/service.go.tmpl", data)
 		if err != nil {
 			log.Error("error", "error", err)
 			return
 		}
 
-		err = write("./internal/"+domainName, "domain.go", domainTemplate, domainName)
+		err = writeFromTemplate("./internal/"+domainName, "domain.go", "templates/domain/domain.go.tmpl", data)
 		if err != nil {
 			log.Error("error", "error", err)
 			return
@@ -43,76 +55,37 @@ func generateCommand(args []string) {
 	}
 }
 
-func write(folder, file, template string, a ...any) error {
-	// TODO: create dir only if needed
+func writeFromTemplate(folder, file, templatePath string, data any) error {
 	os.MkdirAll(folder, 0755)
 
-	data := fmt.Appendf(nil, template, a...)
-	err := os.WriteFile(fmt.Sprintf("%s/%s", folder, file), data, 0644)
+	// Get the directory of the current CLI package
+	_, filename, _, _ := runtime.Caller(0)
+	cliDir := filepath.Dir(filename)
+	fullTemplatePath := filepath.Join(cliDir, templatePath)
+
+	templateContent, err := os.ReadFile(fullTemplatePath)
+	if err != nil {
+		return fmt.Errorf("failed to read template %s: %w", fullTemplatePath, err)
+	}
+
+	tmpl, err := template.New(file).Parse(string(templateContent))
+	if err != nil {
+		return fmt.Errorf("failed to parse template %s: %w", fullTemplatePath, err)
+	}
+
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, data)
+	if err != nil {
+		return fmt.Errorf("failed to execute template %s: %w", fullTemplatePath, err)
+	}
+
+	err = os.WriteFile(filepath.Join(folder, file), buf.Bytes(), 0644)
 	if err != nil {
 		return err
 	}
 
 	return nil
 }
-
-// TODO: fix imports for platforma packages
-const modelTemplate = `package %s
-
-type %s struct{}
-`
-
-const repositoryTemplate = `package %s
-
-import "hostamat/pkg/platforma/database"
-
-type Repository struct{}
-
-func NewRepository() *Repository {
-	return &Repository{}
-}
-
-func (r *Repository) Schema() ([]database.Migration, database.Schema) {
-	return []database.Migration{}, database.Schema{}
-}
-`
-
-const serviceTemplate = `package %s
-
-type repository interface{}
-
-type Service struct {
-	repo repository
-}
-
-func NewService(repo repository) *Service {
-	return &Service{
-		repo: repo,
-	}
-}
-`
-
-const domainTemplate = `package %s
-
-type Domain struct {
-	Repository *Repository
-	Service    *Service
-}
-
-func (d *Domain) GetRepository() any {
-	return d.Repository
-}
-
-func New() *Domain {
-	repository := NewRepository()
-	service := NewService(repository)
-
-	return &Domain{
-		Repository: repository,
-		Service:    service,
-	}
-}
-`
 
 func title(s string) string {
 	return strings.ToUpper(string([]rune(s)[0])) + s[1:]
