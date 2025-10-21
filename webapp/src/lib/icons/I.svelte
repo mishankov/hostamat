@@ -34,8 +34,4 @@
   line {
     transition: all 500ms;
   }
-
-  svg:hover line.animated {
-    transform: rotate(90deg) ;
-  }
 </style>
