@@ -35,6 +35,7 @@
 		z-index: 1;
 
     transition: var(--transition);
+    user-select: none;
 	}
 
   p.dark {
