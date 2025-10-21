@@ -46,7 +46,7 @@
       </Card>
 
       {:catch error}
-        <Error error="Ошибка при загрузке сайтов: {error.message}" />
+        <Error message="Ошибка при загрузке сайтов: {error.message}" />
       {/await}
     </div>
   </div>

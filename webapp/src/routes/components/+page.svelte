@@ -77,13 +77,13 @@
   <h2>Error card</h2>
   
   <div style="width: 300px;">
-    <Error error="Error message" />
+    <Error header="Error message" />
   </div>
 
   <h2>Success card</h2>
   
   <div style="width: 300px;">
-    <Success message="Success message" />
+    <Success header="Success message" />
   </div>
 
   <h1>Separator</h1>

@@ -179,7 +179,10 @@
 </script>
 
 <div class="file-upload-container">
-  <Error error={error} />
+  {#if error}
+    <Error message={error} />
+  {/if}
+  
 
   {#if uploadedFiles.length > 0 || skippedFiles.length > 0}
     <Success header="Загрузка успешно завершена">

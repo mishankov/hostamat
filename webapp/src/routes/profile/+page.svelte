@@ -59,7 +59,10 @@
 
 <main>
   <div class="profile">
-    <Error error={errorMessage} />
+    {#if errorMessage}
+      <Error message={errorMessage} />
+    {/if}
+    
     {#if sucessMessage}
       <Success header={sucessMessage} />
     {/if}
