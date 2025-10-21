@@ -60,8 +60,10 @@
 <main>
   <div class="profile">
     <Error error={errorMessage} />
-    <Success message={sucessMessage} />
-
+    {#if sucessMessage}
+      <Success header={sucessMessage} />
+    {/if}
+    
     <h1>Профиль</h1>
 
     <div class="profile-data">

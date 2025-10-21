@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Card } from "$lib/components";
+	import { Button, Card, Error, Success } from "$lib/components";
 	import  { Upload, X } from "$lib/icons";
 	import { IconButton } from "$lib/components";
 
@@ -84,7 +84,7 @@
   
   async function uploadFiles(): Promise<void> {
     if (selectedFiles.length === 0) {
-      error = 'Please select files to upload';
+      error = 'Выбери файлы для загрузки';
       return;
     }
     
@@ -179,6 +179,35 @@
 </script>
 
 <div class="file-upload-container">
+  <Error error={error} />
+
+  {#if uploadedFiles.length > 0 || skippedFiles.length > 0}
+    <Success header="Загрузка успешно завершена">
+      <div class="success-message">
+        {#if uploadedFiles.length > 0}
+          <div class="uploaded-files">
+            <p>Загруженные файлы:</p>
+            <ul>
+              {#each uploadedFiles as file}
+                <li>{file}</li>
+              {/each}
+            </ul>
+          </div>
+        {/if}
+        {#if skippedFiles.length > 0}
+          <div class="skipped-files">
+            <p>Пропущенные файлы:</p>
+            <ul>
+              {#each skippedFiles as file}
+                <li>{file}</li>
+              {/each}
+            </ul>
+          </div>
+        {/if}
+      </div>
+    </Success>
+  {/if}
+  
   <div 
     class="drop-zone" 
     class:drag-over={false}
@@ -252,38 +281,6 @@
     </div>
   {/if}
   
-  {#if error}
-    <div class="message error">
-      {error}
-    </div>
-  {/if}
-  
-  {#if link}
-    <div class="message success">
-      <a href="https://{link}" target="_blank">{link}</a>
-      {#if uploadedFiles.length > 0}
-        <div class="uploaded-files">
-          <h4>Uploaded Files:</h4>
-          <ul>
-            {#each uploadedFiles as file}
-              <li>{file}</li>
-            {/each}
-          </ul>
-        </div>
-      {/if}
-      {#if skippedFiles.length > 0}
-        <div class="skipped-files">
-          <h4>Skipped Files:</h4>
-          <ul>
-            {#each skippedFiles as file}
-              <li>{file}</li>
-            {/each}
-          </ul>
-        </div>
-      {/if}
-    </div>
-  {/if}
-  
   <div class="actions">
     <Button 
       kind="action" 
@@ -295,6 +292,12 @@
 </div>
 
 <style>
+  .success-message {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   .file-upload-container {
     max-width: 500px;
 
@@ -393,49 +396,6 @@
     font-size: 0.875rem;
     color: #64748b;
     text-align: center;
-  }
-  
-  .message {
-    margin-top: 1rem;
-    padding: 0.75rem 1rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
-  }
-  
-  .message.error {
-    background-color: #fef2f2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
-  }
-  
-  .message.success {
-    background-color: #f0fdf4;
-    color: #16a34a;
-    border: 1px solid #bbf7d0;
-  }
-  
-  .uploaded-files,
-  .skipped-files {
-    margin-top: 1rem;
-  }
-  
-  .uploaded-files h4,
-  .skipped-files h4 {
-    margin: 0.5rem 0;
-    font-size: 0.875rem;
-    color: #1e293b;
-  }
-  
-  .uploaded-files ul,
-  .skipped-files ul {
-    margin: 0;
-    padding-left: 1.25rem;
-    font-size: 0.875rem;
-    color: #64748b;
-  }
-  
-  .skipped-files {
-    color: #d97706;
   }
   
   .actions {
