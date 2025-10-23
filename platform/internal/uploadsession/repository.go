@@ -1,6 +1,6 @@
 package uploadsession
 
-import "hostamat/pkg/platforma/database"
+import "github.com/mishankov/platforma/database"
 
 type Repository struct {
 	db database.Database

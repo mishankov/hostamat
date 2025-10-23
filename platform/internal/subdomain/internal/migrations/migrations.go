@@ -1,6 +1,6 @@
 package migrations
 
-import "hostamat/pkg/platforma/database"
+import "github.com/mishankov/platforma/database"
 
 var Migrations = []database.Migration{
 	{

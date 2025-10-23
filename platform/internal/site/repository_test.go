@@ -8,7 +8,8 @@ import (
 	"time"
 
 	"hostamat/internal/site"
-	"hostamat/pkg/platforma/database"
+
+	"github.com/mishankov/platforma/database"
 
 	_ "github.com/glebarez/go-sqlite"
 	"github.com/jmoiron/sqlx"

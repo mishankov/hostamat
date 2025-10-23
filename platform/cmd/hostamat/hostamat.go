@@ -10,15 +10,16 @@ import (
 	"hostamat/internal/middlewares"
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
-	"hostamat/pkg/platforma/application"
-	"hostamat/pkg/platforma/auth"
-	"hostamat/pkg/platforma/database"
-	"hostamat/pkg/platforma/httpclient"
-	"hostamat/pkg/platforma/httpserver"
-	"hostamat/pkg/platforma/log"
-	"hostamat/pkg/platforma/session"
 	"os"
 	"time"
+
+	"github.com/mishankov/platforma/application"
+	"github.com/mishankov/platforma/auth"
+	"github.com/mishankov/platforma/database"
+	"github.com/mishankov/platforma/httpclient"
+	"github.com/mishankov/platforma/httpserver"
+	"github.com/mishankov/platforma/log"
+	"github.com/mishankov/platforma/session"
 )
 
 func main() {

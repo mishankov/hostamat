@@ -3,9 +3,10 @@ package main
 import (
 	"hostamat/internal/adapters/config"
 
-	"hostamat/pkg/platforma/log"
 	"log/slog"
 	"os"
+
+	"github.com/mishankov/platforma/log"
 )
 
 func main() {

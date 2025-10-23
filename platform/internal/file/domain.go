@@ -1,8 +1,9 @@
 package file
 
 import (
-	"hostamat/pkg/platforma/httpserver"
 	"net/http"
+
+	"github.com/mishankov/platforma/httpserver"
 )
 
 type Domain struct {

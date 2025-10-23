@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"hostamat/internal/site"
-	"hostamat/pkg/platforma/auth"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/mishankov/platforma/auth"
 )
 
 func TestCreateSiteHandler_ServeHTTP(t *testing.T) {

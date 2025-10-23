@@ -3,8 +3,9 @@ package file
 import (
 	"context"
 	"errors"
-	"hostamat/pkg/platforma/log"
 	"io"
+
+	"github.com/mishankov/platforma/log"
 )
 
 type s3 interface {

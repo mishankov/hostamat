@@ -5,7 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 	"hostamat/internal/subdomain/internal/migrations"
-	"hostamat/pkg/platforma/database"
+
+	"github.com/mishankov/platforma/database"
 )
 
 const (

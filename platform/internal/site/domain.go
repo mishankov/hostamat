@@ -1,7 +1,7 @@
 package site
 
 import (
-	"hostamat/pkg/platforma/httpserver"
+	"github.com/mishankov/platforma/httpserver"
 )
 
 type Domain struct {

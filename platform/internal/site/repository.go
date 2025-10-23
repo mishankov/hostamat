@@ -4,7 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"hostamat/internal/site/internal/migrations"
-	"hostamat/pkg/platforma/database"
+
+	"github.com/mishankov/platforma/database"
 )
 
 const (

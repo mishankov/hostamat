@@ -3,8 +3,9 @@ package site
 import (
 	"context"
 	"encoding/json"
-	"hostamat/pkg/platforma/log"
 	"net/http"
+
+	"github.com/mishankov/platforma/log"
 )
 
 type listSiteService interface {

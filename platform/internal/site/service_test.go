@@ -9,7 +9,8 @@ import (
 
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
-	"hostamat/pkg/platforma/auth"
+
+	"github.com/mishankov/platforma/auth"
 )
 
 func TestService_Create(t *testing.T) {

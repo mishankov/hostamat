@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"hostamat/internal/subdomain"
-	"hostamat/pkg/platforma/auth"
 	"time"
+
+	"github.com/mishankov/platforma/auth"
 
 	"github.com/google/uuid"
 )
