@@ -48,7 +48,9 @@
 
 <h1>Регистрация</h1>
 
-<Error message={error} />
+{#if error}
+  <Error message={error} />
+{/if}
 
 <Input id="login" type="text" label="Логин" bind:value={login} />
 <Input id="password" type="password" label="Пароль" bind:value={password} />
