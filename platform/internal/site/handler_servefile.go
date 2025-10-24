@@ -1,27 +1,22 @@
-package file
+package site
 
 import (
-	"context"
 	"io"
 	"net/http"
 	"strings"
 )
 
-type serveService interface {
-	GetFile(ctx context.Context, fileName string, domain string) (io.Reader, error)
+type ServeFileHandler struct {
+	service *Service
 }
 
-type ServeHandler struct {
-	service serveService
-}
-
-func NewServeHandler(service serveService) *ServeHandler {
-	return &ServeHandler{
+func NewServeFileHandler(service *Service) *ServeFileHandler {
+	return &ServeFileHandler{
 		service: service,
 	}
 }
 
-func (h *ServeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *ServeFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	filePath := r.URL.Path
@@ -29,7 +24,7 @@ func (h *ServeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		filePath = "/index.html"
 	}
 
-	file, err := h.service.GetFile(ctx, filePath, r.Host)
+	file, err := h.service.fileService.GetFile(ctx, r.Host+"/"+filePath)
 	if err != nil {
 		http.Error(w, "File not found", http.StatusNotFound)
 		return
@@ -40,7 +35,7 @@ func (h *ServeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	io.Copy(w, file)
 }
 
-func (h *ServeHandler) getContentType(filename string) string {
+func (h *ServeFileHandler) getContentType(filename string) string {
 	switch {
 	case strings.HasSuffix(filename, ".html"):
 		return "text/html"

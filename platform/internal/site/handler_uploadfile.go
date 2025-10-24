@@ -1,27 +1,20 @@
-package file
+package site
 
 import (
-	"context"
 	"encoding/json"
-	"io"
 	"net/http"
 )
 
-type uploadService interface {
-	UploadFile(ctx context.Context, filename string, file io.Reader, size int64, siteId string) ([]string, []string, error)
+type UploadFileHandler struct {
+	service *Service
 }
 
-type UploadHandler struct {
-	uploadService uploadService
-}
-
-func NewUploadHandler(service uploadService) *UploadHandler {
-	return &UploadHandler{
-		uploadService: service,
+func NewUploadFileHandler(service *Service) *UploadFileHandler {
+	return &UploadFileHandler{
+		service: service,
 	}
 }
-
-func (h *UploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	if r.Method != http.MethodPost {
@@ -43,7 +36,7 @@ func (h *UploadHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	uploaded, skipped, err := h.uploadService.UploadFile(ctx, handler.Filename, file, handler.Size, siteId)
+	uploaded, skipped, err := h.service.fileService.UploadFile(ctx, siteId, handler.Filename, file, handler.Size)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

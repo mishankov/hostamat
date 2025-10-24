@@ -3,6 +3,7 @@ package site
 import (
 	"context"
 	"errors"
+	"hostamat/internal/file"
 	"hostamat/internal/subdomain"
 	"time"
 
@@ -28,12 +29,14 @@ type subdomainService interface {
 type Service struct {
 	repository       repository
 	subdomainService subdomainService
+	fileService      *file.Service
 }
 
-func NewService(repository repository, subdomainService subdomainService) *Service {
+func NewService(repository repository, subdomainService subdomainService, fileService *file.Service) *Service {
 	return &Service{
 		repository:       repository,
 		subdomainService: subdomainService,
+		fileService:      fileService,
 	}
 }
 
@@ -123,6 +126,15 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 
 	// `s.Get` already checks permission, so can delete without additional checks
 	return s.repository.Delete(ctx, id)
+}
+
+func (s *Service) DeleteFiles(ctx context.Context, domain string) error {
+	site, err := s.GetByDomain(ctx, domain)
+	if err != nil {
+		return err
+	}
+
+	return s.fileService.DeleteFromFolder(ctx, site.Id)
 }
 
 func (s *Service) checkAccess(ctx context.Context, site *Site) bool {

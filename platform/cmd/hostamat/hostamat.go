@@ -56,8 +56,8 @@ func main() {
 
 	// Domains
 	subdomainDomain := subdomain.New(db, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
-	siteDomain := site.New(db, subdomainDomain.Service)
-	fileDomain := file.New(s3Client, siteDomain.Service, conf.S3.Bucket)
+	fileDomain := file.New(s3Client, conf.S3.Bucket)
+	siteDomain := site.New(db, subdomainDomain.Service, fileDomain.Service)
 	sessionDomain := session.New(db)
 	authDomain := auth.New(db, sessionDomain.Service, "hsessionid", nil, nil)
 	uploadSessionDomain := uploadsession.New(db)
@@ -71,8 +71,8 @@ func main() {
 	apiGroup := httpserver.NewHandlerGroup()
 	apiGroup.Use(authDomain.Middleware)
 
-	apiGroup.Handle("/files", fileDomain.ChangeHandleGroup)
-	apiGroup.Handle("/sites", siteDomain.HandleGroup)
+	apiGroup.Handle("/files", siteDomain.FileHandlerGroup)
+	apiGroup.Handle("/sites", siteDomain.SiteHandlerGroup)
 
 	// HTTP server
 	httpServer := httpserver.New(conf.Port, 10*time.Second)
@@ -80,7 +80,7 @@ func main() {
 	httpServer.HandleGroup("/api", apiGroup)
 	httpServer.HandleGroup("/auth", authDomain.HandleGroup)
 	// HandleGroup used here because client would request files by additional path
-	httpServer.HandleGroup(conf.FileServerPath, fileDomain.ServeHandle)
+	httpServer.HandleGroup(conf.FileServerPath, siteDomain.FileServeHandler)
 
 	httpServer.Use(recoverMiddleware, traceId, requestLogger)
 
