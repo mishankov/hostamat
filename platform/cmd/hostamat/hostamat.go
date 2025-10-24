@@ -10,6 +10,7 @@ import (
 	"hostamat/internal/middlewares"
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
+	"hostamat/internal/uploadsession"
 	"os"
 	"time"
 
@@ -59,6 +60,7 @@ func main() {
 	fileDomain := file.New(s3Client, siteDomain.Service, conf.S3.Bucket)
 	sessionDomain := session.New(db)
 	authDomain := auth.New(db, sessionDomain.Service, "hsessionid", nil, nil)
+	uploadSessionDomain := uploadsession.New(db)
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
@@ -109,6 +111,7 @@ func main() {
 	app.RegisterDomain("file", "", fileDomain)
 	app.RegisterDomain("auth", "default", authDomain)
 	app.RegisterDomain("session", "default", sessionDomain)
+	app.RegisterDomain("uploadsession", "default", uploadSessionDomain)
 
 	app.RegisterService("http", httpServer)
 

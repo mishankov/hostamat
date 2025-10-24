@@ -1,6 +1,8 @@
 package uploadsession
 
-import "github.com/mishankov/platforma/database"
+import (
+	"github.com/mishankov/platforma/database"
+)
 
 type Domain struct {
 	Repository *Repository
@@ -11,7 +13,7 @@ func (d *Domain) GetRepository() any {
 	return d.Repository
 }
 
-func New(db database.Database) *Domain {
+func New(db *database.Database) *Domain {
 	repository := NewRepository(db)
 	service := NewService(repository)
 
