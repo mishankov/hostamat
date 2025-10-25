@@ -3,8 +3,9 @@ package s3
 import (
 	"context"
 	"fmt"
-	"hostamat/pkg/platforma/log"
 	"io"
+
+	"github.com/mishankov/platforma/log"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"

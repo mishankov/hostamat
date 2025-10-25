@@ -4,11 +4,11 @@ import (
 	"archive/zip"
 	"context"
 	"errors"
-	"hostamat/internal/site"
-	"hostamat/pkg/platforma/log"
 	"io"
 	"path/filepath"
 	"strings"
+
+	"github.com/mishankov/platforma/log"
 )
 
 type repository interface {
@@ -18,57 +18,38 @@ type repository interface {
 	DeleteFromFolder(ctx context.Context, bucketName, folderName string) error
 }
 
-type siteService interface {
-	Get(context.Context, string) (*site.Site, error)
-	GetIdByDomain(context.Context, string) (string, error)
-	GetByDomain(context.Context, string) (*site.Site, error)
-}
-
 type Service struct {
-	repo        repository
-	siteService siteService
-	bucketName  string
+	repo       repository
+	bucketName string
 }
 
-func NewService(repo repository, siteService siteService, bucketName string) *Service {
+func NewService(repo repository, bucketName string) *Service {
 	return &Service{
-		repo:        repo,
-		siteService: siteService,
-		bucketName:  bucketName,
+		repo:       repo,
+		bucketName: bucketName,
 	}
 }
 
-func (s *Service) GetFile(ctx context.Context, fileName, domain string) (io.Reader, error) {
-	siteId, err := s.siteService.GetIdByDomain(ctx, domain)
-	if err != nil {
-		return nil, err
-	}
+func (s *Service) GetFile(ctx context.Context, path string) (io.Reader, error) {
+	path = strings.TrimPrefix(path, "/")
 
-	fileName = strings.TrimPrefix(fileName, "/")
+	log.DebugContext(ctx, "get file", "path", path)
 
-	log.DebugContext(ctx, "get file", "site", siteId, "fileName", fileName)
-
-	return s.repo.GetObject(ctx, s.bucketName, siteId+"/"+fileName)
+	return s.repo.GetObject(ctx, s.bucketName, path)
 }
 
-func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reader, size int64, siteId string) ([]string, []string, error) {
-	// Check acces to site by trying to get it
-	_, err := s.siteService.Get(ctx, siteId)
-	if err != nil {
-		return nil, nil, err
-	}
-
+func (s *Service) UploadFile(ctx context.Context, path, filename string, file io.Reader, size int64) ([]string, []string, error) {
 	var uploaded, skipped []string
 
 	switch filepath.Ext(filename) {
 	case ".zip":
 		var err error
-		uploaded, skipped, err = s.uploadZipArchive(ctx, siteId, file, size)
+		uploaded, skipped, err = s.uploadZipArchive(ctx, path, file, size)
 		if err != nil {
 			return nil, nil, err
 		}
 	default:
-		if err := s.uploadSingleFile(ctx, siteId, filename, file, size); err != nil {
+		if err := s.uploadSingleFile(ctx, path, filename, file, size); err != nil {
 			return nil, nil, err
 		}
 		uploaded = []string{filename}
@@ -77,14 +58,8 @@ func (s *Service) UploadFile(ctx context.Context, filename string, file io.Reade
 	return uploaded, skipped, nil
 }
 
-func (s *Service) DeleteFromFolder(ctx context.Context, siteId string) error {
-	// Check acces to site by trying to get it
-	_, err := s.siteService.Get(ctx, siteId)
-	if err != nil {
-		return err
-	}
-
-	return s.repo.DeleteFromFolder(ctx, s.bucketName, siteId)
+func (s *Service) DeleteFromFolder(ctx context.Context, folder string) error {
+	return s.repo.DeleteFromFolder(ctx, s.bucketName, folder)
 }
 
 func (s *Service) uploadSingleFile(ctx context.Context, folder, filename string, file io.Reader, size int64) error {

@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"hostamat/pkg/platforma/auth"
 	"math"
 	"math/rand"
 	"sync"
+
+	"github.com/mishankov/platforma/auth"
 
 	"github.com/google/uuid"
 )

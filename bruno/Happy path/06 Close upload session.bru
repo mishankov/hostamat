@@ -1,0 +1,15 @@
+meta {
+  name: 06 Close upload session
+  type: http
+  seq: 6
+}
+
+delete {
+  url: http://localhost:1001/api/uploadsessions
+  body: none
+  auth: inherit
+}
+
+headers {
+  H-UploadSession-Id: 5956b786-eb60-4fa7-811f-a3229cbadec2
+}

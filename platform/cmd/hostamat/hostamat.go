@@ -10,15 +10,17 @@ import (
 	"hostamat/internal/middlewares"
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
-	"hostamat/pkg/platforma/application"
-	"hostamat/pkg/platforma/auth"
-	"hostamat/pkg/platforma/database"
-	"hostamat/pkg/platforma/httpclient"
-	"hostamat/pkg/platforma/httpserver"
-	"hostamat/pkg/platforma/log"
-	"hostamat/pkg/platforma/session"
+	"hostamat/internal/uploadsession"
 	"os"
 	"time"
+
+	"github.com/mishankov/platforma/application"
+	"github.com/mishankov/platforma/auth"
+	"github.com/mishankov/platforma/database"
+	"github.com/mishankov/platforma/httpclient"
+	"github.com/mishankov/platforma/httpserver"
+	"github.com/mishankov/platforma/log"
+	"github.com/mishankov/platforma/session"
 )
 
 func main() {
@@ -54,8 +56,9 @@ func main() {
 
 	// Domains
 	subdomainDomain := subdomain.New(db, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
-	siteDomain := site.New(db, subdomainDomain.Service)
-	fileDomain := file.New(s3Client, siteDomain.Service, conf.S3.Bucket)
+	fileDomain := file.New(s3Client, conf.S3.Bucket)
+	uploadSessionDomain := uploadsession.New(db)
+	siteDomain := site.New(db, subdomainDomain.Service, fileDomain.Service, uploadSessionDomain.Service)
 	sessionDomain := session.New(db)
 	authDomain := auth.New(db, sessionDomain.Service, "hsessionid", nil, nil)
 
@@ -68,8 +71,9 @@ func main() {
 	apiGroup := httpserver.NewHandlerGroup()
 	apiGroup.Use(authDomain.Middleware)
 
-	apiGroup.Handle("/files", fileDomain.ChangeHandleGroup)
-	apiGroup.Handle("/sites", siteDomain.HandleGroup)
+	apiGroup.Handle("/files", siteDomain.FileHandlerGroup)
+	apiGroup.Handle("/sites", siteDomain.SiteHandlerGroup)
+	apiGroup.Handle("/uploadsessions", siteDomain.UploadSessionHandlerGroup)
 
 	// HTTP server
 	httpServer := httpserver.New(conf.Port, 10*time.Second)
@@ -77,7 +81,7 @@ func main() {
 	httpServer.HandleGroup("/api", apiGroup)
 	httpServer.HandleGroup("/auth", authDomain.HandleGroup)
 	// HandleGroup used here because client would request files by additional path
-	httpServer.HandleGroup(conf.FileServerPath, fileDomain.ServeHandle)
+	httpServer.HandleGroup(conf.FileServerPath, siteDomain.FileServeHandler)
 
 	httpServer.Use(recoverMiddleware, traceId, requestLogger)
 
@@ -108,6 +112,7 @@ func main() {
 	app.RegisterDomain("file", "", fileDomain)
 	app.RegisterDomain("auth", "default", authDomain)
 	app.RegisterDomain("session", "default", sessionDomain)
+	app.RegisterDomain("uploadsession", "default", uploadSessionDomain)
 
 	app.RegisterService("http", httpServer)
 

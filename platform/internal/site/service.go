@@ -3,9 +3,14 @@ package site
 import (
 	"context"
 	"errors"
+	"hostamat/internal/file"
 	"hostamat/internal/subdomain"
-	"hostamat/pkg/platforma/auth"
+	"hostamat/internal/uploadsession"
+	"io"
+	"strings"
 	"time"
+
+	"github.com/mishankov/platforma/auth"
 
 	"github.com/google/uuid"
 )
@@ -25,14 +30,18 @@ type subdomainService interface {
 }
 
 type Service struct {
-	repository       repository
-	subdomainService subdomainService
+	repository           repository
+	subdomainService     subdomainService
+	fileService          *file.Service
+	uploadSessionService *uploadsession.Service
 }
 
-func NewService(repository repository, subdomainService subdomainService) *Service {
+func NewService(repository repository, subdomainService subdomainService, fileService *file.Service, uploadSessionService *uploadsession.Service) *Service {
 	return &Service{
-		repository:       repository,
-		subdomainService: subdomainService,
+		repository:           repository,
+		subdomainService:     subdomainService,
+		fileService:          fileService,
+		uploadSessionService: uploadSessionService,
 	}
 }
 
@@ -100,6 +109,10 @@ func (s *Service) GetByDomain(ctx context.Context, domain string) (*Site, error)
 	return site, nil
 }
 
+func (s *Service) GetByDomainNoAuth(ctx context.Context, domain string) (*Site, error) {
+	return s.repository.GetByDomain(ctx, domain)
+}
+
 func (s *Service) GetList(ctx context.Context) ([]*Site, error) {
 	user := auth.UserFromContext(ctx)
 	if user == nil {
@@ -120,8 +133,71 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 		return err
 	}
 
+	err = s.DeleteFiles(ctx, site.Id)
+	if err != nil {
+		return err
+	}
+
 	// `s.Get` already checks permission, so can delete without additional checks
 	return s.repository.Delete(ctx, id)
+}
+
+func (s *Service) DeleteFiles(ctx context.Context, siteId string) error {
+	return s.fileService.DeleteFromFolder(ctx, siteId)
+}
+
+func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*uploadsession.UploadSession, error) {
+	// Get site to check access
+	site, err := s.Get(ctx, siteId)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.DeleteFiles(ctx, site.Domain)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.uploadSessionService.Create(ctx, site.Id)
+}
+
+func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string) error {
+	us, err := s.uploadSessionService.Get(ctx, uploadSessionId)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.Get(ctx, us.Site)
+	if err != nil {
+		return err
+	}
+
+	return s.uploadSessionService.Close(ctx, us.Id)
+}
+
+func (s *Service) GetFile(ctx context.Context, host, filePath string) (io.Reader, error) {
+	site, err := s.GetByDomainNoAuth(ctx, host)
+	if err != nil {
+		return nil, err
+	}
+
+	filePath = strings.Trim(filePath, "/")
+
+	return s.fileService.GetFile(ctx, site.Id+"/"+filePath)
+}
+
+func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename string, file io.Reader, size int64) ([]string, []string, error) {
+	us, err := s.uploadSessionService.Get(ctx, uploadSessionId)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	_, err = s.Get(ctx, us.Site)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return s.fileService.UploadFile(ctx, us.Site, filename, file, size)
 }
 
 func (s *Service) checkAccess(ctx context.Context, site *Site) bool {

@@ -1,0 +1,23 @@
+meta {
+  name: 04 Upload file
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:1001/api/files
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  H-UploadSession-Id: 5956b786-eb60-4fa7-811f-a3229cbadec2
+}
+
+body:multipart-form {
+  file: @file(/Users/mishankov/dev/hostamat/index.html)
+}
+
+body:file {
+  file: @file(/Users/mishankov/dev/hostamat/index.html) @contentType(text/html; charset=utf-8)
+}
