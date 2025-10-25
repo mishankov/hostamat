@@ -1,17 +1,17 @@
 meta {
-  name: 03 Upload file
+  name: 04 Upload file
   type: http
-  seq: 3
+  seq: 4
 }
 
 post {
-  url: http://localhost:1001/files/api
+  url: http://localhost:1001/api/files
   body: multipartForm
   auth: inherit
 }
 
 headers {
-  H-Site-Id: 2bfb2dfe-b948-4d8d-b189-afab0daf544f
+  H-UploadSession-Id: 5956b786-eb60-4fa7-811f-a3229cbadec2
 }
 
 body:multipart-form {
