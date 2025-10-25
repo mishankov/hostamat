@@ -133,6 +133,11 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 		return err
 	}
 
+	err = s.DeleteFiles(ctx, site.Id)
+	if err != nil {
+		return err
+	}
+
 	// `s.Get` already checks permission, so can delete without additional checks
 	return s.repository.Delete(ctx, id)
 }
