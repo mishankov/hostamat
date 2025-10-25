@@ -7,6 +7,7 @@ import (
 	"hostamat/internal/subdomain"
 	"hostamat/internal/uploadsession"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/mishankov/platforma/auth"
@@ -108,6 +109,10 @@ func (s *Service) GetByDomain(ctx context.Context, domain string) (*Site, error)
 	return site, nil
 }
 
+func (s *Service) GetByDomainNoAuth(ctx context.Context, domain string) (*Site, error) {
+	return s.repository.GetByDomain(ctx, domain)
+}
+
 func (s *Service) GetList(ctx context.Context) ([]*Site, error) {
 	user := auth.UserFromContext(ctx)
 	if user == nil {
@@ -163,6 +168,17 @@ func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string
 	}
 
 	return s.uploadSessionService.Close(ctx, us.Id)
+}
+
+func (s *Service) GetFile(ctx context.Context, host, filePath string) (io.Reader, error) {
+	site, err := s.GetByDomainNoAuth(ctx, host)
+	if err != nil {
+		return nil, err
+	}
+
+	filePath = strings.Trim(filePath, "/")
+
+	return s.fileService.GetFile(ctx, site.Id+"/"+filePath)
 }
 
 func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename string, file io.Reader, size int64) ([]string, []string, error) {

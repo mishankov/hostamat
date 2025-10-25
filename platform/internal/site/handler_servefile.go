@@ -24,7 +24,7 @@ func (h *ServeFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		filePath = "/index.html"
 	}
 
-	file, err := h.service.fileService.GetFile(ctx, r.Host+"/"+filePath)
+	file, err := h.service.GetFile(ctx, r.Host, filePath)
 	if err != nil {
 		http.Error(w, "File not found", http.StatusNotFound)
 		return
