@@ -5,9 +5,8 @@ import "time"
 type UploadSessionStatus string
 
 const (
-	UploadSessionStatusNew        UploadSessionStatus = "new"
-	UploadSessionStatusInProgress UploadSessionStatus = "in_progress"
-	UploadSessionStatusCompleted  UploadSessionStatus = "completed"
+	UploadSessionStatusOpen   UploadSessionStatus = "open"
+	UploadSessionStatusClosed UploadSessionStatus = "closed"
 )
 
 type UploadSession struct {

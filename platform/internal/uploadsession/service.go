@@ -18,7 +18,23 @@ func NewService(repo *Repository) *Service {
 	}
 }
 
-func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*UploadSession, error) {
+func (s *Service) Get(ctx context.Context, id string) (*UploadSession, error) {
+	return s.repo.Get(ctx, id)
+}
+
+func (s *Service) Close(ctx context.Context, uploadSessionId string) error {
+	us, err := s.Get(ctx, uploadSessionId)
+	if err != nil {
+		return err
+	}
+
+	us.Status = UploadSessionStatusClosed
+	us.UpdatedAt = time.Now()
+
+	return s.repo.UpdateStatus(ctx, us)
+}
+
+func (s *Service) Create(ctx context.Context, siteId string) (*UploadSession, error) {
 	user := auth.UserFromContext(ctx)
 
 	uploadSession := &UploadSession{
@@ -27,7 +43,7 @@ func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*Uplo
 		Site:      siteId,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		Status:    UploadSessionStatusNew,
+		Status:    UploadSessionStatusOpen,
 	}
 
 	err := s.repo.Create(ctx, uploadSession)

@@ -57,10 +57,10 @@ func main() {
 	// Domains
 	subdomainDomain := subdomain.New(db, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
 	fileDomain := file.New(s3Client, conf.S3.Bucket)
-	siteDomain := site.New(db, subdomainDomain.Service, fileDomain.Service)
+	uploadSessionDomain := uploadsession.New(db)
+	siteDomain := site.New(db, subdomainDomain.Service, fileDomain.Service, uploadSessionDomain.Service)
 	sessionDomain := session.New(db)
 	authDomain := auth.New(db, sessionDomain.Service, "hsessionid", nil, nil)
-	uploadSessionDomain := uploadsession.New(db)
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
@@ -73,6 +73,7 @@ func main() {
 
 	apiGroup.Handle("/files", siteDomain.FileHandlerGroup)
 	apiGroup.Handle("/sites", siteDomain.SiteHandlerGroup)
+	apiGroup.Handle("/uploadsessions", siteDomain.UploadSessionHandlerGroup)
 
 	// HTTP server
 	httpServer := httpserver.New(conf.Port, 10*time.Second)

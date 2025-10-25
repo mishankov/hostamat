@@ -5,6 +5,7 @@ import (
 	"errors"
 	"hostamat/internal/file"
 	"hostamat/internal/subdomain"
+	"hostamat/internal/uploadsession"
 	"time"
 
 	"github.com/mishankov/platforma/auth"
@@ -27,16 +28,18 @@ type subdomainService interface {
 }
 
 type Service struct {
-	repository       repository
-	subdomainService subdomainService
-	fileService      *file.Service
+	repository           repository
+	subdomainService     subdomainService
+	fileService          *file.Service
+	uploadSessionService *uploadsession.Service
 }
 
-func NewService(repository repository, subdomainService subdomainService, fileService *file.Service) *Service {
+func NewService(repository repository, subdomainService subdomainService, fileService *file.Service, uploadSessionService *uploadsession.Service) *Service {
 	return &Service{
-		repository:       repository,
-		subdomainService: subdomainService,
-		fileService:      fileService,
+		repository:           repository,
+		subdomainService:     subdomainService,
+		fileService:          fileService,
+		uploadSessionService: uploadSessionService,
 	}
 }
 
@@ -135,6 +138,30 @@ func (s *Service) DeleteFiles(ctx context.Context, domain string) error {
 	}
 
 	return s.fileService.DeleteFromFolder(ctx, site.Id)
+}
+
+func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*uploadsession.UploadSession, error) {
+	// Get site to check access
+	site, err := s.Get(ctx, siteId)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.uploadSessionService.Create(ctx, site.Id)
+}
+
+func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string) error {
+	us, err := s.uploadSessionService.Get(ctx, uploadSessionId)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.Get(ctx, us.Site)
+	if err != nil {
+		return err
+	}
+
+	return s.uploadSessionService.Close(ctx, us.Id)
 }
 
 func (s *Service) checkAccess(ctx context.Context, site *Site) bool {

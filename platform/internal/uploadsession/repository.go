@@ -14,6 +14,16 @@ func NewRepository(db *database.Database) *Repository {
 	return &Repository{db: db}
 }
 
+func (r *Repository) Get(ctx context.Context, id string) (*UploadSession, error) {
+	var uploadSession UploadSession
+	err := r.db.GetContext(ctx, &uploadSession, `SELECT * FROM uploadsessions WHERE id = $1`, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &uploadSession, nil
+}
+
 func (r *Repository) Create(ctx context.Context, uploadSession *UploadSession) error {
 	_, err := r.db.NamedExecContext(ctx, `INSERT INTO uploadsessions (id, "user", site, created_at, updated_at, status) VALUES (:id, :user, :site, :created_at, :updated_at, :status)`, uploadSession)
 	if err != nil {
