@@ -100,6 +100,24 @@
     uploading = true;
     uploadProgress = 0;
     error = '';
+
+    const headers = new Headers();
+    Object.entries(additionalHeaders).forEach(([key, value]) => {
+      headers.set(key, value);
+    });
+
+    const createUploadSessionResp = await fetch('/api/createUploadSession', {
+      method: 'POST',
+      headers
+    });
+
+    if (!createUploadSessionResp.ok) {
+      error = 'Ошибка при создании сессии загрузки';
+      uploading = false;
+      return;
+    }
+
+    const uploadSession = await createUploadSessionResp.text();
     
     try {
       for (let i = 0; i < selectedFiles.length; i++) {
@@ -111,6 +129,7 @@
         Object.entries(additionalHeaders).forEach(([key, value]) => {
           headers.set(key, value);
         });
+        headers.set('H-UploadSession-Id', uploadSession || '');
 
         const response = await fetch(uploadUrl, {
           method: 'POST',
@@ -142,9 +161,16 @@
     } catch (err) {
       error = 'Ошибка при загрузке файла';
       onuploaderror?.({ error });
-    } finally {
-      uploading = false;
     }
+
+    await fetch('/api/closeUploadSession', {
+      method: 'DELETE',
+      headers: {
+        'H-UploadSession-Id': uploadSession || ''
+      }
+    });
+
+    uploading = false;
   }
   
   function removeFile(index: number): void {

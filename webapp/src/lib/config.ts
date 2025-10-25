@@ -8,6 +8,7 @@ export const Config = {
     createUrl: `${env.API_BASE || 'http://localhost:1001'}/api/sites`,
     listUrl: `${env.API_BASE || 'http://localhost:1001'}/api/sites`
   },
+  uploadSessionsUrl: `${env.API_BASE || 'http://localhost:1001'}/api/uploadsessions`,
   auth: {
     loginUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/login`,
     logoutUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/logout`,
