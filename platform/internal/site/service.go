@@ -131,18 +131,18 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 	return s.repository.Delete(ctx, id)
 }
 
-func (s *Service) DeleteFiles(ctx context.Context, domain string) error {
-	site, err := s.GetByDomain(ctx, domain)
-	if err != nil {
-		return err
-	}
-
-	return s.fileService.DeleteFromFolder(ctx, site.Id)
+func (s *Service) DeleteFiles(ctx context.Context, siteId string) error {
+	return s.fileService.DeleteFromFolder(ctx, siteId)
 }
 
 func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*uploadsession.UploadSession, error) {
 	// Get site to check access
 	site, err := s.Get(ctx, siteId)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.DeleteFiles(ctx, site.Domain)
 	if err != nil {
 		return nil, err
 	}

@@ -36,7 +36,6 @@ func New(db db, subdomainService subdomainService, fileService *file.Service, up
 
 	fileHandlerGroup := httpserver.NewHandlerGroup()
 	fileHandlerGroup.Handle("POST /", NewUploadFileHandler(service))
-	fileHandlerGroup.Handle("DELETE /", NewDeleteFileHandler(service))
 
 	uploadSessionHandlerGroup := httpserver.NewHandlerGroup()
 	uploadSessionHandlerGroup.Handle("POST /", NewCreateUploadSessionHandler(service))
