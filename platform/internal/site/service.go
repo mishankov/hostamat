@@ -6,6 +6,7 @@ import (
 	"hostamat/internal/file"
 	"hostamat/internal/subdomain"
 	"hostamat/internal/uploadsession"
+	"io"
 	"time"
 
 	"github.com/mishankov/platforma/auth"
@@ -162,6 +163,20 @@ func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string
 	}
 
 	return s.uploadSessionService.Close(ctx, us.Id)
+}
+
+func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename string, file io.Reader, size int64) ([]string, []string, error) {
+	us, err := s.uploadSessionService.Get(ctx, uploadSessionId)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	_, err = s.Get(ctx, us.Site)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return s.fileService.UploadFile(ctx, us.Site, filename, file, size)
 }
 
 func (s *Service) checkAccess(ctx context.Context, site *Site) bool {

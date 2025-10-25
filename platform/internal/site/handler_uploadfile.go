@@ -22,9 +22,9 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	siteId := r.Header.Get("H-Site-Id")
-	if siteId == "" {
-		http.Error(w, "Missing site id", http.StatusBadRequest)
+	uploadSessionId := r.Header.Get("H-UploadSession-Id")
+	if uploadSessionId == "" {
+		http.Error(w, "Missing upload session id", http.StatusBadRequest)
 		return
 	}
 
@@ -36,7 +36,7 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	uploaded, skipped, err := h.service.fileService.UploadFile(ctx, siteId, handler.Filename, file, handler.Size)
+	uploaded, skipped, err := h.service.UploadFile(ctx, uploadSessionId, handler.Filename, file, handler.Size)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
