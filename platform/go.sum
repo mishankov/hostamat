@@ -79,6 +79,8 @@ github.com/minio/minio-go/v7 v7.0.94 h1:1ZoksIKPyaSt64AVOyaQvhDOgVC3MfZsWM6mZXRU
 github.com/minio/minio-go/v7 v7.0.94/go.mod h1:71t2CqDt3ThzESgZUlU1rBN54mksGGlkLcFgguDnnAc=
 github.com/mishankov/platforma v0.1.0-alpha.3 h1:tm/thUmRgChSwrL6wlcbeBfrReejWQclhyQ3VP/qciA=
 github.com/mishankov/platforma v0.1.0-alpha.3/go.mod h1:x6xTitrNx/RlInO5UZWBLBoli77UirrTmG8dJtBqWcY=
+github.com/mishankov/platforma v0.1.0-alpha.4 h1:0bfSwpiGjQcyaXdvL19jXaIJ4RQ0/K+CQbngjq8r5w4=
+github.com/mishankov/platforma v0.1.0-alpha.4/go.mod h1:x6xTitrNx/RlInO5UZWBLBoli77UirrTmG8dJtBqWcY=
 github.com/moby/docker-image-spec v1.3.1 h1:jMKff3w6PgbfSa69GfNg+zN/XLhfXJGnEx3Nl2EsFP0=
 github.com/moby/docker-image-spec v1.3.1/go.mod h1:eKmb5VW8vQEh/BAr2yvVNvuiJuY6UIocYsFu/DxxRpo=
 github.com/moby/go-archive v0.1.0 h1:Kk/5rdW/g+H8NHdJW2gsXyZ7UnzvJNOy6VKJqueWdcQ=
