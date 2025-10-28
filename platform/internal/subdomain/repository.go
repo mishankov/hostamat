@@ -27,8 +27,8 @@ func NewRepository(db db) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) Schema() ([]database.Migration, database.Schema) {
-	return migrations.Migrations, migrations.Schema
+func (r *Repository) Migrations() []database.Migration {
+	return migrations.Migrations
 }
 
 func (r *Repository) Get(ctx context.Context, id string) (*Subdomain, error) {

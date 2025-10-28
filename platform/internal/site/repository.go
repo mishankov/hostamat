@@ -29,8 +29,8 @@ func NewRepository(db db) *Repository {
 	}
 }
 
-func (r *Repository) Schema() ([]database.Migration, database.Schema) {
-	return migrations.Migrations, migrations.Schema
+func (r *Repository) Migrations() []database.Migration {
+	return migrations.Migrations
 }
 
 func (r *Repository) Create(ctx context.Context, site *Site) error {
