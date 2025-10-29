@@ -17,10 +17,10 @@ import (
 	"github.com/mishankov/platforma/application"
 	"github.com/mishankov/platforma/auth"
 	"github.com/mishankov/platforma/database"
-	"github.com/mishankov/platforma/httpclient"
 	"github.com/mishankov/platforma/httpserver"
 	"github.com/mishankov/platforma/log"
 	"github.com/mishankov/platforma/session"
+	"hostamat/internal/httpclient"
 )
 
 func main() {
