@@ -16,6 +16,11 @@ type ListSiteHandler struct {
 	service listSiteService
 }
 
+type listReponse struct {
+	Sites    []*Site `json:"sites"`
+	MaxAmoun int     `json:"maxAmount"`
+}
+
 func NewListSiteHandler(service listSiteService) *ListSiteHandler {
 	return &ListSiteHandler{
 		service: service,
@@ -38,6 +43,11 @@ func (h *ListSiteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	resp := listReponse{sites, maxSites}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(sites)
+	err = json.NewEncoder(w).Encode(resp)
+	if err != nil {
+		log.ErrorContext(ctx, "failed to send response", "error", err, "resp", resp)
+	}
 }
