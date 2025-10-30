@@ -29,7 +29,7 @@
 		</button>
 	</a>
 {:else}
-	<button {disabled} bind:this={ref} class={kind} {onclick}>
+	<button {disabled} bind:this={ref} class={[kind, filled && 'filled']} {onclick}>
 		{@render children?.()}
 	</button>
 {/if}
