@@ -3,7 +3,7 @@
 	import { invalidateAll } from '$app/navigation';
 
 	import { Card, Error, Info } from '$lib/components';
-	import { Spinner, Plus, X } from '$lib/icons';
+	import { Spinner, Plus } from '$lib/icons';
 
 	import { type Site } from './types';
 	import SiteContent from './SiteContent.svelte';
@@ -14,11 +14,10 @@
 	let loading = $state(true);
 
 	const updateState = async () => {
-		let sitesResp = await data.sitesResp;
-		if (sitesResp) {
-			sites = sitesResp.sites;
-			maxAmount = sitesResp.maxAmount || 0;
-		}
+		const sitesResp = await data.sitesResp;
+
+		sites = sitesResp.sites;
+		maxAmount = sitesResp.maxAmount || 0;
 
 		loading = false;
 	};
@@ -32,8 +31,8 @@
 
 		<div class="site-list">
 			{#await data.sitesResp}
-				<Spinner />
-			{:then _}
+				<Spinner size={50} />
+			{:then}
 				{#each sites as site (site.id)}
 					<Card style="height: 110px;">
 						<SiteContent {site} />
@@ -45,17 +44,24 @@
 						<button
 							class="add-site"
 							onclick={async () => {
+								if (loading) return;
+								loading = true;
+
 								await fetch('/api/createSite', {
 									method: 'POST'
 								});
 
-								loading = true;
 								await invalidateAll();
 								updateState();
 							}}
 						>
-							<p class="add-site-icon"><Plus size={40} /></p>
-							<p class="add-site-text">Добавить сайт</p>
+							{#if loading}
+								<p><Spinner size={40} /></p>
+								<p class="add-site-text">Добавляем сайт</p>
+							{:else}
+								<p><Plus size={40} /></p>
+								<p class="add-site-text">Добавить сайт</p>
+							{/if}
 						</button>
 					</Card>
 				{:else if loading === false}
