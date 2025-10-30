@@ -1,105 +1,119 @@
 <script lang="ts">
-  import type { PageProps } from './$types';
-	import { invalidateAll } from "$app/navigation";
-  
-	import { Card, Error } from "$lib/components";
-	import { Spinner, Plus } from "$lib/icons";
-  
-  import { type Site } from './types';
-	import SiteContent from "./SiteContent.svelte";
+	import type { PageProps } from './$types';
+	import { invalidateAll } from '$app/navigation';
+
+	import { Card, Error, Info } from '$lib/components';
+	import { Spinner, Plus, X } from '$lib/icons';
+
+	import { type Site } from './types';
+	import SiteContent from './SiteContent.svelte';
 
 	let { data }: PageProps = $props();
-  let sites = $state<Site[]>([]);
+	let sites = $state<Site[]>([]);
+	let maxAmount = $state(0);
+	let loading = $state(true);
 
-  (async () => {
-    sites = await data.sites;
-  })()
+	const updateState = async () => {
+		let sitesResp = await data.sitesResp;
+		if (sitesResp) {
+			sites = sitesResp.sites;
+			maxAmount = sitesResp.maxAmount || 0;
+		}
+
+		loading = false;
+	};
+
+	updateState();
 </script>
 
 <main>
-  <div class="dashboard">
-    <h1>Твои сайты</h1>
-  
-    <div class="site-list">
-      {#await data.sites}
-        <Spinner />
-      {:then _}
-        {#each sites as site (site.id)}
-          <Card style="height: 110px;">
-            <SiteContent site={site} />
-          </Card>
-        {/each}
-      
+	<div class="dashboard">
+		<h1>Твои сайты</h1>
 
-      <Card floating style="height: 110px;">
-        <button class="add-site" onclick={async () => {
-          const response = await fetch('/api/createSite', {
-                method: 'POST',
-              })
+		<div class="site-list">
+			{#await data.sitesResp}
+				<Spinner />
+			{:then _}
+				{#each sites as site (site.id)}
+					<Card style="height: 110px;">
+						<SiteContent {site} />
+					</Card>
+				{/each}
 
-              await invalidateAll()
-              sites = await data.sites;
-        }}>
-          <p class="add-site-icon"><Plus size={40} /></p>
-          <p class="add-site-text">Добавить сайт</p>
-        </button>
-      </Card>
+				{#if sites.length < maxAmount}
+					<Card floating style="height: 110px;">
+						<button
+							class="add-site"
+							onclick={async () => {
+								await fetch('/api/createSite', {
+									method: 'POST'
+								});
 
-      {:catch error}
-        <Error message="Ошибка при загрузке сайтов: {error.message}" />
-      {/await}
-    </div>
-  </div>
+								loading = true;
+								await invalidateAll();
+								updateState();
+							}}
+						>
+							<p class="add-site-icon"><Plus size={40} /></p>
+							<p class="add-site-text">Добавить сайт</p>
+						</button>
+					</Card>
+				{:else if loading === false}
+					<div style="height: 110px; display: flex; align-items: center;">
+						<Info header="Максимальное количество сайтов в альфа версии">
+							Для добавления нового сайта, удали один из существующих
+						</Info>
+					</div>
+				{/if}
+			{:catch error}
+				<Error message="Ошибка при загрузке сайтов: {error.message}" />
+			{/await}
+		</div>
+	</div>
 </main>
 
-
 <style>
-  main {
-    width: 100%;
+	main {
+		width: 100%;
 
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .dashboard {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    
-    width: clamp(500px, 75%, 1200px);
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
 
-    padding: 20px;
-  }
+	.dashboard {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
 
-  .site-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .add-site {
-    all: unset;
+		width: clamp(500px, 75%, 1200px);
 
-    height: 100%;
+		padding: 20px;
+	}
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+	.site-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
 
-    padding-left: 20px;
-    padding-right: 20px;
-  }
+	.add-site {
+		all: unset;
 
-  .add-site-icon {
-    font-size: 20px;
-    user-select: none;
-  }
+		height: 100%;
 
-  .add-site-text {
-    color: #bbb;
-    user-select: none;
-  }
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	.add-site-text {
+		color: #bbb;
+		user-select: none;
+	}
 </style>
