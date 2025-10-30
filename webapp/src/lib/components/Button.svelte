@@ -1,92 +1,99 @@
 <script lang="ts">
-  type ButtonKind = "primary" | "confirm" | "danger" | "action"
+	type ButtonKind = 'primary' | 'confirm' | 'danger' | 'action';
 
-  type ButtonProps = {
-    kind?: ButtonKind
-    disabled?: boolean
-    link?: string
-    ref?: any
-    children?: any
-    onclick?: (e: Event) => void
-  }
+	type ButtonProps = {
+		kind?: ButtonKind;
+		disabled?: boolean;
+		filled?: boolean;
+		link?: string;
+		ref?: any;
+		children?: any;
+		onclick?: (e: Event) => void;
+	};
 
-  let {
-    kind = "primary",
-    disabled = false,
-    link = "",
-    children = undefined,
-    ref = $bindable(null),
-    onclick = undefined,
-  }: ButtonProps = $props()
+	let {
+		kind = 'primary',
+		disabled = false,
+		filled = false,
+		link = '',
+		children = undefined,
+		ref = $bindable(null),
+		onclick = undefined
+	}: ButtonProps = $props();
 </script>
 
 {#if link}
-  <a href={link}>
-    <button {disabled} bind:this={ref} class="{kind}" onclick={onclick}>
-      {@render children?.()}
-    </button>
-  </a>
+	<a href={link}>
+		<button {disabled} bind:this={ref} class={[kind, filled && 'filled']} {onclick}>
+			{@render children?.()}
+		</button>
+	</a>
 {:else}
-  <button {disabled} bind:this={ref} class="{kind}" onclick={onclick}>
-    {@render children?.()}
-  </button>
+	<button {disabled} bind:this={ref} class={kind} {onclick}>
+		{@render children?.()}
+	</button>
 {/if}
 
 <style>
-  button {
-    appearance: none;
-    width: fit-content;
+	button {
+		appearance: none;
+		width: fit-content;
 
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 15px;
+		border-width: 1px;
+		border-style: solid;
+		border-radius: 15px;
 
-    padding: 12px 20px;
+		padding: 12px 20px;
 
-    text-align: center;
-    user-select: none;
+		text-align: center;
+		user-select: none;
 
-    transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
-  }
+		transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
 
-  .primary {
-    background-color: var(--color-primary-dim);
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-  }
+		color: var(--color);
+		background-color: var(--color-dim);
+		border-color: var(--color);
+	}
 
-  .confirm {
-    background-color: var(--color-confirm-dim);
-    color: var(--color-confirm);
-    border-color: var(--color-confirm);
-  }
+	.filled {
+		color: var(--color-dim);
+		background-color: var(--color);
+		border-color: var(--color);
+	}
 
-  .danger {
-    background-color: var(--color-danger-dim);
-    color: var(--color-danger);
-    border-color: var(--color-danger);
-  }
+	.primary {
+		--color: var(--color-primary);
+		--color-dim: var(--color-primary-dim);
+	}
 
-  .action {
-    background-color: var(--color-action-dim);
-    color: var(--color-action);
-    border-color: var(--color-action);
-  }
+	.confirm {
+		--color: var(--color-confirm);
+		--color-dim: var(--color-confirm-dim);
+	}
 
-  button:hover:enabled {
-    box-shadow: var(--shadow);
-    transform: translateY(-1px);
-  }
+	.danger {
+		--color: var(--color-danger);
+		--color-dim: var(--color-danger-dim);
+	}
 
-  button:active:enabled {
-    box-shadow: none;
-    transform: translateY(+1px);
-  }
+	.action {
+		--color: var(--color-action);
+		--color-dim: var(--color-action-dim);
+	}
 
-  button:disabled {
-    background-color: #555;
-    color: #fff;
-    border-color: #fff;
-  }
+	button:hover:enabled {
+		box-shadow: var(--shadow);
+		transform: translateY(-1px);
+	}
+
+	button:active:enabled {
+		box-shadow: none;
+		transform: translateY(+1px);
+	}
+
+	button:disabled {
+		background-color: #555;
+		color: #fff;
+		border-color: #fff;
+	}
 </style>
-
