@@ -48,6 +48,17 @@ func NewService(repository repository, subdomainService subdomainService, fileSe
 func (s *Service) Create(ctx context.Context) (*Site, error) {
 	var err error
 
+	// GetList also checks access so no need to check it further...
+	sites, err := s.GetList(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(sites) >= maxSites {
+		return nil, errors.New("max sites limit reached")
+	}
+
+	// ... but access is still checked beacuse we need user info
 	user := auth.UserFromContext(ctx)
 	if user == nil {
 		return nil, errors.New("access denied")
