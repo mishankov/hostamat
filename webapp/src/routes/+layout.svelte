@@ -1,79 +1,79 @@
 <script lang="ts">
-	import { Button, Card, Link } from '$lib/components';
-  import type { LayoutProps } from './$types';
+	import { Button, Link } from '$lib/components';
+	import type { LayoutProps } from './$types';
 
-  let { data, children }: LayoutProps = $props();
+	let { data, children }: LayoutProps = $props();
 
-  const logout = async () => {
-    const resp = await fetch('/api/auth/logout', { method: 'POST' });
-    window.location.reload();
-  }
+	const logout = async () => {
+		await fetch('/api/auth/logout', { method: 'POST' });
+		window.location.reload();
+	};
 </script>
 
 <header>
-  <div class="header-card">
-    <div class="nav-links">
-      <Link href="/"><span class="logo">ХОСТАМАТ</span></Link>
-      <Link href="/dashboard">Дашборд</Link>
-      <Link href="/about">О сервисе</Link>
-    </div>
+	<div class="header-card">
+		<div class="nav-links">
+			<Link href="/"><span class="logo">ХОСТАМАТ</span></Link>
+			<Link href="/dashboard">Дашборд</Link>
+			<Link href="/about">О сервисе</Link>
+		</div>
 
-    <div class="user-info">
-      {#if data.isAuthenticated == true}
-        <Link href="/profile">{data.username}</Link>
-        <Button onclick={logout}>Выйти</Button>
-      {:else}
-        <Button link="/login">Войти</Button>
-      {/if}
-    </div>
-  </div>
+		<div class="user-info">
+			{#if data.isAuthenticated == true}
+				<Link href="/profile">{data.username}</Link>
+				<Button onclick={logout}>Выйти</Button>
+			{:else}
+				<Button link="/login">Войти</Button>
+			{/if}
+		</div>
+	</div>
 </header>
 
 {@render children()}
 
 <style>
-  header {
-    width: 100%;
-    height: fit-content;
+	header {
+		width: 100%;
+		height: fit-content;
 
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
 
-    background-color: var(--color-background-object);
-    border-bottom: var(--border-regular);
-  }
+		background-color: var(--color-background-object);
+		border-bottom: var(--border-regular);
+	}
 
-  .header-card {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
+	.header-card {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		gap: 10px;
 
-    padding: 20px;
+		padding: 20px;
 
-    height: 75px;
-    width: clamp(500px, 75%, 1200px);
-  }
+		height: 75px;
+		width: clamp(500px, 75%, 1200px);
+	}
 
-  .nav-links {
-    display: flex;
-    flex-direction: row;
-    align-items: end;
-    gap: 20px;
-  }
+	.nav-links {
+		display: flex;
+		flex-direction: row;
+		align-items: end;
+		gap: 20px;
+	}
 
-  .user-info {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 20px;
-  }
+	.user-info {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 20px;
+	}
 
-  span.logo {
-    font-size: larger;
-    font-weight: bold;
-  }
+	span.logo {
+		font-size: larger;
+		font-weight: bold;
+	}
 </style>

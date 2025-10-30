@@ -17,6 +17,9 @@
 		const sitesResp = await data.sitesResp;
 
 		sites = sitesResp.sites;
+		if (!sites) {
+			sites = [];
+		}
 		maxAmount = sitesResp.maxAmount || 0;
 
 		loading = false;
