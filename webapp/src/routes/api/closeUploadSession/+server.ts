@@ -7,7 +7,7 @@ export const DELETE: RequestHandler = async ({ request }) => {
 			method: 'DELETE',
 			headers: {
 				Cookie: request.headers.get('Cookie') || '',
-				'H-Uploadsession-Id': request.headers.get('H-Uploadsession-Id') || '',
+				'H-Uploadsession-Id': request.headers.get('H-Uploadsession-Id') || ''
 			}
 		});
 

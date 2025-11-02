@@ -3,7 +3,7 @@
 </script>
 
 <div class="progress-bar">
-	<p class={[uploadProgress > 50 && "dark"]}>{Math.round(uploadProgress)}%</p>
+	<p class={[uploadProgress > 50 && 'dark']}>{Math.round(uploadProgress)}%</p>
 	<div class="progress-fill" style="width: {uploadProgress}%"></div>
 </div>
 
@@ -34,11 +34,11 @@
 		margin: 0;
 		z-index: 1;
 
-    transition: var(--transition);
-    user-select: none;
+		transition: var(--transition);
+		user-select: none;
 	}
 
-  p.dark {
-    color: var(--color-primary-dim);
-  }
+	p.dark {
+		color: var(--color-primary-dim);
+	}
 </style>

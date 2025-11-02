@@ -1,27 +1,23 @@
 <script lang="ts">
-  let {
-    href,
-    target = '_self',
-    children,
-    alwaysUnderline = false,
-    ...restProps
-  } = $props();
+	let { href, target = '_self', children, alwaysUnderline = false, ...restProps } = $props();
 </script>
 
-<a href={href} target={target} class={alwaysUnderline ? 'underline' : ''} {...restProps}>{@render children?.()}</a>
+<a {href} {target} class={alwaysUnderline ? 'underline' : ''} {...restProps}
+	>{@render children?.()}</a
+>
 
 <style>
-  a {
-    color: var(--color-primary);
-    text-decoration: none;
-    transition: all 500ms;
-  }
+	a {
+		color: var(--color-primary);
+		text-decoration: none;
+		transition: all 500ms;
+	}
 
-  a.underline {
-    text-decoration: underline;
-  }
+	a.underline {
+		text-decoration: underline;
+	}
 
-  a:hover {
-    text-decoration: underline;
-  }
+	a:hover {
+		text-decoration: underline;
+	}
 </style>

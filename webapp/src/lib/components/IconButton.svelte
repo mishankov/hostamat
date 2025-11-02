@@ -1,22 +1,18 @@
 <script lang="ts">
-  let {
-    children,
-    onclick,
-    ...restProps
-  } = $props()
+	let { children, onclick, ...restProps } = $props();
 </script>
 
 <button {onclick} {...restProps}>
-  {@render children()}
+	{@render children()}
 </button>
 
 <style>
-  button {
-    all: unset;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	button {
+		all: unset;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
-    padding: 5px;
-  }
+		padding: 5px;
+	}
 </style>

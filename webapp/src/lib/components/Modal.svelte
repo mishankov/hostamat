@@ -1,73 +1,77 @@
 <script lang="ts">
-	import type { Snippet } from "svelte";
+	import type { Snippet } from 'svelte';
 
-  let {
-    children,
-    kind = "primary"
-  } : {
-    children?: Snippet,
-    kind?: "primary" | "danger"
-  } = $props()
+	let {
+		children,
+		kind = 'primary'
+	}: {
+		children?: Snippet;
+		kind?: 'primary' | 'danger';
+	} = $props();
 
-  let dialog = $state<HTMLDialogElement>();
-  export const open = () => dialog?.showModal()
+	let dialog = $state<HTMLDialogElement>();
+	export const open = () => dialog?.showModal();
 </script>
 
-<dialog bind:this={dialog} class={kind} onclick={(e: MouseEvent) => {
-    if (e.target === dialog) {
-      dialog?.close()
-    }
-  }}>
-  <div class="modal-content">
-    {@render children?.()}
-  </div>
+<dialog
+	bind:this={dialog}
+	class={kind}
+	onclick={(e: MouseEvent) => {
+		if (e.target === dialog) {
+			dialog?.close();
+		}
+	}}
+>
+	<div class="modal-content">
+		{@render children?.()}
+	</div>
 </dialog>
 
 <style>
-  dialog {
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    
-    border: var(--border-regular);
-    border-radius: var(--border-radius-regular);
+	dialog {
+		top: 50%;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
 
-    padding: 0;
+		border: var(--border-regular);
+		border-radius: var(--border-radius-regular);
 
-    background-color: var(--color-background-object);
-    color: var(--color-text);
+		padding: 0;
 
-    transition: var(--transition);
-  }
+		background-color: var(--color-background-object);
+		color: var(--color-text);
 
-  .primary {
-    border-color: var(--color-border);
-  }
+		transition: var(--transition);
+	}
 
-  .danger {
-    border-color: var(--color-danger);
-  }
+	.primary {
+		border-color: var(--color-border);
+	}
 
-  dialog[open] {
-    animation: fadein 300ms ease-in forwards;
-  }
+	.danger {
+		border-color: var(--color-danger);
+	}
 
-  @keyframes fadein {
-    0% {
-      opacity: 0;
-      transform: translateX(-50%) translateY(-50%) scale(.95);
-    }
-    100% {
-      opacity: 1;
-      transform: translateX(-50%) translateY(-50%) scale(1);
-    }
-  }
+	dialog[open] {
+		animation: fadein 300ms ease-in forwards;
+	}
 
-  ::backdrop {
-    background-color: rgba(0, 0, 0, 0.5);
-  }
+	@keyframes fadein {
+		0% {
+			opacity: 0;
+			transform: translateX(-50%) translateY(-50%) scale(0.95);
+		}
+		100% {
+			opacity: 1;
+			transform: translateX(-50%) translateY(-50%) scale(1);
+		}
+	}
 
-  div.modal-content {
-    padding: 20px;
-  }
+	::backdrop {
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+
+	div.modal-content {
+		padding: 20px;
+	}
 </style>
