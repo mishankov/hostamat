@@ -7,8 +7,8 @@
 		<div class="header">
 			<h1>О сервисе</h1>
 			<p class="lead">
-				Хостамат (<Link href="hostamat.ru" target="_blank" alwaysUnderline>hostamat.ru</Link>) —
-				сервис для простого хостинга статических сайтов.
+				Хостамат (<Link href="https://hostamat.ru" target="_blank" alwaysUnderline>hostamat.ru</Link
+				>) — сервис для простого хостинга статических сайтов.
 			</p>
 		</div>
 
