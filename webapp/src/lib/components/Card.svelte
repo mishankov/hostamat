@@ -40,6 +40,6 @@
 
 	.floating:hover {
 		box-shadow: var(--shadow);
-		transform: scale(1.01);
+		transform: translateY(-2px);
 	}
 </style>
