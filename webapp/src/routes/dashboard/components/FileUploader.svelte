@@ -11,7 +11,6 @@
 		disabled?: boolean;
 		additionalHeaders?: Record<string, string>;
 		onfilesselected?: (event: { files: File[] }) => void;
-		onfileuploaded?: (event: { file: File; result: any }) => void;
 		onuploadcomplete?: (event: { fileCount: number }) => void;
 		onuploaderror?: (event: { error: string }) => void;
 	}
@@ -24,7 +23,6 @@
 		disabled = false,
 		additionalHeaders = {},
 		onfilesselected,
-		onfileuploaded,
 		onuploadcomplete,
 		onuploaderror
 	}: Props = $props();
@@ -147,8 +145,6 @@
 				// Store uploaded and skipped files
 				uploadedFiles = uploadedFiles.concat(result.uploadedFiles || []);
 				skippedFiles = skippedFiles.concat(result.skippedFiles || []);
-
-				onfileuploaded?.({ file, result });
 			}
 
 			const uploadedCount = selectedFiles.length;
@@ -156,7 +152,7 @@
 			fileInput.value = '';
 
 			onuploadcomplete?.({ fileCount: uploadedCount });
-		} catch (err) {
+		} catch {
 			error = 'Ошибка при загрузке файла';
 			onuploaderror?.({ error });
 		}
@@ -218,7 +214,7 @@
 					<div class="uploaded-files">
 						<p>Загруженные файлы:</p>
 						<ul>
-							{#each uploadedFiles as file}
+							{#each uploadedFiles as file (file)}
 								<li>{file}</li>
 							{/each}
 						</ul>
@@ -228,7 +224,7 @@
 					<div class="skipped-files">
 						<p>Пропущенные файлы:</p>
 						<ul>
-							{#each skippedFiles as file}
+							{#each skippedFiles as file (file)}
 								<li>{file}</li>
 							{/each}
 						</ul>
@@ -283,7 +279,7 @@
 				</div>
 
 				<div class="files-list">
-					{#each selectedFiles as file, index}
+					{#each selectedFiles as file, index (index)}
 						<div class="file-item">
 							<div class="file-info">
 								<span class="file-name">{file.name}</span>
