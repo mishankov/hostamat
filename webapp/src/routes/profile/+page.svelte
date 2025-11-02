@@ -2,144 +2,159 @@
 	import { Button, Error, IconButton, Success } from '$lib/components';
 	import Input from '$lib/components/Input.svelte';
 	import { Copy } from '$lib/icons';
-  import type { PageProps } from './$types';
+	import type { PageProps } from './$types';
 
-  let { data }: PageProps = $props();
+	let { data }: PageProps = $props();
 
-  let currentPassword = $state("")
-  let newPassword = $state("")
-  let newPasswordAgain = $state("")
-  let changePasswordButtonDisabled = $derived(
-    !(currentPassword.length > 0 &&
-      newPassword.length >= 8 && newPassword.length <= 100 && 
-      newPasswordAgain.length >= 8 && newPasswordAgain.length <= 100 && 
-      newPassword === newPasswordAgain)
-  )
+	let currentPassword = $state('');
+	let newPassword = $state('');
+	let newPasswordAgain = $state('');
+	let changePasswordButtonDisabled = $derived(
+		!(
+			currentPassword.length > 0 &&
+			newPassword.length >= 8 &&
+			newPassword.length <= 100 &&
+			newPasswordAgain.length >= 8 &&
+			newPasswordAgain.length <= 100 &&
+			newPassword === newPasswordAgain
+		)
+	);
 
-  let errorMessage = $state("")
-  let sucessMessage = $state("")
+	let errorMessage = $state('');
+	let sucessMessage = $state('');
 
-  const clearMessages = () => {
-    errorMessage = ""
-    sucessMessage = ""
-  }
+	const clearMessages = () => {
+		errorMessage = '';
+		sucessMessage = '';
+	};
 
-  const clearPasswords = () => {
-    currentPassword = ""
-    newPassword = ""
-    newPasswordAgain = ""
-  }
+	const clearPasswords = () => {
+		currentPassword = '';
+		newPassword = '';
+		newPasswordAgain = '';
+	};
 
-  const changePasswordAction = async () => {
-    clearMessages()
-    const res = await fetch("/api/auth/change-password", {
-      method: "POST",
-      body: JSON.stringify({
-        currentPassword,
-        newPassword,
-      }),
-    })
+	const changePasswordAction = async () => {
+		clearMessages();
+		const res = await fetch('/api/auth/change-password', {
+			method: 'POST',
+			body: JSON.stringify({
+				currentPassword,
+				newPassword
+			})
+		});
 
-    if (res.ok) {
-      sucessMessage = "Пароль успешно изменён!"
-      clearPasswords()
-      return
-    }
+		if (res.ok) {
+			sucessMessage = 'Пароль успешно изменён!';
+			clearPasswords();
+			return;
+		}
 
-    const data = await res.text()
-    if (res.status === 401) {
-      errorMessage = "Неверный текущий пароль"
-    } else if (data.trim() == "invalid password") {
-      errorMessage = "Пароль не соответствует требованиям"
-    } else {
-      errorMessage = "Ошибка сервера";
-    }
-  }
+		const data = await res.text();
+		if (res.status === 401) {
+			errorMessage = 'Неверный текущий пароль';
+		} else if (data.trim() == 'invalid password') {
+			errorMessage = 'Пароль не соответствует требованиям';
+		} else {
+			errorMessage = 'Ошибка сервера';
+		}
+	};
 </script>
 
 <main>
-  <div class="profile">
-    {#if errorMessage}
-      <Error message={errorMessage} />
-    {/if}
-    
-    {#if sucessMessage}
-      <Success message={sucessMessage} />
-    {/if}
-    
-    <h1>Профиль</h1>
+	<div class="profile">
+		{#if errorMessage}
+			<Error message={errorMessage} />
+		{/if}
 
-    <div class="profile-data">
-      <div class="profile-data-row">
-        <span class="label">Логин</span>
-        <div class="profile-data-value">
-          <span>{data.username}</span>
-          <IconButton onclick={() => {navigator.clipboard.writeText(data.username)}}>
-            <Copy size={15}/>
-          </IconButton>
-        </div>
-      </div>
-    </div>
+		{#if sucessMessage}
+			<Success message={sucessMessage} />
+		{/if}
 
-    <div class="change-password">
-      <h2>Смена пароля</h2>
+		<h1>Профиль</h1>
 
-      <Input id="oldPassword" type="password" label="Текущий пароль" bind:value={currentPassword}/>
-      <Input id="newPassword" type="password" label="Новый пароль" bind:value={newPassword}/>
-      <Input id="newPasswordAgain" type="password" label="Новый пароль ещё раз" bind:value={newPasswordAgain}/>
+		<div class="profile-data">
+			<div class="profile-data-row">
+				<span class="label">Логин</span>
+				<div class="profile-data-value">
+					<span>{data.username}</span>
+					<IconButton
+						onclick={() => {
+							navigator.clipboard.writeText(data.username);
+						}}
+					>
+						<Copy size={15} />
+					</IconButton>
+				</div>
+			</div>
+		</div>
 
-      <Button kind="danger" onclick={changePasswordAction} disabled={changePasswordButtonDisabled}>Сменить пароль</Button>
-    </div>
-  </div>
+		<div class="change-password">
+			<h2>Смена пароля</h2>
+
+			<Input id="oldPassword" type="password" label="Текущий пароль" bind:value={currentPassword} />
+			<Input id="newPassword" type="password" label="Новый пароль" bind:value={newPassword} />
+			<Input
+				id="newPasswordAgain"
+				type="password"
+				label="Новый пароль ещё раз"
+				bind:value={newPasswordAgain}
+			/>
+
+			<Button kind="danger" onclick={changePasswordAction} disabled={changePasswordButtonDisabled}
+				>Сменить пароль</Button
+			>
+		</div>
+	</div>
 </main>
 
 <style>
-  main {
-    width: 100%;
+	main {
+		width: 100%;
 
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .profile {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    
-    width: clamp(500px, 75%, 1200px);
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
 
-    padding: 20px;
-  }
+	.profile {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
 
-  .profile-data {
-    padding-top: 10px;
-  }
+		width: clamp(500px, 75%, 1200px);
 
-  .profile-data-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+		padding: 20px;
+	}
 
-    gap: 20px;
-  }
+	.profile-data {
+		padding-top: 10px;
+	}
 
-  span.label {
-    color: var(--color-text-secondary);
-  }
+	.profile-data-row {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
 
-  .profile-data-value {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
+		gap: 20px;
+	}
 
-  .change-password {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+	span.label {
+		color: var(--color-text-secondary);
+	}
 
-    max-width: 300px;
-  }
+	.profile-data-value {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.change-password {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+
+		max-width: 300px;
+	}
 </style>

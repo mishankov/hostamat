@@ -7,7 +7,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			method: 'POST',
 			headers: {
 				Cookie: request.headers.get('Cookie') || '',
-				'H-Site-Id': request.headers.get('H-Site-Id') || '',
+				'H-Site-Id': request.headers.get('H-Site-Id') || ''
 			}
 		});
 
