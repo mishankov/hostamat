@@ -14,13 +14,14 @@ import (
 	"os"
 	"time"
 
+	"hostamat/internal/httpclient"
+
 	"github.com/mishankov/platforma/application"
 	"github.com/mishankov/platforma/auth"
 	"github.com/mishankov/platforma/database"
 	"github.com/mishankov/platforma/httpserver"
 	"github.com/mishankov/platforma/log"
 	"github.com/mishankov/platforma/session"
-	"hostamat/internal/httpclient"
 )
 
 func main() {
@@ -53,14 +54,15 @@ func main() {
 		logger.Error("failed to create database", "error", err)
 		os.Exit(1)
 	}
+	conn := db.Connection()
 
 	// Domains
-	subdomainDomain := subdomain.New(db, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
+	subdomainDomain := subdomain.New(conn, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
 	fileDomain := file.New(s3Client, conf.S3.Bucket)
-	uploadSessionDomain := uploadsession.New(db)
-	siteDomain := site.New(db, subdomainDomain.Service, fileDomain.Service, uploadSessionDomain.Service)
-	sessionDomain := session.New(db)
-	authDomain := auth.New(db, sessionDomain.Service, "hsessionid", nil, nil)
+	uploadSessionDomain := uploadsession.New(conn)
+	siteDomain := site.New(conn, subdomainDomain.Service, fileDomain.Service, uploadSessionDomain.Service)
+	sessionDomain := session.New(conn)
+	authDomain := auth.New(conn, sessionDomain.Service, "hsessionid", nil, nil)
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()

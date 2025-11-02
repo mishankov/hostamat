@@ -1,7 +1,7 @@
 package uploadsession
 
 import (
-	"github.com/mishankov/platforma/database"
+	"github.com/jmoiron/sqlx"
 )
 
 type Domain struct {
@@ -13,7 +13,7 @@ func (d *Domain) GetRepository() any {
 	return d.Repository
 }
 
-func New(db *database.Database) *Domain {
+func New(db *sqlx.DB) *Domain {
 	repository := NewRepository(db)
 	service := NewService(repository)
 

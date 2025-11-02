@@ -3,14 +3,15 @@ package uploadsession
 import (
 	"context"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/mishankov/platforma/database"
 )
 
 type Repository struct {
-	db *database.Database
+	db *sqlx.DB
 }
 
-func NewRepository(db *database.Database) *Repository {
+func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
