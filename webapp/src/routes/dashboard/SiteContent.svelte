@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Button, Card, Info, Link, Modal } from '$lib/components';
-	import { Copy, Download, Trash, Upload } from '$lib/icons';
+	import { Button, Info, Link, Modal } from '$lib/components';
+	import { Copy, Trash, Upload } from '$lib/icons';
 
 	import FileUploader from './components/FileUploader.svelte';
 	import { IconButton } from '$lib/components';
@@ -38,7 +38,14 @@
 		<Modal bind:this={uploadModal} kind="primary">
 			<div class="upload-modal">
 				<h3>Загрузить файлы для {subdomain}</h3>
-				<Info message="При загрузке файлов все старые файлы будут удалены" />
+				<Info header="Информация о загрузке сайтов">
+					<p>При загрузке файлов все старые файлы будут удалены</p>
+					<p>
+						Разрешённые типы файлов <Link href="/about" target="_blank" alwaysUnderline
+							>на странице</Link
+						>
+					</p>
+				</Info>
 				<FileUploader
 					multiple={true}
 					uploadUrl="/api/uploadFile"
@@ -49,9 +56,9 @@
 			</div>
 		</Modal>
 
-		<IconButton title="Скачать сайт" onclick={() => {}}>
+		<!-- <IconButton title="Скачать сайт" onclick={() => {}}>
 			<Download size={20} />
-		</IconButton>
+		</IconButton> -->
 
 		<IconButton title="Удалить сайт" onclick={() => deleteModal?.open()}>
 			<Trash size={20} />
@@ -64,7 +71,7 @@
 					<Button
 						kind="danger"
 						onclick={async () => {
-							const response = await fetch('/api/deleteSite', {
+							await fetch('/api/deleteSite', {
 								method: 'POST',
 								headers: {
 									'H-Site-Id': site.id

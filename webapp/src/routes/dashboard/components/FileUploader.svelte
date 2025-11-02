@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { Button, Card, Error, ProgressBar, Success } from '$lib/components';
+	import { Button, Card, Error, Link, ProgressBar, Success } from '$lib/components';
 	import { Upload, X } from '$lib/icons';
 	import { IconButton } from '$lib/components';
 
 	interface Props {
 		uploadUrl?: string;
-		acceptedTypes?: string;
 		maxFileSize?: number;
 		multiple?: boolean;
 		disabled?: boolean;
@@ -17,7 +16,6 @@
 
 	let {
 		uploadUrl = '/api/upload',
-		acceptedTypes = '',
 		maxFileSize = 20 * 1024 * 1024, // 20MB default
 		multiple = false,
 		disabled = false,
@@ -250,12 +248,7 @@
 				<strong>Нажми тут для выбора файлов</strong> или перетащи их
 			</p>
 			<p class="drop-subtext">
-				{#if acceptedTypes}
-					Разрешённые типы файлов: {acceptedTypes}
-				{:else}
-					Разрешены все типы файлов
-				{/if}
-				• Максимальный размер: {formatFileSize(maxFileSize)}
+				Максимальный размер: {formatFileSize(maxFileSize)}
 			</p>
 		</div>
 	</div>
@@ -264,7 +257,7 @@
 		bind:this={fileInput}
 		type="file"
 		{multiple}
-		accept={acceptedTypes}
+		accept="text/html, text/css, application/javascript, image/png, image/jpeg, image/jpeg, image/svg+xml, application/x-zip-compressed"
 		onchange={handleFileSelect}
 		style="display: none;"
 		{disabled}
