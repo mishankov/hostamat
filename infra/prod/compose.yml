@@ -5,6 +5,8 @@ services:
     ports:
       - 80:80
       - 443:443
+    expose:
+      - 2019
     volumes:
       - ./config/Caddyfile:/etc/caddy/Caddyfile
       - ./container-data/caddy/data:/data
