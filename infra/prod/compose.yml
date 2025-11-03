@@ -1,12 +1,10 @@
 services:
-  # TODO: caddy admin port should probably not be exposed
   caddy:
     image: caddy:latest
     container_name: caddy
     ports:
       - 80:80
       - 443:443
-      - 2019:2019
     volumes:
       - ./config/Caddyfile:/etc/caddy/Caddyfile
       - ./container-data/caddy/data:/data
@@ -35,7 +33,7 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-  
+
   dozzle-agent:
     image: amir20/dozzle:latest
     container_name: dozzle-agent
