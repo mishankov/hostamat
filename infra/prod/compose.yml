@@ -24,6 +24,8 @@ services:
       - ${HOSTAMAT_PORT}:1001
     env_file:
       - .env
+    depends_on:
+      - caddy
     restart: unless-stopped
 
   webapp:
