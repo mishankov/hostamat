@@ -1,5 +1,8 @@
 set -e  # Exit on any error
 
+apt update
+apt upgrade -y
+
 
 # Setup private network
 # Instruction from here - https://timeweb.cloud/docs/vpc/managing-bgp-networks/configuring-private-ip#ubuntu
@@ -64,10 +67,6 @@ apt-get update
 
 # Install Docker packages
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-# Add docker group ti current user
-sudo groupadd docker
-sudo usermod -aG docker $USER
 
 echo "Docker installation completed successfully!"
 
