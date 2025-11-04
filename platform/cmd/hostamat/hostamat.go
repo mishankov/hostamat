@@ -55,6 +55,7 @@ func main() {
 		os.Exit(1)
 	}
 	conn := db.Connection()
+	defer conn.Close()
 
 	// Domains
 	subdomainDomain := subdomain.New(conn, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
