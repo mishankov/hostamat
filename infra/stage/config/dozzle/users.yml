@@ -1,0 +1,6 @@
+users:
+    mishankov:
+        email: denis@mishankov.dev
+        name: Denis Mishankov
+        password: $2a$11$ZoDSh2FGUNl5.ntZen0xVOFYZlqqYrOKjZdLvupXnL.yaf0thAESi
+        filter: ""

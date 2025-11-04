@@ -1,0 +1,23 @@
+services:
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    environment:
+      - DOZZLE_ENABLE_ACTIONS=true
+      - DOZZLE_ENABLE_SHELL=true
+      - DOZZLE_AUTH_PROVIDER=simple
+      - DOZZLE_AUTH_TTL=10000h
+      - DOZZLE_REMOTE_AGENT=109.73.205.129:7007
+    ports:
+      - 8081:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/dozzle/users.yml:/data/users.yml:ro
+
+  gatus:
+    image: ghcr.io/twin/gatus:latest
+    container_name: gatus
+    ports:
+      - 8082:8080
+    volumes:
+      - ./config/gatus:/config

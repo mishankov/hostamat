@@ -1,0 +1,51 @@
+services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    ports:
+      - 80:80
+      - 443:443
+    expose:
+      - 2019
+    volumes:
+      - ./config/Caddyfile:/etc/caddy/Caddyfile
+      - ./container-data/caddy/data:/data
+      - ./container-data/caddy/config:/config
+    command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile --resume
+    restart: unless-stopped
+
+  hostamat:
+    build:
+      context: ../../platform
+      dockerfile: Dockerfile
+      network: host
+    container_name: hostamat
+    ports:
+      - ${HOSTAMAT_PORT}:1001
+    env_file:
+      - .env
+    depends_on:
+      - caddy
+    restart: unless-stopped
+
+  webapp:
+    build:
+      context: ../../webapp
+      dockerfile: Dockerfile
+      network: host
+    container_name: landing
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  dozzle-agent:
+    image: amir20/dozzle:latest
+    container_name: dozzle-agent
+    command: agent
+    environment:
+      - DOZZLE_HOSTNAME=hostamat
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 7007:7007
+    restart: unless-stopped
