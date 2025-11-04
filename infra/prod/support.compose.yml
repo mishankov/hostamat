@@ -7,7 +7,7 @@ services:
       - DOZZLE_ENABLE_SHELL=true
       - DOZZLE_AUTH_PROVIDER=simple
       - DOZZLE_AUTH_TTL=10000h
-      - DOZZLE_REMOTE_AGENT=109.73.205.129:7007
+      - DOZZLE_REMOTE_AGENT=192.168.0.5:7007
     ports:
       - 8081:8080
     volumes:
