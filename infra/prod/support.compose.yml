@@ -35,6 +35,19 @@ services:
       - ./config/gatus:/config
     restart: unless-stopped
 
+  metabase:
+    image: metabase/metabase
+    container_name: metabase
+    ports:
+      - "8083:3000"
+    volumes:
+      - metabase_data:/metabase-data
+    environment:
+      - MB_DB_FILE=/metabase-data/metabase.db
+    restart: unless-stopped
+
 volumes:
   portainer_data:
     name: portainer_data
+  metabase_data:
+    name: metabase_data
