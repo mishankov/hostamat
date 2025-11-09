@@ -1,5 +1,4 @@
 <script lang="ts">
-	import NumberFlow from '@number-flow/svelte';
 	import { goto } from '$app/navigation';
 
 	export let data: { stats: { userCount: number; siteCount: number; uploadSessionCount: number } };
@@ -91,9 +90,9 @@
 							</svg>
 						</div>
 						<div class="text-right">
-							<div class="text-3xl font-bold text-base-content">
-								<NumberFlow value={data.stats.userCount} duration={1000} />
-							</div>
+						<div class="text-3xl font-bold text-base-content">
+							{data.stats.userCount}
+						</div>
 							<div class="text-sm text-base-content/70">Users</div>
 						</div>
 					</div>
@@ -123,9 +122,9 @@
 							</svg>
 						</div>
 						<div class="text-right">
-							<div class="text-3xl font-bold text-base-content">
-								<NumberFlow value={data.stats.siteCount} duration={1000} />
-							</div>
+						<div class="text-3xl font-bold text-base-content">
+							{data.stats.siteCount}
+						</div>
 							<div class="text-sm text-base-content/70">Sites</div>
 						</div>
 					</div>
@@ -155,9 +154,9 @@
 							</svg>
 						</div>
 						<div class="text-right">
-							<div class="text-3xl font-bold text-base-content">
-								<NumberFlow value={data.stats.uploadSessionCount} duration={1000} />
-							</div>
+						<div class="text-3xl font-bold text-base-content">
+							{data.stats.uploadSessionCount}
+						</div>
 							<div class="text-sm text-base-content/70">Sessions</div>
 						</div>
 					</div>

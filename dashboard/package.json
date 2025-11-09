@@ -16,7 +16,7 @@
 	"devDependencies": {
 		"@eslint/compat": "^1.4.0",
 		"@eslint/js": "^9.38.0",
-		"@sveltejs/adapter-auto": "^7.0.0",
+		"@sveltejs/adapter-node": "^5.4.0",
 		"@sveltejs/kit": "^2.47.1",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
 		"@tailwindcss/vite": "^4.1.14",
@@ -37,7 +37,6 @@
 	},
 	"dependencies": {
 		"@lucia-auth/adapter-postgresql": "^3.1.2",
-		"@number-flow/svelte": "^0.3.9",
 		"@tailwindcss/typography": "^0.5.19",
 		"daisyui": "^5.4.7",
 		"lucia-sveltekit": "^0.14.3",
