@@ -67,8 +67,15 @@ func main() {
 			}
 
 			if data.Token == authToken {
-				http.SetCookie(w, &http.Cookie{Value: authToken})
+				http.SetCookie(w, &http.Cookie{
+					Name:     cookieName,
+					Value:    authToken,
+					Path:     "/",
+					HttpOnly: true})
+				w.WriteHeader(200)
 			}
+
+			w.WriteHeader(http.StatusUnauthorized)
 		}
 
 	})
