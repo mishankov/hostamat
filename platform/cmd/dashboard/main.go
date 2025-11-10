@@ -33,19 +33,22 @@ func Templates() fs.FS {
 func main() {
 	ctx := context.Background()
 	app := application.New()
-	server := httpserver.New("4444", 3*time.Second)
+	authToken := os.Getenv("TOKEN")
+
 	db, err := database.New(os.Getenv("DB_CONN"))
 	if err != nil {
 		log.ErrorContext(ctx, "failed to create database", "error", err)
 	}
-	defer db.Connection().Close()
+	conn := db.Connection()
+	defer conn.Close()
 
 	tmpls, err := template.ParseFS(Templates(), "login.html", "dashboard.html")
 	if err != nil {
 		log.ErrorContext(ctx, "failed to parse templates", "error", err)
 	}
 
-	authToken := os.Getenv("TOKEN")
+	server := httpserver.New("4444", 3*time.Second)
+	server.Use(httpserver.NewRecoverMiddleware())
 
 	server.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -81,6 +84,7 @@ func main() {
 	})
 
 	server.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		cookie, err := r.Cookie(cookieName)
 		if err != nil {
 			log.InfoContext(ctx, "failed to get cookie", "error", err)
@@ -97,11 +101,37 @@ func main() {
 		err = tmpls.ExecuteTemplate(w, "dashboard.html", nil)
 		if err != nil {
 			log.ErrorContext(ctx, "failed to execute template", "error", err)
+			w.WriteHeader(500)
 		}
+
+		type metric struct {
+			Id     string   `json:"id"`
+			Name   string   `json:"name"`
+			Values []string `json:"values"`
+			Error  string   `json:"error"`
+		}
+
+		var metrics []metric = make([]metric, 3)
+
+		getMetric := func(id, name string, pos int, query string, metrics []metric) {
+			metrics[pos].Id = id
+			metrics[pos].Name = name
+			var dest = []string{""}
+			err := conn.SelectContext(ctx, &dest, query)
+			metrics[pos].Values = dest
+			if err != nil {
+				metrics[pos].Error = err.Error()
+			}
+		}
+
+		getMetric("users", "Users", 0, "select count(*) from users", metrics)
+		getMetric("sites", "Sites", 1, "select count(*) from sites", metrics)
+		getMetric("us", "Upload Sessions", 2, "select count(*) from uploadsessions", metrics)
+
+		log.InfoContext(ctx, "data", "metrics", metrics)
 	})
 
 	app.RegisterService("server", server)
-	app.RegisterDatabase("default", db)
 
 	if err := app.Run(ctx); err != nil {
 		log.ErrorContext(ctx, "applications run failed", "error", err)
