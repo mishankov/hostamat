@@ -98,12 +98,6 @@ func main() {
 			return
 		}
 
-		err = tmpls.ExecuteTemplate(w, "dashboard.html", nil)
-		if err != nil {
-			log.ErrorContext(ctx, "failed to execute template", "error", err)
-			w.WriteHeader(500)
-		}
-
 		type metric struct {
 			Id     string   `json:"id"`
 			Name   string   `json:"name"`
@@ -126,9 +120,15 @@ func main() {
 
 		getMetric("users", "Users", 0, "select count(*) from users", metrics)
 		getMetric("sites", "Sites", 1, "select count(*) from sites", metrics)
-		getMetric("us", "Upload Sessions", 2, "select count(*) from uploadsessions", metrics)
+		getMetric("us", "Uploads", 2, "select count(*) from uploadsessions", metrics)
 
 		log.InfoContext(ctx, "data", "metrics", metrics)
+
+		err = tmpls.ExecuteTemplate(w, "dashboard.html", metrics)
+		if err != nil {
+			log.ErrorContext(ctx, "failed to execute template", "error", err)
+			w.WriteHeader(500)
+		}
 	})
 
 	app.RegisterService("server", server)

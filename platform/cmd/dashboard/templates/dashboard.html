@@ -11,7 +11,23 @@
         />
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     </head>
-    <body>
-        <p>Hi, dashboard!</p>
+    <body
+        class="min-h-screen bg-base-200 flex items-center gap-4 justify-center"
+    >
+        <div
+            class="stats stats-vertical lg:stats-horizontal bg-base-100 shadow"
+        >
+            {{range .}}
+            <div class="stat">
+                <div class="stat-title">{{.Name}}</div>
+                <div class="stat-value">{{index .Values 0}}</div>
+                {{if .Error}}
+                <div role="alert" class="alert alert-error alert-soft">
+                    <span>{{.Error}}</span>
+                </div>
+                {{end}}
+            </div>
+            {{end}}
+        </div>
     </body>
 </html>
