@@ -24,14 +24,14 @@ services:
   minio:
     image: quay.io/minio/minio
     ports:
-      - "9000:9000"   # API port
-      - "9001:9001"   # Console port
+      - "9000:9000" # API port
+      - "9001:9001" # Console port
     volumes:
-      - ./container-data/minio/data:/data   # Mount host directory to /data
+      - ./container-data/minio/data:/data # Mount host directory to /data
     environment:
       - MINIO_ROOT_USER=ROOTNAME
       - MINIO_ROOT_PASSWORD=CHANGEME123
-    command: server /data --console-address ":9001"   # Launch command
+    command: server /data --console-address ":9001" # Launch command
 
   db:
     image: postgres
@@ -40,10 +40,19 @@ services:
       - POSTGRES_DB=hostamat
       - POSTGRES_USER=hostamat
       - POSTGRES_PASSWORD=hostamat
-    expose: 
+    expose:
       - 5432
-    ports: 
+    ports:
       - "5432:5432"
+
+  dashboard:
+    build:
+      context: ../../platform
+      dockerfile: Dockerfile.dashboard
+    env_file:
+      - .env
+    ports:
+      - 1002:4444
 
   hostamat:
     build:
@@ -67,12 +76,12 @@ services:
       - HOSTAMAT_POSTGRES_DB=hostamat
       - HOSTAMAT_POSTGRES_USER=hostamat
       - HOSTAMAT_POSTGRES_PASSWORD=hostamat
-  
+
       - HOSTAMAT_S3_URL=minio:9000
       - HOSTAMAT_S3_LOGIN=ROOTNAME
       - HOSTAMAT_S3_PASSWORD=CHANGEME123
       - HOSTAMAT_S3_BUCKET=hostamat
     ports:
-    - 1001:1001
+      - 1001:1001
     volumes:
       - ../../platform:/app
