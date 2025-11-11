@@ -35,6 +35,18 @@ services:
       - ./config/gatus:/config
     restart: unless-stopped
 
+  dashboard:
+    build:
+      context: ../../platform
+      dockerfile: Dockerfile.dashboard
+      network: host
+    container_name: dashboard
+    ports:
+      - 8083:4444
+    env_file:
+      - .env
+    restart: unless-stopped
+
 volumes:
   portainer_data:
     name: portainer_data
