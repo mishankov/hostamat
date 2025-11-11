@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 vars:
   GREETING: Hello, World!
@@ -15,7 +15,7 @@ tasks:
     dir: infra/test
     cmds:
       - docker compose up proxymini caddy minio db -d --remove-orphans
-  
+
   # Backend
 
   backend:
@@ -29,9 +29,14 @@ tasks:
     cmds:
       - go test ./... -v -cover
 
-  # Webapps
+  # Webapp
 
   webapp:
     dir: webapp
     cmds:
       - npm run dev
+
+  dash:
+    dir: platform
+    cmds:
+      - TOKEN=secret_token DB_CONN=postgresql://hostamat:hostamat@localhost:5432/hostamat?sslmode=disable go run ./cmd/dashboard
