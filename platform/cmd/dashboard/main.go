@@ -83,7 +83,7 @@ func main() {
 
 	})
 
-	server.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	server.HandleFunc("/dashboard", func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		cookie, err := r.Cookie(cookieName)
 		if err != nil {
