@@ -210,22 +210,26 @@
 			<div class="success-message">
 				{#if uploadedFiles.length > 0}
 					<div class="uploaded-files">
-						<p>Загруженные файлы:</p>
-						<ul>
-							{#each uploadedFiles as file (file)}
-								<li>{file}</li>
-							{/each}
-						</ul>
+						<details>
+							<summary>Загруженные файлы ({uploadedFiles.length})</summary>
+							<ul>
+								{#each uploadedFiles as file (file)}
+									<li>{file}</li>
+								{/each}
+							</ul>
+						</details>
 					</div>
 				{/if}
 				{#if skippedFiles.length > 0}
 					<div class="skipped-files">
-						<p>Пропущенные файлы:</p>
-						<ul>
-							{#each skippedFiles as file (file)}
-								<li>{file}</li>
-							{/each}
-						</ul>
+						<details>
+							<summary>Пропущенные файлы ({skippedFiles.length})</summary>
+							<ul>
+								{#each skippedFiles as file (file)}
+									<li>{file}</li>
+								{/each}
+							</ul>
+						</details>
 					</div>
 				{/if}
 			</div>
