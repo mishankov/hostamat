@@ -56,10 +56,6 @@
 			</div>
 		</Modal>
 
-		<!-- <IconButton title="Скачать сайт" onclick={() => {}}>
-			<Download size={20} />
-		</IconButton> -->
-
 		<IconButton title="Удалить сайт" onclick={() => deleteModal?.open()}>
 			<Trash size={20} />
 		</IconButton>
