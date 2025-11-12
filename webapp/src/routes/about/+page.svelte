@@ -1,5 +1,5 @@
 <script>
-	import { Badge, Card, Link } from '$lib/components';
+	import { Badge, Link } from '$lib/components';
 </script>
 
 <svelte:head>
