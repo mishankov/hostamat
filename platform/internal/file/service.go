@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mishankov/platforma/log"
+	"github.com/platforma-dev/platforma/log"
 	"github.com/platforma-dev/platforma/queue"
 )
 

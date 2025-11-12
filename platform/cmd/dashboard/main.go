@@ -10,10 +10,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/mishankov/platforma/application"
-	"github.com/mishankov/platforma/database"
-	"github.com/mishankov/platforma/httpserver"
-	"github.com/mishankov/platforma/log"
+	"github.com/platforma-dev/platforma/application"
+	"github.com/platforma-dev/platforma/database"
+	"github.com/platforma-dev/platforma/httpserver"
+	"github.com/platforma-dev/platforma/log"
 )
 
 const cookieName = "dashsession"

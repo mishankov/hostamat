@@ -8,7 +8,7 @@ import (
 	"math/rand"
 	"sync"
 
-	"github.com/mishankov/platforma/auth"
+	"github.com/platforma-dev/platforma/auth"
 
 	"github.com/google/uuid"
 )

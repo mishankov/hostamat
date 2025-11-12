@@ -16,12 +16,12 @@ import (
 
 	"hostamat/internal/httpclient"
 
-	"github.com/mishankov/platforma/application"
-	"github.com/mishankov/platforma/auth"
-	"github.com/mishankov/platforma/database"
-	"github.com/mishankov/platforma/httpserver"
-	"github.com/mishankov/platforma/log"
-	"github.com/mishankov/platforma/session"
+	"github.com/platforma-dev/platforma/application"
+	"github.com/platforma-dev/platforma/auth"
+	"github.com/platforma-dev/platforma/database"
+	"github.com/platforma-dev/platforma/httpserver"
+	"github.com/platforma-dev/platforma/log"
+	"github.com/platforma-dev/platforma/session"
 )
 
 func main() {

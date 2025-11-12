@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/mishankov/platforma/auth"
+	"github.com/platforma-dev/platforma/auth"
 )
 
 type Service struct {

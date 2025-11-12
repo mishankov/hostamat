@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/mishankov/platforma/database"
+	"github.com/platforma-dev/platforma/database"
 )
 
 type Repository struct {

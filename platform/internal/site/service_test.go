@@ -10,7 +10,7 @@ package site_test
 // 	"hostamat/internal/site"
 // 	"hostamat/internal/subdomain"
 
-// 	"github.com/mishankov/platforma/auth"
+// 	"github.com/platforma-dev/platforma/auth"
 // )
 
 // func TestService_Create(t *testing.T) {
