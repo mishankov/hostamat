@@ -1,6 +1,7 @@
 import Badge from './Badge.svelte';
 import Button from './Button.svelte';
 import Card from './Card.svelte';
+import Details from './Details.svelte';
 import Error from './Error.svelte';
 import IconButton from './IconButton.svelte';
 import Info from './Info.svelte';
@@ -15,6 +16,7 @@ export {
 	Badge,
 	Button,
 	Card,
+	Details,
 	Error,
 	IconButton,
 	Info,
