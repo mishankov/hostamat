@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Card, Error, Link, ProgressBar, Success } from '$lib/components';
+	import { Button, Card, Details, Error, Link, ProgressBar, Success } from '$lib/components';
 	import { Upload, X } from '$lib/icons';
 	import { IconButton } from '$lib/components';
 
@@ -210,26 +210,24 @@
 			<div class="success-message">
 				{#if uploadedFiles.length > 0}
 					<div class="uploaded-files">
-						<details>
-							<summary>Загруженные файлы ({uploadedFiles.length})</summary>
+						<Details summary="Загруженные файлы ({uploadedFiles.length})">
 							<ul>
 								{#each uploadedFiles as file (file)}
 									<li>{file}</li>
 								{/each}
 							</ul>
-						</details>
+						</Details>
 					</div>
 				{/if}
 				{#if skippedFiles.length > 0}
 					<div class="skipped-files">
-						<details>
-							<summary>Пропущенные файлы ({skippedFiles.length})</summary>
+						<Details summary="Пропущенные файлы ({skippedFiles.length})">
 							<ul>
 								{#each skippedFiles as file (file)}
 									<li>{file}</li>
 								{/each}
 							</ul>
-						</details>
+						</Details>
 					</div>
 				{/if}
 			</div>
