@@ -19,14 +19,14 @@ body {
 	--color-primary: #ffffff;
 	--color-primary-dim: #1a1a1a;
 
-	--color-confirm: hsla(110, 100%, 50%, 1);
-	--color-confirm-dim: hsla(110, 100%, 50%, 0.25);
+	--color-confirm: hsla(150, 80%, 50%, 1);
+	--color-confirm-dim: hsla(150, 90%, 15%);
 
-	--color-danger: hsla(338, 100%, 50%, 1);
-	--color-danger-dim: hsla(338, 100%, 50%, 0.25);
+	--color-danger: hsla(350, 80%, 50%, 1);
+	--color-danger-dim: hsla(350, 90%, 15%);
 
-	--color-action: hsla(200, 100%, 50%, 1);
-	--color-action-dim: hsla(200, 100%, 50%, 0.25);
+	--color-action: hsla(195, 80%, 50%, 1);
+	--color-action-dim: hsla(195, 90%, 15%);
 
 	--border-width: 0.5px;
 	--border-style: solid;
