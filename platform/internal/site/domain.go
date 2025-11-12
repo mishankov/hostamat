@@ -5,7 +5,7 @@ import (
 	"hostamat/internal/uploadsession"
 	"net/http"
 
-	"github.com/mishankov/platforma/httpserver"
+	"github.com/platforma-dev/platforma/httpserver"
 )
 
 type Domain struct {

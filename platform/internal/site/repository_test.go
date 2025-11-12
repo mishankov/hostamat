@@ -9,7 +9,7 @@ package site_test
 
 // 	"hostamat/internal/site"
 
-// 	"github.com/mishankov/platforma/database"
+// 	"github.com/platforma-dev/platforma/database"
 
 // 	_ "github.com/glebarez/go-sqlite"
 // 	"github.com/jmoiron/sqlx"

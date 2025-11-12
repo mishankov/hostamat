@@ -6,7 +6,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/minio/minio-go/v7 v7.0.94
-	github.com/mishankov/platforma v0.1.0-alpha.8
+	github.com/platforma-dev/platforma v0.1.0-alpha.13
 )
 
 require (

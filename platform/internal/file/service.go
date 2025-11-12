@@ -7,8 +7,10 @@ import (
 	"io"
 	"path/filepath"
 	"strings"
+	"time"
 
-	"github.com/mishankov/platforma/log"
+	"github.com/platforma-dev/platforma/log"
+	"github.com/platforma-dev/platforma/queue"
 )
 
 type repository interface {
@@ -19,15 +21,27 @@ type repository interface {
 }
 
 type Service struct {
-	repo       repository
-	bucketName string
+	repo                  repository
+	bucketName            string
+	deleteFolderProcessor *queue.Processor[string]
 }
 
 func NewService(repo repository, bucketName string) *Service {
-	return &Service{
+
+	service := &Service{
 		repo:       repo,
 		bucketName: bucketName,
 	}
+
+	deleteFolderQueue := queue.NewChanQueue[string](5, time.Second)
+	service.deleteFolderProcessor = queue.New(queue.HandlerFunc[string](func(ctx context.Context, folder string) {
+		err := service.deleteFromFolder(ctx, folder)
+		if err != nil {
+			log.ErrorContext(ctx, "failed to delete files from folder", "folder", folder, "error", err)
+		}
+	}), deleteFolderQueue, 2, 3*time.Second)
+
+	return service
 }
 
 func (s *Service) GetFile(ctx context.Context, path string) (io.Reader, error) {
@@ -59,6 +73,10 @@ func (s *Service) UploadFile(ctx context.Context, path, filename string, file io
 }
 
 func (s *Service) DeleteFromFolder(ctx context.Context, folder string) error {
+	return s.deleteFolderProcessor.Enqueue(ctx, folder)
+}
+
+func (s *Service) deleteFromFolder(ctx context.Context, folder string) error {
 	return s.repo.DeleteFromFolder(ctx, s.bucketName, folder)
 }
 

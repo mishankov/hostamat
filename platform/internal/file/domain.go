@@ -1,8 +1,11 @@
 package file
 
+import "github.com/platforma-dev/platforma/queue"
+
 type Domain struct {
-	Repository *Repository
-	Service    *Service
+	Repository        *Repository
+	Service           *Service
+	DeleteFolderQueue *queue.Processor[string]
 }
 
 func (d *Domain) GetRepository() any {
@@ -14,7 +17,8 @@ func New(s3Client s3, bucketName string) *Domain {
 	service := NewService(repository, bucketName)
 
 	return &Domain{
-		Repository: repository,
-		Service:    service,
+		Repository:        repository,
+		Service:           service,
+		DeleteFolderQueue: service.deleteFolderProcessor,
 	}
 }

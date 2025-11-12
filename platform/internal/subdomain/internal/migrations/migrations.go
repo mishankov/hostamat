@@ -1,6 +1,6 @@
 package migrations
 
-import "github.com/mishankov/platforma/database"
+import "github.com/platforma-dev/platforma/database"
 
 var Migrations = []database.Migration{
 	{

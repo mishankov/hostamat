@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mishankov/platforma/auth"
+	"github.com/platforma-dev/platforma/auth"
 )
 
 func TestCreateSiteHandler_ServeHTTP(t *testing.T) {

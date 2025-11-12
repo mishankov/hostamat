@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"hostamat/internal/subdomain/internal/migrations"
 
-	"github.com/mishankov/platforma/database"
+	"github.com/platforma-dev/platforma/database"
 )
 
 const (
