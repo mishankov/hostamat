@@ -39,7 +39,7 @@
 		<Modal
 			bind:this={uploadModal}
 			kind="primary"
-			openCallback={() => {
+			closeCallback={() => {
 				fileUploader?.resetUploadState();
 			}}
 		>
