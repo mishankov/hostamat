@@ -2,6 +2,10 @@
 	import { Card, Link } from '$lib/components';
 </script>
 
+<svelte:head>
+	<title>О сервисе | Хостамат</title>
+</svelte:head>
+
 <main>
 	<div class="about">
 		<div class="header">

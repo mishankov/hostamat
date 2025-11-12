@@ -1,6 +1,5 @@
 <script>
 	import Button from '$lib/components/Button.svelte';
-	import Card from '$lib/components/Card.svelte';
 	import Error from '$lib/components/Error.svelte';
 	import Input from '$lib/components/Input.svelte';
 
@@ -31,6 +30,10 @@
 		}
 	};
 </script>
+
+<svelte:head>
+	<title>Вход | Хостамат</title>
+</svelte:head>
 
 <svelte:window
 	on:keydown={(e) => {

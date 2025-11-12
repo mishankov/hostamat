@@ -5,6 +5,10 @@
 	import Check from '$lib/icons/Check.svelte';
 </script>
 
+<svelte:head>
+	<title>Компоненты | Хостамат</title>
+</svelte:head>
+
 <div style="display:flex; flex-direction:column; gap:20px; padding:10px;">
 	<h1>Buttons</h1>
 

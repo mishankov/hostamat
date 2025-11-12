@@ -61,6 +61,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Профиль | Хостамат</title>
+</svelte:head>
+
 <main>
 	<div class="profile">
 		{#if errorMessage}

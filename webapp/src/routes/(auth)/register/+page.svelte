@@ -44,6 +44,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Регистрация | Хостамат</title>
+</svelte:head>
+
 <svelte:window
 	on:keydown={(e) => {
 		if (e.key === 'Enter' && !registerButtonDisabled) {
