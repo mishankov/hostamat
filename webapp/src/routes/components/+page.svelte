@@ -23,6 +23,15 @@
 		<Button kind="action">Action</Button>
 	</div>
 
+	<h3>Filled</h3>
+
+	<div style="display: flex; gap: 10px">
+		<Button kind="primary" filled>Primary</Button>
+		<Button kind="confirm" filled>Confirm</Button>
+		<Button kind="danger" filled>Danger</Button>
+		<Button kind="action" filled>Action</Button>
+	</div>
+
 	<h2>On click event</h2>
 
 	<Button onclick={(event) => alert('Hey!')}>Click me!</Button>
