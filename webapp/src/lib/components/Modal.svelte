@@ -3,14 +3,19 @@
 
 	let {
 		children,
-		kind = 'primary'
+		kind = 'primary',
+		openCallback = () => {}
 	}: {
 		children?: Snippet;
 		kind?: 'primary' | 'danger';
+		openCallback?: () => void;
 	} = $props();
 
 	let dialog = $state<HTMLDialogElement>();
-	export const open = () => dialog?.showModal();
+	export const open = () => {
+		openCallback();
+		dialog?.showModal();
+	};
 </script>
 
 <dialog

@@ -33,7 +33,7 @@
 	let uploadedFiles: string[] = $state([]);
 	let skippedFiles: string[] = $state([]);
 
-	function resetUploadState() {
+	export function resetUploadState() {
 		uploadedFiles = [];
 		skippedFiles = [];
 		uploadProgress = 0;
