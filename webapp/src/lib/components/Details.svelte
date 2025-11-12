@@ -1,17 +1,16 @@
 <script lang="ts">
-	import Link from './Link.svelte';
-
 	let { summary = '', children = undefined } = $props();
 </script>
 
 <details>
-	<summary><Link alwaysUnderline>{summary}</Link></summary>
+	<summary>{summary}</summary>
 	{@render children()}
 </details>
 
 <style>
 	summary {
 		padding-bottom: 5px;
+		text-decoration: underline;
 	}
 
 	summary::marker {
