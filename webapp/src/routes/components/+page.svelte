@@ -5,6 +5,10 @@
 	import Check from '$lib/icons/Check.svelte';
 </script>
 
+<svelte:head>
+	<title>Компоненты | Хостамат</title>
+</svelte:head>
+
 <div style="display:flex; flex-direction:column; gap:20px; padding:10px;">
 	<h1>Buttons</h1>
 
@@ -17,6 +21,15 @@
 		<Button kind="confirm">Confirm</Button>
 		<Button kind="danger">Danger</Button>
 		<Button kind="action">Action</Button>
+	</div>
+
+	<h3>Filled</h3>
+
+	<div style="display: flex; gap: 10px">
+		<Button kind="primary" filled>Primary</Button>
+		<Button kind="confirm" filled>Confirm</Button>
+		<Button kind="danger" filled>Danger</Button>
+		<Button kind="action" filled>Action</Button>
 	</div>
 
 	<h2>On click event</h2>

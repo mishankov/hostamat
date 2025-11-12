@@ -28,6 +28,10 @@
 	updateState();
 </script>
 
+<svelte:head>
+	<title>Дашборд | Хостамат</title>
+</svelte:head>
+
 <main>
 	<div class="dashboard">
 		<h1>Твои сайты</h1>

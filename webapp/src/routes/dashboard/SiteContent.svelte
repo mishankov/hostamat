@@ -16,6 +16,7 @@
 
 	let uploadModal = $state<Modal>();
 	let deleteModal = $state<Modal>();
+	let fileUploader = $state<FileUploader>();
 </script>
 
 <div class="site-content">
@@ -35,7 +36,13 @@
 		<IconButton onclick={() => uploadModal?.open()} title="Загрузить сайт">
 			<Upload size={20} />
 		</IconButton>
-		<Modal bind:this={uploadModal} kind="primary">
+		<Modal
+			bind:this={uploadModal}
+			kind="primary"
+			closeCallback={() => {
+				fileUploader?.resetUploadState();
+			}}
+		>
 			<div class="upload-modal">
 				<h3>Загрузить файлы для {subdomain}</h3>
 				<Info header="Информация о загрузке сайтов">
@@ -47,6 +54,7 @@
 					</p>
 				</Info>
 				<FileUploader
+					bind:this={fileUploader}
 					multiple={true}
 					uploadUrl="/api/uploadFile"
 					additionalHeaders={{
@@ -55,10 +63,6 @@
 				/>
 			</div>
 		</Modal>
-
-		<!-- <IconButton title="Скачать сайт" onclick={() => {}}>
-			<Download size={20} />
-		</IconButton> -->
 
 		<IconButton title="Удалить сайт" onclick={() => deleteModal?.open()}>
 			<Trash size={20} />

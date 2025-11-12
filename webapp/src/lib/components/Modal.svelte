@@ -3,14 +3,26 @@
 
 	let {
 		children,
-		kind = 'primary'
+		kind = 'primary',
+		openCallback = () => {},
+		closeCallback = () => {}
 	}: {
 		children?: Snippet;
 		kind?: 'primary' | 'danger';
+		openCallback?: () => void;
+		closeCallback?: () => void;
 	} = $props();
 
 	let dialog = $state<HTMLDialogElement>();
-	export const open = () => dialog?.showModal();
+	export const open = () => {
+		openCallback();
+		dialog?.showModal();
+	};
+
+	export const close = () => {
+		closeCallback();
+		dialog?.close();
+	};
 </script>
 
 <dialog
@@ -18,7 +30,7 @@
 	class={kind}
 	onclick={(e: MouseEvent) => {
 		if (e.target === dialog) {
-			dialog?.close();
+			close();
 		}
 	}}
 >

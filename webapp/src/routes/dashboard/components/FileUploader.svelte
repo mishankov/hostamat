@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Card, Error, Link, ProgressBar, Success } from '$lib/components';
+	import { Button, Card, Details, Error, Link, ProgressBar, Success } from '$lib/components';
 	import { Upload, X } from '$lib/icons';
 	import { IconButton } from '$lib/components';
 
@@ -33,7 +33,7 @@
 	let uploadedFiles: string[] = $state([]);
 	let skippedFiles: string[] = $state([]);
 
-	function resetUploadState() {
+	export function resetUploadState() {
 		uploadedFiles = [];
 		skippedFiles = [];
 		uploadProgress = 0;
@@ -210,22 +210,24 @@
 			<div class="success-message">
 				{#if uploadedFiles.length > 0}
 					<div class="uploaded-files">
-						<p>Загруженные файлы:</p>
-						<ul>
-							{#each uploadedFiles as file (file)}
-								<li>{file}</li>
-							{/each}
-						</ul>
+						<Details summary="Загруженные файлы ({uploadedFiles.length})">
+							<ul>
+								{#each uploadedFiles as file (file)}
+									<li>{file}</li>
+								{/each}
+							</ul>
+						</Details>
 					</div>
 				{/if}
 				{#if skippedFiles.length > 0}
 					<div class="skipped-files">
-						<p>Пропущенные файлы:</p>
-						<ul>
-							{#each skippedFiles as file (file)}
-								<li>{file}</li>
-							{/each}
-						</ul>
+						<Details summary="Пропущенные файлы ({skippedFiles.length})">
+							<ul>
+								{#each skippedFiles as file (file)}
+									<li>{file}</li>
+								{/each}
+							</ul>
+						</Details>
 					</div>
 				{/if}
 			</div>

@@ -1,6 +1,5 @@
 <script>
 	import Button from '$lib/components/Button.svelte';
-	import Card from '$lib/components/Card.svelte';
 	import Error from '$lib/components/Error.svelte';
 	import Input from '$lib/components/Input.svelte';
 
@@ -32,6 +31,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Вход | Хостамат</title>
+</svelte:head>
+
 <svelte:window
 	on:keydown={(e) => {
 		if (e.key === 'Enter' && !loginButtonDisabled) {
@@ -46,8 +49,14 @@
 	<Error message={error} />
 {/if}
 
-<Input id="login" type="text" label="Логин" bind:value={login} />
-<Input id="password" type="password" label="Пароль" bind:value={password} />
+<Input id="login" type="text" label="Логин" bind:value={login} placeholder="ivan" />
+<Input
+	id="password"
+	type="password"
+	label="Пароль"
+	bind:value={password}
+	placeholder="verysecure"
+/>
 
 <div class="actions">
 	<Button filled onclick={loginAction} disabled={loginButtonDisabled}>Войти</Button>

@@ -12,7 +12,7 @@
 	span {
 		width: fit-content;
 
-		border-radius: 15px;
+		border-radius: var(--border-radius-regular);
 
 		padding: 4px 8px;
 

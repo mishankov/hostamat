@@ -2,6 +2,10 @@
 	import { Badge, Button, Card } from '$lib/components';
 </script>
 
+<svelte:head>
+	<title>Хостамат</title>
+</svelte:head>
+
 <main>
 	<div class="landing">
 		<div class="header">
