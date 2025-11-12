@@ -41,7 +41,7 @@
 
 		border-width: 1px;
 		border-style: solid;
-		border-radius: 15px;
+		border-radius: var(--border-radius-regular);
 
 		padding: 12px 20px;
 

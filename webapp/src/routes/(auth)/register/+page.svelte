@@ -58,9 +58,21 @@
 	<Error message={error} />
 {/if}
 
-<Input id="login" type="text" label="Логин" bind:value={login} />
-<Input id="password" type="password" label="Пароль" bind:value={password} />
-<Input id="passwordAgain" type="password" label="Пароль ещё раз" bind:value={passwordAgain} />
+<Input id="login" type="text" label="Логин" bind:value={login} placeholder="ivan" />
+<Input
+	id="password"
+	type="password"
+	label="Пароль"
+	bind:value={password}
+	placeholder="verysecure"
+/>
+<Input
+	id="passwordAgain"
+	type="password"
+	label="Пароль ещё раз"
+	bind:value={passwordAgain}
+	placeholder="verysecure"
+/>
 
 <Card kind="primary">
 	<div class="password-rules">

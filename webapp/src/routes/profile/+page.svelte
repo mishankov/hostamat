@@ -92,13 +92,26 @@
 		<div class="change-password">
 			<h2>Смена пароля</h2>
 
-			<Input id="oldPassword" type="password" label="Текущий пароль" bind:value={currentPassword} />
-			<Input id="newPassword" type="password" label="Новый пароль" bind:value={newPassword} />
+			<Input
+				id="oldPassword"
+				type="password"
+				label="Текущий пароль"
+				bind:value={currentPassword}
+				placeholder="verysecure"
+			/>
+			<Input
+				id="newPassword"
+				type="password"
+				label="Новый пароль"
+				bind:value={newPassword}
+				placeholder="verysecure2"
+			/>
 			<Input
 				id="newPasswordAgain"
 				type="password"
 				label="Новый пароль ещё раз"
 				bind:value={newPasswordAgain}
+				placeholder="verysecure2"
 			/>
 
 			<Button kind="danger" onclick={changePasswordAction} disabled={changePasswordButtonDisabled}

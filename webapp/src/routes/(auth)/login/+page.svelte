@@ -46,8 +46,14 @@
 	<Error message={error} />
 {/if}
 
-<Input id="login" type="text" label="Логин" bind:value={login} />
-<Input id="password" type="password" label="Пароль" bind:value={password} />
+<Input id="login" type="text" label="Логин" bind:value={login} placeholder="ivan" />
+<Input
+	id="password"
+	type="password"
+	label="Пароль"
+	bind:value={password}
+	placeholder="verysecure"
+/>
 
 <div class="actions">
 	<Button filled onclick={loginAction} disabled={loginButtonDisabled}>Войти</Button>
