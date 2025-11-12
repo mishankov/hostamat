@@ -118,6 +118,7 @@ func main() {
 	app.RegisterDomain("uploadsession", "default", uploadSessionDomain)
 
 	app.RegisterService("http", httpServer)
+	app.RegisterService("deleteFolderQueue", fileDomain.DeleteFolderQueue)
 
 	if err := app.Run(ctx); err != nil {
 		logger.Error("Applicaton finished with error", "error", err)
