@@ -131,7 +131,7 @@ func (s *Service) uploadZipArchive(ctx context.Context, folder string, file io.R
 }
 
 func isAllowedFile(filename string) bool {
-	if filename == "" || strings.HasPrefix(filename, ".") || strings.Contains(filename, "/.") {
+	if filename == "" || strings.HasPrefix(filename, ".") || strings.Contains(filename, "/.") || strings.Contains(filename, "node_modules") {
 		return false
 	}
 	return isAllowedExtension(filename)
