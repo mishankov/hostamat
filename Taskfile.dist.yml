@@ -34,7 +34,7 @@ tasks:
   webapp:
     dir: webapp
     cmds:
-      - npm run dev
+      - bun run --bun dev
 
   dash:
     dir: platform
