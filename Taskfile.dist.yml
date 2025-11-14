@@ -50,3 +50,23 @@ tasks:
   pull-prod:
     cmds:
       - ssh -t {{.SSH_PROD}} 'cd ~/hostamat; git pull'
+
+  # Docker
+
+  push-backend:
+    vars:
+      TAG: backend:latest
+    dir: platform
+    cmds:
+      - docker build --tag {{.TAG}} .
+      - docker tag {{.TAG}} hostamat-container-registry.registry.twcstorage.ru/hostamat/{{.TAG}}
+      - docker push hostamat-container-registry.registry.twcstorage.ru/hostamat/{{.TAG}}
+
+  push-webapp:
+    vars:
+      TAG: webapp:latest
+    dir: webapp
+    cmds:
+      - docker build --tag {{.TAG}} .
+      - docker tag {{.TAG}} hostamat-container-registry.registry.twcstorage.ru/hostamat/{{.TAG}}
+      - docker push hostamat-container-registry.registry.twcstorage.ru/hostamat/{{.TAG}}
