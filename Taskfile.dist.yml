@@ -1,7 +1,7 @@
 version: "3"
 
 vars:
-  GREETING: Hello, World!
+  SSH_PROD: root@31.130.147.84
 
 tasks:
   # Infra
@@ -40,3 +40,13 @@ tasks:
     dir: platform
     cmds:
       - TOKEN=secret_token DB_CONN=postgresql://hostamat:hostamat@localhost:5432/hostamat?sslmode=disable go run ./cmd/dashboard
+
+  # Deploy
+
+  deploy-prod:
+    cmds:
+      - ssh -t {{.SSH_PROD}} 'cd ~/hostamat/infra/prod; ./scripts/deploy-app.sh'
+
+  pull-prod:
+    cmds:
+      - ssh -t {{.SSH_PROD}} 'cd ~/hostamat; git pull'
