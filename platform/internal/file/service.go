@@ -140,7 +140,9 @@ func isAllowedFile(filename string) bool {
 func isAllowedExtension(filename string) bool {
 	ext := strings.ToLower(strings.TrimPrefix(strings.ToLower(filepath.Ext(filename)), "."))
 	switch ext {
-	case "html", "css", "js", "png", "jpg", "jpeg", "svg":
+	case "html", "css", "js",
+		"png", "jpg", "jpeg", "svg", "gif", "ico", "webp",
+		"woff2", "woff", "ttf", "eot":
 		return true
 	default:
 		return false

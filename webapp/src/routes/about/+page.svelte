@@ -32,15 +32,30 @@
 
 			<div class="card">
 				<h2>Поддерживаемые форматы</h2>
+				<h3>Исходный код</h3>
 				<div class="file-types">
-					<Badge text="HTML" />
-					<Badge text="CSS" />
-					<Badge text="JavaScript" />
-					<Badge text="PNG" />
-					<Badge text="JPG" />
-					<Badge text="JPEG" />
-					<Badge text="SVG" />
-					<Badge text="ZIP" />
+					<Badge text="html" />
+					<Badge text="css" />
+					<Badge text="js" />
+				</div>
+
+				<h3>Изображения</h3>
+				<div class="file-types">
+					<Badge text="png" />
+					<Badge text="jpg" />
+					<Badge text="jpeg" />
+					<Badge text="svg" />
+					<Badge text="gif" />
+					<Badge text="ico" />
+					<Badge text="webp" />
+				</div>
+
+				<h3>Шрифты</h3>
+				<div class="file-types">
+					<Badge text="woff2" />
+					<Badge text="woff" />
+					<Badge text="ttf" />
+					<Badge text="eot" />
 				</div>
 			</div>
 
