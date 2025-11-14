@@ -15,10 +15,7 @@ services:
     restart: unless-stopped
 
   hostamat:
-    build:
-      context: ../../platform
-      dockerfile: Dockerfile
-      network: host
+    image: hostamat-container-registry.registry.twcstorage.ru/hostamat/backend:latest
     container_name: hostamat
     ports:
       - ${HOSTAMAT_PORT}:1001
@@ -29,10 +26,7 @@ services:
     restart: unless-stopped
 
   webapp:
-    build:
-      context: ../../webapp
-      dockerfile: Dockerfile
-      network: host
+    image: hostamat-container-registry.registry.twcstorage.ru/hostamat/webapp:latest
     container_name: landing
     expose:
       - 3000

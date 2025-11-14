@@ -1,7 +1,9 @@
 version: "3"
 
 vars:
-  SSH_PROD: root@31.130.147.84
+  SSH_PROD_APP: root@31.130.147.84
+  SSH_PROD_SUPPORT: root@147.45.109.74
+  CONTAINER_REGISTRY: hostamat-container-registry.registry.twcstorage.ru
 
 tasks:
   # Infra
@@ -41,12 +43,48 @@ tasks:
     cmds:
       - TOKEN=secret_token DB_CONN=postgresql://hostamat:hostamat@localhost:5432/hostamat?sslmode=disable go run ./cmd/dashboard
 
+  # Docker
+
+  push-backend:
+    vars:
+      TAG: hostamat/backend:latest
+    dir: platform
+    cmds:
+      - docker build --tag {{.TAG}} --platform linux/amd64 .
+      - docker tag {{.TAG}} {{.CONTAINER_REGISTRY}}/{{.TAG}}
+      - docker push {{.CONTAINER_REGISTRY}}/{{.TAG}}
+
+  push-webapp:
+    vars:
+      TAG: hostamat/webapp:latest
+    dir: webapp
+    cmds:
+      - docker build --tag {{.TAG}} --platform linux/amd64 .
+      - docker tag {{.TAG}} {{.CONTAINER_REGISTRY}}/{{.TAG}}
+      - docker push {{.CONTAINER_REGISTRY}}/{{.TAG}}
+
+  push-dashboard:
+    vars:
+      TAG: hostamat/dashboard:latest
+    dir: platform
+    cmds:
+      - docker build --tag {{.TAG}} --platform linux/amd64 --file Dockerfile.dashboard .
+      - docker tag {{.TAG}} {{.CONTAINER_REGISTRY}}/{{.TAG}}
+      - docker push {{.CONTAINER_REGISTRY}}/{{.TAG}}
+
   # Deploy
 
-  deploy-prod:
+  deploy-prod-app:
+    deps: ["push-backend", "push-webapp"]
     cmds:
-      - ssh -t {{.SSH_PROD}} 'cd ~/hostamat/infra/prod; ./scripts/deploy-app.sh'
+      - cat ./infra/prod/scripts/deploy-app.sh | ssh -t {{.SSH_PROD_APP}}
 
-  pull-prod:
+  deploy-prod-support:
+    deps: ["push-dashboard"]
     cmds:
-      - ssh -t {{.SSH_PROD}} 'cd ~/hostamat; git pull'
+      - cat ./infra/prod/scripts/deploy-support.sh | ssh -t {{.SSH_PROD_SUPPORT}}
+
+  deploy-prod:
+    deps: ["deploy-prod-support", "deploy-prod-app"]
+    cmds:
+      - ssh -t {{.SSH_PROD_APP}} 'cd ./hostamat/infra/prod; docker compose logs hostamat -f'
