@@ -32,13 +32,11 @@ export const getSites = async (
 };
 
 export const deleteSite = async (siteId: string) => {
-	const resp = await fetch('/api/proxy', {
+	await fetch('/api/proxy', {
 		method: 'POST',
 		headers: {
 			'X-Method': 'deleteSite',
 			'H-Site-Id': siteId
 		}
 	});
-
-	return resp.ok;
 };
