@@ -7,7 +7,7 @@ import (
 )
 
 type createSiteService interface {
-	Create(context.Context) (*Site, error)
+	Create(context.Context, string) (*Site, error)
 }
 
 type CreateSiteHandler struct {
@@ -28,7 +28,21 @@ func (h *CreateSiteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	site, err := h.service.Create(ctx)
+	var requestBody struct {
+		Name string `json:"name"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if requestBody.Name == "" {
+		http.Error(w, "Name is required", http.StatusBadRequest)
+		return
+	}
+
+	site, err := h.service.Create(ctx, requestBody.Name)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

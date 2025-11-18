@@ -44,7 +44,7 @@ func NewService(repository repository, subdomainService subdomainService, fileSe
 	}
 }
 
-func (s *Service) Create(ctx context.Context) (*Site, error) {
+func (s *Service) Create(ctx context.Context, name string) (*Site, error) {
 	var err error
 
 	// GetList also checks access so no need to check it further...
@@ -70,6 +70,7 @@ func (s *Service) Create(ctx context.Context) (*Site, error) {
 
 	site := &Site{
 		Id:        uuid.NewString(),
+		Name:      name,
 		User:      user.ID,
 		Subdomain: subdomain.Id,
 		Domain:    subdomain.FullDomain,
