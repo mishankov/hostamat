@@ -12,6 +12,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			case 'getSites':
 				config = ProxyConfig.getSites;
 				break;
+			case 'deleteSite':
+				config = ProxyConfig.deleteSite;
+				break;
 			default:
 				return new Response('Method not allowed', { status: 405 });
 		}

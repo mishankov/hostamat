@@ -4,7 +4,8 @@
 
 	import FileUploader from './components/FileUploader.svelte';
 	import { IconButton } from '$lib/components';
-	import { type Site } from './types';
+	import { type Site } from '$lib/types';
+	import { deleteSite } from '$lib/api-client';
 
 	interface Props {
 		site: Site;
@@ -76,12 +77,7 @@
 					<Button
 						kind="danger"
 						onclick={async () => {
-							await fetch('/api/deleteSite', {
-								method: 'POST',
-								headers: {
-									'H-Site-Id': site.id
-								}
-							});
+							await deleteSite(site.id);
 
 							window.location.reload();
 						}}>Удалить</Button
