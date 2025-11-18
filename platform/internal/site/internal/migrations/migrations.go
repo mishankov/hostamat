@@ -21,12 +21,8 @@ var Migrations = []database.Migration{
 		Down: `ALTER TABLE sites DROP COLUMN "user"`,
 	},
 	{
-		ID: "truncate_sites_table",
-		Up: `TRUNCATE TABLE sites`,
-	},
-	{
 		ID:   "add_name_column",
-		Up:   `ALTER TABLE sites ADD COLUMN "name" VARCHAR(255) NOT NULL`,
+		Up:   `ALTER TABLE sites ADD COLUMN "name" VARCHAR(255) NOT NULL DEFAULT 'Сайт'`,
 		Down: `ALTER TABLE sites DROP COLUMN "name"`,
 	},
 }
