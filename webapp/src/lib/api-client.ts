@@ -1,3 +1,5 @@
+import { type Site } from '$lib/types';
+
 export const createSite = async (name: string) => {
 	const resp = await fetch('/api/proxy', {
 		method: 'POST',
@@ -8,4 +10,23 @@ export const createSite = async (name: string) => {
 	});
 
 	return resp.ok;
+};
+
+type SitesResponse = {
+	sites: Site[];
+	maxAmount: number;
+};
+
+export const getSites = async (
+	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+	request: Request
+): Promise<SitesResponse | null> => {
+	const headers = request.headers;
+	headers.append('X-Method', 'getSites');
+	const resp = await fetch('/api/proxy', {
+		method: 'POST',
+		headers: headers
+	});
+
+	return resp.ok ? await resp.json() : null;
 };

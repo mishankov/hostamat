@@ -5,7 +5,7 @@
 	import { Button, Card, Error, Info, Input, Modal } from '$lib/components';
 	import { Spinner, Plus } from '$lib/icons';
 
-	import { type Site } from './types';
+	import { type Site } from '$lib/types';
 	import SiteContent from './SiteContent.svelte';
 	import { createSite } from '$lib/api-client';
 
@@ -19,11 +19,8 @@
 	const updateState = async () => {
 		const sitesResp = await data.sitesResp;
 
-		sites = sitesResp.sites;
-		if (!sites) {
-			sites = [];
-		}
-		maxAmount = sitesResp.maxAmount || 0;
+		sites = sitesResp?.sites || [];
+		maxAmount = sitesResp?.maxAmount || 0;
 
 		newSiteName = 'Новый сайт';
 		loading = false;

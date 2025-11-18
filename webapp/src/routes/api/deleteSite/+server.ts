@@ -3,7 +3,7 @@ import { Config } from '$lib/config';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		const response = await fetch(Config.sites.createUrl, {
+		const response = await fetch(Config.sites.deleteUrl, {
 			method: 'DELETE',
 			headers: {
 				'H-Site-Id': request.headers.get('H-Site-Id') || '',

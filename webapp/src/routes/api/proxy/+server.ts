@@ -1,13 +1,16 @@
 import type { RequestHandler } from './$types';
 import { ProxyConfig } from '$lib/server/config';
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		const method = request.headers.get('X-Method');
 		let config;
 		switch (method) {
 			case 'createSite':
 				config = ProxyConfig.createSite;
+				break;
+			case 'getSites':
+				config = ProxyConfig.getSites;
 				break;
 			default:
 				return new Response('Method not allowed', { status: 405 });
