@@ -20,6 +20,7 @@ type repository interface {
 	GetByDomain(ctx context.Context, domain string) (*Site, error)
 	GetList(ctx context.Context, userId string) ([]*Site, error)
 	Create(ctx context.Context, site *Site) error
+	Update(ctx context.Context, site *Site) error
 	Delete(ctx context.Context, id string) error
 }
 
@@ -131,6 +132,18 @@ func (s *Service) GetList(ctx context.Context) ([]*Site, error) {
 	}
 
 	return s.repository.GetList(ctx, user.ID)
+}
+
+func (s *Service) UpdateName(ctx context.Context, id, name string) error {
+	site, err := s.Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	site.Name = name
+	site.UpdatedAt = time.Now()
+
+	return s.repository.Update(ctx, site)
 }
 
 func (s *Service) Delete(ctx context.Context, id string) error {
