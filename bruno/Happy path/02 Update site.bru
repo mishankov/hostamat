@@ -1,0 +1,19 @@
+meta {
+  name: 02 Update site
+  type: http
+  seq: 3
+}
+
+put {
+  url: http://localhost:1001/api/sites
+  body: json
+  auth: inherit
+}
+
+headers {
+  H-Site-Id: e12003e6-c366-4ed1-b1cd-de2a17f93b4d
+}
+
+body:json {
+  {"name": "great site"}
+}
