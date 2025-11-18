@@ -20,7 +20,6 @@ type repository interface {
 	GetByDomain(ctx context.Context, domain string) (*Site, error)
 	GetList(ctx context.Context, userId string) ([]*Site, error)
 	Create(ctx context.Context, site *Site) error
-	Update(ctx context.Context, site *Site) error
 	Delete(ctx context.Context, id string) error
 }
 

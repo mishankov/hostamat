@@ -35,8 +35,8 @@ func (r *Repository) Migrations() []database.Migration {
 
 func (r *Repository) Create(ctx context.Context, site *Site) error {
 	query := `
-		INSERT INTO ` + tableName + ` (id, "user", subdomain, domain, created_at, updated_at, version)
-		VALUES (:id, :user, :subdomain, :domain, :created_at, :updated_at, :version)
+		INSERT INTO ` + tableName + ` (id, name, "user", subdomain, domain, created_at, updated_at, version)
+		VALUES (:id, :name, :user, :subdomain, :domain, :created_at, :updated_at, :version)
 	`
 	_, err := r.db.NamedExecContext(ctx, query, site)
 	return err
@@ -67,16 +67,6 @@ func (r *Repository) GetList(ctx context.Context, userId string) ([]*Site, error
 		return nil, err
 	}
 	return sites, nil
-}
-
-func (r *Repository) Update(ctx context.Context, site *Site) error {
-	query := `
-		UPDATE ` + tableName + `
-		SET subdomain = :subdomain, domain = :domain, updated_at = :updated_at, version = :version
-		WHERE id = :id
-	`
-	_, err := r.db.NamedExecContext(ctx, query, site)
-	return err
 }
 
 func (r *Repository) Delete(ctx context.Context, id string) error {
