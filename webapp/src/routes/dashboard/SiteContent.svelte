@@ -21,7 +21,8 @@
 
 <div class="site-content">
 	<div class="site-url-container">
-		<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{subdomain}</Link>
+		<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
+
 		<IconButton
 			title="Скопировать URL"
 			onclick={() => {
@@ -44,7 +45,7 @@
 			}}
 		>
 			<div class="upload-modal">
-				<h3>Загрузить файлы для {subdomain}</h3>
+				<h3>Загрузить файлы для "{site.name}"</h3>
 				<Info header="Информация о загрузке сайтов">
 					<p>При загрузке файлов все старые файлы будут удалены</p>
 					<p>

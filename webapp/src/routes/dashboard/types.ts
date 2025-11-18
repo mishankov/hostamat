@@ -1,5 +1,6 @@
 export type Site = {
 	id: string;
+	name: string;
 	subdomain?: string;
 	domain: string;
 	createdAt?: string;

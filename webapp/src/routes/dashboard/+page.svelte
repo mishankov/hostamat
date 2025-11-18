@@ -2,16 +2,19 @@
 	import type { PageProps } from './$types';
 	import { invalidateAll } from '$app/navigation';
 
-	import { Card, Error, Info } from '$lib/components';
+	import { Button, Card, Error, Info, Input, Modal } from '$lib/components';
 	import { Spinner, Plus } from '$lib/icons';
 
 	import { type Site } from './types';
 	import SiteContent from './SiteContent.svelte';
+	import { createSite } from '$lib/api-client';
 
 	let { data }: PageProps = $props();
 	let sites = $state<Site[]>([]);
 	let maxAmount = $state(0);
 	let loading = $state(true);
+	let newSiteName = $state('Новый сайт');
+	let errorMessage = $state('');
 
 	const updateState = async () => {
 		const sitesResp = await data.sitesResp;
@@ -22,8 +25,12 @@
 		}
 		maxAmount = sitesResp.maxAmount || 0;
 
+		newSiteName = 'Новый сайт';
 		loading = false;
+		newSiteModal?.close();
 	};
+
+	let newSiteModal = $state<Modal>();
 
 	updateState();
 </script>
@@ -35,6 +42,10 @@
 <main>
 	<div class="dashboard">
 		<h1>Твои сайты</h1>
+
+		{#if errorMessage}
+			<Error message={errorMessage} />
+		{/if}
 
 		<div class="site-list">
 			{#await data.sitesResp}
@@ -50,16 +61,8 @@
 					<Card floating style="height: 110px;">
 						<button
 							class="add-site"
-							onclick={async () => {
-								if (loading) return;
-								loading = true;
-
-								await fetch('/api/createSite', {
-									method: 'POST'
-								});
-
-								await invalidateAll();
-								updateState();
+							onclick={() => {
+								newSiteModal?.open();
 							}}
 						>
 							{#if loading}
@@ -71,6 +74,34 @@
 							{/if}
 						</button>
 					</Card>
+
+					<Modal bind:this={newSiteModal}>
+						<div style="display: flex; flex-direction: column; gap: 15px;">
+							<h2>Новый сайт</h2>
+							<Input id="site-name" label="Название" bind:value={newSiteName}></Input>
+							<div style="display: flex; gap: 15px; align-items: center;">
+								<Button
+									filled
+									disabled={loading}
+									onclick={async () => {
+										loading = true;
+										const res = await createSite(newSiteName);
+
+										if (res) {
+											await invalidateAll();
+											updateState();
+										} else {
+											errorMessage = 'Ошибка при создании сайта';
+											updateState();
+										}
+									}}>Создать</Button
+								>
+								{#if loading}
+									<Spinner size={30} />
+								{/if}
+							</div>
+						</div>
+					</Modal>
 				{:else if loading === false}
 					<div style="height: 110px; display: flex; align-items: center;">
 						<Info header="Максимальное количество сайтов в альфа версии">

@@ -8,7 +8,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			headers: {
 				Cookie: request.headers.get('Cookie') || '',
 				'Content-Type': 'application/json'
-			}
+			},
+			body: request.body
 		});
 
 		return new Response(response.body, {
