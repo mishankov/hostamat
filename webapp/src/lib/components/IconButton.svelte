@@ -14,5 +14,12 @@
 		justify-content: center;
 
 		padding: 5px;
+		border-radius: var(--border-radius-regular);
+
+		transition: var(--transition);
+	}
+
+	button:hover {
+		background-color: #222;
 	}
 </style>
