@@ -59,6 +59,7 @@
 					bind:this={fileUploader}
 					multiple={true}
 					uploadUrl="/api/uploadFile"
+					siteId={site.id}
 					additionalHeaders={{
 						'H-Site-Id': site.id
 					}}

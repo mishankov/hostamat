@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { Button, Card, Details, Error, Link, ProgressBar, Success } from '$lib/components';
+	import { Button, Card, Details, Error, ProgressBar, Success } from '$lib/components';
 	import { Upload, X } from '$lib/icons';
 	import { IconButton } from '$lib/components';
+	import { createUploadSession } from '$lib/api-client';
 
 	interface Props {
 		uploadUrl?: string;
@@ -9,6 +10,7 @@
 		multiple?: boolean;
 		disabled?: boolean;
 		additionalHeaders?: Record<string, string>;
+		siteId: string;
 		onfilesselected?: (event: { files: File[] }) => void;
 		onuploadcomplete?: (event: { fileCount: number }) => void;
 		onuploaderror?: (event: { error: string }) => void;
@@ -20,6 +22,7 @@
 		multiple = false,
 		disabled = false,
 		additionalHeaders = {},
+		siteId,
 		onfilesselected,
 		onuploadcomplete,
 		onuploaderror
@@ -96,23 +99,13 @@
 		uploadProgress = 0;
 		error = '';
 
-		const headers = new Headers();
-		Object.entries(additionalHeaders).forEach(([key, value]) => {
-			headers.set(key, value);
-		});
+		const uploadSession = await createUploadSession(siteId);
 
-		const createUploadSessionResp = await fetch('/api/createUploadSession', {
-			method: 'POST',
-			headers
-		});
-
-		if (!createUploadSessionResp.ok) {
+		if (uploadSession === '') {
 			error = 'Ошибка при создании сессии загрузки';
 			uploading = false;
 			return;
 		}
-
-		const uploadSession = await createUploadSessionResp.text();
 
 		try {
 			for (let i = 0; i < selectedFiles.length; i++) {
