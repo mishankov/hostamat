@@ -10,7 +10,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			method: 'POST',
 			headers,
 			body: request.body,
-			// @ts-ignore
+			// @ts-expect-error duplex needed to send files
 			duplex: 'half'
 		});
 
