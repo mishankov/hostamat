@@ -1,28 +1,13 @@
 import type { RequestHandler } from './$types';
-import { ProxyConfig } from '$lib/server/config';
+import { getConfigForMethod } from '$lib/server/config';
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	try {
 		const method = request.headers.get('X-Method');
-		let config;
-		switch (method) {
-			case 'createSite':
-				config = ProxyConfig.createSite;
-				break;
-			case 'getSites':
-				config = ProxyConfig.getSites;
-				break;
-			case 'deleteSite':
-				config = ProxyConfig.deleteSite;
-				break;
-			case 'createUploadSession':
-				config = ProxyConfig.createUploadSession;
-				break;
-			case 'closeUploadSession':
-				config = ProxyConfig.closeUploadSession;
-				break;
-			default:
-				return new Response('Method not allowed', { status: 405 });
+		const config = getConfigForMethod(method);
+
+		if (config === null) {
+			return new Response('Method not allowed', { status: 405 });
 		}
 
 		const response = await fetch(config.url, {

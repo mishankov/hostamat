@@ -23,4 +23,24 @@ export const ProxyConfig = {
 		method: 'DELETE',
 		url: `${API_BASE}/api/uploadsessions`
 	}
-} as const;
+};
+
+export const getConfigForMethod = (method: string | null) => {
+	if (method === null) {
+		return null;
+	}
+	switch (method) {
+		case 'createSite':
+			return ProxyConfig.createSite;
+		case 'getSites':
+			return ProxyConfig.getSites;
+		case 'deleteSite':
+			return ProxyConfig.deleteSite;
+		case 'createUploadSession':
+			return ProxyConfig.createUploadSession;
+		case 'closeUploadSession':
+			return ProxyConfig.closeUploadSession;
+		default:
+			return null;
+	}
+};
