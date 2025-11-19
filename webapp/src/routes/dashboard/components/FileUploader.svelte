@@ -2,7 +2,7 @@
 	import { Button, Card, Details, Error, ProgressBar, Success } from '$lib/components';
 	import { Upload, X } from '$lib/icons';
 	import { IconButton } from '$lib/components';
-	import { createUploadSession } from '$lib/api-client';
+	import { closeUploadSession, createUploadSession } from '$lib/api-client';
 
 	interface Props {
 		uploadUrl?: string;
@@ -101,7 +101,7 @@
 
 		const uploadSession = await createUploadSession(siteId);
 
-		if (uploadSession === '') {
+		if (uploadSession === null) {
 			error = 'Ошибка при создании сессии загрузки';
 			uploading = false;
 			return;
@@ -117,7 +117,7 @@
 				Object.entries(additionalHeaders).forEach(([key, value]) => {
 					headers.set(key, value);
 				});
-				headers.set('H-UploadSession-Id', uploadSession || '');
+				headers.set('H-UploadSession-Id', uploadSession);
 
 				const response = await fetch(uploadUrl, {
 					method: 'POST',
@@ -148,12 +148,7 @@
 			onuploaderror?.({ error });
 		}
 
-		await fetch('/api/closeUploadSession', {
-			method: 'DELETE',
-			headers: {
-				'H-UploadSession-Id': uploadSession || ''
-			}
-		});
+		await closeUploadSession(uploadSession);
 
 		uploading = false;
 	}

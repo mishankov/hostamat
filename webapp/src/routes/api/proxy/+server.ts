@@ -18,6 +18,9 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 			case 'createUploadSession':
 				config = ProxyConfig.createUploadSession;
 				break;
+			case 'closeUploadSession':
+				config = ProxyConfig.closeUploadSession;
+				break;
 			default:
 				return new Response('Method not allowed', { status: 405 });
 		}

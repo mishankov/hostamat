@@ -18,5 +18,9 @@ export const ProxyConfig = {
 	createUploadSession: {
 		method: 'POST',
 		url: `${API_BASE}/api/uploadsessions`
+	},
+	closeUploadSession: {
+		method: 'DELETE',
+		url: `${API_BASE}/api/uploadsessions`
 	}
 } as const;
