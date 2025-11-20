@@ -24,7 +24,7 @@ export const getSites = async (
 	const headers = request.headers;
 	headers.append('X-Method', 'getSites');
 	const resp = await fetch('/api/proxy', {
-		method: 'POST',
+		method: 'GET',
 		headers: headers
 	});
 
@@ -33,7 +33,7 @@ export const getSites = async (
 
 export const deleteSite = async (siteId: string) => {
 	await fetch('/api/proxy', {
-		method: 'POST',
+		method: 'DELETE',
 		headers: {
 			'X-Method': 'deleteSite',
 			'H-Site-Id': siteId

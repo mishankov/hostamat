@@ -12,7 +12,7 @@ export const createUploadSession = async (siteId: string) => {
 
 export const closeUploadSession = async (uploadSessionId: string) => {
 	const resp = await fetch('/api/proxy', {
-		method: 'POST',
+		method: 'DELETE',
 		headers: {
 			'X-Method': 'closeUploadSession',
 			'H-UploadSession-Id': uploadSessionId
