@@ -13,7 +13,7 @@
 		align-items: center;
 		justify-content: center;
 
-		padding: 5px;
+		padding: 4px;
 		border-radius: var(--border-radius-regular);
 
 		transition: var(--transition);
