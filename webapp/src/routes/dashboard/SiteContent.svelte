@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, Info, Input, Link, Modal } from '$lib/components';
-	import { Copy, Trash, Spinner, Upload } from '$lib/icons';
+	import { Copy, Trash, Spinner, Upload, Edit } from '$lib/icons';
 
 	import FileUploader from './components/FileUploader.svelte';
 	import { IconButton } from '$lib/components';
@@ -52,7 +52,7 @@
 
 	<div class="site-toolbar">
 		<IconButton onclick={() => updateModal?.open()} title="Изменить сайт">
-			<Upload size={20} />
+			<Edit size={20} />
 		</IconButton>
 		<Modal
 			bind:this={updateModal}
