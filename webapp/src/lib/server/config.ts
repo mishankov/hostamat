@@ -11,6 +11,10 @@ export const ProxyConfig = {
 		method: 'GET',
 		url: `${API_BASE}/api/sites`
 	},
+	updateSite: {
+		method: 'PUT',
+		url: `${API_BASE}/api/sites`
+	},
 	deleteSite: {
 		method: 'DELETE',
 		url: `${API_BASE}/api/sites`

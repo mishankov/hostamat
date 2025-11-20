@@ -50,7 +50,7 @@
 			{:then}
 				{#each sites as site (site.id)}
 					<Card style="height: 110px;">
-						<SiteContent {site} />
+						<SiteContent {site} bind:loading bind:errorMessage onsiteupdate={invalidateAll} />
 					</Card>
 				{/each}
 

@@ -31,6 +31,19 @@ export const getSites = async (
 	return resp.ok ? await resp.json() : null;
 };
 
+export const updateSite = async (siteId: string, name: string) => {
+	const resp = await fetch('/api/proxy', {
+		method: 'PUT',
+		headers: {
+			'X-Method': 'updateSite',
+			'H-Site-Id': siteId
+		},
+		body: JSON.stringify({ name: name })
+	});
+
+	return resp.ok;
+};
+
 export const deleteSite = async (siteId: string) => {
 	await fetch('/api/proxy', {
 		method: 'DELETE',
