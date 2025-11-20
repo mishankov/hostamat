@@ -39,15 +39,6 @@
 <div class="site-content">
 	<div class="site-url-container">
 		<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
-
-		<IconButton
-			title="Скопировать URL"
-			onclick={() => {
-				navigator.clipboard.writeText(`https://${site.domain}`);
-			}}
-		>
-			<Copy size={20} />
-		</IconButton>
 	</div>
 
 	<div class="site-toolbar">
@@ -57,14 +48,16 @@
 		<Modal
 			bind:this={updateModal}
 			kind="primary"
+			openCallback={() => (newSiteName = site.name)}
 			closeCallback={() => {
 				fileUploader?.resetUploadState();
 			}}
 		>
 			<div style="display: flex; flex-direction: column; gap: 15px;">
-				<h2>Сайт "{site.name}"</h2>
+				<h3>Изменить "{site.name}"</h3>
 				<Input id="site-name" label="Название" bind:value={newSiteName}></Input>
 				<div style="display: flex; gap: 15px; align-items: center;">
+					<Button disabled={loading} onclick={() => updateModal?.close()}>Отмена</Button>
 					<Button
 						filled
 						disabled={loading}
@@ -110,6 +103,7 @@
 				</Info>
 				<FileUploader
 					bind:this={fileUploader}
+					onclose={uploadModal?.close}
 					multiple={true}
 					uploadUrl="/api/uploadFile"
 					siteId={site.id}
@@ -119,6 +113,15 @@
 				/>
 			</div>
 		</Modal>
+
+		<IconButton
+			title="Скопировать URL"
+			onclick={() => {
+				navigator.clipboard.writeText(`https://${site.domain}`);
+			}}
+		>
+			<Copy size={20} />
+		</IconButton>
 
 		<IconButton title="Удалить сайт" onclick={() => deleteModal?.open()}>
 			<Trash size={20} />
@@ -147,11 +150,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: 5px;
+		min-width: 150px;
+		height: 100%;
 
 		padding-top: 20px;
 		padding-left: 20px;
 		padding-right: 20px;
-		padding-bottom: 10px;
+		padding-bottom: 20px;
 	}
 
 	.site-url-container {
@@ -164,11 +169,13 @@
 
 	.site-toolbar {
 		width: fit-content;
-		align-self: flex-end;
-		padding-top: 10px;
+		justify-self: end;
 
 		display: flex;
-		gap: 5px;
+		padding: 2px;
+
+		border: var(--border-regular);
+		border-radius: 7px;
 	}
 
 	.upload-modal {

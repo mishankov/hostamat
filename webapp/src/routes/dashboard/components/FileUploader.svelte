@@ -14,6 +14,7 @@
 		onfilesselected?: (event: { files: File[] }) => void;
 		onuploadcomplete?: (event: { fileCount: number }) => void;
 		onuploaderror?: (event: { error: string }) => void;
+		onclose?: () => void;
 	}
 
 	let {
@@ -25,7 +26,8 @@
 		siteId,
 		onfilesselected,
 		onuploadcomplete,
-		onuploaderror
+		onuploaderror,
+		onclose = () => {}
 	}: Props = $props();
 
 	let fileInput: HTMLInputElement;
@@ -282,6 +284,7 @@
 	<ProgressBar bind:uploadProgress />
 
 	<div class="actions">
+		<Button onclick={onclose} disabled={disabled || uploading}>Закрыть</Button>
 		<Button
 			kind="action"
 			onclick={uploadFiles}
@@ -374,6 +377,8 @@
 	}
 
 	.actions {
-		text-align: center;
+		display: flex;
+		gap: 15px;
+		align-items: center;
 	}
 </style>

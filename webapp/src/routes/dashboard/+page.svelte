@@ -82,9 +82,10 @@
 
 					<Modal bind:this={newSiteModal}>
 						<div style="display: flex; flex-direction: column; gap: 15px;">
-							<h2>Новый сайт</h2>
+							<h3>Новый сайт</h3>
 							<Input id="site-name" label="Название" bind:value={newSiteName}></Input>
-							<div style="display: flex; gap: 15px; align-items: center;">
+							<div style="display: flex; gap: 15px; align-items: center; ">
+								<Button disabled={loading} onclick={() => newSiteModal?.close()}>Отмена</Button>
 								<Button
 									filled
 									disabled={loading}
