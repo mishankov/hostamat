@@ -67,18 +67,18 @@
 	}
 
 	.confirm {
-		--color: var(--color-confirm);
-		--color-dim: var(--color-confirm-dim);
+		--color: var(--color-confirm-50);
+		--color-dim: var(--color-confirm-10);
 	}
 
 	.danger {
-		--color: var(--color-danger);
-		--color-dim: var(--color-danger-dim);
+		--color: var(--color-danger-50);
+		--color-dim: var(--color-danger-10);
 	}
 
 	.action {
-		--color: var(--color-action);
-		--color-dim: var(--color-action-dim);
+		--color: var(--color-action-50);
+		--color-dim: var(--color-action-10);
 	}
 
 	button:hover:enabled {

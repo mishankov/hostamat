@@ -311,7 +311,7 @@
 	}
 
 	.drop-zone {
-		border: 1px dashed var(--color-action);
+		border: 1px dashed var(--color-action-50);
 		border-radius: var(--border-radius-regular);
 		padding: 2rem;
 		text-align: center;

@@ -13,7 +13,7 @@
 		width: 100%;
 		height: 30px;
 
-		background-color: var(--color-primary-dim);
+		background-color: var(--color-primary-10);
 
 		border: var(--border-regular);
 		border-radius: var(--border-radius-regular);
@@ -21,7 +21,7 @@
 
 	.progress-fill {
 		height: 100%;
-		background-color: var(--color-primary);
+		background-color: var(--color-primary-95);
 		border-radius: var(--border-radius-regular);
 		transition: var(--transition);
 	}
@@ -39,6 +39,6 @@
 	}
 
 	p.dark {
-		color: var(--color-primary-dim);
+		color: var(--color-primary-10);
 	}
 </style>

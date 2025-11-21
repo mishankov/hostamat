@@ -32,7 +32,7 @@
 
 <style>
 	rect {
-		stroke: var(--color-primary);
+		stroke: var(--color-primary-90);
 		transition: all 500ms;
 	}
 
@@ -41,7 +41,7 @@
 	}
 
 	svg:hover rect {
-		stroke: var(--color-primary);
+		stroke: var(--color-primary-90);
 	}
 
 	svg:hover rect.back {
@@ -49,6 +49,6 @@
 	}
 
 	svg:active rect.front {
-		fill: var(--color-primary);
+		fill: var(--color-primary-90);
 	}
 </style>

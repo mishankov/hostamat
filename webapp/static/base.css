@@ -64,23 +64,39 @@ body {
 	--color-danger-90: hsl(350, 70%, 90%);
 	--color-danger-95: hsl(350, 70%, 95%);
 
+	--color-action-5: hsl(200, 70%, 5%);
+	--color-action-7: hsl(200, 70%, 7%);
+	--color-action-10: hsl(200, 70%, 10%);
+	--color-action-15: hsl(200, 70%, 15%);
+	--color-action-20: hsl(200, 70%, 20%);
+	--color-action-30: hsl(200, 70%, 30%);
+	--color-action-40: hsl(200, 70%, 40%);
+	--color-action-50: hsl(200, 70%, 50%);
+	--color-action-60: hsl(200, 70%, 60%);
+	--color-action-70: hsl(200, 70%, 70%);
+	--color-action-80: hsl(200, 70%, 80%);
+	--color-action-90: hsl(200, 70%, 90%);
+	--color-action-95: hsl(200, 70%, 95%);
+
+	--color-confirm-5: hsl(150, 70%, 5%);
+	--color-confirm-7: hsl(150, 70%, 7%);
+	--color-confirm-10: hsl(150, 70%, 10%);
+	--color-confirm-15: hsl(150, 70%, 15%);
+	--color-confirm-20: hsl(150, 70%, 20%);
+	--color-confirm-30: hsl(150, 70%, 30%);
+	--color-confirm-40: hsl(150, 70%, 40%);
+	--color-confirm-50: hsl(150, 70%, 50%);
+	--color-confirm-60: hsl(150, 70%, 60%);
+	--color-confirm-70: hsl(150, 70%, 70%);
+	--color-confirm-80: hsl(150, 70%, 80%);
+	--color-confirm-90: hsl(150, 70%, 90%);
+	--color-confirm-95: hsl(150, 70%, 95%);
+
 	--color-background: var(--color-primary-7);
 	--color-background-object: var(--color-primary-5);
 	--color-text-regular: var(--color-primary-95);
 	--color-text-secondary: var(--color-primary-80);
 	--color-border: var(--color-primary-20);
-
-	--color-primary: var(--color-primary-95);
-	--color-primary-dim: var(--color-primary-10);
-
-	--color-confirm: hsla(150, 80%, 50%, 1);
-	--color-confirm-dim: hsla(150, 90%, 15%);
-
-	--color-danger: hsla(350, 80%, 50%, 1);
-	--color-danger-dim: hsla(350, 90%, 15%);
-
-	--color-action: hsl(194, 70%, 50%);
-	--color-action-dim: hsl(194, 70%, 10%);
 
 	--border-width: 0.5px;
 	--border-style: solid;
@@ -91,12 +107,13 @@ body {
 
 	--transition: all 300ms;
 
-	--primary-gradient: linear-gradient(-10deg, var(--color-primary-5), var(--color-primary-7));
-	--danger-gradient: linear-gradient(-10deg, var(--color-danger-5), var(--color-danger-7));
+	--gradien-primary: linear-gradient(-10deg, var(--color-primary-5), var(--color-primary-7));
+	--gradient-danger: linear-gradient(-10deg, var(--color-danger-5), var(--color-danger-7));
+	--gradient-action: linear-gradient(-10deg, var(--color-action-5), var(--color-action-7));
 }
 
 body {
 	background: var(--color-background);
-	background: var(--primary-gradient);
+	background: var(--gradien-primary);
 	color: var(--color-text-regular);
 }

@@ -12,7 +12,7 @@
       40 0
       20 0
     "
-		stroke="var(--color-primary)"
+		stroke="var(--color-primary-90)"
 		stroke-width="7"
 		stroke-linecap="round"
 		stroke-linejoin="round"
@@ -34,7 +34,7 @@
       0 15
       -10 5
     "
-		stroke="var(--color-primary)"
+		stroke="var(--color-primary-90)"
 		stroke-width="7"
 		stroke-linecap="round"
 		stroke-linejoin="round"

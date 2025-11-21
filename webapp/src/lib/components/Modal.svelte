@@ -50,7 +50,7 @@
 
 		padding: 0;
 
-		background: var(--primary-gradient);
+		background: var(--gradien-primary);
 		color: var(--color-text);
 
 		transition: var(--transition);
@@ -62,7 +62,7 @@
 
 	.danger {
 		border-color: var(--color-danger);
-		background: var(--danger-gradient);
+		background: var(--gradient-danger);
 	}
 
 	dialog[open] {
