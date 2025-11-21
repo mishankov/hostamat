@@ -284,7 +284,6 @@
 	<ProgressBar bind:uploadProgress />
 
 	<div class="actions">
-		<Button onclick={onclose} disabled={disabled || uploading}>Закрыть</Button>
 		<Button
 			filled
 			onclick={uploadFiles}
@@ -292,6 +291,7 @@
 		>
 			Загрузить
 		</Button>
+		<Button onclick={onclose} disabled={disabled || uploading}>Закрыть</Button>
 	</div>
 </div>
 

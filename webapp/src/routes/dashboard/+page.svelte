@@ -85,7 +85,6 @@
 							<h3>Новый сайт</h3>
 							<Input id="site-name" label="Название" bind:value={newSiteName}></Input>
 							<div style="display: flex; gap: 15px; align-items: center; ">
-								<Button disabled={loading} onclick={() => newSiteModal?.close()}>Отмена</Button>
 								<Button
 									filled
 									disabled={loading}
@@ -102,6 +101,7 @@
 										}
 									}}>Создать</Button
 								>
+								<Button disabled={loading} onclick={() => newSiteModal?.close()}>Отмена</Button>
 								{#if loading}
 									<Spinner size={30} />
 								{/if}

@@ -60,7 +60,6 @@
 				<h3>Изменить "{site.name}"</h3>
 				<Input id="site-name" label="Название" bind:value={newSiteName}></Input>
 				<div style="display: flex; gap: 15px; align-items: center;">
-					<Button disabled={loading} onclick={() => updateModal?.close()}>Отмена</Button>
 					<Button
 						filled
 						disabled={loading}
@@ -77,6 +76,7 @@
 							}
 						}}>Изменить</Button
 					>
+					<Button disabled={loading} onclick={() => updateModal?.close()}>Отмена</Button>
 					{#if loading}
 						<Spinner size={30} />
 					{/if}
@@ -133,15 +133,16 @@
 			<div class="delete-modal">
 				<p>Вы уверены, что хотите удалить сайт "{site.name}"?</p>
 				<form method="dialog">
-					<Button kind="primary">Отмена</Button>
 					<Button
 						kind="danger"
+						filled
 						onclick={async () => {
 							await deleteSite(site.id);
 
 							window.location.reload();
 						}}>Удалить</Button
 					>
+					<Button kind="primary">Отмена</Button>
 				</form>
 			</div>
 		</Modal>
