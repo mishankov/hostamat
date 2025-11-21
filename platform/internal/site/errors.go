@@ -3,6 +3,6 @@ package site
 import "errors"
 
 var (
-	errLongName  = errors.New("long site name")
-	errShortName = errors.New("short site name")
+	errLongName  = errors.New("Название сайта должно быть не более 25 символов")
+	errShortName = errors.New("Название сайта должно быть не менее 1 символа")
 )

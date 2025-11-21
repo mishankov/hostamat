@@ -92,11 +92,11 @@
 										loading = true;
 										const res = await createSite(newSiteName);
 
-										if (res) {
+										if (res === true) {
 											await invalidateAll();
 											updateState();
 										} else {
-											errorMessage = 'Ошибка при создании сайта';
+											errorMessage = res.errorText;
 											updateState();
 										}
 									}}>Создать</Button

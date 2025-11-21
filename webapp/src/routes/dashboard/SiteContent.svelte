@@ -131,7 +131,9 @@
 		</IconButton>
 		<Modal bind:this={deleteModal} kind="danger">
 			<div class="delete-modal">
-				<p>Вы уверены, что хотите удалить сайт "{site.name}"?</p>
+				<p style="color: var(--color-danger-90);">
+					Вы уверены, что хотите удалить сайт "{site.name}"?
+				</p>
 				<form method="dialog">
 					<Button
 						kind="danger"
@@ -142,7 +144,7 @@
 							window.location.reload();
 						}}>Удалить</Button
 					>
-					<Button kind="primary">Отмена</Button>
+					<Button kind="danger">Отмена</Button>
 				</form>
 			</div>
 		</Modal>

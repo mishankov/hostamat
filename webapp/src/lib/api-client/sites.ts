@@ -1,6 +1,7 @@
 import { type Site } from '$lib/types';
+import { type Resp } from './models';
 
-export const createSite = async (name: string) => {
+export const createSite = async (name: string): Promise<Resp<true>> => {
 	const resp = await fetch('/api/proxy', {
 		method: 'POST',
 		headers: {
@@ -9,7 +10,11 @@ export const createSite = async (name: string) => {
 		body: JSON.stringify({ name: name })
 	});
 
-	return resp.ok;
+	if (resp.ok) return true;
+
+	return resp.status >= 500
+		? { errorText: 'Ошибка сервера при создании сайта' }
+		: { errorText: await resp.text() };
 };
 
 type SitesResponse = {
