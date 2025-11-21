@@ -44,7 +44,7 @@
 
 	<div class="site-toolbar">
 		<IconButton onclick={() => updateModal?.open()} title="Изменить сайт">
-			<Edit size={20} />
+			<Edit size={25} />
 		</IconButton>
 		<Modal
 			bind:this={updateModal}
@@ -83,7 +83,7 @@
 		</Modal>
 
 		<IconButton onclick={() => uploadModal?.open()} title="Загрузить сайт">
-			<Upload size={20} />
+			<Upload size={25} />
 		</IconButton>
 		<Modal
 			bind:this={uploadModal}
@@ -121,11 +121,11 @@
 				navigator.clipboard.writeText(`https://${site.domain}`);
 			}}
 		>
-			<Copy size={20} background="var(--color-primary-7)" />
+			<Copy size={25} background="var(--color-primary-7)" />
 		</IconButton>
 
 		<IconButton title="Удалить сайт" kind="danger" onclick={() => deleteModal?.open()}>
-			<Trash size={20} />
+			<Trash size={25} />
 		</IconButton>
 		<Modal bind:this={deleteModal} kind="danger">
 			<div class="delete-modal">
