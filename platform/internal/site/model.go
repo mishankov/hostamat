@@ -4,7 +4,10 @@ import (
 	"time"
 )
 
-const maxSites = 5
+const (
+	maxSites          = 5
+	siteNameMaxLength = 25
+)
 
 type Site struct {
 	Id        string    `db:"id" json:"id"`

@@ -78,6 +78,11 @@ func (s *Service) Create(ctx context.Context, name string) (*Site, error) {
 		CreatedAt: time.Now(),
 	}
 
+	err = s.validate(ctx, site)
+	if err != nil {
+		return nil, err
+	}
+
 	err = s.repository.Create(ctx, site)
 	if err != nil {
 		return nil, err
@@ -142,6 +147,11 @@ func (s *Service) UpdateName(ctx context.Context, id, name string) error {
 
 	site.Name = name
 	site.UpdatedAt = time.Now()
+
+	err = s.validate(ctx, site)
+	if err != nil {
+		return err
+	}
 
 	return s.repository.Update(ctx, site)
 }
@@ -222,6 +232,18 @@ func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename stri
 	}
 
 	return s.fileService.UploadFile(ctx, us.Site, filename, file, size)
+}
+
+func (s *Service) validate(_ context.Context, site *Site) error {
+	if len(site.Name) > siteNameMaxLength {
+		return errLongName
+	}
+
+	if len(site.Name) == 0 {
+		return errShortName
+	}
+
+	return nil
 }
 
 func (s *Service) checkAccess(ctx context.Context, site *Site) bool {

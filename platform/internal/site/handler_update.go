@@ -3,6 +3,7 @@ package site
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -50,6 +51,11 @@ func (h *UpdateSiteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	err := h.service.UpdateName(ctx, siteId, requestBody.Name)
 	if err != nil {
+		if errors.Is(err, errLongName) || errors.Is(err, errShortName) {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
