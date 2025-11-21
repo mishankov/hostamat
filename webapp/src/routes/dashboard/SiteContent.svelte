@@ -121,7 +121,7 @@
 				navigator.clipboard.writeText(`https://${site.domain}`);
 			}}
 		>
-			<Copy size={20} />
+			<Copy size={20} background="var(--color-primary-7)" />
 		</IconButton>
 
 		<IconButton title="Удалить сайт" kind="danger" onclick={() => deleteModal?.open()}>
@@ -176,6 +176,7 @@
 		display: flex;
 		padding: 2px;
 		margin-top: auto;
+		background-color: var(--color-primary-7);
 
 		border: var(--border-regular);
 		border-radius: 7px;

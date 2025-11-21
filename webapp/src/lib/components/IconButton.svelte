@@ -20,7 +20,7 @@
 	}
 
 	button:hover {
-		background: var(--color-primary-10);
+		background: var(--color-primary-15);
 		cursor: pointer;
 	}
 
