@@ -37,7 +37,7 @@
 	label {
 		background-color: transparent;
 		font-size: 14px;
-		color: var(--color-primary-90);
+		color: var(--color-inactive-70);
 		pointer-events: none;
 		transition: var(--transition);
 		user-select: none;
@@ -54,17 +54,17 @@
 		border-width: 1px;
 		border-style: solid;
 		border-radius: var(--border-radius-regular);
-		border-color: var(--color-primary-30);
+		border-color: var(--color-inactive-50);
 
 		transition: var(--transition);
 	}
 
 	input:focus {
 		outline: none;
-		border-color: var(--color-primary);
+		border-color: var(--color-primary-90);
 	}
 
 	input::placeholder {
-		color: var(--color-primary-30);
+		color: var(--color-inactive-30);
 	}
 </style>

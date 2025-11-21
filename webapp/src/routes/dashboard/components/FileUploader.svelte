@@ -286,7 +286,7 @@
 	<div class="actions">
 		<Button onclick={onclose} disabled={disabled || uploading}>Закрыть</Button>
 		<Button
-			kind="action"
+			filled
 			onclick={uploadFiles}
 			disabled={disabled || uploading || selectedFiles.length === 0}
 		>

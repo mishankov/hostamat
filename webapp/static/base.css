@@ -95,7 +95,7 @@ body {
 	--color-background: var(--color-primary-7);
 	--color-background-object: var(--color-primary-5);
 	--color-text-regular: var(--color-primary-95);
-	--color-text-secondary: var(--color-primary-80);
+	--color-text-secondary: var(--color-inactive-50);
 	--color-border: var(--color-primary-20);
 
 	--border-width: 0.5px;

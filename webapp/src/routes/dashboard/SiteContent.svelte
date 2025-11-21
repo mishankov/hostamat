@@ -168,7 +168,7 @@
 		align-items: start;
 		gap: 5px;
 
-		font-size: 20px;
+		font-size: 18px;
 	}
 
 	.site-toolbar {

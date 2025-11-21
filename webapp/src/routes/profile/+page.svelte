@@ -67,12 +67,16 @@
 
 <main>
 	<div class="profile">
-		{#if errorMessage}
-			<Error message={errorMessage} />
-		{/if}
+		{#if errorMessage || sucessMessage}
+			<div style="max-width: 500px;">
+				{#if errorMessage}
+					<Error message={errorMessage} />
+				{/if}
 
-		{#if sucessMessage}
-			<Success message={sucessMessage} />
+				{#if sucessMessage}
+					<Success message={sucessMessage} />
+				{/if}
+			</div>
 		{/if}
 
 		<h1>Профиль</h1>

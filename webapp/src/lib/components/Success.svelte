@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { X } from '$lib/icons';
-	import Check from '$lib/icons/Check.svelte';
+	import { Check } from '$lib/icons';
 	import Card from './Card.svelte';
 
 	let { children = null, header = '', message = '' } = $props();
