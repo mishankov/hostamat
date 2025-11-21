@@ -8,7 +8,7 @@
 
 <style>
 	a {
-		color: var(--color-primary);
+		color: var(--color-primary-90);
 		text-decoration: none;
 		transition: all 500ms;
 	}

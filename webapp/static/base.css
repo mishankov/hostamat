@@ -10,23 +10,93 @@ body {
 }
 
 :root {
-	--color-background: #1f1f1f;
-	--color-background-object: #1a1a1a;
-	--color-text-regular: #ffffff;
-	--color-text-secondary: #aaa;
-	--color-border: #555;
+	--color-primary-5: hsl(194, 70%, 5%);
+	--color-primary-7: hsl(194, 70%, 7%);
+	--color-primary-10: hsl(194, 70%, 10%);
+	--color-primary-15: hsl(194, 70%, 15%);
+	--color-primary-20: hsl(194, 70%, 20%);
+	--color-primary-30: hsl(194, 70%, 30%);
+	--color-primary-40: hsl(194, 70%, 40%);
+	--color-primary-50: hsl(194, 70%, 50%);
+	--color-primary-60: hsl(194, 70%, 60%);
+	--color-primary-70: hsl(194, 70%, 70%);
+	--color-primary-80: hsl(194, 70%, 80%);
+	--color-primary-90: hsl(194, 70%, 90%);
+	--color-primary-95: hsl(194, 70%, 95%);
 
-	--color-primary: #ffffff;
-	--color-primary-dim: #1a1a1a;
+	--color-accent-5: hsl(14, 70%, 5%);
+	--color-accent-7: hsl(14, 70%, 7%);
+	--color-accent-10: hsl(14, 70%, 10%);
+	--color-accent-20: hsl(14, 70%, 20%);
+	--color-accent-30: hsl(14, 70%, 30%);
+	--color-accent-40: hsl(14, 70%, 40%);
+	--color-accent-50: hsl(14, 70%, 50%);
+	--color-accent-60: hsl(14, 70%, 60%);
+	--color-accent-70: hsl(14, 70%, 70%);
+	--color-accent-80: hsl(14, 70%, 80%);
+	--color-accent-90: hsl(14, 70%, 90%);
+	--color-accent-95: hsl(14, 70%, 95%);
 
-	--color-confirm: hsla(150, 80%, 50%, 1);
-	--color-confirm-dim: hsla(150, 90%, 15%);
+	--color-inactive-5: hsl(194, 20%, 5%);
+	--color-inactive-7: hsl(194, 20%, 7%);
+	--color-inactive-10: hsl(194, 20%, 10%);
+	--color-inactive-20: hsl(194, 20%, 20%);
+	--color-inactive-30: hsl(194, 20%, 30%);
+	--color-inactive-40: hsl(194, 20%, 40%);
+	--color-inactive-50: hsl(194, 20%, 50%);
+	--color-inactive-60: hsl(194, 20%, 60%);
+	--color-inactive-70: hsl(194, 20%, 70%);
+	--color-inactive-80: hsl(194, 20%, 80%);
+	--color-inactive-90: hsl(194, 20%, 90%);
+	--color-inactive-95: hsl(194, 20%, 95%);
 
-	--color-danger: hsla(350, 80%, 50%, 1);
-	--color-danger-dim: hsla(350, 90%, 15%);
+	--color-danger-5: hsl(350, 70%, 5%);
+	--color-danger-7: hsl(350, 70%, 7%);
+	--color-danger-10: hsl(350, 70%, 10%);
+	--color-danger-15: hsl(350, 70%, 15%);
+	--color-danger-20: hsl(350, 70%, 20%);
+	--color-danger-30: hsl(350, 70%, 30%);
+	--color-danger-40: hsl(350, 70%, 40%);
+	--color-danger-50: hsl(350, 70%, 50%);
+	--color-danger-60: hsl(350, 70%, 60%);
+	--color-danger-70: hsl(350, 70%, 70%);
+	--color-danger-80: hsl(350, 70%, 80%);
+	--color-danger-90: hsl(350, 70%, 90%);
+	--color-danger-95: hsl(350, 70%, 95%);
 
-	--color-action: hsla(195, 80%, 50%, 1);
-	--color-action-dim: hsla(195, 90%, 15%);
+	--color-action-5: hsl(200, 70%, 5%);
+	--color-action-7: hsl(200, 70%, 7%);
+	--color-action-10: hsl(200, 70%, 10%);
+	--color-action-15: hsl(200, 70%, 15%);
+	--color-action-20: hsl(200, 70%, 20%);
+	--color-action-30: hsl(200, 70%, 30%);
+	--color-action-40: hsl(200, 70%, 40%);
+	--color-action-50: hsl(200, 70%, 50%);
+	--color-action-60: hsl(200, 70%, 60%);
+	--color-action-70: hsl(200, 70%, 70%);
+	--color-action-80: hsl(200, 70%, 80%);
+	--color-action-90: hsl(200, 70%, 90%);
+	--color-action-95: hsl(200, 70%, 95%);
+
+	--color-confirm-5: hsl(150, 70%, 5%);
+	--color-confirm-7: hsl(150, 70%, 7%);
+	--color-confirm-10: hsl(150, 70%, 10%);
+	--color-confirm-15: hsl(150, 70%, 15%);
+	--color-confirm-20: hsl(150, 70%, 20%);
+	--color-confirm-30: hsl(150, 70%, 30%);
+	--color-confirm-40: hsl(150, 70%, 40%);
+	--color-confirm-50: hsl(150, 70%, 50%);
+	--color-confirm-60: hsl(150, 70%, 60%);
+	--color-confirm-70: hsl(150, 70%, 70%);
+	--color-confirm-80: hsl(150, 70%, 80%);
+	--color-confirm-90: hsl(150, 70%, 90%);
+	--color-confirm-95: hsl(150, 70%, 95%);
+
+	--color-background: var(--color-primary-7);
+	--color-background-object: var(--color-primary-5);
+	--color-text-regular: var(--color-primary-95);
+	--color-text-secondary: var(--color-inactive-50);
+	--color-border: var(--color-primary-20);
 
 	--border-width: 0.5px;
 	--border-style: solid;
@@ -36,9 +106,15 @@ body {
 	--shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
 
 	--transition: all 300ms;
+
+	--gradien-primary: linear-gradient(-10deg, var(--color-primary-5), var(--color-primary-7));
+	--gradient-danger: linear-gradient(-10deg, var(--color-danger-5), var(--color-danger-7));
+	--gradient-action: linear-gradient(-10deg, var(--color-action-5), var(--color-action-7));
 }
 
 body {
-	background-color: var(--color-background);
+	background: var(--color-background);
+	background: var(--gradien-primary);
 	color: var(--color-text-regular);
+	font-size: 16px;
 }

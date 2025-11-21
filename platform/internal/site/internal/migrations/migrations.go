@@ -20,4 +20,14 @@ var Migrations = []database.Migration{
 		Up:   `ALTER TABLE sites ADD COLUMN "user" VARCHAR(255) NOT NULL`,
 		Down: `ALTER TABLE sites DROP COLUMN "user"`,
 	},
+	{
+		ID:   "add_name_column",
+		Up:   `ALTER TABLE sites ADD COLUMN "name" VARCHAR(255) NOT NULL DEFAULT 'Сайт'`,
+		Down: `ALTER TABLE sites DROP COLUMN "name"`,
+	},
+	{
+		ID:   "drop_version_column",
+		Up:   `ALTER TABLE sites DROP COLUMN "version"`,
+		Down: `ALTER TABLE sites ADD COLUMN "version" INT`,
+	},
 }

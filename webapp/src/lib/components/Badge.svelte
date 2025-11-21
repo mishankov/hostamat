@@ -22,7 +22,7 @@
 		text-align: center;
 		user-select: none;
 
-		color: var(--color-action);
-		background-color: var(--color-action-dim);
+		color: var(--color-accent-60);
+		background-color: var(--color-accent-20);
 	}
 </style>

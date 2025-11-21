@@ -24,18 +24,21 @@
 	}
 
 	.confirm {
-		border-color: var(--color-confirm);
-		background-color: var(--color-confirm-dim);
+		color: var(--color-confirm-90);
+		border-color: var(--color-confirm-60);
+		background: var(--gradient-confirm);
 	}
 
 	.danger {
-		border-color: var(--color-danger);
-		background-color: var(--color-danger-dim);
+		color: var(--color-danger-90);
+		border-color: var(--color-danger-60);
+		background: var(--gradient-danger);
 	}
 
 	.action {
-		border-color: var(--color-action);
-		background-color: var(--color-action-dim);
+		color: var(--color-action-90);
+		border-color: var(--color-action-60);
+		background: var(--gradient-action);
 	}
 
 	.floating:hover {

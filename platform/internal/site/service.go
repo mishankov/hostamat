@@ -45,7 +45,7 @@ func NewService(repository repository, subdomainService subdomainService, fileSe
 	}
 }
 
-func (s *Service) Create(ctx context.Context) (*Site, error) {
+func (s *Service) Create(ctx context.Context, name string) (*Site, error) {
 	var err error
 
 	// GetList also checks access so no need to check it further...
@@ -71,10 +71,16 @@ func (s *Service) Create(ctx context.Context) (*Site, error) {
 
 	site := &Site{
 		Id:        uuid.NewString(),
+		Name:      name,
 		User:      user.ID,
 		Subdomain: subdomain.Id,
 		Domain:    subdomain.FullDomain,
 		CreatedAt: time.Now(),
+	}
+
+	err = s.validate(ctx, site)
+	if err != nil {
+		return nil, err
 	}
 
 	err = s.repository.Create(ctx, site)
@@ -131,6 +137,23 @@ func (s *Service) GetList(ctx context.Context) ([]*Site, error) {
 	}
 
 	return s.repository.GetList(ctx, user.ID)
+}
+
+func (s *Service) UpdateName(ctx context.Context, id, name string) error {
+	site, err := s.Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	site.Name = name
+	site.UpdatedAt = time.Now()
+
+	err = s.validate(ctx, site)
+	if err != nil {
+		return err
+	}
+
+	return s.repository.Update(ctx, site)
 }
 
 func (s *Service) Delete(ctx context.Context, id string) error {
@@ -209,6 +232,18 @@ func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename stri
 	}
 
 	return s.fileService.UploadFile(ctx, us.Site, filename, file, size)
+}
+
+func (s *Service) validate(_ context.Context, site *Site) error {
+	if len(site.Name) > siteNameMaxLength {
+		return errLongName
+	}
+
+	if len(site.Name) == 0 {
+		return errShortName
+	}
+
+	return nil
 }
 
 func (s *Service) checkAccess(ctx context.Context, site *Site) bool {

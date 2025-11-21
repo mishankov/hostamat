@@ -2,29 +2,27 @@
 	import type { PageProps } from './$types';
 	import { invalidateAll } from '$app/navigation';
 
-	import { Card, Error, Info } from '$lib/components';
-	import { Spinner, Plus } from '$lib/icons';
+	import { Card, Error, Info, Modal } from '$lib/components';
+	import { Spinner } from '$lib/icons';
 
-	import { type Site } from './types';
+	import { type Site } from '$lib/types';
 	import SiteContent from './SiteContent.svelte';
+	import AddNewSite from './AddNewSite.svelte';
 
 	let { data }: PageProps = $props();
 	let sites = $state<Site[]>([]);
 	let maxAmount = $state(0);
 	let loading = $state(true);
+	let errorMessage = $state('');
 
 	const updateState = async () => {
 		const sitesResp = await data.sitesResp;
 
-		sites = sitesResp.sites;
-		if (!sites) {
-			sites = [];
-		}
-		maxAmount = sitesResp.maxAmount || 0;
+		sites = sitesResp?.sites || [];
+		maxAmount = sitesResp?.maxAmount || 0;
 
 		loading = false;
 	};
-
 	updateState();
 </script>
 
@@ -36,41 +34,36 @@
 	<div class="dashboard">
 		<h1>Твои сайты</h1>
 
+		{#if errorMessage}
+			<Error message={errorMessage} />
+		{/if}
+
 		<div class="site-list">
 			{#await data.sitesResp}
 				<Spinner size={50} />
 			{:then}
 				{#each sites as site (site.id)}
-					<Card style="height: 110px;">
-						<SiteContent {site} />
+					<Card style="height: 150px;">
+						<SiteContent
+							{site}
+							bind:loading
+							bind:errorMessage
+							onsiteupdate={async () => {
+								await invalidateAll();
+								updateState();
+							}}
+						/>
 					</Card>
 				{/each}
 
 				{#if sites.length < maxAmount}
-					<Card floating style="height: 110px;">
-						<button
-							class="add-site"
-							onclick={async () => {
-								if (loading) return;
-								loading = true;
-
-								await fetch('/api/createSite', {
-									method: 'POST'
-								});
-
-								await invalidateAll();
-								updateState();
-							}}
-						>
-							{#if loading}
-								<p><Spinner size={40} /></p>
-								<p class="add-site-text">Добавляем сайт</p>
-							{:else}
-								<p><Plus size={40} /></p>
-								<p class="add-site-text">Добавить сайт</p>
-							{/if}
-						</button>
-					</Card>
+					<AddNewSite
+						bind:loading
+						onsuccess={async () => {
+							await invalidateAll();
+							updateState();
+						}}
+					/>
 				{:else if loading === false}
 					<div style="height: 110px; display: flex; align-items: center;">
 						<Info header="Максимальное количество сайтов в альфа версии">
@@ -109,24 +102,5 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 10px;
-	}
-
-	.add-site {
-		all: unset;
-
-		height: 100%;
-
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-
-		padding-left: 20px;
-		padding-right: 20px;
-	}
-
-	.add-site-text {
-		color: #bbb;
-		user-select: none;
 	}
 </style>

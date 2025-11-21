@@ -25,14 +25,11 @@ func New(db db, subdomainService subdomainService, fileService *file.Service, up
 	repository := NewRepository(db)
 	service := NewService(repository, subdomainService, fileService, uploadSessionService)
 
-	createHandle := NewCreateSiteHandler(service)
-	listHandler := NewListSiteHandler(service)
-	deleteHandler := NewDeleteSiteHandler(service)
-
 	siteHandlerGroup := httpserver.NewHandlerGroup()
-	siteHandlerGroup.Handle("POST /", createHandle)
-	siteHandlerGroup.Handle("GET /", listHandler)
-	siteHandlerGroup.Handle("DELETE /", deleteHandler)
+	siteHandlerGroup.Handle("GET /", NewListSiteHandler(service))
+	siteHandlerGroup.Handle("PUT /", NewUpdateSiteHandler(service))
+	siteHandlerGroup.Handle("POST /", NewCreateSiteHandler(service))
+	siteHandlerGroup.Handle("DELETE /", NewDeleteSiteHandler(service))
 
 	fileHandlerGroup := httpserver.NewHandlerGroup()
 	fileHandlerGroup.Handle("POST /", NewUploadFileHandler(service))

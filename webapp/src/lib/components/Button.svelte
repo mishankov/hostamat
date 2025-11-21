@@ -51,34 +51,46 @@
 		transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
 
 		color: var(--color);
-		background-color: var(--color-dim);
-		border-color: var(--color);
+		background-color: var(--color-background);
+		border-color: var(--color-border);
 	}
 
 	.filled {
-		color: var(--color-dim);
-		background-color: var(--color);
-		border-color: var(--color);
+		color: var(--color);
+		background-color: var(--color-background-filled);
+		border-color: var(--color-background-filled);
 	}
 
 	.primary {
-		--color: var(--color-primary);
-		--color-dim: var(--color-primary-dim);
+		--color: var(--color-primary-90);
+		--color-border: var(--color-primary-90);
+		--color-background: var(--color-primary-5);
+		--color-background-filled: var(--color-primary-90);
+	}
+
+	.primary.filled {
+		color: var(--color-primary-5);
 	}
 
 	.confirm {
-		--color: var(--color-confirm);
-		--color-dim: var(--color-confirm-dim);
+		--color: var(--color-confirm-90);
+		--color-border: var(--color-confirm-60);
+		--color-background: var(--color-confirm-10);
+		--color-background-filled: var(--color-confirm-50);
 	}
 
 	.danger {
-		--color: var(--color-danger);
-		--color-dim: var(--color-danger-dim);
+		--color: var(--color-danger-90);
+		--color-border: var(--color-danger-60);
+		--color-background: var(--color-danger-10);
+		--color-background-filled: var(--color-danger-50);
 	}
 
 	.action {
-		--color: var(--color-action);
-		--color-dim: var(--color-action-dim);
+		--color: var(--color-action-90);
+		--color-border: var(--color-action-60);
+		--color-background: var(--color-action-10);
+		--color-background-filled: var(--color-action-50);
 	}
 
 	button:hover:enabled {
@@ -92,8 +104,8 @@
 	}
 
 	button:disabled {
-		background-color: #555;
-		color: #fff;
-		border-color: #fff;
+		background-color: var(--color-inactive-30);
+		color: var(--color-inactive-90);
+		border-color: var(--color-inactive-90);
 	}
 </style>

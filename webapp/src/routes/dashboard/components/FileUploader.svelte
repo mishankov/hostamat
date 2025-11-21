@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { Button, Card, Details, Error, Link, ProgressBar, Success } from '$lib/components';
+	import { Button, Card, Details, Error, ProgressBar, Success } from '$lib/components';
 	import { Upload, X } from '$lib/icons';
 	import { IconButton } from '$lib/components';
+	import { closeUploadSession, createUploadSession } from '$lib/api-client';
 
 	interface Props {
 		uploadUrl?: string;
@@ -9,9 +10,11 @@
 		multiple?: boolean;
 		disabled?: boolean;
 		additionalHeaders?: Record<string, string>;
+		siteId: string;
 		onfilesselected?: (event: { files: File[] }) => void;
 		onuploadcomplete?: (event: { fileCount: number }) => void;
 		onuploaderror?: (event: { error: string }) => void;
+		onclose?: () => void;
 	}
 
 	let {
@@ -20,9 +23,11 @@
 		multiple = false,
 		disabled = false,
 		additionalHeaders = {},
+		siteId,
 		onfilesselected,
 		onuploadcomplete,
-		onuploaderror
+		onuploaderror,
+		onclose = () => {}
 	}: Props = $props();
 
 	let fileInput: HTMLInputElement;
@@ -96,23 +101,13 @@
 		uploadProgress = 0;
 		error = '';
 
-		const headers = new Headers();
-		Object.entries(additionalHeaders).forEach(([key, value]) => {
-			headers.set(key, value);
-		});
+		const uploadSession = await createUploadSession(siteId);
 
-		const createUploadSessionResp = await fetch('/api/createUploadSession', {
-			method: 'POST',
-			headers
-		});
-
-		if (!createUploadSessionResp.ok) {
+		if (uploadSession === null) {
 			error = 'Ошибка при создании сессии загрузки';
 			uploading = false;
 			return;
 		}
-
-		const uploadSession = await createUploadSessionResp.text();
 
 		try {
 			for (let i = 0; i < selectedFiles.length; i++) {
@@ -124,7 +119,7 @@
 				Object.entries(additionalHeaders).forEach(([key, value]) => {
 					headers.set(key, value);
 				});
-				headers.set('H-UploadSession-Id', uploadSession || '');
+				headers.set('H-UploadSession-Id', uploadSession);
 
 				const response = await fetch(uploadUrl, {
 					method: 'POST',
@@ -155,12 +150,7 @@
 			onuploaderror?.({ error });
 		}
 
-		await fetch('/api/closeUploadSession', {
-			method: 'DELETE',
-			headers: {
-				'H-UploadSession-Id': uploadSession || ''
-			}
-		});
+		await closeUploadSession(uploadSession);
 
 		uploading = false;
 	}
@@ -295,12 +285,13 @@
 
 	<div class="actions">
 		<Button
-			kind="action"
+			filled
 			onclick={uploadFiles}
 			disabled={disabled || uploading || selectedFiles.length === 0}
 		>
 			Загрузить
 		</Button>
+		<Button onclick={onclose} disabled={disabled || uploading}>Закрыть</Button>
 	</div>
 </div>
 
@@ -320,7 +311,7 @@
 	}
 
 	.drop-zone {
-		border: 1px dashed var(--color-action);
+		border: 1px dashed var(--color-action-50);
 		border-radius: var(--border-radius-regular);
 		padding: 2rem;
 		text-align: center;
@@ -386,6 +377,8 @@
 	}
 
 	.actions {
-		text-align: center;
+		display: flex;
+		gap: 15px;
+		align-items: center;
 	}
 </style>

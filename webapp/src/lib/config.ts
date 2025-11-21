@@ -5,8 +5,7 @@ export const Config = {
 		uploadUrl: `${env.API_BASE || 'http://localhost:1001'}/api/files`
 	},
 	sites: {
-		createUrl: `${env.API_BASE || 'http://localhost:1001'}/api/sites`,
-		listUrl: `${env.API_BASE || 'http://localhost:1001'}/api/sites`
+		deleteUrl: `${env.API_BASE || 'http://localhost:1001'}/api/sites`
 	},
 	uploadSessionsUrl: `${env.API_BASE || 'http://localhost:1001'}/api/uploadsessions`,
 	auth: {

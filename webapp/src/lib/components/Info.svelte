@@ -8,7 +8,7 @@
 <div class="info">
 	<Card kind="action" style="height: fit-content; width: 100%; padding: 10px;">
 		<div class="header">
-			<I size={25} color="var(--color-action)" />
+			<I size={25} color="var(--color-action-50)" />
 			{#if header}
 				<h4>{header}</h4>
 			{:else if message}
