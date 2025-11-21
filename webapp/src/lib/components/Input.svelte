@@ -1,28 +1,33 @@
 <script lang="ts">
-	type InputProps = {
-		id: string;
-		type?: string;
-		label?: string;
-		placeholder?: string;
-		value?: string;
-		ref?: any;
-	};
-
 	let {
 		id,
+		invalid = false,
+		errorMessage = '',
 		type = 'text',
 		label = '',
 		placeholder = ' ',
 		value = $bindable(''),
-		ref = $bindable(null)
-	}: InputProps = $props();
+		ref = $bindable(null),
+		...restProps
+	} = $props();
 </script>
 
 <div class="input-container">
 	{#if label}
 		<label for={id}>{label}</label>
 	{/if}
-	<input {id} {type} bind:value bind:this={ref} {placeholder} />
+	<input
+		{id}
+		class={[(invalid || errorMessage) && 'invalid']}
+		{type}
+		bind:value
+		bind:this={ref}
+		{placeholder}
+		{...restProps}
+	/>
+	{#if errorMessage}
+		<span class="error-message">{errorMessage}</span>
+	{/if}
 </div>
 
 <style>
@@ -48,6 +53,8 @@
 
 		padding: 12px 10px;
 
+		font-size: 16px;
+
 		background-color: var(--color-primary-7);
 		color: var(--color-primary);
 
@@ -66,5 +73,15 @@
 
 	input::placeholder {
 		color: var(--color-inactive-30);
+	}
+
+	input.invalid {
+		border-color: var(--color-danger-50);
+		background: var(--color-danger-5);
+	}
+
+	span.error-message {
+		color: var(--color-danger-50);
+		font-size: 14px;
 	}
 </style>

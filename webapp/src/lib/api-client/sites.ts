@@ -1,22 +1,6 @@
 import { type Site } from '$lib/types';
 import { type Resp } from './models';
 
-export const createSite = async (name: string): Promise<Resp<true>> => {
-	const resp = await fetch('/api/proxy', {
-		method: 'POST',
-		headers: {
-			'X-Method': 'createSite'
-		},
-		body: JSON.stringify({ name: name })
-	});
-
-	if (resp.ok) return true;
-
-	return resp.status >= 500
-		? { errorText: 'Ошибка сервера при создании сайта' }
-		: { errorText: await resp.text() };
-};
-
 type SitesResponse = {
 	sites: Site[];
 	maxAmount: number;
@@ -36,6 +20,22 @@ export const getSites = async (
 	return resp.ok ? await resp.json() : null;
 };
 
+export const createSite = async (name: string) => {
+	const resp = await fetch('/api/proxy', {
+		method: 'POST',
+		headers: {
+			'X-Method': 'createSite'
+		},
+		body: JSON.stringify({ name: name })
+	});
+
+	if (resp.ok) return true;
+
+	return resp.status >= 500
+		? { errorText: 'Ошибка сервера при создании сайта' }
+		: { errorText: await resp.text() };
+};
+
 export const updateSite = async (siteId: string, name: string) => {
 	const resp = await fetch('/api/proxy', {
 		method: 'PUT',
@@ -46,7 +46,11 @@ export const updateSite = async (siteId: string, name: string) => {
 		body: JSON.stringify({ name: name })
 	});
 
-	return resp.ok;
+	if (resp.ok) return true;
+
+	return resp.status >= 500
+		? { errorText: 'Ошибка сервера при изменении сайта' }
+		: { errorText: await resp.text() };
 };
 
 export const deleteSite = async (siteId: string) => {

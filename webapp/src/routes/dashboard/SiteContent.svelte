@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { Button, Info, Input, Link, Modal } from '$lib/components';
-	import { Copy, Trash, Spinner, Upload, Edit } from '$lib/icons';
+	import { Button, Info, Link, Modal } from '$lib/components';
+	import { Copy, Trash, Upload } from '$lib/icons';
 
 	import FileUploader from './components/FileUploader.svelte';
+	import UpdateSite from './UpdateSite.svelte';
 	import { IconButton } from '$lib/components';
 	import { type Site } from '$lib/types';
-	import { deleteSite, updateSite } from '$lib/api-client';
+	import { deleteSite } from '$lib/api-client';
 
 	interface Props {
 		site: Site;
@@ -23,16 +24,12 @@
 
 	const subdomain = site.domain.split('.')[0];
 
-	let updateModal = $state<Modal>();
 	let uploadModal = $state<Modal>();
 	let deleteModal = $state<Modal>();
 	let fileUploader = $state<FileUploader>();
-	let newSiteName = $state('');
 
 	const resetState = () => {
 		loading = false;
-		newSiteName = '';
-		updateModal?.close();
 	};
 </script>
 
@@ -45,44 +42,14 @@
 	</div>
 
 	<div class="site-toolbar">
-		<IconButton onclick={() => updateModal?.open()} title="Изменить сайт">
-			<Edit size={25} />
-		</IconButton>
-		<Modal
-			bind:this={updateModal}
-			kind="primary"
-			openCallback={() => (newSiteName = site.name)}
-			closeCallback={() => {
-				fileUploader?.resetUploadState();
+		<UpdateSite
+			siteName={site.name}
+			siteId={site.id}
+			onsuccess={async () => {
+				resetState();
+				await onsiteupdate();
 			}}
-		>
-			<div style="display: flex; flex-direction: column; gap: 15px;">
-				<h3>Изменить "{site.name}"</h3>
-				<Input id="site-name" label="Название" bind:value={newSiteName}></Input>
-				<div style="display: flex; gap: 15px; align-items: center;">
-					<Button
-						filled
-						disabled={loading}
-						onclick={async () => {
-							loading = true;
-							const res = await updateSite(site.id, newSiteName);
-
-							if (res) {
-								await onsiteupdate();
-								resetState();
-							} else {
-								errorMessage = 'Ошибка при изменении сайта';
-								resetState();
-							}
-						}}>Изменить</Button
-					>
-					<Button disabled={loading} onclick={() => updateModal?.close()}>Отмена</Button>
-					{#if loading}
-						<Spinner size={30} />
-					{/if}
-				</div>
-			</div>
-		</Modal>
+		/>
 
 		<IconButton onclick={() => uploadModal?.open()} title="Загрузить сайт">
 			<Upload size={25} />
@@ -95,7 +62,7 @@
 			}}
 		>
 			<div class="upload-modal">
-				<h3>Загрузить файлы для "{site.name}"</h3>
+				<h2>Загрузить файлы для "{site.name}"</h2>
 				<Info header="Информация о загрузке сайтов">
 					<p>При загрузке файлов все старые файлы будут удалены</p>
 					<p>
