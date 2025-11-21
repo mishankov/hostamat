@@ -39,6 +39,7 @@
 <div class="site-content">
 	<div class="site-url-container">
 		<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
+		<span style="font-size: 10px; color: #666;">{subdomain}</span>
 	</div>
 
 	<div class="site-toolbar">
@@ -128,7 +129,7 @@
 		</IconButton>
 		<Modal bind:this={deleteModal} kind="danger">
 			<div class="delete-modal">
-				<p>Вы уверены, что хотите удалить сайт {subdomain}?</p>
+				<p>Вы уверены, что хотите удалить сайт "{site.name}"?</p>
 				<form method="dialog">
 					<Button kind="primary">Отмена</Button>
 					<Button
@@ -156,15 +157,14 @@
 		padding-top: 20px;
 		padding-left: 20px;
 		padding-right: 20px;
-		padding-bottom: 20px;
+		padding-bottom: 10px;
 	}
 
 	.site-url-container {
 		display: flex;
-		align-items: center;
-		gap: 3px;
-
-		padding-bottom: 10px;
+		flex-direction: column;
+		align-items: start;
+		gap: 5px;
 	}
 
 	.site-toolbar {
@@ -173,6 +173,7 @@
 
 		display: flex;
 		padding: 2px;
+		margin-top: auto;
 
 		border: var(--border-regular);
 		border-radius: 7px;
