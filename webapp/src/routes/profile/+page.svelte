@@ -164,6 +164,7 @@
 	.profile-data-value {
 		display: flex;
 		flex-direction: row;
+		gap: 4px;
 		align-items: center;
 	}
 

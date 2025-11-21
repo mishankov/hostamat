@@ -39,7 +39,7 @@
 <div class="site-content">
 	<div class="site-url-container">
 		<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
-		<span style="font-size: 10px; color: #666;">{subdomain}</span>
+		<span style="font-size: 10px; color: var(--color-text-secondary);">{subdomain}</span>
 	</div>
 
 	<div class="site-toolbar">
