@@ -75,7 +75,7 @@ body {
 	--shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
 
 	--transition: all 300ms;
-	--primary-gradient: linear-gradient(0deg, hsl(194, 70%, 5%), hsl(194, 70%, 10%));
+	--primary-gradient: linear-gradient(-10deg, hsl(194, 70%, 5%), hsl(194, 70%, 10%));
 }
 
 body {
