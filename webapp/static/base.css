@@ -13,6 +13,7 @@ body {
 	--color-primary-5: hsl(194, 70%, 5%);
 	--color-primary-7: hsl(194, 70%, 7%);
 	--color-primary-10: hsl(194, 70%, 10%);
+	--color-primary-15: hsl(194, 70%, 15%);
 	--color-primary-20: hsl(194, 70%, 20%);
 	--color-primary-30: hsl(194, 70%, 30%);
 	--color-primary-40: hsl(194, 70%, 40%);
@@ -49,6 +50,20 @@ body {
 	--color-inactive-90: hsl(194, 20%, 90%);
 	--color-inactive-95: hsl(194, 20%, 95%);
 
+	--color-danger-5: hsl(350, 70%, 5%);
+	--color-danger-7: hsl(350, 70%, 7%);
+	--color-danger-10: hsl(350, 70%, 10%);
+	--color-danger-15: hsl(350, 70%, 15%);
+	--color-danger-20: hsl(350, 70%, 20%);
+	--color-danger-30: hsl(350, 70%, 30%);
+	--color-danger-40: hsl(350, 70%, 40%);
+	--color-danger-50: hsl(350, 70%, 50%);
+	--color-danger-60: hsl(350, 70%, 60%);
+	--color-danger-70: hsl(350, 70%, 70%);
+	--color-danger-80: hsl(350, 70%, 80%);
+	--color-danger-90: hsl(350, 70%, 90%);
+	--color-danger-95: hsl(350, 70%, 95%);
+
 	--color-background: var(--color-primary-7);
 	--color-background-object: var(--color-primary-5);
 	--color-text-regular: var(--color-primary-95);
@@ -75,7 +90,9 @@ body {
 	--shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
 
 	--transition: all 300ms;
-	--primary-gradient: linear-gradient(-10deg, hsl(194, 70%, 5%), hsl(194, 70%, 10%));
+
+	--primary-gradient: linear-gradient(-10deg, var(--color-primary-5), var(--color-primary-7));
+	--danger-gradient: linear-gradient(-10deg, var(--color-danger-5), var(--color-danger-7));
 }
 
 body {

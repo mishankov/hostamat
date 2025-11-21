@@ -124,7 +124,7 @@
 			<Copy size={20} />
 		</IconButton>
 
-		<IconButton title="Удалить сайт" onclick={() => deleteModal?.open()}>
+		<IconButton title="Удалить сайт" kind="danger" onclick={() => deleteModal?.open()}>
 			<Trash size={20} />
 		</IconButton>
 		<Modal bind:this={deleteModal} kind="danger">

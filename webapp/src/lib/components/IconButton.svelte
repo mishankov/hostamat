@@ -1,8 +1,8 @@
 <script lang="ts">
-	let { children, onclick, ...restProps } = $props();
+	let { children, onclick, kind = 'primary', ...restProps } = $props();
 </script>
 
-<button {onclick} {...restProps}>
+<button class={kind} {onclick} {...restProps}>
 	{@render children()}
 </button>
 
@@ -20,7 +20,12 @@
 	}
 
 	button:hover {
-		background-color: var(--color-primary-10);
+		background: var(--color-primary-10);
+		cursor: pointer;
+	}
+
+	button.danger:hover {
+		background: var(--color-danger-15);
 		cursor: pointer;
 	}
 </style>
