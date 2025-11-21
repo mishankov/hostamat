@@ -11,7 +11,7 @@
         5 -30
         10 -20
       "
-			stroke="currentColor"
+			stroke="var(--color-primary)"
 			stroke-width="7"
 			stroke-linecap="round"
 			stroke-linejoin="round"
@@ -23,7 +23,7 @@
 			y1="-20"
 			x2="30"
 			y2="-20"
-			stroke="currentColor"
+			stroke="var(--color-primary)"
 			stroke-width="7"
 			stroke-linecap="round"
 			stroke-linejoin="round"
@@ -36,7 +36,7 @@
 		y1="-10"
 		x2="-8"
 		y2="20"
-		stroke="currentColor"
+		stroke="var(--color-primary)"
 		stroke-width="7"
 		stroke-linecap="round"
 		stroke-linejoin="round"
@@ -47,7 +47,7 @@
 		y1="-10"
 		x2="8"
 		y2="20"
-		stroke="currentColor"
+		stroke="var(--color-primary)"
 		stroke-width="7"
 		stroke-linecap="round"
 		stroke-linejoin="round"
@@ -61,7 +61,7 @@
       20 30
       25 -20
     "
-		stroke="currentColor"
+		stroke="var(--color-primary)"
 		stroke-width="7"
 		stroke-linecap="round"
 		stroke-linejoin="round"

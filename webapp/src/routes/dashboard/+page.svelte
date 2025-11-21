@@ -49,7 +49,7 @@
 				<Spinner size={50} />
 			{:then}
 				{#each sites as site (site.id)}
-					<Card style="height: 110px;">
+					<Card style="height: 120px;">
 						<SiteContent
 							{site}
 							bind:loading
@@ -63,7 +63,7 @@
 				{/each}
 
 				{#if sites.length < maxAmount}
-					<Card floating style="height: 110px;">
+					<Card floating style="height: 120px;">
 						<button
 							class="add-site"
 							onclick={() => {
@@ -163,7 +163,7 @@
 	}
 
 	.add-site-text {
-		color: #bbb;
+		color: var(--color-primary-90);
 		user-select: none;
 	}
 </style>

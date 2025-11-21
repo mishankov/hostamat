@@ -39,7 +39,7 @@
 <div class="site-content">
 	<div class="site-url-container">
 		<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
-		<span style="font-size: 10px; color: var(--color-text-secondary);">{subdomain}</span>
+		<span style="font-size: 16px; color: var(--color-text-secondary);">{subdomain}</span>
 	</div>
 
 	<div class="site-toolbar">
@@ -154,7 +154,7 @@
 		min-width: 150px;
 		height: 100%;
 
-		padding-top: 20px;
+		padding-top: 10px;
 		padding-left: 20px;
 		padding-right: 20px;
 		padding-bottom: 10px;
@@ -165,6 +165,8 @@
 		flex-direction: column;
 		align-items: start;
 		gap: 5px;
+
+		font-size: 20px;
 	}
 
 	.site-toolbar {

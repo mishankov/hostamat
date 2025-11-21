@@ -31,12 +31,13 @@
 
 		display: flex;
 		flex-direction: column;
-		gap: 3px;
+		gap: 5px;
 	}
 
 	label {
 		background-color: transparent;
-		color: var(--color-primary);
+		font-size: 14px;
+		color: var(--color-primary-90);
 		pointer-events: none;
 		transition: var(--transition);
 		user-select: none;
@@ -47,13 +48,13 @@
 
 		padding: 12px 10px;
 
-		background-color: var(--color-primary-dim);
+		background-color: var(--color-primary-7);
 		color: var(--color-primary);
 
 		border-width: 1px;
 		border-style: solid;
 		border-radius: var(--border-radius-regular);
-		border-color: var(--color-border);
+		border-color: var(--color-primary-30);
 
 		transition: var(--transition);
 	}
@@ -61,5 +62,9 @@
 	input:focus {
 		outline: none;
 		border-color: var(--color-primary);
+	}
+
+	input::placeholder {
+		color: var(--color-primary-30);
 	}
 </style>

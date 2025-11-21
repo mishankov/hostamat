@@ -62,8 +62,8 @@
 	}
 
 	.primary {
-		--color: var(--color-primary);
-		--color-dim: var(--color-primary-dim);
+		--color: var(--color-primary-90);
+		--color-dim: var(--color-primary-5);
 	}
 
 	.confirm {
@@ -92,8 +92,8 @@
 	}
 
 	button:disabled {
-		background-color: #555;
-		color: #fff;
-		border-color: #fff;
+		background-color: var(--color-inactive-30);
+		color: var(--color-inactive-90);
+		border-color: var(--color-inactive-90);
 	}
 </style>
