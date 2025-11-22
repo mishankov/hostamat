@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { Button, Link } from '$lib/components';
 	import type { LayoutProps } from './$types';
 
@@ -8,6 +9,14 @@
 		await fetch('/api/auth/logout', { method: 'POST' });
 		window.location.reload();
 	};
+
+	if (browser) {
+		console.info(
+			'%c📝 Обратная связь %c\nЕсли что-то пошло не так, вот форма обратной связи:\nhttps://forms.yandex.ru/u/6907bbfc49af47f3cae7650a/',
+			'color: hsl(194, 70%, 30%); font-weight: bold; font-size: 16px;',
+			'font-size: 14px;'
+		);
+	}
 </script>
 
 <header>
