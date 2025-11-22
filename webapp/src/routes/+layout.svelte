@@ -40,6 +40,26 @@
 
 {@render children()}
 
+<footer>
+	<div class="header-card">
+		<div class="nav-links">
+			<Link href="/"
+				><span class="logo" style="color: var(--color-inactive-50);">ХОСТАМАТ</span></Link
+			>
+			<Link href="/cookies" alwaysUnderline style="color: var(--color-inactive-50);">Куки</Link>
+			<Link href="/privacy" alwaysUnderline style="color: var(--color-inactive-50);"
+				>Политика конифиденциальности</Link
+			>
+			<Link href="/rights" alwaysUnderline style="color: var(--color-inactive-50);"
+				>Права потребителя</Link
+			>
+			<Link href="/terms" alwaysUnderline style="color: var(--color-inactive-50);"
+				>Пользовательское соглашение</Link
+			>
+		</div>
+	</div>
+</footer>
+
 <style>
 	header {
 		width: 100%;
@@ -50,8 +70,21 @@
 		justify-content: center;
 		align-items: center;
 
-		background-color: var(--color-background-object);
+		background-color: var(--color-primary-5);
 		border-bottom: var(--border-regular);
+	}
+
+	footer {
+		width: 100%;
+		height: fit-content;
+
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+
+		background-color: var(--color-primary-5);
+		border-top: var(--border-regular);
 	}
 
 	.header-card {
