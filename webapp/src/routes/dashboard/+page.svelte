@@ -2,7 +2,7 @@
 	import type { PageProps } from './$types';
 	import { invalidateAll } from '$app/navigation';
 
-	import { Card, Error, Info, Modal } from '$lib/components';
+	import { Card, Error, Info } from '$lib/components';
 	import { Spinner } from '$lib/icons';
 
 	import { type Site } from '$lib/types';
