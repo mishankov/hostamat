@@ -16,7 +16,7 @@ const config = {
 	vitePlugin: {
 		inspector: {
 			toggleKeyCombo: 'alt-x',
-			showToggleButton: 'always',
+			// showToggleButton: 'always',
 			toggleButtonPos: 'bottom-right'
 		}
 	}
