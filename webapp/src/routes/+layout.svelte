@@ -18,13 +18,13 @@
 		);
 	}
 
-	let cookieConsent = $state('');
+	let cookieConsent = $state('notset');
 	if (browser) {
 		cookieConsent = localStorage.getItem('cookieConsent') || '';
 	}
 </script>
 
-{#if !cookieConsent}
+{#if cookieConsent !== 'notset' && cookieConsent !== 'true'}
 	<div class="cookie">
 		<Card kind="confirm">
 			<div
