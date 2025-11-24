@@ -81,11 +81,12 @@
 <style>
 	main {
 		width: 100%;
+		height: calc(100% - 76px);
 
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
-		align-items: center;
+		align-items: start;
 	}
 
 	.dashboard {
