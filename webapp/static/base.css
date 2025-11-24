@@ -110,6 +110,7 @@ body {
 	--gradien-primary: linear-gradient(-10deg, var(--color-primary-5), var(--color-primary-7));
 	--gradient-danger: linear-gradient(-10deg, var(--color-danger-5), var(--color-danger-7));
 	--gradient-action: linear-gradient(-10deg, var(--color-action-5), var(--color-action-7));
+	--gradient-confirm: linear-gradient(-10deg, var(--color-confirm-5), var(--color-confirm-7));
 }
 
 body {

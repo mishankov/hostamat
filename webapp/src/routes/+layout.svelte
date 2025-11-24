@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { Button, Link } from '$lib/components';
+	import { Button, Card, Link } from '$lib/components';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
@@ -17,7 +17,34 @@
 			'font-size: 14px;'
 		);
 	}
+
+	let cookieConsent = $state('');
+	if (browser) {
+		cookieConsent = localStorage.getItem('cookieConsent') || '';
+	}
 </script>
+
+{#if !cookieConsent}
+	<div class="cookie">
+		<Card kind="confirm">
+			<div
+				class="cookie-inner"
+				style="display: flex; flex-direction: column; gap: 20px; padding: 10px;"
+			>
+				<p>
+					Мы используем куки <Link href="/cookies" target="_blank" alwaysUnderline>вот так</Link>
+				</p>
+				<Button
+					onclick={() => {
+						cookieConsent = 'true';
+						localStorage.setItem('cookieConsent', 'true');
+					}}
+					kind="confirm">Принять</Button
+				>
+			</div>
+		</Card>
+	</div>
+{/if}
 
 <header>
 	<div class="header-card">
@@ -61,6 +88,14 @@
 </footer>
 
 <style>
+	.cookie {
+		position: fixed;
+		bottom: 10px;
+		right: 10px;
+		width: 300px;
+		height: 100px;
+	}
+
 	header {
 		width: 100%;
 		height: fit-content;
