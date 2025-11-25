@@ -29,10 +29,14 @@
 		<Card kind="confirm">
 			<div
 				class="cookie-inner"
-				style="display: flex; flex-direction: column; gap: 20px; padding: 10px;"
+				style="display: flex; flex-direction: column; gap: 20px; padding: 20px;"
 			>
 				<p>
-					Мы используем куки <Link href="/cookies" target="_blank" alwaysUnderline>вот так</Link>
+					Мы не используем куки для аналитики. Подробнее <Link
+						href="/cookies"
+						target="_blank"
+						alwaysUnderline>тут</Link
+					>
 				</p>
 				<Button
 					onclick={() => {
@@ -92,8 +96,6 @@
 		position: fixed;
 		bottom: 10px;
 		right: 10px;
-		width: 300px;
-		height: 100px;
 	}
 
 	header {
