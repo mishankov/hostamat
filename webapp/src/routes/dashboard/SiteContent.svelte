@@ -148,7 +148,7 @@
 		display: flex;
 		padding: 2px;
 		margin-top: auto;
-		background-color: var(--color-primary-7);
+		background: var(--gradient-primary);
 
 		border: var(--border-regular);
 		border-radius: 7px;
