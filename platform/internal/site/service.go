@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/platforma-dev/platforma/auth"
+	"github.com/platforma-dev/platforma/log"
 
 	"github.com/google/uuid"
 )
@@ -87,6 +88,8 @@ func (s *Service) Create(ctx context.Context, name string) (*Site, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	log.InfoContext(ctx, "new site created", "siteId", site.Id, "subdomain", subdomain.Name)
 
 	return site, nil
 }
@@ -173,7 +176,14 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 	}
 
 	// `s.Get` already checks permission, so can delete without additional checks
-	return s.repository.Delete(ctx, id)
+	err = s.repository.Delete(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	log.InfoContext(ctx, "site deleted", "siteId", site.Id)
+
+	return nil
 }
 
 func (s *Service) DeleteFiles(ctx context.Context, siteId string) error {
@@ -192,7 +202,14 @@ func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*uplo
 		return nil, err
 	}
 
-	return s.uploadSessionService.Create(ctx, site.Id)
+	us, err := s.uploadSessionService.Create(ctx, site.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	log.InfoContext(ctx, "new upload session created", "siteId", siteId, "uploadSessionId", us.Id)
+
+	return us, nil
 }
 
 func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string) error {
@@ -206,7 +223,14 @@ func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string
 		return err
 	}
 
-	return s.uploadSessionService.Close(ctx, us.Id)
+	err = s.uploadSessionService.Close(ctx, us.Id)
+	if err != nil {
+		return err
+	}
+
+	log.InfoContext(ctx, "upload session created closed", "uploadSessionId", uploadSessionId)
+
+	return nil
 }
 
 func (s *Service) GetFile(ctx context.Context, host, filePath string) (io.Reader, error) {
