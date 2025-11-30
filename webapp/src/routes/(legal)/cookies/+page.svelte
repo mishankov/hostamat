@@ -109,12 +109,6 @@
 				>.
 			</p>
 		</section>
-
-		<section>
-			<p class="last-updated">
-				<strong>Дата последнего обновления:</strong> 22 ноября 2025 года
-			</p>
-		</section>
 	</div>
 </main>
 
@@ -166,11 +160,5 @@
 	li {
 		margin-bottom: 8px;
 		color: var(--color-text-secondary);
-	}
-
-	.last-updated {
-		margin-top: 30px;
-		padding-top: 20px;
-		border-top: 1px solid var(--color-border);
 	}
 </style>
