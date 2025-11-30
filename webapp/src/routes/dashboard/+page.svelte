@@ -2,7 +2,7 @@
 	import type { PageProps } from './$types';
 	import { invalidateAll } from '$app/navigation';
 
-	import { Card, Error, Info, Modal } from '$lib/components';
+	import { Card, Error, Info } from '$lib/components';
 	import { Spinner } from '$lib/icons';
 
 	import { type Site } from '$lib/types';
@@ -81,11 +81,12 @@
 <style>
 	main {
 		width: 100%;
+		height: calc(100% - 76px);
 
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
-		align-items: center;
+		align-items: start;
 	}
 
 	.dashboard {

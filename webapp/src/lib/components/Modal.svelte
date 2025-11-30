@@ -50,7 +50,7 @@
 
 		padding: 0;
 
-		background: var(--gradien-primary);
+		background: var(--gradient-primary);
 		color: var(--color-text);
 
 		transition: var(--transition);

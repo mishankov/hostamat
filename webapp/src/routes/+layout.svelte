@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { Button, Link } from '$lib/components';
+	import { Button, Card, Link } from '$lib/components';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
@@ -17,7 +17,38 @@
 			'font-size: 14px;'
 		);
 	}
+
+	let cookieConsent = $state('notset');
+	if (browser) {
+		cookieConsent = localStorage.getItem('cookieConsent') || '';
+	}
 </script>
+
+{#if cookieConsent !== 'notset' && cookieConsent !== 'true'}
+	<div class="cookie">
+		<Card kind="confirm">
+			<div
+				class="cookie-inner"
+				style="display: flex; flex-direction: column; gap: 20px; padding: 20px;"
+			>
+				<p>
+					Мы не используем куки для аналитики. Подробнее <Link
+						href="/cookies"
+						target="_blank"
+						alwaysUnderline>тут</Link
+					>
+				</p>
+				<Button
+					onclick={() => {
+						cookieConsent = 'true';
+						localStorage.setItem('cookieConsent', 'true');
+					}}
+					kind="confirm">Принять</Button
+				>
+			</div>
+		</Card>
+	</div>
+{/if}
 
 <header>
 	<div class="header-card">
@@ -40,7 +71,33 @@
 
 {@render children()}
 
+<footer>
+	<div class="header-card">
+		<div class="nav-links">
+			<Link href="/"
+				><span class="logo" style="color: var(--color-inactive-50);">ХОСТАМАТ</span></Link
+			>
+			<Link href="/cookies" alwaysUnderline style="color: var(--color-inactive-50);">Куки</Link>
+			<Link href="/privacy" alwaysUnderline style="color: var(--color-inactive-50);"
+				>Политика конифиденциальности</Link
+			>
+			<Link href="/rights" alwaysUnderline style="color: var(--color-inactive-50);"
+				>Права потребителя</Link
+			>
+			<Link href="/terms" alwaysUnderline style="color: var(--color-inactive-50);"
+				>Пользовательское соглашение</Link
+			>
+		</div>
+	</div>
+</footer>
+
 <style>
+	.cookie {
+		position: fixed;
+		bottom: 10px;
+		right: 10px;
+	}
+
 	header {
 		width: 100%;
 		height: fit-content;
@@ -50,8 +107,21 @@
 		justify-content: center;
 		align-items: center;
 
-		background-color: var(--color-background-object);
+		background-color: var(--color-primary-5);
 		border-bottom: var(--border-regular);
+	}
+
+	footer {
+		width: 100%;
+		height: fit-content;
+
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+
+		background-color: var(--color-primary-5);
+		border-top: var(--border-regular);
 	}
 
 	.header-card {
