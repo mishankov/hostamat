@@ -170,7 +170,7 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 		return err
 	}
 
-	err = s.DeleteFiles(ctx, site.Id)
+	err = s.fileService.DeleteFromFolderAsync(ctx, site.Id)
 	if err != nil {
 		return err
 	}
@@ -186,10 +186,6 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 	return nil
 }
 
-func (s *Service) DeleteFiles(ctx context.Context, siteId string) error {
-	return s.fileService.DeleteFromFolder(ctx, siteId)
-}
-
 func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*uploadsession.UploadSession, error) {
 	// Get site to check access
 	site, err := s.Get(ctx, siteId)
@@ -197,7 +193,7 @@ func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*uplo
 		return nil, err
 	}
 
-	err = s.DeleteFiles(ctx, site.Domain)
+	err = s.fileService.DeleteFromFolder(ctx, site.Domain)
 	if err != nil {
 		return nil, err
 	}
@@ -228,7 +224,7 @@ func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string
 		return err
 	}
 
-	log.InfoContext(ctx, "upload session created closed", "uploadSessionId", uploadSessionId)
+	log.InfoContext(ctx, "upload session closed", "uploadSessionId", uploadSessionId)
 
 	return nil
 }

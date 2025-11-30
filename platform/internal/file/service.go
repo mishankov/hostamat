@@ -35,7 +35,7 @@ func NewService(repo repository, bucketName string) *Service {
 
 	deleteFolderQueue := queue.NewChanQueue[string](5, time.Second)
 	service.deleteFolderProcessor = queue.New(queue.HandlerFunc[string](func(ctx context.Context, folder string) {
-		err := service.deleteFromFolder(ctx, folder)
+		err := service.DeleteFromFolder(ctx, folder)
 		if err != nil {
 			log.ErrorContext(ctx, "failed to delete files from folder", "folder", folder, "error", err)
 		}
@@ -72,12 +72,18 @@ func (s *Service) UploadFile(ctx context.Context, path, filename string, file io
 	return uploaded, skipped, nil
 }
 
-func (s *Service) DeleteFromFolder(ctx context.Context, folder string) error {
+func (s *Service) DeleteFromFolderAsync(ctx context.Context, folder string) error {
 	return s.deleteFolderProcessor.Enqueue(ctx, folder)
 }
 
-func (s *Service) deleteFromFolder(ctx context.Context, folder string) error {
-	return s.repo.DeleteFromFolder(ctx, s.bucketName, folder)
+func (s *Service) DeleteFromFolder(ctx context.Context, folder string) error {
+	err := s.repo.DeleteFromFolder(ctx, s.bucketName, folder)
+	if err != nil {
+		return err
+	}
+
+	log.InfoContext(ctx, "files deleted", "folder", folder)
+	return nil
 }
 
 func (s *Service) uploadSingleFile(ctx context.Context, folder, filename string, file io.Reader, size int64) error {
