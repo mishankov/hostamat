@@ -32,7 +32,7 @@
 				style="display: flex; flex-direction: column; gap: 20px; padding: 20px;"
 			>
 				<p>
-					Мы не используем куки <Link href="/cookies" target="_blank" alwaysUnderline>вот так</Link>
+					Мы используем куки <Link href="/cookies" target="_blank" alwaysUnderline>вот так</Link>
 				</p>
 				<Button
 					onclick={() => {
