@@ -22,6 +22,7 @@ import (
 	"github.com/platforma-dev/platforma/httpserver"
 	"github.com/platforma-dev/platforma/log"
 	"github.com/platforma-dev/platforma/session"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
@@ -85,6 +86,8 @@ func main() {
 	httpServer.HandleGroup("/auth", authDomain.HandleGroup)
 	// HandleGroup used here because client would request files by additional path
 	httpServer.HandleGroup(conf.FileServerPath, siteDomain.FileServeHandler)
+
+	httpServer.Handle("/metrics", promhttp.Handler())
 
 	httpServer.Use(recoverMiddleware, traceId, requestLogger)
 
