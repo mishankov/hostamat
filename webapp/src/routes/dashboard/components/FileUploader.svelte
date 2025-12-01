@@ -113,6 +113,7 @@
 		const filesOverallSize = selectedFiles.reduce((acc, file) => acc + file.size, 0);
 		if (filesOverallSize > maxFileSize) {
 			error = `Файлы слишком большие. Максимальный размер: ${formatFileSize(maxFileSize)}`;
+			uploading = false;
 			return;
 		}
 
