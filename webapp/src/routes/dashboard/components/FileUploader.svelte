@@ -132,12 +132,7 @@
 					return;
 				}
 
-				const result = await response.json();
 				uploadProgress = ((i + 1) / selectedFiles.length) * 100;
-
-				// Store uploaded and skipped files
-				uploadedFiles = uploadedFiles.concat(result.uploadedFiles || []);
-				skippedFiles = skippedFiles.concat(result.skippedFiles || []);
 			}
 
 			const uploadedCount = selectedFiles.length;
@@ -150,7 +145,18 @@
 			onuploaderror?.({ error });
 		}
 
-		await closeUploadSession(uploadSession);
+		const closeUploadResp = await closeUploadSession(uploadSession);
+
+		if (closeUploadResp.ok) {
+			uploadedFiles = closeUploadResp.files
+				.filter((file) => file.uploaded)
+				.map((file) => `${file.name} (${formatFileSize(file.size)})`);
+			skippedFiles = closeUploadResp.files
+				.filter((file) => !file.uploaded)
+				.map((file) => file.name);
+		} else {
+			error = 'Ошибка при завершении загрузки';
+		}
 
 		uploading = false;
 	}

@@ -275,7 +275,7 @@ func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename stri
 	}
 
 	for _, file := range skipped {
-		s.uploadSessionService.CreateFile(ctx, us.Id, file.Name, file.Size, true)
+		s.uploadSessionService.CreateFile(ctx, us.Id, file.Name, file.Size, false)
 	}
 
 	return nil
