@@ -55,9 +55,9 @@
 		selectedFiles = files;
 
 		// Validate file sizes
-		const oversizedFiles = files.filter((file) => file.size > maxFileSize);
-		if (oversizedFiles.length > 0) {
-			error = `File(s) too large. Maximum size: ${formatFileSize(maxFileSize)}`;
+		const filesOverallSize = files.reduce((acc, file) => acc + file.size, 0);
+		if (filesOverallSize > maxFileSize) {
+			error = `Файлы слишком большие. Максимальный размер: ${formatFileSize(maxFileSize)}`;
 			return;
 		}
 
@@ -79,6 +79,13 @@
 		resetUploadState();
 
 		const files = Array.from(event.dataTransfer.files);
+
+		// Validate file sizes
+		const filesOverallSize = files.reduce((acc, file) => acc + file.size, 0);
+		if (filesOverallSize > maxFileSize) {
+			error = `Файлы слишком большие. Максимальный размер: ${formatFileSize(maxFileSize)}`;
+			return;
+		}
 
 		// Update file input
 		const dt = new DataTransfer();
