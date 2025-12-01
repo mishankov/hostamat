@@ -1,7 +1,6 @@
 package site
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
@@ -36,20 +35,11 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	uploaded, skipped, err := h.service.UploadFile(ctx, uploadSessionId, handler.Filename, file, handler.Size)
+	err = h.service.UploadFile(ctx, uploadSessionId, handler.Filename, file, handler.Size)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	response := struct {
-		UploadedFiles []string `json:"uploadedFiles"`
-		SkippedFiles  []string `json:"skippedFiles"`
-	}{
-		UploadedFiles: uploaded,
-		SkippedFiles:  skipped,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	w.WriteHeader(http.StatusCreated)
 }

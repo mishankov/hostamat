@@ -7,6 +7,7 @@ import (
 const (
 	maxSites          = 5
 	siteNameMaxLength = 25
+	maxFilesSize      = 50 * 1024 * 1024
 )
 
 type Site struct {

@@ -17,3 +17,11 @@ type UploadSession struct {
 	UpdatedAt time.Time           `db:"updated_at" json:"updatedAt"`
 	Status    UploadSessionStatus `db:"status" json:"status"`
 }
+
+type File struct {
+	Id              string `db:"id" json:"id"`
+	UploadSessionId string `db:"upload_session" json:"-"`
+	Name            string `db:"name" json:"name"`
+	Uploaded        bool   `db:"uploaded" json:"uploaded"`
+	Size            int    `db:"size" json:"size"`
+}
