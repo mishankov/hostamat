@@ -1,5 +1,10 @@
 set -e  # Exit on any error
 
+# Configuration variables
+INTERFACE_NAME="eth1"
+PRIVATE_IP="192.168.0.12/24"
+NETPLAN_FILE="/etc/netplan/99-ipv4.yaml"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -42,11 +47,6 @@ apt upgrade -y
 
 print_header "Private Network Setup"
 print_info "Instruction from: https://timeweb.cloud/docs/vpc/managing-bgp-networks/configuring-private-ip#ubuntu"
-
-# Configuration variables
-INTERFACE_NAME="eth1"
-PRIVATE_IP="192.168.0.12/24"
-NETPLAN_FILE="/etc/netplan/99-ipv4.yaml"
 
 # Step 1: Configure private IP through Netplan
 print_step "Configuring Netplan for interface $INTERFACE_NAME..."
