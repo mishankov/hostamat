@@ -80,13 +80,6 @@
 
 		const files = Array.from(event.dataTransfer.files);
 
-		// Validate file sizes
-		const filesOverallSize = files.reduce((acc, file) => acc + file.size, 0);
-		if (filesOverallSize > maxFileSize) {
-			error = `Файлы слишком большие. Максимальный размер: ${formatFileSize(maxFileSize)}`;
-			return;
-		}
-
 		// Update file input
 		const dt = new DataTransfer();
 		files.forEach((file) => dt.items.add(file));
@@ -113,6 +106,13 @@
 		if (uploadSession === null) {
 			error = 'Ошибка при создании сессии загрузки';
 			uploading = false;
+			return;
+		}
+
+		// Validate file sizes
+		const filesOverallSize = selectedFiles.reduce((acc, file) => acc + file.size, 0);
+		if (filesOverallSize > maxFileSize) {
+			error = `Файлы слишком большие. Максимальный размер: ${formatFileSize(maxFileSize)}`;
 			return;
 		}
 
