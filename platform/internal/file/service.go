@@ -52,8 +52,8 @@ func (s *Service) GetFile(ctx context.Context, path string) (io.Reader, error) {
 	return s.repo.GetObject(ctx, s.bucketName, path)
 }
 
-func (s *Service) UploadFile(ctx context.Context, path, filename string, file io.Reader, size int64) ([]string, []string, error) {
-	var uploaded, skipped []string
+func (s *Service) UploadFile(ctx context.Context, path, filename string, file io.Reader, size int64) ([]File, []File, error) {
+	var uploaded, skipped []File
 
 	switch filepath.Ext(filename) {
 	case ".zip":
@@ -64,9 +64,13 @@ func (s *Service) UploadFile(ctx context.Context, path, filename string, file io
 		}
 	default:
 		if err := s.uploadSingleFile(ctx, path, filename, file, size); err != nil {
+			if errors.Is(err, ErrInvalidFileType) {
+				skipped = []File{{filename, 0}}
+			}
 			return nil, nil, err
+		} else {
+			uploaded = []File{{filename, int(size)}}
 		}
-		uploaded = []string{filename}
 	}
 
 	return uploaded, skipped, nil
@@ -93,7 +97,7 @@ func (s *Service) uploadSingleFile(ctx context.Context, folder, filename string,
 	return s.repo.PutObject(ctx, s.bucketName, folder+"/"+filename, file, size)
 }
 
-func (s *Service) uploadZipArchive(ctx context.Context, folder string, file io.Reader, size int64) ([]string, []string, error) {
+func (s *Service) uploadZipArchive(ctx context.Context, folder string, file io.Reader, size int64) ([]File, []File, error) {
 	fileReaderAt, ok := file.(io.ReaderAt)
 	if !ok {
 		return nil, nil, errors.New("zip file must be seekable")
@@ -104,7 +108,7 @@ func (s *Service) uploadZipArchive(ctx context.Context, folder string, file io.R
 		return nil, nil, err
 	}
 
-	var uploadedFiles, skippedFiles []string
+	var uploadedFiles, skippedFiles []File
 
 	for _, f := range zipReader.File {
 		if f.FileInfo().IsDir() {
@@ -113,24 +117,24 @@ func (s *Service) uploadZipArchive(ctx context.Context, folder string, file io.R
 
 		filename := strings.Join(strings.Split(f.Name, "/")[1:], "/")
 		if !isAllowedFile(filename) {
-			skippedFiles = append(skippedFiles, filename)
+			skippedFiles = append(skippedFiles, File{filename, 0})
 			continue
 		}
 
 		fileReader, err := f.Open()
 		if err != nil {
-			skippedFiles = append(skippedFiles, filename)
+			skippedFiles = append(skippedFiles, File{filename, 0})
 			continue
 		}
 
 		err = s.uploadSingleFile(ctx, folder, filename, fileReader, int64(f.UncompressedSize64))
 		fileReader.Close()
 		if err != nil {
-			skippedFiles = append(skippedFiles, filename)
+			skippedFiles = append(skippedFiles, File{filename, 0})
 			continue
 		}
 
-		uploadedFiles = append(uploadedFiles, filename)
+		uploadedFiles = append(uploadedFiles, File{filename, int(f.UncompressedSize64)})
 	}
 
 	return uploadedFiles, skippedFiles, nil

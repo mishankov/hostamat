@@ -2,6 +2,7 @@ package uploadsession
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/platforma-dev/platforma/database"
@@ -43,6 +44,30 @@ func (r *Repository) UpdateStatus(ctx context.Context, uploadSession *UploadSess
 	return nil
 }
 
+func (r *Repository) CreateFile(ctx context.Context, file File) error {
+	_, err := r.db.NamedExecContext(ctx, `INSERT INTO files (id, upload_session, name, uploaded, size) VALUES (:id, :upload_session, :name, :uploaded, :size)`, file)
+	return err
+}
+
+func (r *Repository) GetFilesSizeForUploadSession(ctx context.Context, uploadSessionId string) (int, error) {
+	var size sql.NullInt64
+	err := r.db.GetContext(ctx, &size, `SELECT SUM(size) FROM files WHERE upload_session = $1`, uploadSessionId)
+
+	return int(size.Int64), err
+}
+
+func (r *Repository) GetFiles(ctx context.Context, uploadSessionId string) ([]File, error) {
+	var files []File
+	err := r.db.SelectContext(ctx, &files, `SELECT * FROM files WHERE upload_session = $1`, uploadSessionId)
+
+	return files, err
+}
+
+func (r *Repository) DeleteFilesForUploadSession(ctx context.Context, uploadSessionId string) error {
+	_, err := r.db.ExecContext(ctx, `DELETE FROM files WHERE upload_session = $1`, uploadSessionId)
+	return err
+}
+
 func (r *Repository) Migrations() []database.Migration {
 	return []database.Migration{{
 		ID: "init",
@@ -55,5 +80,15 @@ func (r *Repository) Migrations() []database.Migration {
 			status VARCHAR(255) NOT NULL
 		)`,
 		Down: `DROP TABLE uploadsessions`,
+	}, {
+		ID: "add_files_table",
+		Up: `CREATE TABLE IF NOT EXISTS files (
+			id VARCHAR(255) PRIMARY KEY,
+			upload_session VARCHAR(255) NOT NULL,
+			name VARCHAR(255) NOT NULL,
+			uploaded BOOLEAN NOT NULL,
+			size INT NOT NULL
+		)`,
+		Down: `DROP TABLE files`,
 	}}
 }

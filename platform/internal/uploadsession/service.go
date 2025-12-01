@@ -31,7 +31,17 @@ func (s *Service) Close(ctx context.Context, uploadSessionId string) error {
 	us.Status = UploadSessionStatusClosed
 	us.UpdatedAt = time.Now()
 
-	return s.repo.UpdateStatus(ctx, us)
+	err = s.repo.UpdateStatus(ctx, us)
+	if err != nil {
+		return err
+	}
+
+	err = s.repo.DeleteFilesForUploadSession(ctx, us.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Service) Create(ctx context.Context, siteId string) (*UploadSession, error) {
@@ -52,4 +62,22 @@ func (s *Service) Create(ctx context.Context, siteId string) (*UploadSession, er
 	}
 
 	return uploadSession, nil
+}
+
+func (s *Service) GetSize(ctx context.Context, uploadSessionId string) (int, error) {
+	return s.repo.GetFilesSizeForUploadSession(ctx, uploadSessionId)
+}
+
+func (s *Service) CreateFile(ctx context.Context, uploadSessionId, filename string, size int, uploaded bool) error {
+	return s.repo.CreateFile(ctx, File{
+		Id:              uuid.NewString(),
+		UploadSessionId: uploadSessionId,
+		Name:            filename,
+		Uploaded:        uploaded,
+		Size:            size,
+	})
+}
+
+func (s *Service) GetFiles(ctx context.Context, uploadSessionId string) ([]File, error) {
+	return s.repo.GetFiles(ctx, uploadSessionId)
 }

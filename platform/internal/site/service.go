@@ -208,25 +208,30 @@ func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*uplo
 	return us, nil
 }
 
-func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string) error {
+func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string) ([]uploadsession.File, error) {
 	us, err := s.uploadSessionService.Get(ctx, uploadSessionId)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	_, err = s.Get(ctx, us.Site)
 	if err != nil {
-		return err
+		return nil, err
+	}
+
+	files, err := s.uploadSessionService.GetFiles(ctx, us.Id)
+	if err != nil {
+		return nil, err
 	}
 
 	err = s.uploadSessionService.Close(ctx, us.Id)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	log.InfoContext(ctx, "upload session closed", "uploadSessionId", uploadSessionId)
 
-	return nil
+	return files, nil
 }
 
 func (s *Service) GetFile(ctx context.Context, host, filePath string) (io.Reader, error) {
@@ -240,18 +245,40 @@ func (s *Service) GetFile(ctx context.Context, host, filePath string) (io.Reader
 	return s.fileService.GetFile(ctx, site.Id+"/"+filePath)
 }
 
-func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename string, file io.Reader, size int64) ([]string, []string, error) {
+func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename string, file io.Reader, size int64) error {
+	currentSize, err := s.uploadSessionService.GetSize(ctx, uploadSessionId)
+	if err != nil {
+		return err
+	}
+
+	if int64(currentSize)+size > maxFilesSize {
+		return errUploadSize
+	}
+
 	us, err := s.uploadSessionService.Get(ctx, uploadSessionId)
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 
 	_, err = s.Get(ctx, us.Site)
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 
-	return s.fileService.UploadFile(ctx, us.Site, filename, file, size)
+	uploaded, skipped, err := s.fileService.UploadFile(ctx, us.Site, filename, file, size)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range uploaded {
+		s.uploadSessionService.CreateFile(ctx, us.Id, file.Name, file.Size, true)
+	}
+
+	for _, file := range skipped {
+		s.uploadSessionService.CreateFile(ctx, us.Id, file.Name, file.Size, false)
+	}
+
+	return nil
 }
 
 func (s *Service) validate(_ context.Context, site *Site) error {
