@@ -27,7 +27,7 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.ParseMultipartForm(10 << 20) // 10 MB
+	r.ParseMultipartForm(20 << 20) // 20 MB
 	file, handler, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, "Error retrieving file", http.StatusBadRequest)
