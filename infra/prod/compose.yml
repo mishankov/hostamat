@@ -3,8 +3,9 @@ services:
     image: caddy:latest
     deploy:
       replicas: 1
-      constraints:
-        - node.labels.kind == webserver
+      placement:
+        constraints:
+          - node.labels.kind == webserver
     ports:
       - 80:80
       - 443:443
@@ -16,7 +17,7 @@ services:
       - caddy-data/caddy/config:/config
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile --resume
 
-config:
+configs:
   caddyfile:
     external: true
 
