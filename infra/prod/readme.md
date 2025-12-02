@@ -2,8 +2,8 @@
 
 ## Deploy
 
-docker config create caddyfile config/Caddyfile
-docker config create dozzle_users config/dozzle/users.yml
+docker config create caddyfile config/Caddyfile && \
+docker config create dozzle_users config/dozzle/users.yml && \
 docker stack config -c compose.yml > swarm.yml && docker stack deploy --compose-file swarm.yml --prune --with-registry-auth hostamat
 
 ### Nuke
