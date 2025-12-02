@@ -60,7 +60,7 @@ services:
     image: ghcr.io/twin/gatus:latest
     configs:
       - source: gatus_config
-        target: /config/config.yml
+        target: /config/config.yaml
     ports:
       - 8082:8080
 

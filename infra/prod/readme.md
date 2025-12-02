@@ -16,8 +16,8 @@ docker stack rm hostamat && docker config rm caddyfile dozzle_users gatus_config
 - [Hostamat](https://hostamat.ru/)
 - [Portainer](https://5.129.199.174:8080)
 - [Dozzle](http://5.129.199.174:8081)
-- [Gatus](http://147.45.109.74:8082)
-- [Dashboard](http://147.45.109.74:8083/dashboard)
+- [Gatus](http://5.129.199.174:8082)
+- [Dashboard](http://5.129.199.174:8083/dashboard)
 
 ## Настройка сервера
 
