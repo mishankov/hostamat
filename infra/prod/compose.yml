@@ -13,8 +13,8 @@ services:
       - source: caddyfile
         target: /etc/caddy/Caddyfile
     volumes:
-      - caddy-data/data:/data
-      - caddy-data/caddy/config:/config
+      - caddy-data:/data
+      - caddy-conf:/config
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile --resume
 
 configs:
@@ -23,4 +23,6 @@ configs:
 
 volumes:
   caddy-data:
+    external: true
+  caddy-conf:
     external: true

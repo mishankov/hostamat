@@ -1,5 +1,10 @@
 # Prod infra
 
+## Deploy
+
+docker config create caddyfile config/Caddyfile
+docker stack deploy --compose-file compose.yml  hostamat
+
 ## Links
 
 - [Hostamat](https://hostamat.ru/)
