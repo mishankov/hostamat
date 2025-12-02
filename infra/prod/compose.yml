@@ -2,6 +2,11 @@ services:
   caddy:
     image: caddy:latest
     container_name: caddy
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind=webserver
     ports:
       - 80:80
       - 443:443
