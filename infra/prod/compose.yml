@@ -18,6 +18,27 @@ services:
       - caddy-conf:/config
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile --resume
 
+  # app
+  hostamat:
+    image: hostamat-container-registry.registry.twcstorage.ru/hostamat/backend:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == app
+    env_file:
+      - .env
+
+  webapp:
+    image: hostamat-container-registry.registry.twcstorage.ru/hostamat/webapp:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == app
+    env_file:
+      - .env
+
   # support
   portainer:
     image: portainer/portainer-ce:lts
