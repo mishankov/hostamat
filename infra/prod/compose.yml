@@ -56,6 +56,21 @@ services:
       - 8080:9443
       - 8000:8000
 
+  gatus:
+    image: ghcr.io/twin/gatus:latest
+    configs:
+      - source: gatus_config
+        target: /config/config.yml
+    ports:
+      - 8082:8080
+
+  dashboard:
+    image: hostamat-container-registry.registry.twcstorage.ru/hostamat/dashboard:latest
+    ports:
+      - 8083:4444
+    env_file:
+      - .env
+
   # global
   dozzle:
     image: amir20/dozzle:latest
@@ -77,6 +92,8 @@ configs:
   caddyfile:
     external: true
   dozzle_users:
+    external: true
+  gatus_config:
     external: true
 
 volumes:

@@ -1,13 +1,6 @@
 endpoints:
-  - name: API (private IP)
-    url: "http://192.168.0.5:1001/health"
-    interval: 5m
-    conditions:
-      - "[STATUS] == 200"
-      - "[RESPONSE_TIME] < 300"
-
-  - name: API (public IP)
-    url: "http://31.130.147.84:1001/health"
+  - name: API
+    url: "http://hostamat:1001/health"
     interval: 5m
     conditions:
       - "[STATUS] == 200"
