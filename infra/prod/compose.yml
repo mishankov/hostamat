@@ -34,17 +34,21 @@ services:
       - 8000:8000
 
   # global
-  dozzle-agent:
+  dozzle:
     image: amir20/dozzle:latest
+    environment:
+      - DOZZLE_MODE=swarm
+    configs:
+      - source: dozzle_users
+        target: /data/users.yml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8081:8080
+    networks:
+      - dozzle
     deploy:
       mode: global
-    environment:
-      - DOZZLE_HOSTNAME=hostamat
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    ports:
-      - 7007:7007
-    command: agent
 
   portainer_agent:
     image: portainer/agent:2.33.3
@@ -68,3 +72,7 @@ volumes:
     external: true
   portainer_data:
     external: true
+
+networks:
+  dozzle:
+    driver: overlay

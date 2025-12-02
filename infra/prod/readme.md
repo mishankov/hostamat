@@ -3,6 +3,7 @@
 ## Deploy
 
 docker config create caddyfile config/Caddyfile
+docker config create dozzle_users config/dozzle/users.yml
 docker stack deploy --compose-file compose.yml  hostamat
 
 ## Links
