@@ -17,6 +17,18 @@ services:
       - caddy-conf:/config
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile --resume
 
+  dozzle-agent:
+    image: amir20/dozzle:latest
+    deploy:
+      mode: global
+    environment:
+      - DOZZLE_HOSTNAME=hostamat
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 7007:7007
+    command: agent
+
   portainer_agent:
     image: portainer/agent:2.33.3
     deploy:
