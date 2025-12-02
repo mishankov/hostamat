@@ -64,6 +64,8 @@ services:
 configs:
   caddyfile:
     external: true
+  dozzle_users:
+    external: true
 
 volumes:
   caddy-data:
