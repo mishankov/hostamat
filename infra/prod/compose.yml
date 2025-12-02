@@ -6,7 +6,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.labels.kind=webserver
+          - node.labels.kind==webserver
     ports:
       - 80:80
       - 443:443
