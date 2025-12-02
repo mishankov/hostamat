@@ -1,0 +1,25 @@
+services:
+  caddy:
+    image: caddy:latest
+    deploy:
+      replicas: 1
+      constraints:
+        - node.labels.kind == webserver
+    ports:
+      - 80:80
+      - 443:443
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+    volumes:
+      - caddy-data/data:/data
+      - caddy-data/caddy/config:/config
+    command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile --resume
+
+config:
+  caddyfile:
+    external: true
+
+volumes:
+  caddy-data:
+    external: true
