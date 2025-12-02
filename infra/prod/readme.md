@@ -4,13 +4,14 @@
 
 docker config create caddyfile config/Caddyfile
 docker config create dozzle_users config/dozzle/users.yml
-docker stack deploy --compose-file compose.yml  hostamat
+docker stack config -c compose.yml > swarm.yml
+docker stack deploy --compose-file swarm.yml --prune hostamat
 
 ## Links
 
 - [Hostamat](https://hostamat.ru/)
-- [Portainer](http://147.45.109.74:8080)
-- [Dozzle](http://147.45.109.74:8081)
+- [Portainer](https://5.129.199.174:8080)
+- [Dozzle](http://5.129.199.174:8081)
 - [Gatus](http://147.45.109.74:8082)
 - [Dashboard](http://147.45.109.74:8083/dashboard)
 
