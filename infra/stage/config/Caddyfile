@@ -1,8 +1,0 @@
-{
-	# Make admin endpoint available
-  admin 0.0.0.0:2019
-}
-
-{$HOSTAMAT_DOMAIN:hostamat.ru} {
-    reverse_proxy landing:3000
-}
