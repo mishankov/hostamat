@@ -3,6 +3,13 @@ storage:
   path: "postgres://${GATUS_DB_USER}:${GATUS_DB_PASSWORD}@${GATUS_DB_HOST}:5432/${GATUS_DB}?sslmode=disable"
 
 endpoints:
+  - name: Webserver
+    url: "http://caddy:2019/id/hostamat_proxy"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"
+
   - name: API
     url: "http://hostamat:1001/health"
     interval: 5m
