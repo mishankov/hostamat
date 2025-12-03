@@ -123,6 +123,8 @@ func main() {
 	app.RegisterService("http", httpServer)
 	app.RegisterService("deleteFolderQueue", fileDomain.DeleteFolderQueue)
 
+	log.InfoContext(ctx, "test log")
+
 	if err := app.Run(ctx); err != nil {
 		logger.Error("Applicaton finished with error", "error", err)
 	}
