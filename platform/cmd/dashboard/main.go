@@ -111,11 +111,12 @@ func main() {
 		}
 
 		type site struct {
-			Domain    string `db:"domain"`
-			Name      string `db:"name"`
-			Username  string `db:"username"`
-			CreatedAt string `db:"created_at"`
-			UpdatedAt string `db:"updated_at"`
+			Domain      string `db:"domain"`
+			Name        string `db:"name"`
+			Username    string `db:"username"`
+			CreatedAt   string `db:"created_at"`
+			UpdatedAt   string `db:"updated_at"`
+			UploadCount int    `db:"upload_count"`
 		}
 
 		type dashboardData struct {
@@ -146,10 +147,10 @@ func main() {
 
 		// Get last 10 registered users
 		err = conn.SelectContext(ctx, &data.Users, `
-				SELECT username, created 
-				FROM users 
-				WHERE username IS NOT NULL 
-				ORDER BY created DESC 
+				SELECT username, created
+				FROM users
+				WHERE username IS NOT NULL
+				ORDER BY created DESC
 				LIMIT 10
 			`)
 		if err != nil {
@@ -158,17 +159,21 @@ func main() {
 
 		// Get last 10 created sites with last upload datetime
 		err = conn.SelectContext(ctx, &data.Sites, `
-				SELECT s.domain, s.name, u.username, s.created_at, s.updated_at
+				SELECT s.domain, s.name, u.username, s.created_at,
+				       COALESCE(MAX(us.updated_at), s.updated_at) as updated_at,
+				       COUNT(us.id) as upload_count
 				FROM sites s
 				LEFT JOIN users u ON s."user" = u.id
-				ORDER BY s.updated_at DESC 
+				LEFT JOIN uploadsessions us ON s.id = us.site
+				GROUP BY s.id, s.domain, s.name, u.username, s.created_at, s.updated_at
+				ORDER BY COALESCE(MAX(us.updated_at), s.updated_at) DESC
 				LIMIT 10
 			`)
 		if err != nil {
 			data.SitesError = err.Error()
 		}
 
-		log.InfoContext(ctx, "data", "stats", data.Stats)
+		log.InfoContext(ctx, "data", "stats", data)
 
 		err = tmpls.ExecuteTemplate(w, "dashboard.html", data)
 		if err != nil {

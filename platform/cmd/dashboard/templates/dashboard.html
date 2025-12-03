@@ -79,13 +79,14 @@
                     {{else}}
                     <div class="overflow-x-auto">
                         <table class="table table-zebra">
-                            <thead>
+                             <thead>
                                 <tr>
                                     <th>Domain</th>
                                     <th>Name</th>
                                     <th>User</th>
                                     <th>Created</th>
                                     <th>Last Upload</th>
+                                    <th>Uploads</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -104,6 +105,7 @@
                                     <td>{{.Username}}</td>
                                     <td>{{.CreatedAt}}</td>
                                     <td>{{.UpdatedAt}}</td>
+                                    <td>{{.UploadCount}}</td>
                                 </tr>
                                 {{end}}
                             </tbody>
