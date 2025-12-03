@@ -1,3 +1,7 @@
+storage:
+  type: postgres
+  path: "postgres://${GATUS_DB_USER}:${GATUS_DB_PASSWORD}@postgres:5432/${GATUS_DB}?sslmode=disable"
+
 endpoints:
   - name: API
     url: "http://hostamat:1001/health"

@@ -66,8 +66,8 @@ services:
     configs:
       - source: gatus_config
         target: /config/config.yaml
-    volumes:
-      - gatus_data:/data
+    env_file:
+      - .env
     ports:
       - 8082:8080
 
@@ -114,8 +114,6 @@ volumes:
   caddy-conf:
     external: true
   portainer_data:
-    external: true
-  gatus_data:
     external: true
 
 networks:
