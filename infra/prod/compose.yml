@@ -67,7 +67,7 @@ services:
       - source: gatus_config
         target: /config/config.yaml
     volumes:
-      - gatus_data:/data/
+      - gatus_data:/data
     ports:
       - 8082:8080
 
