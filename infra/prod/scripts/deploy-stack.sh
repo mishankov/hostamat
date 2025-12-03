@@ -10,4 +10,4 @@ docker config create gatus_config config/gatus/config.yaml
 
 
 docker stack config -c compose.yml > swarm.yml
-(r=3;while ! docker stack deploy --compose-file swarm.yml --prune --with-registry-auth hostamat ; do ((--r))||exit;sleep 5;done)
+(r=3;while ! docker stack deploy --compose-file swarm.yml --prune --with-registry-auth --detach=false hostamat ; do ((--r))||exit;sleep 5;done)
