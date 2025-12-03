@@ -105,26 +105,72 @@ func main() {
 			Error  string   `json:"error"`
 		}
 
-		var metrics []metric = make([]metric, 3)
+		type user struct {
+			Username string `db:"username"`
+			Created  string `db:"created"`
+		}
 
-		getMetric := func(id, name string, pos int, query string, metrics []metric) {
-			metrics[pos].Id = id
-			metrics[pos].Name = name
+		type site struct {
+			Domain    string `db:"domain"`
+			Name      string `db:"name"`
+			Username  string `db:"username"`
+			CreatedAt string `db:"created_at"`
+			UpdatedAt string `db:"updated_at"`
+		}
+
+		type dashboardData struct {
+			Stats      []metric
+			Users      []user
+			UsersError string
+			Sites      []site
+			SitesError string
+		}
+
+		var data dashboardData
+		data.Stats = make([]metric, 3)
+
+		getMetric := func(id, name string, pos int, query string) {
+			data.Stats[pos].Id = id
+			data.Stats[pos].Name = name
 			var dest = []string{""}
 			err := conn.SelectContext(ctx, &dest, query)
-			metrics[pos].Values = dest
+			data.Stats[pos].Values = dest
 			if err != nil {
-				metrics[pos].Error = err.Error()
+				data.Stats[pos].Error = err.Error()
 			}
 		}
 
-		getMetric("users", "Users", 0, "select count(*) from users", metrics)
-		getMetric("sites", "Sites", 1, "select count(*) from sites", metrics)
-		getMetric("us", "Uploads", 2, "select count(*) from uploadsessions", metrics)
+		getMetric("users", "Users", 0, "select count(*) from users")
+		getMetric("sites", "Sites", 1, "select count(*) from sites")
+		getMetric("us", "Uploads", 2, "select count(*) from uploadsessions")
 
-		log.InfoContext(ctx, "data", "metrics", metrics)
+		// Get last 10 registered users
+		err = conn.SelectContext(ctx, &data.Users, `
+				SELECT username, created 
+				FROM users 
+				WHERE username IS NOT NULL 
+				ORDER BY created DESC 
+				LIMIT 10
+			`)
+		if err != nil {
+			data.UsersError = err.Error()
+		}
 
-		err = tmpls.ExecuteTemplate(w, "dashboard.html", metrics)
+		// Get last 10 created sites with last upload datetime
+		err = conn.SelectContext(ctx, &data.Sites, `
+				SELECT s.domain, s.name, u.username, s.created_at, s.updated_at
+				FROM sites s
+				LEFT JOIN users u ON s."user" = u.id
+				ORDER BY s.updated_at DESC 
+				LIMIT 10
+			`)
+		if err != nil {
+			data.SitesError = err.Error()
+		}
+
+		log.InfoContext(ctx, "data", "stats", data.Stats)
+
+		err = tmpls.ExecuteTemplate(w, "dashboard.html", data)
 		if err != nil {
 			log.ErrorContext(ctx, "failed to execute template", "error", err)
 			w.WriteHeader(500)

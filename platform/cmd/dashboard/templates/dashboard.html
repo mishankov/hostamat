@@ -11,23 +11,107 @@
         />
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     </head>
-    <body
-        class="min-h-screen bg-base-200 flex items-center gap-4 justify-center"
-    >
-        <div
-            class="stats stats-vertical lg:stats-horizontal bg-base-100 shadow"
-        >
-            {{range .}}
-            <div class="stat">
-                <div class="stat-title">{{.Name}}</div>
-                <div class="stat-value">{{index .Values 0}}</div>
-                {{if .Error}}
-                <div role="alert" class="alert alert-error alert-soft">
-                    <span>{{.Error}}</span>
+    <body class="min-h-screen bg-base-200 p-4">
+        <div class="max-w-7xl mx-auto flex flex-col gap-4">
+            <h1 class="text-3xl font-bold mb-6">Dashboard</h1>
+
+            <!-- Stats Section -->
+            <h2 class="text-xl font-bold">Stats</h2>
+            <div
+                class="stats stats-vertical lg:stats-horizontal bg-base-100 shadow"
+            >
+                {{range .Stats}}
+                <div class="stat">
+                    <div class="stat-title">{{.Name}}</div>
+                    <div class="stat-value">{{index .Values 0}}</div>
+                    {{if .Error}}
+                    <div role="alert" class="alert alert-error alert-soft">
+                        <span>{{.Error}}</span>
+                    </div>
+                    {{end}}
                 </div>
                 {{end}}
             </div>
-            {{end}}
+
+            <!-- Tables Section -->
+            <h2 class="text-xl font-bold">Last entries</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <!-- Last 10 Registered Users -->
+                <div class="bg-base-100 shadow rounded-lg p-4">
+                    <h2 class="text-xl font-bold mb-4">
+                        Last 10 Registered Users
+                    </h2>
+                    {{if .UsersError}}
+                    <div role="alert" class="alert alert-error">
+                        <span>{{.UsersError}}</span>
+                    </div>
+                    {{else}}
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Registered</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{range .Users}}
+                                <tr>
+                                    <td>{{.Username}}</td>
+                                    <td>{{.Created}}</td>
+                                </tr>
+                                {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{end}}
+                </div>
+
+                <!-- Last 10 Created Sites -->
+                <div class="col-span-2 bg-base-100 shadow rounded-lg p-4">
+                    <h2 class="text-xl font-bold mb-4">
+                        Last 10 Created Sites
+                    </h2>
+                    {{if .SitesError}}
+                    <div role="alert" class="alert alert-error">
+                        <span>{{.SitesError}}</span>
+                    </div>
+                    {{else}}
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra">
+                            <thead>
+                                <tr>
+                                    <th>Domain</th>
+                                    <th>Name</th>
+                                    <th>User</th>
+                                    <th>Created</th>
+                                    <th>Last Upload</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{range .Sites}}
+                                <tr>
+                                    <td>
+                                        <a
+                                            href="https://{{.Domain}}"
+                                            target="_blank"
+                                            class="link link-primary"
+                                        >
+                                            {{.Domain}}
+                                        </a>
+                                    </td>
+                                    <td>{{.Name}}</td>
+                                    <td>{{.Username}}</td>
+                                    <td>{{.CreatedAt}}</td>
+                                    <td>{{.UpdatedAt}}</td>
+                                </tr>
+                                {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
         </div>
     </body>
 </html>
