@@ -1,58 +1,119 @@
 services:
+  # webserver
   caddy:
     image: caddy:latest
-    container_name: caddy
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == webserver
+    env_file:
+      - .env
     ports:
       - 80:80
       - 443:443
-    expose:
-      - 2019
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
     volumes:
-      - ./config/Caddyfile:/etc/caddy/Caddyfile
-      - ./container-data/caddy/data:/data
-      - ./container-data/caddy/config:/config
+      - caddy-data:/data
+      - caddy-conf:/config
     command: caddy run --config /etc/caddy/Caddyfile --adapter caddyfile --resume
-    restart: unless-stopped
 
+  # app
   hostamat:
     image: hostamat-container-registry.registry.twcstorage.ru/hostamat/backend:latest
-    container_name: hostamat
-    ports:
-      - ${HOSTAMAT_PORT}:1001
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == app
     env_file:
       - .env
-    depends_on:
-      - caddy
-    restart: unless-stopped
 
   webapp:
     image: hostamat-container-registry.registry.twcstorage.ru/hostamat/webapp:latest
-    container_name: landing
-    expose:
-      - 3000
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == app
     env_file:
       - .env
-    restart: unless-stopped
 
-  dozzle-agent:
-    image: amir20/dozzle:latest
-    container_name: dozzle-agent
-    command: agent
-    environment:
-      - DOZZLE_HOSTNAME=hostamat
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    ports:
-      - 7007:7007
-    restart: unless-stopped
-
-  portainer_agent:
-    image: portainer/agent:2.33.3
-    container_name: portainer_agent
-    ports:
-      - "9001:9001"
+  # support
+  portainer:
+    image: portainer/portainer-ce:lts
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == support
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /var/lib/docker/volumes:/var/lib/docker/volumes
-      - /:/host
-    restart: unless-stopped
+      - portainer_data:/data
+    ports:
+      - 8080:9443
+      - 8000:8000
+
+  gatus:
+    image: ghcr.io/twin/gatus:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == support
+    configs:
+      - source: gatus_config
+        target: /config/config.yaml
+    ports:
+      - 8082:8080
+
+  dashboard:
+    image: hostamat-container-registry.registry.twcstorage.ru/hostamat/dashboard:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == support
+    ports:
+      - 8083:4444
+    env_file:
+      - .env
+
+  # global
+  dozzle:
+    image: amir20/dozzle:latest
+    environment:
+      - DOZZLE_MODE=swarm
+    configs:
+      - source: dozzle_users
+        target: /data/users.yml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8081:8080
+    networks:
+      - dozzle
+    deploy:
+      mode: global
+
+configs:
+  caddyfile:
+    external: true
+  dozzle_users:
+    external: true
+  gatus_config:
+    external: true
+
+volumes:
+  caddy-data:
+    external: true
+  caddy-conf:
+    external: true
+  portainer_data:
+    external: true
+
+networks:
+  dozzle:
+    driver: overlay

@@ -4,5 +4,5 @@
 }
 
 {$HOSTAMAT_DOMAIN:hostamat.ru} {
-    reverse_proxy landing:3000
+    reverse_proxy webapp:3000
 }

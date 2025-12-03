@@ -1,8 +1,7 @@
 version: "3"
 
 vars:
-  SSH_PROD_APP: root@31.130.147.84
-  SSH_PROD_SUPPORT: root@147.45.109.74
+  SSH_PROD: -i ~/.ssh/hostamat_admin root@5.129.199.174
   CONTAINER_REGISTRY: hostamat-container-registry.registry.twcstorage.ru
 
 tasks:
@@ -74,17 +73,7 @@ tasks:
 
   # Deploy
 
-  deploy-prod-app:
-    deps: ["push-backend", "push-webapp"]
+  deploy-stack:
+    deps: ["push-backend", "push-webapp", "push-dashboard"]
     cmds:
-      - cat ./infra/prod/scripts/deploy-app.sh | ssh -t {{.SSH_PROD_APP}}
-
-  deploy-prod-support:
-    deps: ["push-dashboard"]
-    cmds:
-      - cat ./infra/prod/scripts/deploy-support.sh | ssh -t {{.SSH_PROD_SUPPORT}}
-
-  deploy-prod:
-    deps: ["deploy-prod-support", "deploy-prod-app"]
-    cmds:
-      - ssh -t {{.SSH_PROD_APP}} 'cd ./hostamat/infra/prod; docker compose logs hostamat -f'
+      - cat ./infra/prod/scripts/deploy-stack.sh | ssh -t {{.SSH_PROD}}
