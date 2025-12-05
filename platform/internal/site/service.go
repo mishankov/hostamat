@@ -193,7 +193,7 @@ func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*uplo
 		return nil, err
 	}
 
-	err = s.fileService.DeleteFromFolder(ctx, site.Domain)
+	err = s.fileService.DeleteFromFolder(ctx, site.Id)
 	if err != nil {
 		return nil, err
 	}
