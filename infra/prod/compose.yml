@@ -83,6 +83,21 @@ services:
     env_file:
       - .env
 
+  prometheus:
+    image: prom/prometheus:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == support
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
+    ports:
+      - "8084:9090"
+    volumes:
+      - prometheus-data:/prometheus
+
   # global
   dozzle:
     image: amir20/dozzle:latest
@@ -100,12 +115,25 @@ services:
     deploy:
       mode: global
 
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    deploy:
+      mode: global
+    command:
+      - "--path.rootfs=/host"
+    network_mode: host
+    pid: host
+    volumes:
+      - "/:/host:ro,rslave"
+
 configs:
   caddyfile:
     external: true
   dozzle_users:
     external: true
   gatus_config:
+    external: true
+  prometheus_config:
     external: true
 
 volumes:
@@ -114,6 +142,8 @@ volumes:
   caddy-conf:
     external: true
   portainer_data:
+    external: true
+  prometheus-data:
     external: true
 
 networks:
