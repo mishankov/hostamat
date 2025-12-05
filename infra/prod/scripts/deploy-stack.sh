@@ -11,4 +11,4 @@ docker config create prometheus_config config/prometheus.yaml
 
 
 docker stack config -c compose.yml > swarm.yml
-(r=3;while ! docker stack deploy --compose-file swarm.yml --prune --with-registry-auth --detach=false hostamat ; do ((--r))||exit;sleep 5;done)
+(r=3;while ! docker stack deploy --compose-file swarm.yml --prune --with-registry-auth --detach=true hostamat ; do ((--r))||exit;sleep 5;done)
