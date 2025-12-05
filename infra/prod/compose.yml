@@ -93,10 +93,20 @@ services:
     configs:
       - source: prometheus_config
         target: /etc/prometheus/prometheus.yml
-    ports:
-      - "8084:9090"
     volumes:
       - prometheus-data:/prometheus
+
+  grafana:
+    image: grafana/grafana-enterprise
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == support
+    ports:
+      - "8084:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
 
   # global
   dozzle:
@@ -144,6 +154,8 @@ volumes:
   portainer_data:
     external: true
   prometheus-data:
+    external: true
+  grafana-data:
     external: true
 
 networks:
