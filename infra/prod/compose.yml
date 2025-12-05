@@ -96,17 +96,17 @@ services:
     volumes:
       - prometheus-data:/prometheus
 
-  # grafana:
-  #   image: grafana/grafana-enterprise
-  #   deploy:
-  #     replicas: 1
-  #     placement:
-  #       constraints:
-  #         - node.labels.kind == support
-  #   ports:
-  #     - "8084:3000"
-  #   volumes:
-  #     - grafana-data:/var/lib/grafana
+  grafana:
+    image: grafana/grafana-enterprise
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == support
+    ports:
+      - "8084:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
 
   # global
   dozzle:
