@@ -83,18 +83,18 @@ services:
     env_file:
       - .env
 
-  prometheus:
-    image: prom/prometheus:latest
-    deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - node.labels.kind == support
-    configs:
-      - source: prometheus_config
-        target: /etc/prometheus/prometheus.yml
-    volumes:
-      - prometheus-data:/prometheus
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   deploy:
+  #     replicas: 1
+  #     placement:
+  #       constraints:
+  #         - node.labels.kind == support
+  #   configs:
+  #     - source: prometheus_config
+  #       target: /etc/prometheus/prometheus.yml
+  #   volumes:
+  #     - prometheus-data:/prometheus
 
   # grafana:
   #   image: grafana/grafana-enterprise
