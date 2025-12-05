@@ -121,8 +121,6 @@ services:
       mode: global
     command:
       - "--path.rootfs=/host"
-    network_mode: host
-    pid: host
     volumes:
       - "/:/host:ro,rslave"
 
