@@ -156,7 +156,7 @@ volumes:
   prometheus-data:
     external: true
   grafana-data:
-    external: true
+    # external: true
 
 networks:
   dozzle:
