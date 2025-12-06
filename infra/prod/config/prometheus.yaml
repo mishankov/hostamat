@@ -20,12 +20,12 @@ scrape_configs:
 
   - job_name: node-moscow-1
     static_configs:
-      - targets: ["192.168.0.4:9100"]
+      - targets: ["192.168.0.4:9100", "192.168.0.4:9080"]
 
   - job_name: node-moscow-2
     static_configs:
-      - targets: ["192.168.0.5:9100"]
+      - targets: ["192.168.0.5:9100", "192.168.0.5:9080"]
 
   - job_name: node-moscow-3
     static_configs:
-      - targets: ["192.168.0.6:9100"]
+      - targets: ["192.168.0.6:9100", "192.168.0.6:9080"]
