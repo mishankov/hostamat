@@ -83,6 +83,33 @@ services:
     env_file:
       - .env
 
+  prometheus:
+    image: prom/prometheus:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == support
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
+    volumes:
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana-enterprise
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.kind == support
+    ports:
+      - "8084:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+
   # global
   dozzle:
     image: amir20/dozzle:latest
@@ -100,12 +127,37 @@ services:
     deploy:
       mode: global
 
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    deploy:
+      mode: global
+    command:
+      - "--path.rootfs=/host"
+    volumes:
+      - "/:/host:ro,rslave"
+    ports:
+      - 9100:9100
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    deploy:
+      mode: global
+    ports:
+      - 9080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
 configs:
   caddyfile:
     external: true
   dozzle_users:
     external: true
   gatus_config:
+    external: true
+  prometheus_config:
     external: true
 
 volumes:
@@ -115,6 +167,10 @@ volumes:
     external: true
   portainer_data:
     external: true
+  prometheus-data:
+    external: true
+  grafana-data:
+    # external: true
 
 networks:
   dozzle:
