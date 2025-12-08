@@ -64,7 +64,7 @@
 	.primary {
 		--color: var(--color-primary-90);
 		--color-border: var(--color-primary-90);
-		--color-background: var(--color-primary-5);
+		--color-background: var(--color-primary-10);
 		--color-background-filled: var(--color-primary-90);
 	}
 
