@@ -1,9 +1,9 @@
 <script lang="ts">
 	type CardKind = 'primary' | 'confirm' | 'danger' | 'action';
-	let { children, floating = false, kind = 'primary', ...restProps } = $props();
+	let { children, border = false, floating = false, kind = 'primary', ...restProps } = $props();
 </script>
 
-<div class={['card', floating && 'floating', kind]} {...restProps}>
+<div class={['card', floating && 'floating', border && 'border', kind]} {...restProps}>
 	{@render children()}
 </div>
 
@@ -11,10 +11,9 @@
 	.card {
 		min-width: fit-content;
 
-		border: var(--border-regular);
 		border-radius: var(--border-radius-regular);
 
-		background-color: var(--color-background-object);
+		background-color: var(--color-primary-10);
 
 		transition: var(--transition);
 	}
@@ -44,5 +43,10 @@
 	.floating:hover {
 		box-shadow: var(--shadow);
 		transform: translateY(-2px);
+	}
+
+	.border {
+		border-width: var(--border-width);
+		border-style: var(--border-style);
 	}
 </style>

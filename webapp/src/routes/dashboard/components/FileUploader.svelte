@@ -387,7 +387,7 @@
 	}
 
 	.file-size {
-		color: #aaa;
+		color: var(--color-text-secondary);
 	}
 
 	.actions {

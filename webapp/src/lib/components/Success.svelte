@@ -6,7 +6,7 @@
 </script>
 
 <div class="success">
-	<Card kind="confirm" style="height: fit-content; width: 100%; padding: 10px;">
+	<Card border kind="confirm" style="height: fit-content; width: 100%; padding: 10px;">
 		<div class="header">
 			<Check size={25} color="var(--color-confirm-50)" />
 			{#if header}

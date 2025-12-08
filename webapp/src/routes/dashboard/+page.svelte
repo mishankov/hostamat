@@ -43,7 +43,7 @@
 				<Spinner size={50} />
 			{:then}
 				{#each sites as site (site.id)}
-					<Card style="height: 150px;">
+					<Card border style="height: 150px;">
 						<SiteContent
 							{site}
 							bind:loading

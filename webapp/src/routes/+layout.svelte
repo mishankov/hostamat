@@ -103,8 +103,7 @@
 		justify-content: center;
 		align-items: center;
 
-		background-color: var(--color-primary-5);
-		border-bottom: var(--border-regular);
+		background-color: var(--color-primary-10);
 	}
 
 	footer {
@@ -116,8 +115,7 @@
 		justify-content: center;
 		align-items: center;
 
-		background-color: var(--color-primary-5);
-		border-top: var(--border-regular);
+		background-color: var(--color-primary-10);
 	}
 
 	.header-card {

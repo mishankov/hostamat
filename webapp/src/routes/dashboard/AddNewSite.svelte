@@ -17,7 +17,7 @@
 	resetState();
 </script>
 
-<Card floating style="height: 150px;" kind="action">
+<Card border floating style="height: 150px;" kind="action">
 	<button
 		class="add-site"
 		onclick={() => {
