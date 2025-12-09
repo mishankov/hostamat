@@ -26,7 +26,7 @@
 
 {#if cookieConsent !== 'notset' && cookieConsent !== 'true'}
 	<div class="cookie">
-		<Card kind="confirm">
+		<Card border kind="confirm">
 			<div
 				class="cookie-inner"
 				style="display: flex; flex-direction: column; gap: 20px; padding: 20px;"
