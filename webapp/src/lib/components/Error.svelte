@@ -6,7 +6,7 @@
 </script>
 
 <div class="error">
-	<Card kind="danger" style="height: fit-content; width: 100%; padding: 10px;">
+	<Card border kind="danger" style="height: fit-content; width: 100%; padding: 10px;">
 		<div class="header">
 			<X size={25} color="var(--color-danger-50)" />
 			{#if header}

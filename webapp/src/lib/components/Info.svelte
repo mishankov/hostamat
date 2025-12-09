@@ -6,7 +6,7 @@
 </script>
 
 <div class="info">
-	<Card kind="action" style="height: fit-content; width: 100%; padding: 10px;">
+	<Card border kind="action" style="height: fit-content; width: 100%; padding: 10px;">
 		<div class="header">
 			<I size={25} color="var(--color-action-50)" />
 			{#if header}

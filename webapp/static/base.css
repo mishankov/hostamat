@@ -10,45 +10,45 @@ body {
 }
 
 :root {
-	--color-primary-5: hsl(194, 70%, 5%);
-	--color-primary-7: hsl(194, 70%, 7%);
-	--color-primary-10: hsl(194, 70%, 10%);
-	--color-primary-15: hsl(194, 70%, 15%);
-	--color-primary-20: hsl(194, 70%, 20%);
-	--color-primary-30: hsl(194, 70%, 30%);
-	--color-primary-40: hsl(194, 70%, 40%);
-	--color-primary-50: hsl(194, 70%, 50%);
-	--color-primary-60: hsl(194, 70%, 60%);
-	--color-primary-70: hsl(194, 70%, 70%);
-	--color-primary-80: hsl(194, 70%, 80%);
-	--color-primary-90: hsl(194, 70%, 90%);
-	--color-primary-95: hsl(194, 70%, 95%);
+	--color-primary-5: hsl(200, 70%, 5%);
+	--color-primary-7: hsl(200, 70%, 7%);
+	--color-primary-10: hsl(200, 70%, 10%);
+	--color-primary-15: hsl(200, 70%, 15%);
+	--color-primary-20: hsl(200, 70%, 20%);
+	--color-primary-30: hsl(200, 70%, 30%);
+	--color-primary-40: hsl(200, 70%, 40%);
+	--color-primary-50: hsl(200, 70%, 50%);
+	--color-primary-60: hsl(200, 70%, 60%);
+	--color-primary-70: hsl(200, 70%, 70%);
+	--color-primary-80: hsl(200, 70%, 80%);
+	--color-primary-90: hsl(200, 70%, 90%);
+	--color-primary-95: hsl(200, 70%, 95%);
 
-	--color-accent-5: hsl(14, 70%, 5%);
-	--color-accent-7: hsl(14, 70%, 7%);
-	--color-accent-10: hsl(14, 70%, 10%);
-	--color-accent-20: hsl(14, 70%, 20%);
-	--color-accent-30: hsl(14, 70%, 30%);
-	--color-accent-40: hsl(14, 70%, 40%);
-	--color-accent-50: hsl(14, 70%, 50%);
-	--color-accent-60: hsl(14, 70%, 60%);
-	--color-accent-70: hsl(14, 70%, 70%);
-	--color-accent-80: hsl(14, 70%, 80%);
-	--color-accent-90: hsl(14, 70%, 90%);
-	--color-accent-95: hsl(14, 70%, 95%);
+	--color-accent-5: hsl(20, 70%, 5%);
+	--color-accent-7: hsl(20, 70%, 7%);
+	--color-accent-10: hsl(20, 70%, 10%);
+	--color-accent-20: hsl(20, 70%, 20%);
+	--color-accent-30: hsl(20, 70%, 30%);
+	--color-accent-40: hsl(20, 70%, 40%);
+	--color-accent-50: hsl(20, 70%, 50%);
+	--color-accent-60: hsl(20, 70%, 60%);
+	--color-accent-70: hsl(20, 70%, 70%);
+	--color-accent-80: hsl(20, 70%, 80%);
+	--color-accent-90: hsl(20, 70%, 90%);
+	--color-accent-95: hsl(20, 70%, 95%);
 
-	--color-inactive-5: hsl(194, 20%, 5%);
-	--color-inactive-7: hsl(194, 20%, 7%);
-	--color-inactive-10: hsl(194, 20%, 10%);
-	--color-inactive-20: hsl(194, 20%, 20%);
-	--color-inactive-30: hsl(194, 20%, 30%);
-	--color-inactive-40: hsl(194, 20%, 40%);
-	--color-inactive-50: hsl(194, 20%, 50%);
-	--color-inactive-60: hsl(194, 20%, 60%);
-	--color-inactive-70: hsl(194, 20%, 70%);
-	--color-inactive-80: hsl(194, 20%, 80%);
-	--color-inactive-90: hsl(194, 20%, 90%);
-	--color-inactive-95: hsl(194, 20%, 95%);
+	--color-inactive-5: hsl(200, 20%, 5%);
+	--color-inactive-7: hsl(200, 20%, 7%);
+	--color-inactive-10: hsl(200, 20%, 10%);
+	--color-inactive-20: hsl(200, 20%, 20%);
+	--color-inactive-30: hsl(200, 20%, 30%);
+	--color-inactive-40: hsl(200, 20%, 40%);
+	--color-inactive-50: hsl(200, 20%, 50%);
+	--color-inactive-60: hsl(200, 20%, 60%);
+	--color-inactive-70: hsl(200, 20%, 70%);
+	--color-inactive-80: hsl(200, 20%, 80%);
+	--color-inactive-90: hsl(200, 20%, 90%);
+	--color-inactive-95: hsl(200, 20%, 95%);
 
 	--color-danger-5: hsl(350, 70%, 5%);
 	--color-danger-7: hsl(350, 70%, 7%);
@@ -64,19 +64,19 @@ body {
 	--color-danger-90: hsl(350, 70%, 90%);
 	--color-danger-95: hsl(350, 70%, 95%);
 
-	--color-action-5: hsl(200, 70%, 5%);
-	--color-action-7: hsl(200, 70%, 7%);
-	--color-action-10: hsl(200, 70%, 10%);
-	--color-action-15: hsl(200, 70%, 15%);
-	--color-action-20: hsl(200, 70%, 20%);
-	--color-action-30: hsl(200, 70%, 30%);
-	--color-action-40: hsl(200, 70%, 40%);
-	--color-action-50: hsl(200, 70%, 50%);
-	--color-action-60: hsl(200, 70%, 60%);
-	--color-action-70: hsl(200, 70%, 70%);
-	--color-action-80: hsl(200, 70%, 80%);
-	--color-action-90: hsl(200, 70%, 90%);
-	--color-action-95: hsl(200, 70%, 95%);
+	--color-action-5: hsl(190, 70%, 5%);
+	--color-action-7: hsl(190, 70%, 7%);
+	--color-action-10: hsl(190, 70%, 10%);
+	--color-action-15: hsl(190, 70%, 15%);
+	--color-action-20: hsl(190, 70%, 20%);
+	--color-action-30: hsl(190, 70%, 30%);
+	--color-action-40: hsl(190, 70%, 40%);
+	--color-action-50: hsl(190, 70%, 50%);
+	--color-action-60: hsl(190, 70%, 60%);
+	--color-action-70: hsl(190, 70%, 70%);
+	--color-action-80: hsl(190, 70%, 80%);
+	--color-action-90: hsl(190, 70%, 90%);
+	--color-action-95: hsl(190, 70%, 95%);
 
 	--color-confirm-5: hsl(150, 70%, 5%);
 	--color-confirm-7: hsl(150, 70%, 7%);
@@ -103,14 +103,24 @@ body {
 	--border-regular: var(--border-width) var(--border-style) var(--color-border);
 	--border-radius-regular: 5px;
 
-	--shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+	--shadow-color: 0deg 0% 0%;
+	--shadow:
+		0.2px 0.2px 0.2px hsl(var(--shadow-color) / 0.67),
+		0.2px 0.2px 0.2px -0.7px hsl(var(--shadow-color) / 0.59),
+		0.5px 0.6px 0.6px -1.4px hsl(var(--shadow-color) / 0.5),
+		1.4px 1.5px 1.5px -2.1px hsl(var(--shadow-color) / 0.42),
+		3.1px 3.4px 3.5px -2.9px hsl(var(--shadow-color) / 0.34),
+		6px 6.5px 6.6px -3.6px hsl(var(--shadow-color) / 0.25),
+		10.2px 11px 11.3px -4.3px hsl(var(--shadow-color) / 0.17),
+		16.1px 17.4px 17.8px -5px hsl(var(--shadow-color) / 0.08);
 
 	--transition: all 300ms;
 
 	--gradient-primary: linear-gradient(-10deg, var(--color-primary-5), var(--color-primary-7));
+	--gradient-primary-7-10: linear-gradient(-10deg, var(--color-primary-7), var(--color-primary-10));
 
 	--gradient-danger: linear-gradient(-10deg, var(--color-danger-5), var(--color-danger-7));
-	--gradient-action: linear-gradient(-10deg, var(--color-action-5), var(--color-action-7));
+	--gradient-action: linear-gradient(-10deg, var(--color-action-7), var(--color-action-10));
 	--gradient-confirm: linear-gradient(-10deg, var(--color-confirm-5), var(--color-confirm-7));
 }
 

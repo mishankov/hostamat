@@ -148,7 +148,8 @@
 		display: flex;
 		padding: 2px;
 		margin-top: auto;
-		background: var(--gradient-primary);
+		/*background: var(--gradient-primary-7-10);*/
+		background: var(--color-primary-7);
 
 		border: var(--border-regular);
 		border-radius: 7px;

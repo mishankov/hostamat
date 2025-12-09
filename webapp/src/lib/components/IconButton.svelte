@@ -20,12 +20,12 @@
 	}
 
 	button:hover {
-		background: var(--color-primary-15);
+		background: var(--color-primary-20);
 		cursor: pointer;
 	}
 
 	button.danger:hover {
-		background: var(--color-danger-15);
+		background: var(--color-danger-20);
 		cursor: pointer;
 	}
 </style>

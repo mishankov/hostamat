@@ -26,7 +26,7 @@
 
 {#if cookieConsent !== 'notset' && cookieConsent !== 'true'}
 	<div class="cookie">
-		<Card kind="confirm">
+		<Card border kind="confirm">
 			<div
 				class="cookie-inner"
 				style="display: flex; flex-direction: column; gap: 20px; padding: 20px;"
@@ -103,8 +103,7 @@
 		justify-content: center;
 		align-items: center;
 
-		background-color: var(--color-primary-5);
-		border-bottom: var(--border-regular);
+		background-color: var(--color-primary-10);
 	}
 
 	footer {
@@ -116,8 +115,7 @@
 		justify-content: center;
 		align-items: center;
 
-		background-color: var(--color-primary-5);
-		border-top: var(--border-regular);
+		background-color: var(--color-primary-10);
 	}
 
 	.header-card {

@@ -43,7 +43,7 @@
 				<Spinner size={50} />
 			{:then}
 				{#each sites as site (site.id)}
-					<Card style="height: 150px;">
+					<Card border style="height: 150px;">
 						<SiteContent
 							{site}
 							bind:loading
@@ -67,7 +67,7 @@
 				{:else if loading === false}
 					<div style="height: 110px; display: flex; align-items: center;">
 						<Info header="Максимальное количество сайтов в альфа версии">
-							Для добавления нового сайта, удали один из существующих
+							Для добавления нового сайта, удалите один из существующих
 						</Info>
 					</div>
 				{/if}

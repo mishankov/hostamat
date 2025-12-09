@@ -15,7 +15,7 @@
 
 		background-color: var(--color-primary-10);
 
-		border: var(--border-regular);
+		/*border: var(--border-regular);*/
 		border-radius: var(--border-radius-regular);
 	}
 
