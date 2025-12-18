@@ -48,8 +48,9 @@
                     {{else}}
                     <div class="overflow-x-auto">
                         <table class="table table-zebra">
-                            <thead>
+                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Username</th>
                                     <th>Registered</th>
                                 </tr>
@@ -57,6 +58,7 @@
                             <tbody>
                                 {{range .Users}}
                                 <tr>
+                                    <td class="font-mono text-xs">{{.ID}}</td>
                                     <td>{{.Username}}</td>
                                     <td>{{.Created}}</td>
                                 </tr>
@@ -79,8 +81,9 @@
                     {{else}}
                     <div class="overflow-x-auto">
                         <table class="table table-zebra">
-                             <thead>
+                              <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Domain</th>
                                     <th>Name</th>
                                     <th>User</th>
@@ -92,6 +95,7 @@
                             <tbody>
                                 {{range .Sites}}
                                 <tr>
+                                    <td class="font-mono text-xs">{{.ID}}</td>
                                     <td>
                                         <a
                                             href="https://{{.Domain}}"
