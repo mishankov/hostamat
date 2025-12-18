@@ -4,6 +4,7 @@
     "": {
       "name": "webapp",
       "dependencies": {
+        "@opentelemetry/api": "^1.9.0",
         "@sentry/sveltekit": "^10",
       },
       "devDependencies": {
