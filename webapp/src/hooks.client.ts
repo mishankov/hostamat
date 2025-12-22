@@ -19,7 +19,10 @@ Sentry.init({
 
 	// If you don't want to use Session Replay, just remove the line below:
 	integrations: [
-		replayIntegration(),
+		replayIntegration({
+			maskAllText: false,
+			blockAllMedia: false
+		}),
 		Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error'] })
 	],
 
