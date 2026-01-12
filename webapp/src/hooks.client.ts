@@ -21,7 +21,10 @@ Sentry.init({
 	integrations: [
 		replayIntegration({
 			maskAllText: false,
-			blockAllMedia: false
+			blockAllMedia: false,
+			networkDetailAllowUrls: [window.location.origin],
+			networkRequestHeaders: ['X-Method'],
+			networkResponseHeaders: ['Hostamat-Trace-Id']
 		}),
 		Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error'] })
 	],
