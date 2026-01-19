@@ -1,7 +1,7 @@
 services:
   # webserver
   caddy:
-    image: caddy:latest
+    image: hostamat-container-registry.registry.twcstorage.ru/hostamat/caddy:latest
     deploy:
       replicas: 1
       placement:

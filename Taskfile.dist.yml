@@ -71,9 +71,18 @@ tasks:
       - docker tag {{.TAG}} {{.CONTAINER_REGISTRY}}/{{.TAG}}
       - docker push {{.CONTAINER_REGISTRY}}/{{.TAG}}
 
+  push-caddy:
+    vars:
+      TAG: hostamat/caddy:latest
+    dir: infra/prod
+    cmds:
+      - docker build --tag {{.TAG}} --platform linux/amd64 --file Dockerfile.caddy .
+      - docker tag {{.TAG}} {{.CONTAINER_REGISTRY}}/{{.TAG}}
+      - docker push {{.CONTAINER_REGISTRY}}/{{.TAG}}
+
   # Deploy
 
   deploy-stack:
-    deps: ["push-backend", "push-webapp", "push-dashboard"]
+    deps: ["push-backend", "push-webapp", "push-dashboard", "push-caddy"]
     cmds:
       - cat ./infra/prod/scripts/deploy-stack.sh | ssh -t {{.SSH_PROD}}
