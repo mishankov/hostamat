@@ -1,8 +1,21 @@
 {
 	# Make admin endpoint available
-  admin 0.0.0.0:2019
+	admin 0.0.0.0:2019
+	# Use Let's Encrypt staging for initial testing (comment out for production)
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 }
 
+# Main domain
 {$HOSTAMAT_DOMAIN:hostamat.ru} {
-    reverse_proxy webapp:3000
+	reverse_proxy webapp:3000
+}
+
+# Wildcard subdomain with DNS-01 challenge for unlimited subdomains
+*.{$HOSTAMAT_DOMAIN:hostamat.ru} {
+	tls {
+		dns timeweb {
+			api_token {$TIMEWEB_API_TOKEN}
+		}
+	}
+	# Subdomain routes are dynamically managed via Caddy API
 }
