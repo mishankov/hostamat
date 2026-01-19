@@ -1,6 +1,9 @@
 package site
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+)
 
 type CreateUploadSessionHandler struct {
 	service *Service
@@ -20,13 +23,23 @@ func (h *CreateUploadSessionHandler) ServeHTTP(w http.ResponseWriter, r *http.Re
 
 	siteId := r.Header.Get("H-Site-Id")
 	if siteId == "" {
-		http.Error(w, "Missing site id", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(handlerError{
+			ErrorCode:    errorCodeMissingSiteId,
+			ErrorMessage: "Отсутствует ID сайта",
+		})
 		return
 	}
 
 	us, err := h.service.CreateUploadSession(r.Context(), siteId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(handlerError{
+			ErrorCode:    errorCodeOther,
+			ErrorMessage: "Ошибка сервера при создании сессии загрузки",
+		})
 		return
 	}
 

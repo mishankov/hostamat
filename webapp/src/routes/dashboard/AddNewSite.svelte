@@ -56,14 +56,16 @@
 					}
 
 					loading = true;
-					const res = await createSite(newSiteName);
+					const { data, error } = await createSite(newSiteName);
 
-					if (res === true) {
+					if (error) {
+						newSiteNameError = error;
+						loading = false;
+					}
+
+					if (data) {
 						await onsuccess();
 						modal?.close();
-					} else {
-						newSiteNameError = res.errorText;
-						loading = false;
 					}
 				}}>Создать</Button
 			>

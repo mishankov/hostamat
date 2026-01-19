@@ -35,11 +35,14 @@ func (h *ListSiteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.DebugContext(ctx, "list sites")
-
 	sites, err := h.service.GetList(ctx)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(handlerError{
+			ErrorCode:    errorCodeOther,
+			ErrorMessage: "Ошибка сервера при получении списка сайтов",
+		})
 		return
 	}
 

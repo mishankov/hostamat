@@ -34,23 +34,52 @@ func (h *CreateSiteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(handlerError{
+			ErrorCode:    errorCodeInvalidBody,
+			ErrorMessage: "Неверный формат запроса",
+		})
 		return
 	}
 
 	if requestBody.Name == "" {
-		http.Error(w, "Name is required", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(handlerError{
+			ErrorCode:    errorCodeMissingName,
+			ErrorMessage: "Название обязательно",
+		})
 		return
 	}
 
 	site, err := h.service.Create(ctx, requestBody.Name)
 	if err != nil {
-		if errors.Is(err, errLongName) || errors.Is(err, errShortName) {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+		if errors.Is(err, errLongName) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(handlerError{
+				ErrorCode:    errorCodeNameTooLong,
+				ErrorMessage: err.Error(),
+			})
+			return
+		}
+		if errors.Is(err, errShortName) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(handlerError{
+				ErrorCode:    errorCodeNameTooShort,
+				ErrorMessage: err.Error(),
+			})
 			return
 		}
 
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(handlerError{
+			ErrorCode:    errorCodeOther,
+			ErrorMessage: "Ошибка сервера при создании сайта",
+		})
 		return
 	}
 

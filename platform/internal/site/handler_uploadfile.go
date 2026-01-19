@@ -1,7 +1,10 @@
 package site
 
 import (
+	"encoding/json"
 	"net/http"
+
+	"github.com/platforma-dev/platforma/log"
 )
 
 type UploadFileHandler struct {
@@ -37,8 +40,17 @@ func (h *UploadFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	err = h.service.UploadFile(ctx, uploadSessionId, handler.Filename, file, handler.Size)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		switch err.(type) {
+		case handlerError:
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(err)
+			return
+		default:
+			log.WarnContext(ctx, "error with no error code", "error", err)
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(handlerError{ErrorCode: errorCodeOther, ErrorMessage: err.Error()})
+			return
+		}
 	}
 
 	w.WriteHeader(http.StatusCreated)

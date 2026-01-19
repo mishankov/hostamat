@@ -2,6 +2,7 @@ package site
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 )
 
@@ -29,13 +30,23 @@ func (h *DeleteSiteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	siteId := r.Header.Get("H-Site-Id")
 	if siteId == "" {
-		http.Error(w, "Missing site id", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(handlerError{
+			ErrorCode:    errorCodeMissingSiteId,
+			ErrorMessage: "Отсутствует ID сайта",
+		})
 		return
 	}
 
 	err := h.service.Delete(ctx, siteId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(handlerError{
+			ErrorCode:    errorCodeOther,
+			ErrorMessage: "Ошибка сервера при удалении сайта",
+		})
 		return
 	}
 

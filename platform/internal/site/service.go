@@ -3,6 +3,7 @@ package site
 import (
 	"context"
 	"errors"
+	"fmt"
 	"hostamat/internal/file"
 	"hostamat/internal/subdomain"
 	"hostamat/internal/uploadsession"
@@ -245,7 +246,7 @@ func (s *Service) GetFile(ctx context.Context, host, filePath string) (io.Reader
 	return s.fileService.GetFile(ctx, site.Id+"/"+filePath)
 }
 
-func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename string, file io.Reader, size int64) error {
+func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename string, fileReader io.Reader, size int64) error {
 	currentSize, err := s.uploadSessionService.GetSize(ctx, uploadSessionId)
 	if err != nil {
 		return err
@@ -265,8 +266,12 @@ func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename stri
 		return err
 	}
 
-	uploaded, skipped, err := s.fileService.UploadFile(ctx, us.Site, filename, file, size)
+	uploaded, skipped, err := s.fileService.UploadFile(ctx, us.Site, filename, fileReader, size)
 	if err != nil {
+		if errors.Is(err, file.ErrInvalidFileType) {
+			return handlerError{ErrorCode: errorCodeInvalidExt, ErrorMessage: fmt.Sprintf("У файла %s недопустимое расширение", filename)}
+		}
+
 		return err
 	}
 

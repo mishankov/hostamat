@@ -29,17 +29,16 @@
 					}
 
 					loading = true;
-					const res = await updateSite(siteId, newName);
+					const { data, error } = await updateSite(siteId, newName);
 
-					if (res === true) {
+					if (error) {
+						errorMessage = error;
+						loading = false;
+					}
+
+					if (data) {
 						await onsuccess();
 						modal?.close();
-						// await onsiteupdate();
-						// resetState();
-					} else {
-						errorMessage = res.errorText;
-						loading = false;
-						// resetState();
 					}
 				}}>Изменить</Button
 			>

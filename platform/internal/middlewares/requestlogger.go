@@ -2,13 +2,13 @@ package middlewares
 
 import (
 	"context"
-	"log/slog"
 	"net/http"
 	"strings"
 )
 
 type logger interface {
 	DebugContext(ctx context.Context, msg string, args ...any)
+	ErrorContext(ctx context.Context, msg string, args ...any)
 }
 
 type responseWrapper struct {
@@ -36,33 +36,60 @@ func NewRequestLogger(logger logger) *RequestLogger {
 	return &RequestLogger{logger: logger}
 }
 
-// TODO: wrap ResponseWriter to log response code and headers
 func (m *RequestLogger) Wrap(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/metrics" {
 			ww := &responseWrapper{ResponseWriter: w}
 
-			headerAttrs := make([]slog.Attr, 0, len(r.Header))
-			for k, v := range r.Header {
-				headerAttrs = append(headerAttrs, slog.String(k, strings.Join(v, ", ")))
-			}
-
 			m.logger.DebugContext(
 				r.Context(), "handler invoke started",
-				"path", r.URL.Path, "method", r.Method, "remote", r.RemoteAddr, "headers",
-				slog.Attr{Key: "headers", Value: slog.GroupValue(headerAttrs...)},
+				"path", r.URL.Path, "method", r.Method, "remote", r.RemoteAddr, "headers", maskedHeaders(r.Header),
 			)
 
 			h.ServeHTTP(ww, r)
 
-			m.logger.DebugContext(
-				r.Context(), "handler invoke finished",
-				"status", ww.statusCode, "headers", ww.headers, "body", string(ww.body),
-			)
+			if ww.statusCode >= 500 {
+				m.logger.ErrorContext(
+					r.Context(), "handler invoke finished with error",
+					"path", r.URL.Path, "method", r.Method, "remote", r.RemoteAddr, "request_headers", maskedHeaders(r.Header),
+					"status", ww.statusCode, "response_headers", maskedHeaders(ww.headers), "response_body", string(ww.body),
+				)
+			} else {
+				m.logger.DebugContext(
+					r.Context(), "handler invoke finished",
+					"status", ww.statusCode, "headers", maskedHeaders(ww.headers), "body", string(ww.body),
+				)
+			}
 
 			return
 		}
 
 		h.ServeHTTP(w, r)
 	})
+}
+
+func maskedHeaders(headers http.Header) http.Header {
+	newHeaders := http.Header{}
+	for hn, hvs := range headers {
+		headerName := strings.ToLower(hn)
+		if headerName == "authorization" {
+			for _, hv := range hvs {
+				if strings.HasPrefix(strings.ToLower(hv), "basic ") || strings.HasPrefix(strings.ToLower(hv), "bearer ") {
+					newHeaders.Add(hn, strings.Split(hv, " ")[0]+" ***")
+					continue
+				}
+				newHeaders.Add(hn, hv)
+			}
+		} else if headerName == "cookie" || headerName == "set-cookie" {
+			for range hvs {
+				newHeaders.Add(hn, "***")
+			}
+		} else {
+			for _, hv := range hvs {
+				newHeaders.Add(hn, hv)
+			}
+		}
+	}
+
+	return newHeaders
 }

@@ -1,5 +1,7 @@
-export const createUploadSession = async (siteId: string) => {
-	const resp = await fetch('/api/proxy', {
+import { safeFetch, type AsyncResult } from '$lib/safe';
+
+export const createUploadSession = async (siteId: string): AsyncResult<string, string> => {
+	const { data: resp, error } = await safeFetch('/api/proxy', {
 		method: 'POST',
 		headers: {
 			'X-Method': 'createUploadSession',
@@ -7,30 +9,29 @@ export const createUploadSession = async (siteId: string) => {
 		}
 	});
 
-	return resp.ok ? await resp.text() : null;
+	if (error) {
+		return { data: null, error: error.message };
+	}
+
+	if (!resp.ok) {
+		const errorData: { errorCode: string; errorMessage: string } = await resp.json();
+		return { data: null, error: errorData.errorMessage };
+	}
+
+	return { data: await resp.text(), error: null };
 };
 
-type File = {
+type UploadedFile = {
 	id: string;
 	name: string;
 	uploaded: boolean;
 	size: number;
 };
 
-type FileRespOk = {
-	ok: true;
-	files: File[];
-};
-
-type FileRespError = {
-	ok: false;
-	errorMessage: string;
-};
-
-type FileResp = FileRespOk | FileRespError;
-
-export const closeUploadSession = async (uploadSessionId: string): Promise<FileResp> => {
-	const resp = await fetch('/api/proxy', {
+export const closeUploadSession = async (
+	uploadSessionId: string
+): AsyncResult<UploadedFile[], string> => {
+	const { data: resp, error } = await safeFetch('/api/proxy', {
 		method: 'DELETE',
 		headers: {
 			'X-Method': 'closeUploadSession',
@@ -38,15 +39,14 @@ export const closeUploadSession = async (uploadSessionId: string): Promise<FileR
 		}
 	});
 
-	if (resp.ok) {
-		return {
-			ok: true,
-			files: (await resp.json()) as File[]
-		};
+	if (error) {
+		return { data: null, error: error.message };
 	}
 
-	return {
-		ok: false,
-		errorMessage: await resp.text()
-	};
+	if (!resp.ok) {
+		const errorData: { errorCode: string; errorMessage: string } = await resp.json();
+		return { data: null, error: errorData.errorMessage };
+	}
+
+	return { data: (await resp.json()) as UploadedFile[], error: null };
 };

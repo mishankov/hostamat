@@ -106,9 +106,16 @@
 						kind="danger"
 						filled
 						onclick={async () => {
-							await deleteSite(site.id);
+							const { data, error } = await deleteSite(site.id);
 
-							window.location.reload();
+							if (error) {
+								errorMessage = error;
+								deleteModal?.close();
+							}
+
+							if (data) {
+								window.location.reload();
+							}
 						}}>Удалить</Button
 					>
 					<Button kind="danger">Отмена</Button>

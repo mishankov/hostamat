@@ -18,8 +18,15 @@
 	const updateState = async () => {
 		const sitesResp = await data.sitesResp;
 
-		sites = sitesResp?.sites || [];
-		maxAmount = sitesResp?.maxAmount || 0;
+		if (sitesResp.data) {
+			sites = sitesResp.data.sites;
+			maxAmount = sitesResp.data.maxAmount;
+			errorMessage = '';
+		} else {
+			sites = [];
+			maxAmount = 0;
+			errorMessage = sitesResp.error;
+		}
 
 		loading = false;
 	};
@@ -41,35 +48,39 @@
 		<div class="site-list">
 			{#await data.sitesResp}
 				<Spinner size={50} />
-			{:then}
-				{#each sites as site (site.id)}
-					<Card border style="height: 150px;">
-						<SiteContent
-							{site}
+			{:then sitesResult}
+				{#if sitesResult.data}
+					{#each sites as site (site.id)}
+						<Card border style="height: 150px;">
+							<SiteContent
+								{site}
+								bind:loading
+								bind:errorMessage
+								onsiteupdate={async () => {
+									await invalidateAll();
+									updateState();
+								}}
+							/>
+						</Card>
+					{/each}
+
+					{#if !sites || sites.length < maxAmount}
+						<AddNewSite
 							bind:loading
-							bind:errorMessage
-							onsiteupdate={async () => {
+							onsuccess={async () => {
 								await invalidateAll();
 								updateState();
 							}}
 						/>
-					</Card>
-				{/each}
-
-				{#if sites.length < maxAmount}
-					<AddNewSite
-						bind:loading
-						onsuccess={async () => {
-							await invalidateAll();
-							updateState();
-						}}
-					/>
-				{:else if loading === false}
-					<div style="height: 110px; display: flex; align-items: center;">
-						<Info header="Максимальное количество сайтов в альфа версии">
-							Для добавления нового сайта, удалите один из существующих
-						</Info>
-					</div>
+					{:else if loading === false}
+						<div style="height: 110px; display: flex; align-items: center;">
+							<Info header="Максимальное количество сайтов в альфа версии">
+								Для добавления нового сайта, удалите один из существующих
+							</Info>
+						</div>
+					{/if}
+				{:else}
+					<Error message="Ошибка при загрузке сайтов: {sitesResult.error}" />
 				{/if}
 			{:catch error}
 				<Error message="Ошибка при загрузке сайтов: {error.message}" />

@@ -25,13 +25,23 @@ func (h *CloseUploadSessionHandler) ServeHTTP(w http.ResponseWriter, r *http.Req
 
 	uploadSessionId := r.Header.Get("H-UploadSession-Id")
 	if uploadSessionId == "" {
-		http.Error(w, "Missing upload session id", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(handlerError{
+			ErrorCode:    errorCodeMissingSessionId,
+			ErrorMessage: "Отсутствует ID сессии загрузки",
+		})
 		return
 	}
 
 	files, err := h.service.CloseUploadSession(r.Context(), uploadSessionId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(handlerError{
+			ErrorCode:    errorCodeOther,
+			ErrorMessage: "Ошибка сервера при завершении загрузки",
+		})
 		return
 	}
 

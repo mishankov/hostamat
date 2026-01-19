@@ -3,6 +3,7 @@
 	import { Upload, X } from '$lib/icons';
 	import { IconButton } from '$lib/components';
 	import { closeUploadSession, createUploadSession } from '$lib/api-client';
+	import { uploadFile } from './utils';
 
 	interface Props {
 		uploadUrl?: string;
@@ -101,14 +102,6 @@
 		uploadProgress = 0;
 		error = '';
 
-		const uploadSession = await createUploadSession(siteId);
-
-		if (uploadSession === null) {
-			error = 'Ошибка при создании сессии загрузки';
-			uploading = false;
-			return;
-		}
-
 		// Validate file sizes
 		const filesOverallSize = selectedFiles.reduce((acc, file) => acc + file.size, 0);
 		if (filesOverallSize > maxFileSize) {
@@ -117,53 +110,57 @@
 			return;
 		}
 
-		try {
-			for (let i = 0; i < selectedFiles.length; i++) {
-				const file = selectedFiles[i];
-				const formData = new FormData();
-				formData.append('file', file);
+		const { data: uploadSession, error: errorText } = await createUploadSession(siteId);
 
-				const headers = new Headers();
-				Object.entries(additionalHeaders).forEach(([key, value]) => {
-					headers.set(key, value);
-				});
-				headers.set('H-UploadSession-Id', uploadSession);
+		if (errorText !== null) {
+			error = 'Ошибка при создании сессии загрузки';
+			uploading = false;
+			return;
+		}
 
-				const response = await fetch(uploadUrl, {
-					method: 'POST',
-					headers,
-					body: formData
-				});
+		for (let i = 0; i < selectedFiles.length; i++) {
+			const file = selectedFiles[i];
+			const formData = new FormData();
+			formData.append('file', file);
 
-				if (!response.ok) {
-					error = 'Ошибка при загрузке файла';
-					return;
+			const headers = new Headers();
+			Object.entries(additionalHeaders).forEach(([key, value]) => {
+				headers.set(key, value);
+			});
+			headers.set('H-UploadSession-Id', uploadSession);
+
+			const result = await uploadFile(uploadUrl, headers, formData);
+
+			if (result !== true) {
+				error = result.errorMessage;
+				uploading = false;
+				onuploaderror?.({ error });
+				// Close upload session on error
+				const { error: closeError } = await closeUploadSession(uploadSession);
+				if (closeError) {
+					console.error('Failed to close upload session:', closeError);
 				}
-
-				uploadProgress = ((i + 1) / selectedFiles.length) * 100;
+				return;
 			}
 
-			const uploadedCount = selectedFiles.length;
-			selectedFiles = [];
-			fileInput.value = '';
-
-			onuploadcomplete?.({ fileCount: uploadedCount });
-		} catch {
-			error = 'Ошибка при загрузке файла';
-			onuploaderror?.({ error });
+			uploadProgress = ((i + 1) / selectedFiles.length) * 100;
 		}
+
+		const uploadedCount = selectedFiles.length;
+		selectedFiles = [];
+		fileInput.value = '';
+
+		onuploadcomplete?.({ fileCount: uploadedCount });
 
 		const closeUploadResp = await closeUploadSession(uploadSession);
 
-		if (closeUploadResp.ok) {
-			uploadedFiles = closeUploadResp.files
+		if (closeUploadResp.data) {
+			uploadedFiles = closeUploadResp.data
 				.filter((file) => file.uploaded)
 				.map((file) => `${file.name} (${formatFileSize(file.size)})`);
-			skippedFiles = closeUploadResp.files
-				.filter((file) => !file.uploaded)
-				.map((file) => file.name);
+			skippedFiles = closeUploadResp.data.filter((file) => !file.uploaded).map((file) => file.name);
 		} else {
-			error = 'Ошибка при завершении загрузки';
+			error = closeUploadResp.error;
 		}
 
 		uploading = false;
