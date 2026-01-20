@@ -108,3 +108,7 @@ func (s3 *S3) GetObject(ctx context.Context, bucketName, fileName string) (io.Re
 
 	return obj, nil
 }
+
+func (s3 *S3) ListObjects(ctx context.Context, bucketName string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+	return s3.client.ListObjects(ctx, bucketName, opts)
+}

@@ -48,7 +48,7 @@
                     {{else}}
                     <div class="overflow-x-auto">
                         <table class="table table-zebra">
-                             <thead>
+                            <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Username</th>
@@ -81,7 +81,7 @@
                     {{else}}
                     <div class="overflow-x-auto">
                         <table class="table table-zebra">
-                              <thead>
+                            <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Domain</th>
@@ -118,6 +118,155 @@
                     {{end}}
                 </div>
             </div>
+
+            <div class="bg-error/10 border-2 border-error rounded-lg p-6 mt-8">
+                <h2 class="text-xl font-bold text-error mb-4">Danger Zone</h2>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm mb-2">
+                            Permanently delete all data from system
+                        </p>
+                        <p class="text-xs text-base-content/60">
+                            This action cannot be undone. All users, sites,
+                            files, and configurations will be deleted.
+                        </p>
+                    </div>
+                    <button
+                        onclick="wipe_modal.showModal()"
+                        class="btn btn-error"
+                    >
+                        Wipe All Data
+                    </button>
+                </div>
+            </div>
         </div>
+
+        <!-- Wipe Confirmation Modal -->
+        <dialog id="wipe_modal" class="modal">
+            <div class="modal-box max-w-lg">
+                <h3 class="font-bold text-lg mb-4">Confirm Data Wipe</h3>
+
+                <div class="alert alert-error mb-4">
+                    <span>
+                        THIS WILL DELETE ALL DATA - THIS CANNOT BE UNDONE!
+                    </span>
+                </div>
+
+                <!-- Data counts (server-rendered) -->
+                <div class="mb-4">
+                    <p class="font-semibold text-sm mb-2">The following will be deleted:</p>
+                    <ul class="list list-disc">
+                        <li class="list-row">{{.WipeCounts.Users}} users</li>
+                        <li class="list-row">{{.WipeCounts.Sessions}} sessions</li>
+                        <li class="list-row">{{.WipeCounts.Sites}} sites</li>
+                        <li class="list-row">{{.WipeCounts.Subdomains}} subdomains</li>
+                        <li class="list-row">{{.WipeCounts.UploadSessions}} upload sessions</li>
+                        <li class="list-row">{{.WipeCounts.Files}} files (metadata)</li>
+                        <li class="list-row">{{.WipeCounts.S3Objects}} objects in S3 bucket</li>
+                        <li class="list-row">{{.WipeCounts.CaddyHosts}} Caddy subdomain configurations</li>
+                    </ul>
+                </div>
+
+                <!-- Confirmation input -->
+                <label class="input input-bordered flex items-center gap-4 mb-4">
+                    <span class="label-text">Type <strong>DELETE</strong> to confirm:</span>
+                    <input
+                        type="text"
+                        id="wipeConfirmInput"
+                        class="grow"
+                        placeholder="DELETE"
+                    />
+                </label>
+
+                <!-- Modal actions -->
+                <div class="modal-action">
+                    <form method="dialog">
+                        <button class="btn">Cancel</button>
+                    </form>
+                    <button
+                        id="confirmWipeBtn"
+                        onclick="confirmWipe()"
+                        class="btn btn-error"
+                        disabled
+                    >
+                        Wipe Everything
+                    </button>
+                </div>
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button>close</button>
+            </form>
+        </dialog>
+
+        <script>
+            // Enable/disable confirm button based on input
+            document.addEventListener("DOMContentLoaded", function () {
+                const input = document.getElementById("wipeConfirmInput");
+                if (input) {
+                    input.addEventListener("input", (e) => {
+                        const btn = document.getElementById("confirmWipeBtn");
+                        btn.disabled = e.target.value !== "DELETE";
+                    });
+
+                    // Reset when modal closes
+                    document
+                        .getElementById("wipe_modal")
+                        .addEventListener("close", () => {
+                            input.value = "";
+                            document.getElementById("confirmWipeBtn").disabled =
+                                true;
+                        });
+                }
+            });
+
+            // Perform wipe
+            async function confirmWipe() {
+                const input = document.getElementById("wipeConfirmInput").value;
+                if (input !== "DELETE") return;
+
+                const btn = document.getElementById("confirmWipeBtn");
+
+                // Show loading state on button
+                btn.disabled = true;
+                btn.innerHTML = '<span class="loading loading-spinner"></span> Wiping...';
+
+                // Close modal
+                document.getElementById("wipe_modal").close();
+
+                try {
+                    const response = await fetch("/api/wipe", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ confirmation: "DELETE" }),
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert(
+                            "✓ All data wiped successfully!\n\n" +
+                                "Deleted:\n" +
+                                `- ${result.deleted.Users} users\n` +
+                                `- ${result.deleted.Sessions} sessions\n` +
+                                `- ${result.deleted.Sites} sites\n` +
+                                `- ${result.deleted.Subdomains} subdomains\n` +
+                                `- ${result.deleted.UploadSessions} upload sessions\n` +
+                                `- ${result.deleted.Files} files\n` +
+                                `- ${result.deleted.S3Objects} S3 objects\n` +
+                                `- ${result.deleted.CaddyHosts} Caddy hosts`,
+                        );
+                        window.location.reload(); // Reload to show zeroed stats
+                    } else {
+                        alert("✗ Wipe failed: " + result.error);
+                        btn.disabled = false;
+                        btn.innerHTML = "Wipe Everything";
+                    }
+                } catch (error) {
+                    alert("✗ Network error: " + error.message);
+                    btn.disabled = false;
+                    btn.innerHTML = "Wipe Everything";
+                }
+            }
+        </script>
     </body>
 </html>

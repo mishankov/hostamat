@@ -37,10 +37,13 @@ tasks:
     cmds:
       - bun run --bun dev
 
+  # Dashboard
+
   dash:
-    dir: platform
+    dir: infra/test
     cmds:
-      - TOKEN=secret_token DB_CONN=postgresql://hostamat:hostamat@localhost:5432/hostamat?sslmode=disable go run ./cmd/dashboard
+      # - TOKEN=secret_token DB_CONN=postgresql://hostamat:hostamat@localhost:5432/hostamat?sslmode=disable go run ./cmd/dashboard
+      - docker compose up dashboard --build
 
   # Docker
 

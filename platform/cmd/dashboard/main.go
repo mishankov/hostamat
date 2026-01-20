@@ -4,12 +4,21 @@ import (
 	"context"
 	"embed"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"io/fs"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
+	"hostamat/internal/adapters/caddy"
+	"hostamat/internal/adapters/config"
+	"hostamat/internal/adapters/s3"
+	"hostamat/internal/httpclient"
+
+	"github.com/jmoiron/sqlx"
+	"github.com/minio/minio-go/v7"
 	"github.com/platforma-dev/platforma/application"
 	"github.com/platforma-dev/platforma/database"
 	"github.com/platforma-dev/platforma/httpserver"
@@ -17,6 +26,17 @@ import (
 )
 
 const cookieName = "dashsession"
+
+type WipeCounts struct {
+	Users          int
+	Sessions       int
+	Sites          int
+	Subdomains     int
+	UploadSessions int
+	Files          int
+	S3Objects      int
+	CaddyHosts     int
+}
 
 //go:embed templates
 var templates embed.FS
@@ -35,12 +55,23 @@ func main() {
 	app := application.New()
 	authToken := os.Getenv("TOKEN")
 
+	conf := config.New()
+	log.InfoContext(ctx, "config", "config", conf)
+
 	db, err := database.New(os.Getenv("DB_CONN"))
 	if err != nil {
 		log.ErrorContext(ctx, "failed to create database", "error", err)
 	}
 	conn := db.Connection()
 	defer conn.Close()
+
+	httpClient := httpclient.New(10 * time.Second)
+	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL, "srv0")
+
+	s3Client, err := s3.New(conf.S3.BaseURL, conf.S3.Login, conf.S3.Password, false)
+	if err != nil {
+		log.ErrorContext(ctx, "failed to create S3 client", "error", err)
+	}
 
 	tmpls, err := template.ParseFS(Templates(), "login.html", "dashboard.html")
 	if err != nil {
@@ -127,6 +158,18 @@ func main() {
 			UsersError string
 			Sites      []site
 			SitesError string
+			WipeCounts WipeCounts
+		}
+
+		type WipeCounts struct {
+			Users          int
+			Sessions       int
+			Sites          int
+			Subdomains     int
+			UploadSessions int
+			Files          int
+			S3Objects      int
+			CaddyHosts     int
 		}
 
 		var data dashboardData
@@ -146,6 +189,39 @@ func main() {
 		getMetric("users", "Users", 0, "select count(*) from users")
 		getMetric("sites", "Sites", 1, "select count(*) from sites")
 		getMetric("us", "Uploads", 2, "select count(*) from uploadsessions")
+
+		data.WipeCounts.Users, _ = strconv.Atoi(data.Stats[0].Values[0])
+		data.WipeCounts.Sites, _ = strconv.Atoi(data.Stats[1].Values[0])
+		data.WipeCounts.UploadSessions, _ = strconv.Atoi(data.Stats[2].Values[0])
+
+		var sessionCount int
+		conn.GetContext(ctx, &sessionCount, "SELECT COUNT(*) FROM sessions")
+		data.WipeCounts.Sessions = sessionCount
+
+		var subdomainCount int
+		conn.GetContext(ctx, &subdomainCount, "SELECT COUNT(*) FROM subdomains")
+		data.WipeCounts.Subdomains = subdomainCount
+
+		var fileCount int
+		conn.GetContext(ctx, &fileCount, "SELECT COUNT(*) FROM files")
+		data.WipeCounts.Files = fileCount
+
+		hosts, err := caddyAPI.GetHostsFromShorthandId(ctx, conf.Caddy.ShorthandId)
+		if err != nil {
+			data.WipeCounts.CaddyHosts = 0
+		} else {
+			data.WipeCounts.CaddyHosts = len(hosts)
+		}
+
+		objectsCh := s3Client.ListObjects(ctx, conf.S3.Bucket, minio.ListObjectsOptions{Recursive: true})
+		s3Count := 0
+		for obj := range objectsCh {
+			if obj.Err != nil {
+				break
+			}
+			s3Count++
+		}
+		data.WipeCounts.S3Objects = s3Count
 
 		// Get last 10 registered users
 		err = conn.SelectContext(ctx, &data.Users, `
@@ -184,9 +260,123 @@ func main() {
 		}
 	})
 
+	server.HandleFunc("/api/wipe", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		ctx := r.Context()
+
+		cookie, err := r.Cookie(cookieName)
+		if err != nil || cookie.Value != authToken {
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized"})
+			return
+		}
+
+		var req struct {
+			Confirmation string `json:"confirmation"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request"})
+			return
+		}
+
+		if req.Confirmation != "DELETE" {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Invalid confirmation"})
+			return
+		}
+
+		log.InfoContext(ctx, "Starting wipe operation")
+
+		deleted, err := wipeAllData(ctx, conn, s3Client, caddyAPI, conf.S3.Bucket, conf.Caddy.ShorthandId)
+		if err != nil {
+			log.ErrorContext(ctx, "Wipe failed", "error", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"success": false,
+				"error":   err.Error(),
+			})
+			return
+		}
+
+		log.InfoContext(ctx, "Wipe completed successfully", "deleted", deleted)
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": true,
+			"deleted": deleted,
+			"message": "All data wiped successfully",
+		})
+	})
+
 	app.RegisterService("server", server)
 
 	if err := app.Run(ctx); err != nil {
 		log.ErrorContext(ctx, "applications run failed", "error", err)
 	}
+}
+
+func wipeAllData(ctx context.Context, conn *sqlx.DB, s3Client *s3.S3, caddyAPI *caddy.CaddyAPI, s3Bucket, caddyShorthand string) (*WipeCounts, error) {
+	deleted := &WipeCounts{}
+
+	log.InfoContext(ctx, "Step 1/8: Clearing Caddy subdomain hosts...")
+	hosts, err := caddyAPI.GetHostsFromShorthandId(ctx, caddyShorthand)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get Caddy hosts: %w", err)
+	}
+	deleted.CaddyHosts = len(hosts)
+
+	err = caddyAPI.ClearSubdomains(ctx, caddyShorthand)
+	if err != nil {
+		return nil, fmt.Errorf("failed to clear Caddy hosts: %w", err)
+	}
+	log.InfoContext(ctx, "Cleared Caddy hosts", "count", deleted.CaddyHosts)
+
+	log.InfoContext(ctx, "Step 2/8: Cleaning S3 bucket...")
+	objectsCh := s3Client.ListObjects(ctx, s3Bucket, minio.ListObjectsOptions{Recursive: true})
+	s3Count := 0
+	for obj := range objectsCh {
+		if obj.Err != nil {
+			return nil, fmt.Errorf("failed to list S3 objects: %w", obj.Err)
+		}
+		s3Count++
+	}
+	deleted.S3Objects = s3Count
+
+	err = s3Client.CleanBucket(ctx, s3Bucket)
+	if err != nil {
+		return nil, fmt.Errorf("failed to clean S3 bucket: %w", err)
+	}
+	log.InfoContext(ctx, "Cleaned S3 bucket", "count", deleted.S3Objects)
+
+	tables := []struct {
+		name  string
+		field *int
+		step  string
+	}{
+		{"files", &deleted.Files, "3/8"},
+		{"uploadsessions", &deleted.UploadSessions, "4/8"},
+		{"sessions", &deleted.Sessions, "5/8"},
+		{"sites", &deleted.Sites, "6/8"},
+		{"subdomains", &deleted.Subdomains, "7/8"},
+		{"users", &deleted.Users, "8/8"},
+	}
+
+	for _, table := range tables {
+		log.InfoContext(ctx, fmt.Sprintf("Step %s: Deleting %s from database...", table.step, table.name))
+		result, err := conn.Exec(fmt.Sprintf("DELETE FROM %s", table.name))
+		if err != nil {
+			return nil, fmt.Errorf("failed to delete from %s: %w", table.name, err)
+		}
+		rows, _ := result.RowsAffected()
+		*table.field = int(rows)
+		log.InfoContext(ctx, "Deleted table", "table", table.name, "count", rows)
+	}
+
+	log.InfoContext(ctx, "Wipe completed successfully")
+	return deleted, nil
 }

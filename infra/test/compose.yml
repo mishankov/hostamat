@@ -48,11 +48,13 @@ services:
   dashboard:
     build:
       context: ../../platform
-      dockerfile: Dockerfile.dashboard
+      dockerfile: Dockerfile.dashboard.test
     env_file:
       - .env
     ports:
       - 1002:4444
+    volumes:
+      - ../../platform:/app
 
   hostamat:
     build:
@@ -60,27 +62,6 @@ services:
       dockerfile: Dockerfile.test
     env_file:
       - .env
-    environment:
-      - HOSTAMAT_PORT=1001
-      - HOSTAMAT_LOG_LEVEL=debug
-      - HOSTAMAT_LOG_TYPE=text
-      - HOSTAMAT_DOMAIN=hostamat.localhost
-      - HOSTAMAT_FILESERVER_HOST=host.docker.internal:1001
-      - HOSTAMAT_FILESERVER_PATH=/files/serve
-
-      - HOSTAMAT_CADDY_URL=http://proxymini:1000/caddy
-      - HOSTAMAT_CADDY_SHORTHAND_ID=hostamat_proxy
-
-      - HOSTAMAT_POSTGRES_HOST=db
-      - HOSTAMAT_POSTGRES_PORT=5432
-      - HOSTAMAT_POSTGRES_DB=hostamat
-      - HOSTAMAT_POSTGRES_USER=hostamat
-      - HOSTAMAT_POSTGRES_PASSWORD=hostamat
-
-      - HOSTAMAT_S3_URL=minio:9000
-      - HOSTAMAT_S3_LOGIN=ROOTNAME
-      - HOSTAMAT_S3_PASSWORD=CHANGEME123
-      - HOSTAMAT_S3_BUCKET=hostamat
     ports:
       - 1001:1001
     volumes:
