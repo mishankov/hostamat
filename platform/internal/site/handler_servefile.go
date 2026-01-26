@@ -20,17 +20,14 @@ func (h *ServeFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	filePath := r.URL.Path
-	if filePath == "/" {
-		filePath = "/index.html"
-	}
 
-	file, err := h.service.GetFile(ctx, r.Host, filePath)
+	file, resolvedPath, err := h.service.GetFile(ctx, r.Host, filePath)
 	if err != nil {
 		http.Error(w, "File not found", http.StatusNotFound)
 		return
 	}
 
-	w.Header().Set("Content-Type", h.getContentType(filePath))
+	w.Header().Set("Content-Type", h.getContentType(resolvedPath))
 
 	io.Copy(w, file)
 }
