@@ -44,12 +44,38 @@ func NewService(repo repository, bucketName string) *Service {
 	return service
 }
 
-func (s *Service) GetFile(ctx context.Context, path string) (io.Reader, error) {
+func (s *Service) GetFile(ctx context.Context, path string) (io.Reader, string, error) {
 	path = strings.TrimPrefix(path, "/")
 
 	log.DebugContext(ctx, "get file", "path", path)
 
-	return s.repo.GetObject(ctx, s.bucketName, path)
+	// If path has a known file extension, try exact match only
+	if isAllowedExtension(path) {
+		reader, err := s.repo.GetObject(ctx, s.bucketName, path)
+		return reader, path, err
+	}
+
+	// Try resolution in order: exact path, path.html, path/index.html
+	pathsToTry := []string{
+		path,
+		path + ".html",
+		path + "/index.html",
+	}
+
+	for _, p := range pathsToTry {
+		exists, err := s.repo.ObjectExists(ctx, s.bucketName, p)
+		if err != nil {
+			continue
+		}
+		if exists {
+			reader, err := s.repo.GetObject(ctx, s.bucketName, p)
+			return reader, p, err
+		}
+	}
+
+	// If none found, return error for the original path
+	reader, err := s.repo.GetObject(ctx, s.bucketName, path)
+	return reader, path, err
 }
 
 func (s *Service) UploadFile(ctx context.Context, path, filename string, file io.Reader, size int64) ([]File, []File, error) {

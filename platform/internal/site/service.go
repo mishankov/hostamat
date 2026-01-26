@@ -235,15 +235,26 @@ func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string
 	return files, nil
 }
 
-func (s *Service) GetFile(ctx context.Context, host, filePath string) (io.Reader, error) {
+func (s *Service) GetFile(ctx context.Context, host, filePath string) (io.Reader, string, error) {
 	site, err := s.GetByDomainNoAuth(ctx, host)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	filePath = strings.Trim(filePath, "/")
+	if filePath == "" {
+		filePath = "index.html"
+	}
 
-	return s.fileService.GetFile(ctx, site.Id+"/"+filePath)
+	reader, resolvedPath, err := s.fileService.GetFile(ctx, site.Id+"/"+filePath)
+	if err != nil {
+		return nil, "", err
+	}
+
+	// Strip the site ID prefix from the resolved path
+	resolvedPath = strings.TrimPrefix(resolvedPath, site.Id+"/")
+
+	return reader, resolvedPath, nil
 }
 
 func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename string, fileReader io.Reader, size int64) error {
