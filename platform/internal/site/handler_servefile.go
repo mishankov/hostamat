@@ -1,10 +1,18 @@
 package site
 
 import (
+	_ "embed"
 	"io"
+	"mime"
 	"net/http"
+	"path/filepath"
 	"strings"
+
+	"github.com/platforma-dev/platforma/log"
 )
+
+//go:embed 404.html
+var notFoundHTML []byte
 
 type ServeFileHandler struct {
 	service *Service
@@ -23,30 +31,38 @@ func (h *ServeFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	file, resolvedPath, err := h.service.GetFile(ctx, r.Host, filePath)
 	if err != nil {
-		http.Error(w, "File not found", http.StatusNotFound)
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusNotFound)
+		w.Write(notFoundHTML)
 		return
+	}
+
+	// Close the file if it implements io.Closer
+	if closer, ok := file.(io.Closer); ok {
+		defer closer.Close()
 	}
 
 	w.Header().Set("Content-Type", h.getContentType(resolvedPath))
 
-	io.Copy(w, file)
+	if _, err := io.Copy(w, file); err != nil {
+		log.ErrorContext(ctx, "failed to copy file to response", "error", err, "path", resolvedPath)
+	}
 }
 
 func (h *ServeFileHandler) getContentType(filename string) string {
-	switch {
-	case strings.HasSuffix(filename, ".html"):
-		return "text/html"
-	case strings.HasSuffix(filename, ".css"):
-		return "text/css"
-	case strings.HasSuffix(filename, ".js"):
-		return "application/javascript"
-	case strings.HasSuffix(filename, ".png"):
-		return "image/png"
-	case strings.HasSuffix(filename, ".jpg"), strings.HasSuffix(filename, ".jpeg"):
-		return "image/jpeg"
-	case strings.HasSuffix(filename, ".svg"):
-		return "image/svg+xml"
-	default:
-		return "application/octet-stream"
+	ext := filepath.Ext(filename)
+	contentType := mime.TypeByExtension(ext)
+
+	if contentType == "" {
+		contentType = "application/octet-stream"
 	}
+
+	// Add charset for text-based content types
+	if strings.HasPrefix(contentType, "text/") ||
+		contentType == "application/javascript" ||
+		contentType == "application/json" {
+		contentType += "; charset=utf-8"
+	}
+
+	return contentType
 }
