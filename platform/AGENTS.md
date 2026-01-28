@@ -50,6 +50,7 @@ platform/
 - `platforma/httpserver` for routing (`HandlerGroup`, middleware chaining)
 - `platforma/auth` for session-based auth (`UserFromContext`)
 - Domains register via `app.RegisterDomain("name", "db_connection_id", domain)`
+- Docs for agents - https://platforma-dev.github.io/platforma/llms.txt
 
 **Handlers**:
 - Interface-based service dependencies (e.g., `type createSiteService interface { Create(...) }`)

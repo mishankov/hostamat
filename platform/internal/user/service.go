@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"hostamat/internal/site"
 	"time"
 
 	"github.com/platforma-dev/platforma/auth"
@@ -9,17 +10,17 @@ import (
 	"github.com/platforma-dev/platforma/queue"
 )
 
+type Site interface {
+	GetId() string
+}
+
 type siteService interface {
-	GetList(ctx context.Context) ([]*Site, error)
+	GetList(ctx context.Context) ([]*site.Site, error)
 	Delete(ctx context.Context, id string) error
 }
 
 type uploadSessionService interface {
 	DeleteByUser(ctx context.Context, userId string) error
-}
-
-type Site struct {
-	Id string
 }
 
 type Service struct {

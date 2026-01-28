@@ -11,6 +11,7 @@ import (
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/internal/uploadsession"
+	"hostamat/internal/user"
 	"os"
 	"time"
 
@@ -64,7 +65,8 @@ func main() {
 	uploadSessionDomain := uploadsession.New(conn)
 	siteDomain := site.New(conn, subdomainDomain.Service, fileDomain.Service, uploadSessionDomain.Service)
 	sessionDomain := session.New(conn)
-	authDomain := auth.New(conn, sessionDomain.Service, "hsessionid", nil, nil)
+	userDomain := user.New(siteDomain.Service, uploadSessionDomain.Service)
+	authDomain := auth.New(conn, sessionDomain.Service, "hsessionid", nil, nil, userDomain.CleanupQueue)
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
@@ -122,6 +124,7 @@ func main() {
 
 	app.RegisterService("http", httpServer)
 	app.RegisterService("deleteFolderQueue", fileDomain.DeleteFolderQueue)
+	app.RegisterService("userCleanupQueue", userDomain.CleanupQueue)
 
 	if err := app.Run(ctx); err != nil {
 		logger.Error("Applicaton finished with error", "error", err)
