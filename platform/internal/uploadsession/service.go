@@ -81,3 +81,7 @@ func (s *Service) CreateFile(ctx context.Context, uploadSessionId, filename stri
 func (s *Service) GetFiles(ctx context.Context, uploadSessionId string) ([]File, error) {
 	return s.repo.GetFiles(ctx, uploadSessionId)
 }
+
+func (s *Service) DeleteByUser(ctx context.Context, userId string) error {
+	return s.repo.DeleteByUser(ctx, userId)
+}

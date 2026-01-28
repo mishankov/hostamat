@@ -68,6 +68,16 @@ func (r *Repository) DeleteFilesForUploadSession(ctx context.Context, uploadSess
 	return err
 }
 
+func (r *Repository) DeleteByUser(ctx context.Context, userId string) error {
+	_, err := r.db.ExecContext(ctx, `DELETE FROM files WHERE upload_session IN (SELECT id FROM uploadsessions WHERE "user" = $1)`, userId)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.db.ExecContext(ctx, `DELETE FROM uploadsessions WHERE "user" = $1`, userId)
+	return err
+}
+
 func (r *Repository) Migrations() []database.Migration {
 	return []database.Migration{{
 		ID: "init",
