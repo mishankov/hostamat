@@ -1,5 +1,4 @@
 .DS_Store
-.aider*
 .task/
 
 # Test data
@@ -9,3 +8,4 @@ test_site.zip
 *.db
 
 swarm.yml
+.sisyphus
