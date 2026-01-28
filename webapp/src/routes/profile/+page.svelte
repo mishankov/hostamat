@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { Button, Error, IconButton, Success } from '$lib/components';
+	import { Button, Error, IconButton, Modal, Success } from '$lib/components';
 	import Input from '$lib/components/Input.svelte';
 	import { Copy } from '$lib/icons';
+	import { goto } from '$app/navigation';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -22,6 +23,7 @@
 
 	let errorMessage = $state('');
 	let sucessMessage = $state('');
+	let deleteAccountModal = $state<Modal>();
 
 	const clearMessages = () => {
 		errorMessage = '';
@@ -57,6 +59,29 @@
 			errorMessage = 'Пароль не соответствует требованиям';
 		} else {
 			errorMessage = 'Ошибка сервера';
+		}
+	};
+
+	const deleteAccountAction = async () => {
+		clearMessages();
+		try {
+			const res = await fetch('/api/auth/me', {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!res.ok) {
+				errorMessage = 'Ошибка при удалении аккаунта';
+				deleteAccountModal?.close();
+				return;
+			}
+
+			goto('/login');
+		} catch (error) {
+			errorMessage = 'Ошибка при удалении аккаунта';
+			deleteAccountModal?.close();
 		}
 	};
 </script>
@@ -126,6 +151,29 @@
 				>Сменить пароль</Button
 			>
 		</div>
+
+		<div class="danger-zone">
+			<h2>Опасная зона</h2>
+			<p class="danger-zone-description">
+				Удаление аккаунта нельзя отменить. Все ваши сайты и файлы будут удалены навсегда.
+			</p>
+			<Button kind="danger" filled onclick={() => deleteAccountModal?.open()}>
+				Удалить аккаунт
+			</Button>
+		</div>
+
+		<Modal bind:this={deleteAccountModal} kind="danger">
+			<div class="delete-modal">
+				<p style="color: var(--color-danger-90);">
+					Вы уверены, что хотите удалить свой аккаунт? Это приведёт к безвозвратному удалению всех
+					ваших сайтов и файлов.
+				</p>
+				<form method="dialog">
+					<Button kind="danger" filled onclick={deleteAccountAction}>Удалить</Button>
+					<Button kind="danger">Отмена</Button>
+				</form>
+			</div>
+		</Modal>
 	</div>
 </main>
 
@@ -179,5 +227,42 @@
 		gap: 15px;
 
 		max-width: 300px;
+	}
+
+	.danger-zone {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+
+		max-width: 500px;
+
+		padding: 20px;
+		margin-top: 40px;
+
+		border: 2px solid var(--color-danger-90);
+		border-radius: var(--border-radius-regular);
+		background: var(--color-danger-7);
+	}
+
+	.danger-zone h2 {
+		color: var(--color-danger-90);
+		margin: 0;
+	}
+
+	.danger-zone-description {
+		color: var(--color-danger-90);
+		font-size: 14px;
+		margin: 0;
+	}
+
+	.delete-modal {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.delete-modal > form {
+		display: flex;
+		gap: 10px;
 	}
 </style>
