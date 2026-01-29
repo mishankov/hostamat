@@ -4,6 +4,7 @@
 	import { Copy } from '$lib/icons';
 	import { goto } from '$app/navigation';
 	import type { PageProps } from './$types';
+	import Card from '$lib/components/Card.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -152,15 +153,17 @@
 			>
 		</div>
 
-		<div class="danger-zone">
-			<h2>Опасная зона</h2>
-			<p class="danger-zone-description">
-				Удаление аккаунта нельзя отменить. Все ваши сайты и файлы будут удалены навсегда.
-			</p>
-			<Button kind="danger" filled onclick={() => deleteAccountModal?.open()}>
-				Удалить аккаунт
-			</Button>
-		</div>
+		<Card kind="danger" border={true}>
+			<div class="danger-zone">
+				<h2>Опасная зона</h2>
+				<p class="danger-zone-description">
+					Удаление аккаунта нельзя отменить. Все ваши сайты и файлы будут удалены навсегда.
+				</p>
+				<Button kind="danger" filled onclick={() => deleteAccountModal?.open()}>
+					Удалить аккаунт
+				</Button>
+			</div>
+		</Card>
 
 		<Modal bind:this={deleteAccountModal} kind="danger">
 			<div class="delete-modal">
@@ -237,16 +240,10 @@
 		max-width: 500px;
 
 		padding: 20px;
-		margin-top: 40px;
-
-		border: 2px solid var(--color-danger-90);
-		border-radius: var(--border-radius-regular);
-		background: var(--color-danger-7);
 	}
 
 	.danger-zone h2 {
 		color: var(--color-danger-90);
-		margin: 0;
 	}
 
 	.danger-zone-description {
