@@ -37,6 +37,7 @@ func NewService(siteService siteService, uploadSessionService uploadSessionServi
 
 	cleanupQueue := queue.NewChanQueue[auth.UserCleanupJob](5, time.Second)
 	service.cleanupProcessor = queue.New(queue.HandlerFunc[auth.UserCleanupJob](func(ctx context.Context, job auth.UserCleanupJob) {
+		ctx = context.WithValue(ctx, auth.UserContextKey, &auth.User{ID: job.UserID})
 		err := service.cleanupUser(ctx, job.UserID)
 		if err != nil {
 			log.ErrorContext(ctx, "failed to cleanup user", "userId", job.UserID, "error", err)
