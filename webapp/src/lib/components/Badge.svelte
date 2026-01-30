@@ -1,28 +1,63 @@
 <script lang="ts">
 	type Props = {
 		text: string;
+		kind?: 'accent' | 'confirm' | 'danger' | 'action' | 'muted';
 	};
 
-	let { text = '' }: Props = $props();
+	let { text = '', kind = 'accent' }: Props = $props();
 </script>
 
-<span class="primary">{text}</span>
+<span class={kind}>{text}</span>
 
 <style>
 	span {
+		display: inline-flex;
+		align-items: center;
 		width: fit-content;
 
-		border-radius: var(--border-radius-regular);
+		border-radius: 6px;
 
-		padding: 4px 8px;
+		padding: 5px 10px;
 
-		font-size: small;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
 		font-weight: 600;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
 
 		text-align: center;
 		user-select: none;
 
-		color: var(--color-accent-60);
-		background-color: var(--color-accent-20);
+		transition: all var(--transition-fast);
+	}
+
+	.accent {
+		color: var(--color-accent-80);
+		background: linear-gradient(135deg, var(--color-accent-10), var(--color-accent-15));
+		border: 1px solid var(--color-accent-30);
+	}
+
+	.confirm {
+		color: var(--color-confirm-70);
+		background: linear-gradient(135deg, var(--color-confirm-10), var(--color-confirm-15));
+		border: 1px solid var(--color-confirm-30);
+	}
+
+	.danger {
+		color: var(--color-danger-70);
+		background: linear-gradient(135deg, var(--color-danger-10), var(--color-danger-15));
+		border: 1px solid var(--color-danger-30);
+	}
+
+	.action {
+		color: var(--color-action-70);
+		background: linear-gradient(135deg, var(--color-action-10), var(--color-action-15));
+		border: 1px solid var(--color-action-30);
+	}
+
+	.muted {
+		color: var(--color-text-secondary);
+		background: var(--color-background-object);
+		border: 1px solid var(--color-border);
 	}
 </style>

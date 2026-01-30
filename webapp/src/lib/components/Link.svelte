@@ -8,16 +8,43 @@
 
 <style>
 	a {
-		color: var(--color-primary-90);
+		color: var(--color-text-regular);
 		text-decoration: none;
-		transition: all 500ms;
+		font-weight: 500;
+		transition: all var(--transition-fast);
+		position: relative;
+	}
+
+	a::after {
+		content: '';
+		position: absolute;
+		bottom: -2px;
+		left: 0;
+		width: 0;
+		height: 1px;
+		background: var(--color-accent-50);
+		transition: width var(--transition-fast);
+	}
+
+	a:hover {
+		color: var(--color-accent-50);
+	}
+
+	a:hover::after {
+		width: 100%;
 	}
 
 	a.underline {
 		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: var(--color-border);
 	}
 
-	a:hover {
-		text-decoration: underline;
+	a.underline:hover {
+		text-decoration-color: var(--color-accent-50);
+	}
+
+	a.underline::after {
+		display: none;
 	}
 </style>

@@ -6,34 +6,61 @@
 </script>
 
 <main>
-	<Card>
-		<div class="form">
-			{@render children()}
-		</div>
-	</Card>
+	<div class="auth-container">
+		<Card border>
+			<div class="form">
+				{@render children()}
+			</div>
+		</Card>
+	</div>
 </main>
 
 <style>
 	main {
-		height: calc(100% - 75px);
-		width: 100vw;
+		width: 100%;
+		min-height: calc(100vh - 140px);
 
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+
+		padding: 40px 24px;
+	}
+
+	.auth-container {
+		width: 100%;
+		max-width: 400px;
+
+		animation: fadeInUp 0.4s var(--ease-out-expo) forwards;
+	}
+
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	.form {
-		width: 300px;
-
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
-		align-items: center;
+		gap: 20px;
 
-		gap: 15px;
+		padding: 32px;
+	}
 
-		padding: 20px;
+	@media (max-width: 480px) {
+		main {
+			padding: 24px 16px;
+		}
+
+		.form {
+			padding: 24px;
+		}
 	}
 </style>

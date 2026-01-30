@@ -8,68 +8,88 @@
 
 <main>
 	<div class="about">
-		<h1>О сервисе</h1>
-		<p>
-			Хостамат (<Link href="https://hostamat.ru" target="_blank" alwaysUnderline>hostamat.ru</Link>)
-			— сервис для простого хостинга статических сайтов.
-		</p>
+		<header class="page-header">
+			<h1>О сервисе</h1>
+			<p class="intro">
+				<Link href="https://hostamat.ru" target="_blank" alwaysUnderline>Хостамат</Link> — сервис для простого хостинга статических сайтов.
+			</p>
+		</header>
 
-		<div class="cards">
-			<div class="card">
-				<h2>Простота использования</h2>
-				<p>
-					Для каждого сайта выделяется домен третьего уровня с настроенным TLS, поэтому каждый сайт
-					доступен по HTTPS сразу после загрузки.
-				</p>
-			</div>
-
-			<div class="card">
-				<h2>Гибкая загрузка</h2>
-				<p>
-					Сайты можно загружать напрямую на сайте сервиса в виде отдельных файлов или .zip архива.
-				</p>
-			</div>
-
-			<div class="card">
-				<h2>Поддерживаемые форматы</h2>
-				<h3>Исходный код</h3>
-				<div class="file-types">
-					<Badge text="html" />
-					<Badge text="css" />
-					<Badge text="js" />
+		<div class="features">
+			<section class="feature-section">
+				<div class="feature-icon">01</div>
+				<div class="feature-content">
+					<h2>Простота использования</h2>
+					<p>
+						Для каждого сайта выделяется домен третьего уровня с настроенным TLS, поэтому каждый сайт
+						доступен по HTTPS сразу после загрузки.
+					</p>
 				</div>
+			</section>
 
-				<h3>Изображения</h3>
-				<div class="file-types">
-					<Badge text="png" />
-					<Badge text="jpg" />
-					<Badge text="jpeg" />
-					<Badge text="svg" />
-					<Badge text="gif" />
-					<Badge text="ico" />
-					<Badge text="webp" />
+			<section class="feature-section">
+				<div class="feature-icon">02</div>
+				<div class="feature-content">
+					<h2>Гибкая загрузка</h2>
+					<p>
+						Сайты можно загружать напрямую на сайте сервиса в виде отдельных файлов или .zip архива.
+					</p>
 				</div>
+			</section>
 
-				<h3>Шрифты</h3>
-				<div class="file-types">
-					<Badge text="woff2" />
-					<Badge text="woff" />
-					<Badge text="ttf" />
-					<Badge text="eot" />
+			<section class="feature-section formats">
+				<div class="feature-icon">03</div>
+				<div class="feature-content">
+					<h2>Поддерживаемые форматы</h2>
+
+					<div class="format-group">
+						<h3>Исходный код</h3>
+						<div class="file-types">
+							<Badge text="html" kind="muted" />
+							<Badge text="css" kind="muted" />
+							<Badge text="js" kind="muted" />
+						</div>
+					</div>
+
+					<div class="format-group">
+						<h3>Изображения</h3>
+						<div class="file-types">
+							<Badge text="png" kind="muted" />
+							<Badge text="jpg" kind="muted" />
+							<Badge text="jpeg" kind="muted" />
+							<Badge text="svg" kind="muted" />
+							<Badge text="gif" kind="muted" />
+							<Badge text="ico" kind="muted" />
+							<Badge text="webp" kind="muted" />
+						</div>
+					</div>
+
+					<div class="format-group">
+						<h3>Шрифты</h3>
+						<div class="file-types">
+							<Badge text="woff2" kind="muted" />
+							<Badge text="woff" kind="muted" />
+							<Badge text="ttf" kind="muted" />
+							<Badge text="eot" kind="muted" />
+						</div>
+					</div>
 				</div>
-			</div>
+			</section>
 
-			<div class="card">
-				<h2>Обратная связь</h2>
-				<p>
-					Для сообщения о возникших ошибках, вопросах или желании оставить какую-либо другую
-					обратную связь можно воспользоваться <Link
-						href="https://forms.yandex.ru/u/6907bbfc49af47f3cae7650a"
-						target="_blank"
-						alwaysUnderline>формой</Link
-					>
-				</p>
-			</div>
+			<section class="feature-section">
+				<div class="feature-icon">?</div>
+				<div class="feature-content">
+					<h2>Обратная связь</h2>
+					<p>
+						Для сообщения о возникших ошибках, вопросах или желании оставить какую-либо другую
+						обратную связь можно воспользоваться <Link
+							href="https://forms.yandex.ru/u/6907bbfc49af47f3cae7650a"
+							target="_blank"
+							alwaysUnderline>формой</Link
+						>
+					</p>
+				</div>
+			</section>
 		</div>
 	</div>
 </main>
@@ -77,50 +97,139 @@
 <style>
 	main {
 		width: 100%;
-		height: calc(100% - 76px);
+		min-height: calc(100vh - 140px);
 
 		display: flex;
-		flex-direction: row;
 		justify-content: center;
-		align-items: start;
+
+		padding: 0 24px;
 	}
 
 	.about {
+		width: 100%;
+		max-width: 800px;
+
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: 48px;
 
-		width: clamp(500px, 75%, 1200px);
-
-		padding: 20px;
+		padding: 40px 0 60px;
 	}
 
-	p {
-		font-size: 1.25rem;
-		line-height: 1.6;
+	.page-header {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.page-header h1 {
+		margin: 0;
+	}
+
+	.intro {
+		font-size: 1.125rem;
+		line-height: 1.7;
 		color: var(--color-text-secondary);
 		max-width: 600px;
+		margin: 0;
 	}
 
-	.cards {
+	.features {
 		display: flex;
 		flex-direction: column;
-		gap: 32px;
+		gap: 40px;
 	}
 
-	.card {
+	.feature-section {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 24px;
+		align-items: start;
+	}
+
+	.feature-icon {
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		font-weight: 800;
+		color: var(--color-accent-50);
+		opacity: 0.5;
+
+		width: 48px;
+		height: 48px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		background: var(--color-background-object);
+		border: 1px solid var(--color-border-subtle);
+		border-radius: var(--border-radius-regular);
+	}
+
+	.feature-content {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.feature-content h2 {
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		font-weight: 700;
+		margin: 0;
+	}
+
+	.feature-content p {
+		font-size: 0.9375rem;
+		line-height: 1.7;
+		color: var(--color-text-secondary);
+		margin: 0;
+	}
+
+	.feature-content h3 {
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+		font-weight: 500;
+		color: var(--color-text-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		margin: 0;
+	}
+
+	.formats .feature-content {
+		gap: 20px;
+	}
+
+	.format-group {
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
-	}
-
-	.card h2 {
-		padding-top: 10px;
 	}
 
 	.file-types {
 		display: flex;
-		gap: 12px;
-		max-width: 600px;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	@media (max-width: 600px) {
+		main {
+			padding: 0 16px;
+		}
+
+		.about {
+			padding: 24px 0 40px;
+			gap: 32px;
+		}
+
+		.feature-section {
+			grid-template-columns: 1fr;
+			gap: 16px;
+		}
+
+		.feature-icon {
+			width: 40px;
+			height: 40px;
+			font-size: 1.25rem;
+		}
 	}
 </style>

@@ -1,7 +1,5 @@
 <script lang="ts">
-	let { size = 100, background = 'var(--color-background-object)' } = $props();
-
-	let strokeWidth = 7;
+	let { size = 100, color = 'currentColor', background = 'var(--color-background-object)' } = $props();
 </script>
 
 <svg width={size} viewBox="0 0 100 100">
@@ -13,8 +11,9 @@
 		ry="10"
 		width="60"
 		height="60"
-		stroke-width={strokeWidth}
-		style="--color-background: {background}"
+		stroke-width="6"
+		stroke={color}
+		style="--bg: {background}"
 	/>
 
 	<rect
@@ -25,23 +24,16 @@
 		ry="10"
 		width="60"
 		height="60"
-		stroke-width={strokeWidth}
-		style="--color-background: {background}"
+		stroke-width="6"
+		stroke={color}
+		style="--bg: {background}"
 	/>
 </svg>
 
 <style>
 	rect {
-		stroke: var(--color-primary-90);
-		transition: all 500ms;
-	}
-
-	rect {
-		fill: var(--color-background);
-	}
-
-	svg:hover rect {
-		stroke: var(--color-primary-90);
+		fill: var(--bg);
+		transition: all var(--transition);
 	}
 
 	svg:hover rect.back {
@@ -49,6 +41,6 @@
 	}
 
 	svg:active rect.front {
-		fill: var(--color-primary-90);
+		fill: currentColor;
 	}
 </style>

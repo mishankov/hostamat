@@ -17,7 +17,7 @@
 	resetState();
 </script>
 
-<Card border floating style="height: 150px;" kind="action">
+<Card border floating kind="action">
 	<button
 		class="add-site"
 		onclick={() => {
@@ -25,27 +25,35 @@
 			modal?.open();
 		}}
 	>
-		{#if loading}
-			<p><Spinner size={40} /></p>
-			<p class="add-site-text">Добавляем сайт</p>
-		{:else}
-			<p><Plus size={40} /></p>
-			<p class="add-site-text">Добавить сайт</p>
-		{/if}
+		<div class="add-site-icon">
+			{#if loading}
+				<Spinner size={32} />
+			{:else}
+				<Plus size={32} color="currentColor" />
+			{/if}
+		</div>
+		<span class="add-site-text">
+			{#if loading}
+				Добавляем сайт...
+			{:else}
+				Добавить сайт
+			{/if}
+		</span>
 	</button>
 </Card>
 
 <Modal bind:this={modal}>
-	<div style="display: flex; flex-direction: column; gap: 15px; min-width: 270px;">
+	<div class="new-site-modal">
 		<h2>Новый сайт</h2>
+		<p class="modal-subtitle">Введите название для вашего сайта</p>
 		<Input
 			id="site-name"
 			label="Название"
 			errorMessage={newSiteNameError}
 			bind:value={newSiteName}
 			maxlength="25"
-		></Input>
-		<div style="display: flex; gap: 15px; align-items: center; ">
+		/>
+		<div class="modal-actions">
 			<Button
 				filled
 				disabled={loading}
@@ -76,7 +84,7 @@
 				}}>Отмена</Button
 			>
 			{#if loading}
-				<Spinner size={30} />
+				<Spinner size={24} />
 			{/if}
 		</div>
 	</div>
@@ -85,20 +93,72 @@
 <style>
 	.add-site {
 		all: unset;
+		box-sizing: border-box;
 
+		width: 100%;
 		height: 100%;
+		min-height: 160px;
 
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		gap: 12px;
 
-		padding-left: 20px;
-		padding-right: 20px;
+		padding: 24px;
+		cursor: pointer;
+	}
+
+	.add-site-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		width: 56px;
+		height: 56px;
+
+		background: var(--color-action-15);
+		border: 1px dashed var(--color-action-40);
+		border-radius: var(--border-radius-regular);
+
+		color: var(--color-action-60);
+		transition: all var(--transition-fast);
+	}
+
+	.add-site:hover .add-site-icon {
+		background: var(--color-action-20);
+		border-style: solid;
+		color: var(--color-action-70);
 	}
 
 	.add-site-text {
-		color: var(--color-primary-90);
+		font-size: 0.9375rem;
+		font-weight: 500;
+		color: var(--color-action-70);
 		user-select: none;
+	}
+
+	.new-site-modal {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		min-width: 320px;
+	}
+
+	.new-site-modal h2 {
+		margin: 0;
+	}
+
+	.modal-subtitle {
+		color: var(--color-text-secondary);
+		font-size: 0.9375rem;
+		margin: -8px 0 8px 0;
+	}
+
+	.modal-actions {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding-top: 8px;
 	}
 </style>

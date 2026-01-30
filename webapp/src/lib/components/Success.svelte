@@ -6,24 +6,28 @@
 </script>
 
 <div class="success">
-	<Card border kind="confirm" style="height: fit-content; width: 100%; padding: 10px;">
-		<div class="header">
-			<Check size={25} color="var(--color-confirm-50)" />
-			{#if header}
-				<h4>{header}</h4>
-			{:else if message}
-				<p>{message}</p>
-			{/if}
+	<Card border kind="confirm">
+		<div class="success-inner">
+			<div class="icon-wrapper">
+				<Check size={18} color="currentColor" />
+			</div>
+			<div class="content">
+				{#if header}
+					<h4 class="header">{header}</h4>
+				{:else if message}
+					<p class="message">{message}</p>
+				{/if}
+				{#if children}
+					<div class="body">
+						{@render children?.()}
+					</div>
+				{:else if message && header}
+					<div class="body">
+						{message}
+					</div>
+				{/if}
+			</div>
 		</div>
-		{#if children}
-			<div class="content">
-				{@render children?.()}
-			</div>
-		{:else if message && header}
-			<div class="content">
-				{message}
-			</div>
-		{/if}
 	</Card>
 </div>
 
@@ -32,18 +36,53 @@
 		width: 100%;
 	}
 
-	.header {
+	.success-inner {
 		display: flex;
-		flex-direction: row;
-		gap: 10px;
+		gap: 14px;
+		padding: 16px;
+	}
+
+	.icon-wrapper {
+		display: flex;
 		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+
+		width: 28px;
+		height: 28px;
+
+		background: var(--color-confirm-20);
+		border-radius: var(--border-radius-sm);
+
+		color: var(--color-confirm-60);
 	}
 
 	.content {
 		display: flex;
-		align-items: start;
-		gap: 10px;
+		flex-direction: column;
+		gap: 6px;
+		flex: 1;
+		min-width: 0;
+	}
 
-		padding-top: 10px;
+	.header {
+		font-family: var(--font-display);
+		font-size: 0.9375rem;
+		font-weight: 600;
+		color: var(--color-confirm-80);
+		margin: 0;
+	}
+
+	.message {
+		font-size: 0.875rem;
+		color: var(--color-confirm-70);
+		margin: 0;
+		line-height: 1.5;
+	}
+
+	.body {
+		font-size: 0.875rem;
+		color: var(--color-confirm-60);
+		line-height: 1.5;
 	}
 </style>

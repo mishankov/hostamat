@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { size = 100 } = $props();
+	let { size = 100, color = 'var(--color-text-primary)' } = $props();
 </script>
 
 <svg width={size} viewBox="-50 -50 100 100">
@@ -8,8 +8,8 @@
 		y1="-30"
 		x2="0"
 		y2="30"
-		stroke="var(--color-primary-90)"
-		stroke-width="7"
+		stroke={color}
+		stroke-width="6"
 		stroke-linecap="round"
 		stroke-linejoin="round"
 	/>
@@ -19,8 +19,8 @@
 		y1="0"
 		x2="30"
 		y2="0"
-		stroke="var(--color-primary-90)"
-		stroke-width="7"
+		stroke={color}
+		stroke-width="6"
 		stroke-linecap="round"
 		stroke-linejoin="round"
 	/>
@@ -28,7 +28,7 @@
 
 <style>
 	line {
-		transition: all 500ms;
+		transition: all var(--transition);
 	}
 
 	svg:hover line {

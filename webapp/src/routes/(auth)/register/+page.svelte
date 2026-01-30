@@ -56,32 +56,47 @@
 	}}
 />
 
-<h1>Регистрация</h1>
+<div class="auth-header">
+	<h1>Регистрация</h1>
+	<p>Создайте новый аккаунт</p>
+</div>
 
 {#if error}
 	<Error message={error} />
 {/if}
 
-<Input id="login" type="text" label="Логин" bind:value={login} placeholder="ivan" />
-<Input
-	id="password"
-	type="password"
-	label="Пароль"
-	bind:value={password}
-	placeholder="verysecure"
-/>
-<Input
-	id="passwordAgain"
-	type="password"
-	label="Пароль ещё раз"
-	bind:value={passwordAgain}
-	placeholder="verysecure"
-/>
+<div class="form-fields">
+	<Input id="login" type="text" label="Логин" bind:value={login} placeholder="ivan" />
+	<Input
+		id="password"
+		type="password"
+		label="Пароль"
+		bind:value={password}
+		placeholder="verysecure"
+	/>
+	<Input
+		id="passwordAgain"
+		type="password"
+		label="Пароль ещё раз"
+		bind:value={passwordAgain}
+		placeholder="verysecure"
+	/>
+</div>
 
-<Card kind="primary">
+<Card kind="primary" border>
 	<div class="password-rules">
-		<p>Логин должен быть от 5 до 20 символов</p>
-		<p>Пароль должен быть от 8 до 100 символов</p>
+		<div class="rule" class:valid={login.length >= 5 && login.length <= 20}>
+			<span class="rule-icon">{login.length >= 5 && login.length <= 20 ? '✓' : '○'}</span>
+			<span>Логин от 5 до 20 символов</span>
+		</div>
+		<div class="rule" class:valid={password.length >= 8 && password.length <= 100}>
+			<span class="rule-icon">{password.length >= 8 && password.length <= 100 ? '✓' : '○'}</span>
+			<span>Пароль от 8 до 100 символов</span>
+		</div>
+		<div class="rule" class:valid={password === passwordAgain && password.length > 0}>
+			<span class="rule-icon">{password === passwordAgain && password.length > 0 ? '✓' : '○'}</span>
+			<span>Пароли совпадают</span>
+		</div>
 	</div>
 </Card>
 
@@ -91,23 +106,61 @@
 </div>
 
 <style>
-	.actions {
-		width: 100%;
+	.auth-header {
+		text-align: center;
+		margin-bottom: 8px;
+	}
 
+	.auth-header h1 {
+		font-family: var(--font-display);
+		font-size: 1.75rem;
+		font-weight: 700;
+		margin: 0 0 8px 0;
+	}
+
+	.auth-header p {
+		color: var(--color-text-secondary);
+		font-size: 0.9375rem;
+		margin: 0;
+	}
+
+	.form-fields {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.actions {
 		display: flex;
 		justify-content: space-between;
-		gap: 10px;
-
-		padding-top: 10px;
+		align-items: center;
+		gap: 12px;
+		padding-top: 8px;
 	}
 
 	.password-rules {
-		padding: 10px;
-
+		padding: 16px;
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+	}
 
-		color: var(--color-text-secondary);
+	.rule {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 0.875rem;
+		color: var(--color-text-muted);
+		transition: color var(--transition-fast);
+	}
+
+	.rule.valid {
+		color: var(--color-confirm-60);
+	}
+
+	.rule-icon {
+		font-size: 0.75rem;
+		width: 16px;
+		text-align: center;
 	}
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { size = 100, color = 'var(--color-primary-90)' } = $props();
+	let { size = 100, color = 'var(--color-accent-50)' } = $props();
 </script>
 
 <svg width={size} viewBox="-50 -50 100 100" class="spinner">
@@ -8,7 +8,7 @@
 		cy="0"
 		r="40"
 		stroke={color}
-		stroke-width="7"
+		stroke-width="6"
 		stroke-dasharray="60 188"
 		stroke-dashoffset="0"
 		stroke-linecap="round"
@@ -17,16 +17,32 @@
 </svg>
 
 <style>
-	circle {
-		animation: rotate 1.4s linear infinite;
+	.spinner {
+		animation: spinnerRotate 1s linear infinite;
 	}
 
-	@keyframes rotate {
-		0% {
-			transform: rotate(0deg);
-		}
+	circle {
+		animation: spinnerDash 1.4s ease-in-out infinite;
+	}
+
+	@keyframes spinnerRotate {
 		100% {
 			transform: rotate(360deg);
+		}
+	}
+
+	@keyframes spinnerDash {
+		0% {
+			stroke-dasharray: 10 188;
+			stroke-dashoffset: 0;
+		}
+		50% {
+			stroke-dasharray: 80 188;
+			stroke-dashoffset: -40;
+		}
+		100% {
+			stroke-dasharray: 10 188;
+			stroke-dashoffset: -125;
 		}
 	}
 </style>

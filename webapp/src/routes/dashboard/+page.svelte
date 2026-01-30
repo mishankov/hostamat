@@ -39,7 +39,14 @@
 
 <main>
 	<div class="dashboard">
-		<h1>Твои сайты</h1>
+		<header class="page-header">
+			<h1>Твои сайты</h1>
+			<p class="site-count">
+				{#if sites.length > 0}
+					{sites.length} из {maxAmount} сайтов
+				{/if}
+			</p>
+		</header>
 
 		{#if errorMessage}
 			<Error message={errorMessage} />
@@ -47,35 +54,42 @@
 
 		<div class="site-list">
 			{#await data.sitesResp}
-				<Spinner size={50} />
+				<div class="loading-state">
+					<Spinner size={40} />
+					<span>Загрузка сайтов...</span>
+				</div>
 			{:then sitesResult}
 				{#if sitesResult.data}
-					{#each sites as site (site.id)}
-						<Card border style="height: 150px;">
-							<SiteContent
-								{site}
+					{#each sites as site, index (site.id)}
+						<div class="site-card" style="--delay: {index * 50}ms">
+							<Card border>
+								<SiteContent
+									{site}
+									bind:loading
+									bind:errorMessage
+									onsiteupdate={async () => {
+										await invalidateAll();
+										updateState();
+									}}
+								/>
+							</Card>
+						</div>
+					{/each}
+
+					{#if !sites || sites.length < maxAmount}
+						<div class="site-card add-new" style="--delay: {sites.length * 50}ms">
+							<AddNewSite
 								bind:loading
-								bind:errorMessage
-								onsiteupdate={async () => {
+								onsuccess={async () => {
 									await invalidateAll();
 									updateState();
 								}}
 							/>
-						</Card>
-					{/each}
-
-					{#if !sites || sites.length < maxAmount}
-						<AddNewSite
-							bind:loading
-							onsuccess={async () => {
-								await invalidateAll();
-								updateState();
-							}}
-						/>
+						</div>
 					{:else if loading === false}
-						<div style="height: 110px; display: flex; align-items: center;">
-							<Info header="Максимальное количество сайтов в альфа версии">
-								Для добавления нового сайта, удалите один из существующих
+						<div class="limit-notice">
+							<Info header="Достигнут лимит сайтов">
+								Для добавления нового сайта удалите один из существующих
 							</Info>
 						</div>
 					{/if}
@@ -92,27 +106,98 @@
 <style>
 	main {
 		width: 100%;
-		height: calc(100% - 76px);
+		min-height: calc(100vh - 140px);
 
 		display: flex;
-		flex-direction: row;
 		justify-content: center;
-		align-items: start;
+
+		padding: 0 24px;
 	}
 
 	.dashboard {
+		width: 100%;
+		max-width: 1200px;
+
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: 24px;
 
-		width: clamp(500px, 75%, 1200px);
+		padding: 40px 0 60px;
+	}
 
-		padding: 20px;
+	.page-header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 16px;
+		flex-wrap: wrap;
+	}
+
+	.page-header h1 {
+		margin: 0;
+	}
+
+	.site-count {
+		font-size: 0.875rem;
+		color: var(--color-text-muted);
+		margin: 0;
 	}
 
 	.site-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 16px;
+	}
+
+	.site-card {
+		animation: fadeInUp 0.4s var(--ease-out-expo) forwards;
+		animation-delay: var(--delay, 0ms);
+		opacity: 0;
+	}
+
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(16px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.loading-state {
+		grid-column: 1 / -1;
 		display: flex;
-		flex-wrap: wrap;
-		gap: 10px;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 16px;
+		padding: 60px 20px;
+
+		color: var(--color-text-secondary);
+		font-size: 0.9375rem;
+	}
+
+	.limit-notice {
+		grid-column: 1 / -1;
+	}
+
+	.add-new {
+		min-height: 180px;
+	}
+
+	@media (max-width: 600px) {
+		main {
+			padding: 0 16px;
+		}
+
+		.dashboard {
+			padding: 24px 0 40px;
+		}
+
+		.site-list {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

@@ -13,19 +13,34 @@
 		align-items: center;
 		justify-content: center;
 
-		padding: 4px;
-		border-radius: var(--border-radius-regular);
+		width: 36px;
+		height: 36px;
+		padding: 6px;
+		border-radius: var(--border-radius-sm);
 
-		transition: var(--transition);
+		color: var(--color-text-secondary);
+		background: transparent;
+		cursor: pointer;
+
+		transition: all var(--transition-fast);
 	}
 
 	button:hover {
-		background: var(--color-primary-20);
-		cursor: pointer;
+		color: var(--color-text-primary);
+		background: var(--color-background-hover);
+	}
+
+	button:active {
+		transform: scale(0.95);
 	}
 
 	button.danger:hover {
-		background: var(--color-danger-20);
-		cursor: pointer;
+		color: var(--color-danger-60);
+		background: var(--color-danger-10);
+	}
+
+	button:focus-visible {
+		outline: 2px solid var(--color-accent-50);
+		outline-offset: 2px;
 	}
 </style>

@@ -25,6 +25,7 @@
 	let errorMessage = $state('');
 	let sucessMessage = $state('');
 	let deleteAccountModal = $state<Modal>();
+	let copied = $state(false);
 
 	const clearMessages = () => {
 		errorMessage = '';
@@ -85,6 +86,12 @@
 			deleteAccountModal?.close();
 		}
 	};
+
+	const copyUsername = () => {
+		navigator.clipboard.writeText(data.username);
+		copied = true;
+		setTimeout(() => copied = false, 2000);
+	};
 </script>
 
 <svelte:head>
@@ -93,8 +100,12 @@
 
 <main>
 	<div class="profile">
+		<header class="page-header">
+			<h1>Профиль</h1>
+		</header>
+
 		{#if errorMessage || sucessMessage}
-			<div style="max-width: 500px;">
+			<div class="messages">
 				{#if errorMessage}
 					<Error message={errorMessage} />
 				{/if}
@@ -105,76 +116,77 @@
 			</div>
 		{/if}
 
-		<h1>Профиль</h1>
-
-		<div class="profile-data">
-			<div class="profile-data-row">
-				<span class="label">Логин</span>
-				<div class="profile-data-value">
-					<span>{data.username}</span>
-					<IconButton
-						onclick={() => {
-							navigator.clipboard.writeText(data.username);
-						}}
-					>
-						<Copy size={15} />
-					</IconButton>
+		<section class="section">
+			<h2>Данные аккаунта</h2>
+			<div class="profile-data">
+				<div class="data-item">
+					<span class="data-label">Логин</span>
+					<div class="data-value">
+						<span class="username">{data.username}</span>
+						<IconButton onclick={copyUsername} title={copied ? 'Скопировано!' : 'Копировать'}>
+							<Copy size={16} />
+						</IconButton>
+					</div>
 				</div>
 			</div>
-		</div>
+		</section>
 
-		<div class="change-password">
+		<section class="section">
 			<h2>Смена пароля</h2>
+			<div class="password-form">
+				<Input
+					id="oldPassword"
+					type="password"
+					label="Текущий пароль"
+					bind:value={currentPassword}
+					placeholder="verysecure"
+				/>
+				<Input
+					id="newPassword"
+					type="password"
+					label="Новый пароль"
+					bind:value={newPassword}
+					placeholder="verysecure2"
+				/>
+				<Input
+					id="newPasswordAgain"
+					type="password"
+					label="Новый пароль ещё раз"
+					bind:value={newPasswordAgain}
+					placeholder="verysecure2"
+				/>
 
-			<Input
-				id="oldPassword"
-				type="password"
-				label="Текущий пароль"
-				bind:value={currentPassword}
-				placeholder="verysecure"
-			/>
-			<Input
-				id="newPassword"
-				type="password"
-				label="Новый пароль"
-				bind:value={newPassword}
-				placeholder="verysecure2"
-			/>
-			<Input
-				id="newPasswordAgain"
-				type="password"
-				label="Новый пароль ещё раз"
-				bind:value={newPasswordAgain}
-				placeholder="verysecure2"
-			/>
-
-			<Button kind="danger" onclick={changePasswordAction} disabled={changePasswordButtonDisabled}
-				>Сменить пароль</Button
-			>
-		</div>
-
-		<Card kind="danger" border={true}>
-			<div class="danger-zone">
-				<h2>Опасная зона</h2>
-				<p class="danger-zone-description">
-					Удаление аккаунта нельзя отменить. Все ваши сайты и файлы будут удалены навсегда.
-				</p>
-				<Button kind="danger" filled onclick={() => deleteAccountModal?.open()}>
-					Удалить аккаунт
+				<Button kind="action" onclick={changePasswordAction} disabled={changePasswordButtonDisabled}>
+					Сменить пароль
 				</Button>
 			</div>
-		</Card>
+		</section>
+
+		<section class="section danger-section">
+			<Card kind="danger" border>
+				<div class="danger-zone">
+					<h2>Опасная зона</h2>
+					<p>
+						Удаление аккаунта нельзя отменить. Все ваши сайты и файлы будут удалены навсегда.
+					</p>
+					<Button kind="danger" filled onclick={() => deleteAccountModal?.open()}>
+						Удалить аккаунт
+					</Button>
+				</div>
+			</Card>
+		</section>
 
 		<Modal bind:this={deleteAccountModal} kind="danger">
 			<div class="delete-modal">
-				<p style="color: var(--color-danger-90);">
+				<h3>Удалить аккаунт?</h3>
+				<p>
 					Вы уверены, что хотите удалить свой аккаунт? Это приведёт к безвозвратному удалению всех
 					ваших сайтов и файлов.
 				</p>
-				<form method="dialog">
+				<div class="modal-actions">
 					<Button kind="danger" filled onclick={deleteAccountAction}>Удалить</Button>
-					<Button kind="danger">Отмена</Button>
-				</form>
+					<Button kind="danger" onclick={() => deleteAccountModal?.close()}>Отмена</Button>
+				</div>
 			</div>
 		</Modal>
 	</div>
@@ -183,83 +195,141 @@
 <style>
 	main {
 		width: 100%;
-		height: calc(100% - 76px);
+		min-height: calc(100vh - 140px);
 
 		display: flex;
-		flex-direction: row;
 		justify-content: center;
-		align-items: start;
+
+		padding: 0 24px;
 	}
 
 	.profile {
+		width: 100%;
+		max-width: 800px;
+
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+
+		padding: 40px 0 60px;
+	}
+
+	.page-header h1 {
+		margin: 0;
+	}
+
+	.messages {
+		max-width: 500px;
+	}
+
+	.section {
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
+	}
 
-		width: clamp(500px, 75%, 1200px);
-
-		padding: 20px;
+	.section h2 {
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		font-weight: 700;
+		margin: 0;
 	}
 
 	.profile-data {
-		padding-top: 10px;
-	}
-
-	.profile-data-row {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-
-		gap: 20px;
-	}
-
-	span.label {
-		color: var(--color-text-secondary);
-	}
-
-	.profile-data-value {
-		display: flex;
-		flex-direction: row;
-		gap: 4px;
-		align-items: center;
-	}
-
-	.change-password {
 		display: flex;
 		flex-direction: column;
-		gap: 15px;
+		gap: 12px;
+	}
 
-		max-width: 300px;
+	.data-item {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+	}
+
+	.data-label {
+		font-size: 0.875rem;
+		color: var(--color-text-secondary);
+		min-width: 60px;
+	}
+
+	.data-value {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.username {
+		font-family: var(--font-mono);
+		font-weight: 500;
+		color: var(--color-text-primary);
+	}
+
+	.password-form {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		max-width: 350px;
+	}
+
+	.danger-section {
+		max-width: 500px;
 	}
 
 	.danger-zone {
 		display: flex;
 		flex-direction: column;
-		gap: 15px;
-
-		max-width: 500px;
-
-		padding: 20px;
+		gap: 16px;
+		padding: 24px;
 	}
 
 	.danger-zone h2 {
-		color: var(--color-danger-90);
+		color: var(--color-danger-70);
 	}
 
-	.danger-zone-description {
-		color: var(--color-danger-90);
-		font-size: 14px;
+	.danger-zone p {
+		color: var(--color-danger-60);
+		font-size: 0.9375rem;
+		line-height: 1.6;
 		margin: 0;
 	}
 
 	.delete-modal {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: 16px;
+		max-width: 400px;
 	}
 
-	.delete-modal > form {
+	.delete-modal h3 {
+		font-family: var(--font-display);
+		margin: 0;
+	}
+
+	.delete-modal p {
+		color: var(--color-danger-70);
+		line-height: 1.6;
+		margin: 0;
+	}
+
+	.modal-actions {
 		display: flex;
-		gap: 10px;
+		gap: 12px;
+		padding-top: 8px;
+	}
+
+	@media (max-width: 600px) {
+		main {
+			padding: 0 16px;
+		}
+
+		.profile {
+			padding: 24px 0 40px;
+			gap: 24px;
+		}
+
+		.password-form {
+			max-width: 100%;
+		}
 	}
 </style>

@@ -43,20 +43,25 @@
 	}}
 />
 
-<h1>Вход</h1>
+<div class="auth-header">
+	<h1>Вход</h1>
+	<p>Войдите в свой аккаунт</p>
+</div>
 
 {#if error}
 	<Error message={error} />
 {/if}
 
-<Input id="login" type="text" label="Логин" bind:value={login} placeholder="ivan" />
-<Input
-	id="password"
-	type="password"
-	label="Пароль"
-	bind:value={password}
-	placeholder="verysecure"
-/>
+<div class="form-fields">
+	<Input id="login" type="text" label="Логин" bind:value={login} placeholder="ivan" />
+	<Input
+		id="password"
+		type="password"
+		label="Пароль"
+		bind:value={password}
+		placeholder="verysecure"
+	/>
+</div>
 
 <div class="actions">
 	<Button filled onclick={loginAction} disabled={loginButtonDisabled}>Войти</Button>
@@ -64,13 +69,35 @@
 </div>
 
 <style>
-	.actions {
-		width: 100%;
+	.auth-header {
+		text-align: center;
+		margin-bottom: 8px;
+	}
 
+	.auth-header h1 {
+		font-family: var(--font-display);
+		font-size: 1.75rem;
+		font-weight: 700;
+		margin: 0 0 8px 0;
+	}
+
+	.auth-header p {
+		color: var(--color-text-secondary);
+		font-size: 0.9375rem;
+		margin: 0;
+	}
+
+	.form-fields {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.actions {
 		display: flex;
 		justify-content: space-between;
-		gap: 10px;
-
-		padding-top: 10px;
+		align-items: center;
+		gap: 12px;
+		padding-top: 8px;
 	}
 </style>
