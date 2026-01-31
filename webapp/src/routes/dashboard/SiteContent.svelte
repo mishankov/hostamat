@@ -34,11 +34,11 @@
 </script>
 
 <div class="site-content">
-	<div class="site-url-container">
-		<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
-		<span title="Поддомен" style="font-size: 16px; color: var(--color-text-secondary);"
-			>{subdomain}</span
-		>
+	<div class="site-info">
+		<div class="site-name">
+			<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
+		</div>
+		<span class="site-subdomain" title="Поддомен">{subdomain}</span>
 	</div>
 
 	<div class="site-toolbar">
@@ -52,7 +52,7 @@
 		/>
 
 		<IconButton onclick={() => uploadModal?.open()} title="Загрузить сайт">
-			<Upload size={25} />
+			<Upload size={20} />
 		</IconButton>
 		<Modal
 			bind:this={uploadModal}
@@ -62,8 +62,9 @@
 			}}
 		>
 			<div class="upload-modal">
-				<h2 style="max-width: 500px;">Загрузить файлы для "{site.name}"</h2>
-				<Info header="Информация о загрузке сайтов">
+				<h2>Загрузить файлы</h2>
+				<p class="modal-subtitle">для "{site.name}"</p>
+				<Info header="Информация о загрузке">
 					<p>При загрузке файлов все старые файлы будут удалены</p>
 					<p>
 						Разрешённые типы файлов <Link href="/about" target="_blank" alwaysUnderline
@@ -90,18 +91,21 @@
 				navigator.clipboard.writeText(`https://${site.domain}`);
 			}}
 		>
-			<Copy size={25} background="var(--color-primary-7)" />
+			<Copy size={20} />
 		</IconButton>
 
+		<div class="toolbar-divider"></div>
+
 		<IconButton title="Удалить сайт" kind="danger" onclick={() => deleteModal?.open()}>
-			<Trash size={25} />
+			<Trash size={20} />
 		</IconButton>
 		<Modal bind:this={deleteModal} kind="danger">
 			<div class="delete-modal">
-				<p style="color: var(--color-danger-90);">
-					Вы уверены, что хотите удалить сайт "{site.name}"?
+				<h3>Удалить сайт?</h3>
+				<p>
+					Вы уверены, что хотите удалить сайт "{site.name}"? Это действие нельзя отменить.
 				</p>
-				<form method="dialog">
+				<form method="dialog" class="delete-actions">
 					<Button
 						kind="danger"
 						filled
@@ -129,53 +133,88 @@
 	.site-content {
 		display: flex;
 		flex-direction: column;
-		gap: 5px;
-		min-width: 150px;
-		height: 100%;
-
-		padding-top: 20px;
-		padding-left: 20px;
-		padding-right: 20px;
-		padding-bottom: 20px;
+		justify-content: space-between;
+		gap: 16px;
+		min-width: 200px;
+		min-height: 140px;
+		padding: 20px;
 	}
 
-	.site-url-container {
+	.site-info {
 		display: flex;
 		flex-direction: column;
-		align-items: start;
-		gap: 5px;
+		gap: 4px;
+	}
 
-		font-size: 18px;
+	.site-name {
+		font-size: 17px;
+		font-weight: 500;
+	}
+
+	.site-subdomain {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 13px;
+		color: var(--color-text-muted);
 	}
 
 	.site-toolbar {
-		width: fit-content;
-		justify-self: end;
-
 		display: flex;
-		padding: 2px;
-		margin-top: auto;
-		/*background: var(--gradient-primary-7-10);*/
-		background: var(--color-primary-7);
+		align-items: center;
+		gap: 4px;
+		padding: 4px;
+		background: var(--color-background-elevated);
+		border: 1px solid var(--glass-border);
+		border-radius: var(--border-radius-regular);
+		width: fit-content;
+	}
 
-		border: var(--border-regular);
-		border-radius: 7px;
+	.toolbar-divider {
+		width: 1px;
+		height: 20px;
+		background: var(--color-border);
+		margin: 0 4px;
 	}
 
 	.upload-modal {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: 16px;
+		min-width: 300px;
+	}
+
+	.upload-modal h2 {
+		font-size: 20px;
+		margin: 0;
+	}
+
+	.modal-subtitle {
+		color: var(--color-text-secondary);
+		font-size: 14px;
+		margin-top: -12px;
 	}
 
 	.delete-modal {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: 16px;
+		max-width: 360px;
 	}
 
-	.delete-modal > form {
+	.delete-modal h3 {
+		font-size: 20px;
+		color: var(--color-danger-80);
+		margin: 0;
+	}
+
+	.delete-modal p {
+		color: var(--color-danger-70);
+		font-size: 15px;
+		line-height: 1.5;
+	}
+
+	.delete-actions {
 		display: flex;
-		gap: 10px;
+		gap: 12px;
+		padding-top: 8px;
 	}
 </style>

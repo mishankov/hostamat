@@ -2,22 +2,43 @@
 	let { href, target = '_self', children, alwaysUnderline = false, ...restProps } = $props();
 </script>
 
-<a {href} {target} class={alwaysUnderline ? 'underline' : ''} {...restProps}
-	>{@render children?.()}</a
->
+<a {href} {target} class={alwaysUnderline ? 'underline' : ''} {...restProps}>
+	{@render children?.()}
+</a>
 
 <style>
 	a {
-		color: var(--color-primary-90);
+		color: var(--color-text-regular);
 		text-decoration: none;
-		transition: all 500ms;
+		transition: var(--transition-fast);
+		position: relative;
 	}
 
-	a.underline {
-		text-decoration: underline;
+	a::after {
+		content: '';
+		position: absolute;
+		bottom: -2px;
+		left: 0;
+		width: 0;
+		height: 1px;
+		background: linear-gradient(90deg, var(--color-accent-50), var(--color-primary-60));
+		transition: width 0.3s ease;
+	}
+
+	a:hover::after {
+		width: 100%;
 	}
 
 	a:hover {
-		text-decoration: underline;
+		color: var(--color-accent-60);
+	}
+
+	a.underline::after {
+		width: 100%;
+		background: var(--color-text-secondary);
+	}
+
+	a.underline:hover::after {
+		background: linear-gradient(90deg, var(--color-accent-50), var(--color-primary-60));
 	}
 </style>

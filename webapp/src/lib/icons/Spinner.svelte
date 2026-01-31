@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { size = 100, color = 'var(--color-primary-90)' } = $props();
+	let { size = 100, color = 'var(--color-accent-50)' } = $props();
 </script>
 
 <svg width={size} viewBox="-50 -50 100 100" class="spinner">

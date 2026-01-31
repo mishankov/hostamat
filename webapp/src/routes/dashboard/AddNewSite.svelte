@@ -17,7 +17,7 @@
 	resetState();
 </script>
 
-<Card border floating style="height: 150px;" kind="action">
+<Card border floating kind="action">
 	<button
 		class="add-site"
 		onclick={() => {
@@ -26,17 +26,21 @@
 		}}
 	>
 		{#if loading}
-			<p><Spinner size={40} /></p>
-			<p class="add-site-text">Добавляем сайт</p>
+			<div class="add-site-icon">
+				<Spinner size={32} />
+			</div>
+			<span class="add-site-text">Добавляем...</span>
 		{:else}
-			<p><Plus size={40} /></p>
-			<p class="add-site-text">Добавить сайт</p>
+			<div class="add-site-icon">
+				<Plus size={32} />
+			</div>
+			<span class="add-site-text">Добавить сайт</span>
 		{/if}
 	</button>
 </Card>
 
 <Modal bind:this={modal}>
-	<div style="display: flex; flex-direction: column; gap: 15px; min-width: 270px;">
+	<div class="new-site-modal">
 		<h2>Новый сайт</h2>
 		<Input
 			id="site-name"
@@ -44,9 +48,10 @@
 			errorMessage={newSiteNameError}
 			bind:value={newSiteName}
 			maxlength="25"
-		></Input>
-		<div style="display: flex; gap: 15px; align-items: center; ">
+		/>
+		<div class="modal-actions">
 			<Button
+				kind="accent"
 				filled
 				disabled={loading}
 				onclick={async () => {
@@ -76,7 +81,7 @@
 				}}>Отмена</Button
 			>
 			{#if loading}
-				<Spinner size={30} />
+				<Spinner size={24} />
 			{/if}
 		</div>
 	</div>
@@ -85,20 +90,59 @@
 <style>
 	.add-site {
 		all: unset;
-
-		height: 100%;
+		cursor: pointer;
 
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		gap: 12px;
 
-		padding-left: 20px;
-		padding-right: 20px;
+		min-height: 140px;
+		padding: 24px;
+		width: 100%;
+	}
+
+	.add-site-icon {
+		width: 56px;
+		height: 56px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--color-action-15);
+		border-radius: var(--border-radius-regular);
+		color: var(--color-action-60);
+		transition: var(--transition);
+	}
+
+	.add-site:hover .add-site-icon {
+		background: var(--color-action-20);
+		transform: scale(1.05);
 	}
 
 	.add-site-text {
-		color: var(--color-primary-90);
+		font-size: 15px;
+		font-weight: 500;
+		color: var(--color-action-70);
 		user-select: none;
+	}
+
+	.new-site-modal {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		min-width: 300px;
+	}
+
+	.new-site-modal h2 {
+		font-size: 20px;
+		margin: 0;
+	}
+
+	.modal-actions {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding-top: 8px;
 	}
 </style>

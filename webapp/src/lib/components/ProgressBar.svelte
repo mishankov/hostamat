@@ -3,42 +3,57 @@
 </script>
 
 <div class="progress-bar">
-	<p class={[uploadProgress > 50 && 'dark']}>{Math.round(uploadProgress)}%</p>
-	<div class="progress-fill" style="width: {uploadProgress}%"></div>
+	<div class="progress-track">
+		<div class="progress-fill" style="width: {uploadProgress}%">
+			<div class="progress-glow"></div>
+		</div>
+	</div>
+	<span class="progress-text">{Math.round(uploadProgress)}%</span>
 </div>
 
 <style>
 	.progress-bar {
-		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 12px;
 		width: 100%;
-		height: 30px;
+	}
 
-		background-color: var(--color-primary-10);
-
-		/*border: var(--border-regular);*/
-		border-radius: var(--border-radius-regular);
+	.progress-track {
+		position: relative;
+		flex: 1;
+		height: 8px;
+		background: var(--color-primary-15);
+		border-radius: 4px;
+		overflow: hidden;
 	}
 
 	.progress-fill {
+		position: relative;
 		height: 100%;
-		background-color: var(--color-primary-95);
-		border-radius: var(--border-radius-regular);
-		transition: var(--transition);
+		background: linear-gradient(90deg, var(--color-accent-50), var(--color-accent-60));
+		border-radius: 4px;
+		transition: width 0.3s ease;
 	}
 
-	p {
+	.progress-glow {
 		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		margin: 0;
-		z-index: 1;
-
-		transition: var(--transition);
-		user-select: none;
+		inset: 0;
+		background: linear-gradient(
+			90deg,
+			transparent 0%,
+			rgba(255, 255, 255, 0.4) 50%,
+			transparent 100%
+		);
+		animation: shimmer 1.5s infinite;
 	}
 
-	p.dark {
-		color: var(--color-primary-10);
+	.progress-text {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 13px;
+		font-weight: 500;
+		color: var(--color-accent-60);
+		min-width: 42px;
+		text-align: right;
 	}
 </style>

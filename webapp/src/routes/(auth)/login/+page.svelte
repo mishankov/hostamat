@@ -59,18 +59,29 @@
 />
 
 <div class="actions">
-	<Button filled onclick={loginAction} disabled={loginButtonDisabled}>Войти</Button>
+	<Button kind="accent" filled onclick={loginAction} disabled={loginButtonDisabled}>Войти</Button>
 	<Button link="/register">Создать аккаунт</Button>
 </div>
 
 <style>
+	h1 {
+		text-align: center;
+	}
+
 	.actions {
 		width: 100%;
-
 		display: flex;
-		justify-content: space-between;
-		gap: 10px;
+		flex-direction: column;
+		gap: 12px;
+		padding-top: 8px;
+	}
 
-		padding-top: 10px;
+	.actions :global(button),
+	.actions :global(a) {
+		width: 100%;
+	}
+
+	.actions :global(button) {
+		justify-content: center;
 	}
 </style>

@@ -78,36 +78,74 @@
 	placeholder="verysecure"
 />
 
-<Card kind="primary">
-	<div class="password-rules">
-		<p>Логин должен быть от 5 до 20 символов</p>
-		<p>Пароль должен быть от 8 до 100 символов</p>
+<div class="password-rules">
+	<div class="rule" class:valid={login.length >= 5 && login.length <= 20}>
+		<span class="rule-icon">{login.length >= 5 && login.length <= 20 ? '✓' : '○'}</span>
+		<span>Логин от 5 до 20 символов</span>
 	</div>
-</Card>
+	<div class="rule" class:valid={password.length >= 8 && password.length <= 100}>
+		<span class="rule-icon">{password.length >= 8 && password.length <= 100 ? '✓' : '○'}</span>
+		<span>Пароль от 8 до 100 символов</span>
+	</div>
+	<div class="rule" class:valid={password.length > 0 && password === passwordAgain}>
+		<span class="rule-icon">{password.length > 0 && password === passwordAgain ? '✓' : '○'}</span>
+		<span>Пароли совпадают</span>
+	</div>
+</div>
 
 <div class="actions">
-	<Button onclick={registerAction} disabled={registerButtonDisabled} filled>Создать</Button>
-	<Button link="/login">Войти</Button>
+	<Button kind="accent" onclick={registerAction} disabled={registerButtonDisabled} filled>Создать аккаунт</Button>
+	<Button link="/login">Уже есть аккаунт</Button>
 </div>
 
 <style>
+	h1 {
+		text-align: center;
+	}
+
 	.actions {
 		width: 100%;
-
 		display: flex;
-		justify-content: space-between;
-		gap: 10px;
+		flex-direction: column;
+		gap: 12px;
+		padding-top: 8px;
+	}
 
-		padding-top: 10px;
+	.actions :global(button),
+	.actions :global(a) {
+		width: 100%;
+	}
+
+	.actions :global(button) {
+		justify-content: center;
 	}
 
 	.password-rules {
-		padding: 10px;
-
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: 8px;
+		padding: 16px;
+		background: var(--color-background-elevated);
+		border-radius: var(--border-radius-regular);
+		border: 1px solid var(--glass-border);
+	}
 
-		color: var(--color-text-secondary);
+	.rule {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 13px;
+		color: var(--color-text-muted);
+		transition: var(--transition-fast);
+	}
+
+	.rule.valid {
+		color: var(--color-confirm-60);
+	}
+
+	.rule-icon {
+		font-family: 'JetBrains Mono', monospace;
+		width: 16px;
+		text-align: center;
 	}
 </style>

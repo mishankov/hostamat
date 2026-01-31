@@ -39,7 +39,14 @@
 
 <main>
 	<div class="dashboard">
-		<h1>Твои сайты</h1>
+		<header class="dashboard-header">
+			<h1>Твои сайты</h1>
+			<p class="sites-count">
+				{#if !loading}
+					<span class="count">{sites.length}</span> из <span class="count">{maxAmount}</span>
+				{/if}
+			</p>
+		</header>
 
 		{#if errorMessage}
 			<Error message={errorMessage} />
@@ -47,35 +54,42 @@
 
 		<div class="site-list">
 			{#await data.sitesResp}
-				<Spinner size={50} />
+				<div class="loading-state">
+					<Spinner size={40} />
+					<p>Загружаем сайты...</p>
+				</div>
 			{:then sitesResult}
 				{#if sitesResult.data}
-					{#each sites as site (site.id)}
-						<Card border style="height: 150px;">
-							<SiteContent
-								{site}
+					{#each sites as site, i (site.id)}
+						<div class="site-card" style="animation-delay: {i * 0.05}s">
+							<Card border>
+								<SiteContent
+									{site}
+									bind:loading
+									bind:errorMessage
+									onsiteupdate={async () => {
+										await invalidateAll();
+										updateState();
+									}}
+								/>
+							</Card>
+						</div>
+					{/each}
+
+					{#if !sites || sites.length < maxAmount}
+						<div class="site-card" style="animation-delay: {sites.length * 0.05}s">
+							<AddNewSite
 								bind:loading
-								bind:errorMessage
-								onsiteupdate={async () => {
+								onsuccess={async () => {
 									await invalidateAll();
 									updateState();
 								}}
 							/>
-						</Card>
-					{/each}
-
-					{#if !sites || sites.length < maxAmount}
-						<AddNewSite
-							bind:loading
-							onsuccess={async () => {
-								await invalidateAll();
-								updateState();
-							}}
-						/>
+						</div>
 					{:else if loading === false}
-						<div style="height: 110px; display: flex; align-items: center;">
-							<Info header="Максимальное количество сайтов в альфа версии">
-								Для добавления нового сайта, удалите один из существующих
+						<div class="max-reached">
+							<Info header="Достигнут лимит сайтов">
+								Для добавления нового сайта удалите один из существующих
 							</Info>
 						</div>
 					{/if}
@@ -92,27 +106,82 @@
 <style>
 	main {
 		width: 100%;
-		height: calc(100% - 76px);
+		min-height: calc(100vh - 140px);
 
 		display: flex;
-		flex-direction: row;
 		justify-content: center;
-		align-items: start;
+		padding: 40px 24px;
 	}
 
 	.dashboard {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: 24px;
 
-		width: clamp(500px, 75%, 1200px);
+		width: 100%;
+		max-width: 1200px;
+	}
 
-		padding: 20px;
+	.dashboard-header {
+		display: flex;
+		align-items: baseline;
+		gap: 16px;
+	}
+
+	.dashboard-header h1 {
+		font-size: 32px;
+		font-weight: 700;
+	}
+
+	.sites-count {
+		font-size: 14px;
+		color: var(--color-text-muted);
+	}
+
+	.sites-count .count {
+		font-family: 'JetBrains Mono', monospace;
+		color: var(--color-accent-60);
+		font-weight: 600;
 	}
 
 	.site-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 16px;
+	}
+
+	.site-card {
+		animation: slideUp 0.4s ease-out both;
+	}
+
+	.loading-state {
+		grid-column: 1 / -1;
 		display: flex;
-		flex-wrap: wrap;
-		gap: 10px;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 16px;
+		padding: 60px 20px;
+		color: var(--color-text-muted);
+	}
+
+	.max-reached {
+		grid-column: 1 / -1;
+		max-width: 500px;
+	}
+
+	@media (max-width: 600px) {
+		main {
+			padding: 24px 16px;
+		}
+
+		.dashboard-header {
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.dashboard-header h1 {
+			font-size: 24px;
+		}
 	}
 </style>

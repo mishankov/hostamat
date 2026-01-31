@@ -41,19 +41,24 @@
 
 <style>
 	dialog {
+		position: fixed;
 		top: 50%;
 		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
+		transform: translate(-50%, -50%);
 
-		border: var(--border-regular);
-		border-radius: var(--border-radius-regular);
+		max-width: min(90vw, 500px);
+		max-height: 85vh;
+
+		border: 1px solid var(--glass-border);
+		border-radius: var(--border-radius-lg);
 
 		padding: 0;
 
-		background: var(--gradient-primary-7-10);
-		color: var(--color-text);
+		background: var(--color-background-elevated);
+		color: var(--color-text-regular);
 
-		transition: var(--transition);
+		box-shadow: var(--shadow-lg);
+		overflow: hidden;
 	}
 
 	.primary {
@@ -61,30 +66,35 @@
 	}
 
 	.danger {
-		border-color: var(--color-danger-60);
+		border-color: var(--color-danger-40);
 		background: var(--gradient-danger);
 	}
 
 	dialog[open] {
-		animation: fadein 300ms ease-in forwards;
+		animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 	}
 
-	@keyframes fadein {
+	@keyframes modalIn {
 		0% {
 			opacity: 0;
-			transform: translateX(-50%) translateY(-50%) scale(0.95);
+			transform: translate(-50%, -50%) scale(0.9);
 		}
 		100% {
 			opacity: 1;
-			transform: translateX(-50%) translateY(-50%) scale(1);
+			transform: translate(-50%, -50%) scale(1);
 		}
 	}
 
 	::backdrop {
-		background-color: rgba(0, 0, 0, 0.5);
+		background: rgba(0, 0, 0, 0.6);
+		backdrop-filter: blur(4px);
+		-webkit-backdrop-filter: blur(4px);
+		animation: fadeIn 0.2s ease-out;
 	}
 
 	div.modal-content {
-		padding: 20px;
+		padding: 24px;
+		overflow-y: auto;
+		max-height: calc(85vh - 2px);
 	}
 </style>

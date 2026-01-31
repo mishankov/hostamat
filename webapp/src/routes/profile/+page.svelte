@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { Button, Error, IconButton, Modal, Success } from '$lib/components';
+	import { Button, Error, IconButton, Modal, Success, Card } from '$lib/components';
 	import Input from '$lib/components/Input.svelte';
 	import { Copy } from '$lib/icons';
 	import { goto } from '$app/navigation';
 	import type { PageProps } from './$types';
-	import Card from '$lib/components/Card.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -93,85 +92,91 @@
 
 <main>
 	<div class="profile">
+		<h1>Профиль</h1>
+
 		{#if errorMessage || sucessMessage}
-			<div style="max-width: 500px;">
+			<div class="messages">
 				{#if errorMessage}
 					<Error message={errorMessage} />
 				{/if}
-
 				{#if sucessMessage}
 					<Success message={sucessMessage} />
 				{/if}
 			</div>
 		{/if}
 
-		<h1>Профиль</h1>
-
-		<div class="profile-data">
-			<div class="profile-data-row">
-				<span class="label">Логин</span>
-				<div class="profile-data-value">
-					<span>{data.username}</span>
-					<IconButton
-						onclick={() => {
-							navigator.clipboard.writeText(data.username);
-						}}
-					>
-						<Copy size={15} />
-					</IconButton>
+		<section class="profile-section">
+			<h2>Аккаунт</h2>
+			<div class="profile-data">
+				<div class="profile-field">
+					<span class="field-label">Логин</span>
+					<div class="field-value">
+						<span class="username">{data.username}</span>
+						<IconButton
+							onclick={() => {
+								navigator.clipboard.writeText(data.username);
+							}}
+							title="Скопировать логин"
+						>
+							<Copy size={16} />
+						</IconButton>
+					</div>
 				</div>
 			</div>
-		</div>
+		</section>
 
-		<div class="change-password">
+		<section class="profile-section">
 			<h2>Смена пароля</h2>
-
-			<Input
-				id="oldPassword"
-				type="password"
-				label="Текущий пароль"
-				bind:value={currentPassword}
-				placeholder="verysecure"
-			/>
-			<Input
-				id="newPassword"
-				type="password"
-				label="Новый пароль"
-				bind:value={newPassword}
-				placeholder="verysecure2"
-			/>
-			<Input
-				id="newPasswordAgain"
-				type="password"
-				label="Новый пароль ещё раз"
-				bind:value={newPasswordAgain}
-				placeholder="verysecure2"
-			/>
-
-			<Button kind="danger" onclick={changePasswordAction} disabled={changePasswordButtonDisabled}
-				>Сменить пароль</Button
-			>
-		</div>
-
-		<Card kind="danger" border={true}>
-			<div class="danger-zone">
-				<h2>Опасная зона</h2>
-				<p class="danger-zone-description">
-					Удаление аккаунта нельзя отменить. Все ваши сайты и файлы будут удалены навсегда.
-				</p>
-				<Button kind="danger" filled onclick={() => deleteAccountModal?.open()}>
-					Удалить аккаунт
+			<div class="password-form">
+				<Input
+					id="oldPassword"
+					type="password"
+					label="Текущий пароль"
+					bind:value={currentPassword}
+					placeholder="verysecure"
+				/>
+				<Input
+					id="newPassword"
+					type="password"
+					label="Новый пароль"
+					bind:value={newPassword}
+					placeholder="verysecure2"
+				/>
+				<Input
+					id="newPasswordAgain"
+					type="password"
+					label="Новый пароль ещё раз"
+					bind:value={newPasswordAgain}
+					placeholder="verysecure2"
+				/>
+				<Button kind="primary" onclick={changePasswordAction} disabled={changePasswordButtonDisabled}>
+					Сменить пароль
 				</Button>
 			</div>
-		</Card>
+		</section>
+
+		<section class="profile-section danger-section">
+			<Card kind="danger" border>
+				<div class="danger-zone">
+					<h2>Опасная зона</h2>
+					<p>
+						Удаление аккаунта нельзя отменить. Все ваши сайты и файлы будут удалены навсегда.
+					</p>
+					<Button kind="danger" filled onclick={() => deleteAccountModal?.open()}>
+						Удалить аккаунт
+					</Button>
+				</div>
+			</Card>
+		</section>
 
 		<Modal bind:this={deleteAccountModal} kind="danger">
 			<div class="delete-modal">
-				<p style="color: var(--color-danger-90);">
+				<h3>Удалить аккаунт?</h3>
+				<p>
 					Вы уверены, что хотите удалить свой аккаунт? Это приведёт к безвозвратному удалению всех
 					ваших сайтов и файлов.
 				</p>
-				<form method="dialog">
+				<form method="dialog" class="delete-actions">
 					<Button kind="danger" filled onclick={deleteAccountAction}>Удалить</Button>
 					<Button kind="danger">Отмена</Button>
 				</form>
@@ -183,83 +188,143 @@
 <style>
 	main {
 		width: 100%;
-		height: calc(100% - 76px);
+		min-height: calc(100vh - 140px);
 
 		display: flex;
-		flex-direction: row;
 		justify-content: center;
-		align-items: start;
+		padding: 40px 24px;
 	}
 
 	.profile {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: 32px;
 
-		width: clamp(500px, 75%, 1200px);
+		width: 100%;
+		max-width: 600px;
+	}
 
-		padding: 20px;
+	.profile h1 {
+		font-size: 32px;
+		font-weight: 700;
+	}
+
+	.messages {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.profile-section {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.profile-section h2 {
+		font-size: 18px;
+		font-weight: 600;
+		color: var(--color-text-regular);
 	}
 
 	.profile-data {
-		padding-top: 10px;
-	}
-
-	.profile-data-row {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-
-		gap: 20px;
-	}
-
-	span.label {
-		color: var(--color-text-secondary);
-	}
-
-	.profile-data-value {
-		display: flex;
-		flex-direction: row;
-		gap: 4px;
-		align-items: center;
-	}
-
-	.change-password {
 		display: flex;
 		flex-direction: column;
-		gap: 15px;
+		gap: 12px;
+	}
 
-		max-width: 300px;
+	.profile-field {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+	}
+
+	.field-label {
+		font-size: 14px;
+		color: var(--color-text-muted);
+		min-width: 60px;
+	}
+
+	.field-value {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.username {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 15px;
+		color: var(--color-accent-60);
+	}
+
+	.password-form {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		max-width: 320px;
+	}
+
+	.danger-section {
+		margin-top: 16px;
 	}
 
 	.danger-zone {
 		display: flex;
 		flex-direction: column;
-		gap: 15px;
-
-		max-width: 500px;
-
-		padding: 20px;
+		gap: 16px;
+		padding: 24px;
 	}
 
 	.danger-zone h2 {
-		color: var(--color-danger-90);
+		color: var(--color-danger-80);
+		margin: 0;
 	}
 
-	.danger-zone-description {
-		color: var(--color-danger-90);
+	.danger-zone p {
+		color: var(--color-danger-70);
 		font-size: 14px;
+		line-height: 1.5;
 		margin: 0;
 	}
 
 	.delete-modal {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: 16px;
+		max-width: 360px;
 	}
 
-	.delete-modal > form {
+	.delete-modal h3 {
+		font-size: 20px;
+		color: var(--color-danger-80);
+		margin: 0;
+	}
+
+	.delete-modal p {
+		color: var(--color-danger-70);
+		font-size: 15px;
+		line-height: 1.5;
+	}
+
+	.delete-actions {
 		display: flex;
-		gap: 10px;
+		gap: 12px;
+		padding-top: 8px;
+	}
+
+	@media (max-width: 600px) {
+		main {
+			padding: 24px 16px;
+		}
+
+		.profile h1 {
+			font-size: 24px;
+		}
+
+		.profile-field {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 4px;
+		}
 	}
 </style>

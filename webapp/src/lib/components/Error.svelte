@@ -6,44 +6,76 @@
 </script>
 
 <div class="error">
-	<Card border kind="danger" style="height: fit-content; width: 100%; padding: 10px;">
-		<div class="header">
-			<X size={25} color="var(--color-danger-50)" />
-			{#if header}
-				<h4>{header}</h4>
-			{:else if message}
-				<p>{message}</p>
-			{/if}
+	<Card border kind="danger">
+		<div class="error-content">
+			<div class="error-icon">
+				<X size={18} color="currentColor" />
+			</div>
+			<div class="error-text">
+				{#if header}
+					<h4 class="error-header">{header}</h4>
+				{:else if message}
+					<p class="error-message">{message}</p>
+				{/if}
+				{#if children}
+					<div class="error-body">
+						{@render children?.()}
+					</div>
+				{:else if message && header}
+					<p class="error-body">{message}</p>
+				{/if}
+			</div>
 		</div>
-		{#if children}
-			<div class="content">
-				{@render children?.()}
-			</div>
-		{:else if message && header}
-			<div class="content">
-				{message}
-			</div>
-		{/if}
 	</Card>
 </div>
 
 <style>
 	.error {
 		width: 100%;
+		animation: slideUp 0.3s ease-out;
 	}
 
-	.header {
+	.error-content {
 		display: flex;
-		flex-direction: row;
-		gap: 10px;
+		gap: 12px;
+		padding: 16px;
+	}
+
+	.error-icon {
+		flex-shrink: 0;
+		width: 32px;
+		height: 32px;
+		display: flex;
 		align-items: center;
+		justify-content: center;
+		background: var(--color-danger-20);
+		border-radius: var(--border-radius-sm);
+		color: var(--color-danger-60);
 	}
 
-	.content {
+	.error-text {
 		display: flex;
-		align-items: start;
-		gap: 10px;
+		flex-direction: column;
+		gap: 4px;
+		min-width: 0;
+	}
 
-		padding-top: 10px;
+	.error-header {
+		font-size: 15px;
+		font-weight: 600;
+		color: var(--color-danger-80);
+		margin: 0;
+	}
+
+	.error-message {
+		font-size: 14px;
+		color: var(--color-danger-80);
+		margin: 0;
+	}
+
+	.error-body {
+		font-size: 14px;
+		color: var(--color-danger-70);
+		margin: 0;
 	}
 </style>

@@ -11,15 +11,27 @@
 <style>
 	.separator {
 		border: 0;
+		background: linear-gradient(
+			90deg,
+			transparent,
+			var(--color-border),
+			transparent
+		);
 	}
 
 	.horizontal {
 		width: 100%;
-		border-top: var(--border-regular);
+		height: 1px;
 	}
 
 	.vertical {
+		width: 1px;
 		height: 100%;
-		border-left: var(--border-regular);
+		background: linear-gradient(
+			180deg,
+			transparent,
+			var(--color-border),
+			transparent
+		);
 	}
 </style>
