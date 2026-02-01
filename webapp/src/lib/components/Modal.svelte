@@ -49,11 +49,14 @@
 		border-radius: var(--border-radius-regular);
 
 		padding: 0;
+		max-width: 90vw;
+		max-height: 90vh;
 
-		background: var(--gradient-primary-7-10);
-		color: var(--color-text);
+		background: var(--color-primary-7);
+		color: var(--color-text-regular);
 
 		transition: var(--transition);
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 	}
 
 	.primary {
@@ -61,18 +64,18 @@
 	}
 
 	.danger {
-		border-color: var(--color-danger-60);
+		border-color: var(--color-danger-50);
 		background: var(--gradient-danger);
 	}
 
 	dialog[open] {
-		animation: fadein 300ms ease-in forwards;
+		animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 	}
 
-	@keyframes fadein {
+	@keyframes modalFadeIn {
 		0% {
 			opacity: 0;
-			transform: translateX(-50%) translateY(-50%) scale(0.95);
+			transform: translateX(-50%) translateY(-48%) scale(0.96);
 		}
 		100% {
 			opacity: 1;
@@ -81,10 +84,21 @@
 	}
 
 	::backdrop {
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: rgba(0, 0, 0, 0.6);
+		backdrop-filter: blur(4px);
+		animation: backdropFadeIn 0.3s ease-out;
+	}
+
+	@keyframes backdropFadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
 	}
 
 	div.modal-content {
-		padding: 20px;
+		padding: 28px;
 	}
 </style>

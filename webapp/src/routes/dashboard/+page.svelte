@@ -92,7 +92,7 @@
 <style>
 	main {
 		width: 100%;
-		height: calc(100% - 76px);
+		min-height: calc(100vh - 85px);
 
 		display: flex;
 		flex-direction: row;
@@ -103,16 +103,44 @@
 	.dashboard {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: 24px;
 
-		width: clamp(500px, 75%, 1200px);
+		width: clamp(500px, 85%, 1400px);
+		padding: 40px 20px;
+	}
 
-		padding: 20px;
+	.dashboard h1 {
+		font-size: clamp(32px, 5vw, 48px);
+		margin-bottom: 8px;
+		animation: slideInLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	@keyframes slideInLeft {
+		from {
+			transform: translateX(-30px);
+			opacity: 0;
+		}
+		to {
+			transform: translateX(0);
+			opacity: 1;
+		}
 	}
 
 	.site-list {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 10px;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		gap: 20px;
+		animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
+	}
+
+	@keyframes fadeInUp {
+		from {
+			transform: translateY(20px);
+			opacity: 0;
+		}
+		to {
+			transform: translateY(0);
+			opacity: 1;
+		}
 	}
 </style>

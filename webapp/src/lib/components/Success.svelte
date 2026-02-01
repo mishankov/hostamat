@@ -30,20 +30,50 @@
 <style>
 	.success {
 		width: 100%;
+		animation: successBounce 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	@keyframes successBounce {
+		0% {
+			transform: scale(0.95);
+			opacity: 0;
+		}
+		50% {
+			transform: scale(1.02);
+		}
+		100% {
+			transform: scale(1);
+			opacity: 1;
+		}
 	}
 
 	.header {
 		display: flex;
 		flex-direction: row;
-		gap: 10px;
+		gap: 12px;
 		align-items: center;
+	}
+
+	.header h4 {
+		margin: 0;
+		font-size: 15px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.02em;
+	}
+
+	.header p {
+		margin: 0;
+		font-size: 14px;
 	}
 
 	.content {
 		display: flex;
 		align-items: start;
-		gap: 10px;
-
-		padding-top: 10px;
+		gap: 12px;
+		padding-top: 12px;
+		padding-left: 37px;
+		font-size: 14px;
+		line-height: 1.5;
 	}
 </style>

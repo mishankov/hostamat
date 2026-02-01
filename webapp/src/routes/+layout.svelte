@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { Button, Card, Link } from '$lib/components';
+	import { Button, Card, Link, ThemeToggle } from '$lib/components';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
@@ -55,6 +55,7 @@
 		</div>
 
 		<div class="user-info">
+			<ThemeToggle />
 			{#if data.isAuthenticated == true}
 				<Link href="/profile">{data.username}</Link>
 				<Button onclick={logout}>Выйти</Button>
@@ -90,8 +91,21 @@
 <style>
 	.cookie {
 		position: fixed;
-		bottom: 10px;
-		right: 10px;
+		bottom: 20px;
+		right: 20px;
+		z-index: 1000;
+		animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	@keyframes slideInUp {
+		from {
+			transform: translateY(100px);
+			opacity: 0;
+		}
+		to {
+			transform: translateY(0);
+			opacity: 1;
+		}
 	}
 
 	header {
@@ -104,6 +118,25 @@
 		align-items: center;
 
 		background-color: var(--color-primary-10);
+		border-bottom: var(--border-regular);
+		position: relative;
+	}
+
+	header::after {
+		content: '';
+		position: absolute;
+		bottom: -4px;
+		left: 0;
+		right: 0;
+		height: 4px;
+		background: linear-gradient(90deg,
+			var(--color-accent-50) 0%,
+			var(--color-accent-60) 25%,
+			var(--color-accent-50) 50%,
+			var(--color-accent-60) 75%,
+			var(--color-accent-50) 100%
+		);
+		opacity: 0.6;
 	}
 
 	footer {
@@ -116,6 +149,8 @@
 		align-items: center;
 
 		background-color: var(--color-primary-10);
+		border-top: var(--border-regular);
+		margin-top: auto;
 	}
 
 	.header-card {
@@ -123,30 +158,55 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-		gap: 10px;
+		gap: 15px;
 
-		padding: 20px;
+		padding: 24px 20px;
 
-		height: 75px;
-		width: clamp(500px, 75%, 1200px);
+		min-height: 85px;
+		width: clamp(500px, 85%, 1400px);
 	}
 
 	.nav-links {
 		display: flex;
 		flex-direction: row;
-		align-items: end;
-		gap: 20px;
+		align-items: center;
+		gap: 24px;
 	}
 
 	.user-info {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		gap: 20px;
+		gap: 16px;
 	}
 
 	span.logo {
-		font-size: larger;
-		font-weight: bold;
+		font-size: 24px;
+		font-weight: 900;
+		letter-spacing: -0.03em;
+		position: relative;
+		display: inline-block;
+		padding: 4px 12px;
+		background: linear-gradient(135deg, var(--color-accent-50), var(--color-accent-60));
+		color: white;
+		border-radius: var(--border-radius-regular);
+		box-shadow:
+			0 2px 0 0 var(--color-accent-70),
+			0 4px 8px rgba(0, 0, 0, 0.15);
+		transition: var(--transition);
+	}
+
+	span.logo:hover {
+		transform: translateY(-2px);
+		box-shadow:
+			0 4px 0 0 var(--color-accent-70),
+			0 6px 12px rgba(0, 0, 0, 0.2);
+	}
+
+	span.logo:active {
+		transform: translateY(0);
+		box-shadow:
+			0 1px 0 0 var(--color-accent-70),
+			0 2px 4px rgba(0, 0, 0, 0.15);
 	}
 </style>

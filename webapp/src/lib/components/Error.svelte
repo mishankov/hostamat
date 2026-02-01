@@ -30,20 +30,48 @@
 <style>
 	.error {
 		width: 100%;
+		animation: shake 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	@keyframes shake {
+		0%, 100% {
+			transform: translateX(0);
+		}
+		25% {
+			transform: translateX(-8px);
+		}
+		75% {
+			transform: translateX(8px);
+		}
 	}
 
 	.header {
 		display: flex;
 		flex-direction: row;
-		gap: 10px;
+		gap: 12px;
 		align-items: center;
+	}
+
+	.header h4 {
+		margin: 0;
+		font-size: 15px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.02em;
+	}
+
+	.header p {
+		margin: 0;
+		font-size: 14px;
 	}
 
 	.content {
 		display: flex;
 		align-items: start;
-		gap: 10px;
-
-		padding-top: 10px;
+		gap: 12px;
+		padding-top: 12px;
+		padding-left: 37px;
+		font-size: 14px;
+		line-height: 1.5;
 	}
 </style>
