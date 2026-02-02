@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { resolve } from '$app/paths';
 	import { Button, Card, Link } from '$lib/components';
 	import type { LayoutProps } from './$types';
 
@@ -49,9 +50,10 @@
 <header>
 	<div class="header-card">
 		<div class="nav-links">
-			<Link href="/"><span class="logo">ХОСТАМАТ</span></Link>
-			<Link href="/dashboard">Дашборд</Link>
-			<Link href="/about">О сервисе</Link>
+			<Link href={resolve('/')}><span class="logo">ХОСТАМАТ</span></Link>
+			<Link href={resolve('/dashboard')}>Дашборд</Link>
+			<Link href={resolve('/about')}>О сервисе</Link>
+			<Link href={resolve('/faq')}>FAQ</Link>
 		</div>
 
 		<div class="user-info">
