@@ -122,16 +122,20 @@
 
 <footer>
 	<div class="footer-shell">
-		<div class="footer-brand">
-			<Link href="/"><span class="logo soft">ХОСТАМАТ</span></Link>
-			<p>Статический хостинг без рутины</p>
-		</div>
-		<div class="footer-links">
-			<Link href="/cookies" alwaysUnderline>Куки</Link>
-			<Link href="/privacy" alwaysUnderline>Политика конфиденциальности</Link>
-			<Link href="/rights" alwaysUnderline>Права потребителя</Link>
-			<Link href="/terms" alwaysUnderline>Пользовательское соглашение</Link>
-		</div>
+		<Card border cornerBorder class="footer-card">
+			<div class="footer-inner">
+				<div class="footer-brand">
+					<Link href="/"><span class="logo soft">ХОСТАМАТ</span></Link>
+					<p>Статический хостинг без рутины</p>
+				</div>
+				<div class="footer-links">
+					<Link href="/cookies" alwaysUnderline>Куки</Link>
+					<Link href="/privacy" alwaysUnderline>Политика конфиденциальности</Link>
+					<Link href="/rights" alwaysUnderline>Права потребителя</Link>
+					<Link href="/terms" alwaysUnderline>Пользовательское соглашение</Link>
+				</div>
+			</div>
+		</Card>
 	</div>
 </footer>
 
@@ -155,6 +159,7 @@
 		align-items: center;
 		gap: 1.2rem;
 		padding: 0.8rem 1rem;
+		box-shadow: 0 10px 28px hsl(214 35% 12% / 0.09);
 	}
 
 	.brand-group {
@@ -221,13 +226,25 @@
 	}
 
 	.footer-shell {
+		display: flex;
+		justify-content: center;
+	}
+
+	:global(.footer-card) {
 		width: var(--layout-width);
-		margin: 0 auto;
+		padding: 1rem;
+		box-shadow: 0 10px 28px hsl(214 35% 12% / 0.09);
+	}
+
+	:global(:root[data-theme='dark'] .header-card),
+	:global(:root[data-theme='dark'] .footer-card) {
+		box-shadow: 0 14px 36px hsl(212 60% 3% / 0.42);
+	}
+
+	.footer-inner {
 		display: flex;
 		justify-content: space-between;
 		gap: 1rem;
-		padding: 1rem;
-		border-top: var(--border-regular);
 	}
 
 	.footer-brand {
@@ -274,7 +291,7 @@
 			flex-wrap: wrap;
 		}
 
-		.footer-shell {
+		.footer-inner {
 			flex-direction: column;
 		}
 
