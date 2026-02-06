@@ -6,8 +6,7 @@
 	<title>Хостамат</title>
 </svelte:head>
 
-<main class="page-shell landing-shell">
-	<div class="landing-grid-bg" aria-hidden="true"></div>
+<main class="page-shell">
 	<section class="page-content landing">
 		<Card border cornerBorder class="card-like">
 			<Badge text="Альфа-тестирование" />
@@ -56,61 +55,6 @@
 </main>
 
 <style>
-	.landing-shell {
-		position: relative;
-		isolation: isolate;
-		overflow: hidden;
-
-		--landing-grid-size: 28px;
-		--landing-grid-major-size: 112px;
-		--landing-grid-line: color-mix(in hsl, var(--color-accent-60) 8%, transparent);
-		--landing-grid-major-line: color-mix(in hsl, var(--color-accent-70) 11%, transparent);
-		--landing-glow-strong: color-mix(in hsl, var(--color-accent-40) 20%, transparent);
-		--landing-glow-soft: color-mix(in hsl, var(--color-accent-30) 11%, transparent);
-		--landing-fade: color-mix(in hsl, var(--color-background) 95%, transparent);
-	}
-
-	:global(:root[data-theme='dark']) .landing-shell {
-		--landing-grid-line: color-mix(in hsl, var(--color-accent-70) 10%, transparent);
-		--landing-grid-major-line: color-mix(in hsl, var(--color-accent-80) 14%, transparent);
-		--landing-glow-strong: color-mix(in hsl, var(--color-accent-60) 14%, transparent);
-		--landing-glow-soft: color-mix(in hsl, var(--color-accent-50) 8%, transparent);
-		--landing-fade: color-mix(in hsl, var(--color-background) 92%, transparent);
-	}
-
-	.landing-grid-bg {
-		position: fixed;
-		inset: 0;
-		pointer-events: none;
-		z-index: 0;
-		background:
-			radial-gradient(68% 55% at 86% 7%, var(--landing-glow-strong) 0%, transparent 69%),
-			radial-gradient(52% 42% at 11% 92%, var(--landing-glow-soft) 0%, transparent 74%),
-			linear-gradient(180deg, var(--landing-fade) 0%, transparent 32%, transparent 100%),
-			repeating-linear-gradient(
-				0deg,
-				transparent 0 calc(var(--landing-grid-major-size) - 1px),
-				var(--landing-grid-major-line) calc(var(--landing-grid-major-size) - 1px)
-					var(--landing-grid-major-size)
-			),
-			repeating-linear-gradient(
-				90deg,
-				transparent 0 calc(var(--landing-grid-major-size) - 1px),
-				var(--landing-grid-major-line) calc(var(--landing-grid-major-size) - 1px)
-					var(--landing-grid-major-size)
-			),
-			repeating-linear-gradient(
-				0deg,
-				transparent 0 calc(var(--landing-grid-size) - 1px),
-				var(--landing-grid-line) calc(var(--landing-grid-size) - 1px) var(--landing-grid-size)
-			),
-			repeating-linear-gradient(
-				90deg,
-				transparent 0 calc(var(--landing-grid-size) - 1px),
-				var(--landing-grid-line) calc(var(--landing-grid-size) - 1px) var(--landing-grid-size)
-			);
-	}
-
 	.landing {
 		position: relative;
 		z-index: 1;
@@ -179,22 +123,6 @@
 	}
 
 	@media (max-width: 800px) {
-		.landing-shell {
-			--landing-grid-size: 34px;
-			--landing-grid-major-size: 136px;
-			--landing-grid-line: color-mix(in hsl, var(--color-accent-60) 6%, transparent);
-			--landing-grid-major-line: color-mix(in hsl, var(--color-accent-70) 8%, transparent);
-			--landing-glow-strong: color-mix(in hsl, var(--color-accent-40) 14%, transparent);
-			--landing-glow-soft: color-mix(in hsl, var(--color-accent-30) 8%, transparent);
-		}
-
-		:global(:root[data-theme='dark']) .landing-shell {
-			--landing-grid-line: color-mix(in hsl, var(--color-accent-70) 7%, transparent);
-			--landing-grid-major-line: color-mix(in hsl, var(--color-accent-80) 10%, transparent);
-			--landing-glow-strong: color-mix(in hsl, var(--color-accent-60) 10%, transparent);
-			--landing-glow-soft: color-mix(in hsl, var(--color-accent-50) 6%, transparent);
-		}
-
 		.steps {
 			grid-template-columns: 1fr;
 		}

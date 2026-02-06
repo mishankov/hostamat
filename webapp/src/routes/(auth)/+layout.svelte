@@ -5,7 +5,7 @@
 	let { children }: LayoutProps = $props();
 </script>
 
-<main class="page-shell auth-shell ambient-grid">
+<main class="page-shell auth-shell">
 	<section class="auth-wrap">
 		<Card border>
 			<div class="form">{@render children()}</div>

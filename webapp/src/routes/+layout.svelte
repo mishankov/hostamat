@@ -81,99 +81,106 @@
 	};
 </script>
 
-{#if cookieConsent !== 'notset' && cookieConsent !== 'true'}
-	<div class="cookie">
-		<Card border>
-			<div class="cookie-inner">
-				<p>
-					Мы используем cookie. Подробности в <Link href="/cookies" target="_blank" alwaysUnderline
-						>политике</Link
-					>.
-				</p>
-				<Button
-					onclick={() => {
-						cookieConsent = 'true';
-						localStorage.setItem('cookieConsent', 'true');
-					}}
-					filled
-				>
-					Принять
-				</Button>
-			</div>
-		</Card>
-	</div>
-{/if}
-
-<header>
-	<div class="header-shell">
-		<Card border cornerBorder class="header-card">
-			<div class="brand-group">
-				<Link href={resolve('/')} onclick={closeMenu}><span class="logo">ХОСТАМАТ</span></Link>
-				<button
-					type="button"
-					class="menu-toggle"
-					onclick={() => (menuOpen = !menuOpen)}
-					aria-controls="primary-navigation"
-					aria-expanded={menuOpen}
-					aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
-				>
-					Меню
-				</button>
-			</div>
-
-			<nav id="primary-navigation" class={[menuOpen && 'open']}>
-				<Link href={resolve('/dashboard')} onclick={closeMenu}>Дашборд</Link>
-				<Link href={resolve('/about')} onclick={closeMenu}>О сервисе</Link>
-				<Link href={resolve('/faq')} onclick={closeMenu}>FAQ</Link>
-			</nav>
-
-			<div class="user-info">
-				<IconButton
-					label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
-					onclick={toggleTheme}
-					title={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
-					class="theme-toggle"
-				>
-					<span class="theme-icon theme-icon-light" aria-hidden="true">
-						<Sun size={18} color="var(--color-accent-70)" />
-					</span>
-					<span class="theme-icon theme-icon-dark" aria-hidden="true">
-						<Moon size={18} color="var(--color-accent-70)" />
-					</span>
-				</IconButton>
-				{#if data.isAuthenticated}
-					<Link href="/profile">{data.username}</Link>
-					<Button onclick={logout}>Выйти</Button>
-				{:else}
-					<Button onclick={openLogin}>Войти</Button>
-				{/if}
-			</div>
-		</Card>
-	</div>
-</header>
-
-{@render children()}
-
-<footer>
-	<div class="footer-shell">
-		<Card border cornerBorder class="footer-card">
-			<div class="footer-inner">
-				<div class="footer-brand">
-					<Link href="/"><span class="logo soft">ХОСТАМАТ</span></Link>
-					<p>Статический хостинг без рутины</p>
+<div class="site-chrome ambient-grid">
+	{#if cookieConsent !== 'notset' && cookieConsent !== 'true'}
+		<div class="cookie">
+			<Card border>
+				<div class="cookie-inner">
+					<p>
+						Мы используем cookie. Подробности в <Link href="/cookies" target="_blank" alwaysUnderline
+							>политике</Link
+						>.
+					</p>
+					<Button
+						onclick={() => {
+							cookieConsent = 'true';
+							localStorage.setItem('cookieConsent', 'true');
+						}}
+						filled
+					>
+						Принять
+					</Button>
 				</div>
-				<div class="footer-links">
-					<Link href="/cookies" alwaysUnderline>Куки</Link>
-					<Link href="/privacy" alwaysUnderline>Политика конфиденциальности</Link>
-					<Link href="/rights" alwaysUnderline>Права потребителя</Link>
-					<Link href="/terms" alwaysUnderline>Пользовательское соглашение</Link>
+			</Card>
+		</div>
+	{/if}
+
+	<header>
+		<div class="header-shell">
+			<Card border cornerBorder class="header-card">
+				<div class="brand-group">
+					<Link href={resolve('/')} onclick={closeMenu}><span class="logo">ХОСТАМАТ</span></Link>
+					<button
+						type="button"
+						class="menu-toggle"
+						onclick={() => (menuOpen = !menuOpen)}
+						aria-controls="primary-navigation"
+						aria-expanded={menuOpen}
+						aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
+					>
+						Меню
+					</button>
 				</div>
-			</div>
-		</Card>
-	</div>
-</footer>
+
+				<nav id="primary-navigation" class={[menuOpen && 'open']}>
+					<Link href={resolve('/dashboard')} onclick={closeMenu}>Дашборд</Link>
+					<Link href={resolve('/about')} onclick={closeMenu}>О сервисе</Link>
+					<Link href={resolve('/faq')} onclick={closeMenu}>FAQ</Link>
+				</nav>
+
+				<div class="user-info">
+					<IconButton
+						label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
+						onclick={toggleTheme}
+						title={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
+						class="theme-toggle"
+					>
+						<span class="theme-icon theme-icon-light" aria-hidden="true">
+							<Sun size={18} color="var(--color-accent-70)" />
+						</span>
+						<span class="theme-icon theme-icon-dark" aria-hidden="true">
+							<Moon size={18} color="var(--color-accent-70)" />
+						</span>
+					</IconButton>
+					{#if data.isAuthenticated}
+						<Link href="/profile">{data.username}</Link>
+						<Button onclick={logout}>Выйти</Button>
+					{:else}
+						<Button onclick={openLogin}>Войти</Button>
+					{/if}
+				</div>
+			</Card>
+		</div>
+	</header>
+
+	{@render children()}
+
+	<footer>
+		<div class="footer-shell">
+			<Card border cornerBorder class="footer-card">
+				<div class="footer-inner">
+					<div class="footer-brand">
+						<Link href="/"><span class="logo soft">ХОСТАМАТ</span></Link>
+						<p>Статический хостинг без рутины</p>
+					</div>
+					<div class="footer-links">
+						<Link href="/cookies" alwaysUnderline>Куки</Link>
+						<Link href="/privacy" alwaysUnderline>Политика конфиденциальности</Link>
+						<Link href="/rights" alwaysUnderline>Права потребителя</Link>
+						<Link href="/terms" alwaysUnderline>Пользовательское соглашение</Link>
+					</div>
+				</div>
+			</Card>
+		</div>
+	</footer>
+</div>
 
 <style>
+	.site-chrome {
+		position: relative;
+		z-index: 1;
+	}
+
 	header {
 		position: sticky;
 		top: 0;
