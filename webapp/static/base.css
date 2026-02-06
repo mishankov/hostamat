@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=PT+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,400;100,500;100,600;100,700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
 
 * {
 	margin: 0;
@@ -9,8 +9,8 @@
 :root[data-theme='light'] {
 	color-scheme: light;
 
-	--font-body: 'IBM Plex Mono', 'PT Mono', 'Cascadia Mono', 'Consolas', monospace;
-	--font-display: 'PT Mono', 'IBM Plex Mono', 'Cascadia Mono', 'Consolas', monospace;
+	--font-body: 'IBM Plex Mono', 'Cascadia Mono', 'Consolas', monospace;
+	--font-display: 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
 	--surface-0: hsl(214 34% 97%);
 	--surface-1: hsl(214 28% 93%);
@@ -210,8 +210,22 @@ h4,
 h5,
 h6 {
 	font-family: var(--font-display);
-	letter-spacing: -0.01em;
+	font-weight: 700;
+	letter-spacing: -0.008em;
+	line-height: 1.18;
 	text-wrap: balance;
+}
+
+h1 {
+	font-size: clamp(2rem, 3.5vw, 3rem);
+}
+
+h2 {
+	font-size: clamp(1.6rem, 2.6vw, 2.25rem);
+}
+
+h3 {
+	font-size: clamp(1.3rem, 2vw, 1.75rem);
 }
 
 p,
@@ -265,6 +279,10 @@ main.page-shell {
 	:root[data-theme='dark'] {
 		--layout-width: calc(100vw - 1.2rem);
 		--border-radius-regular: 7px;
+	}
+
+	h1 {
+		line-height: 1.12;
 	}
 }
 

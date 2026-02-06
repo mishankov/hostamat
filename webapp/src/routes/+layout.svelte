@@ -167,7 +167,7 @@
 		font-family: var(--font-display);
 		font-size: 1.04rem;
 		font-weight: 700;
-		letter-spacing: 0.16em;
+		letter-spacing: 0.04em;
 	}
 
 	.logo.soft {

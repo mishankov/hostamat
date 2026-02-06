@@ -94,6 +94,11 @@
 		gap: 0.6rem;
 	}
 
+	.qa h2 {
+		font-size: clamp(1.15rem, 1.2vw, 1.35rem);
+		line-height: 1.24;
+	}
+
 	.qa ul {
 		padding-left: 1.2rem;
 		display: flex;

@@ -102,6 +102,11 @@
 		gap: 0.7rem;
 	}
 
+	.card-section h2 {
+		font-size: clamp(1.2rem, 1.4vw, 1.45rem);
+		line-height: 1.25;
+	}
+
 	.file-types {
 		display: flex;
 		flex-wrap: wrap;
