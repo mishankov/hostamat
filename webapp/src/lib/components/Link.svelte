@@ -1,8 +1,40 @@
 <script lang="ts">
-	let { href, target = '_self', children, alwaysUnderline = false, ...restProps } = $props();
+	type LinkProps = {
+		href: string;
+		target?: string;
+		rel?: string;
+		alwaysUnderline?: boolean;
+		children?: any;
+		onclick?: (event: Event) => void;
+		[key: string]: any;
+	};
+
+	let {
+		href,
+		target = '_self',
+		rel = '',
+		children,
+		alwaysUnderline = false,
+		...restProps
+	}: LinkProps = $props();
+
+	const safeRel = $derived.by(() => {
+		if (target !== '_blank') {
+			return rel || undefined;
+		}
+
+		if (!rel) {
+			return 'noopener noreferrer';
+		}
+
+		const parts = new Set(rel.split(/\s+/g).filter(Boolean));
+		parts.add('noopener');
+		parts.add('noreferrer');
+		return [...parts].join(' ');
+	});
 </script>
 
-<a {href} {target} class={alwaysUnderline ? 'underline' : ''} {...restProps}
+<a {href} {target} rel={safeRel} class={alwaysUnderline ? 'underline' : ''} {...restProps}
 	>{@render children?.()}</a
 >
 
@@ -27,5 +59,9 @@
 
 	a:visited {
 		color: var(--color-accent-80);
+	}
+
+	a:focus-visible {
+		text-decoration: underline;
 	}
 </style>

@@ -1,4 +1,5 @@
 <script>
+	import '$lib/styles/legal-page.css';
 	import { Card, Link } from '$lib/components';
 </script>
 
@@ -115,51 +116,3 @@
 		</Card>
 	</div>
 </main>
-
-<style>
-	.legal-page {
-		gap: 0.8rem;
-		padding-bottom: 2rem;
-	}
-
-	.legal-page h1 {
-		font-size: clamp(1.8rem, 4vw, 2.3rem);
-		margin-bottom: 0.3rem;
-	}
-
-	.legal-section {
-		padding: 1rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.6rem;
-	}
-
-	.legal-section h2 {
-		font-size: clamp(1.2rem, 1.4vw, 1.45rem);
-		line-height: 1.25;
-	}
-
-	.legal-section h3 {
-		font-size: 1.05rem;
-		margin-top: 0.2rem;
-		margin-bottom: 0.1rem;
-	}
-
-	.legal-section p {
-		line-height: 1.6;
-		color: var(--color-text-secondary);
-	}
-
-	.legal-section ul,
-	.legal-section ol {
-		padding-left: 1.2rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.35rem;
-		line-height: 1.6;
-	}
-
-	.legal-section li {
-		color: var(--color-text-secondary);
-	}
-</style>

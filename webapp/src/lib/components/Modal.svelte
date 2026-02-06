@@ -1,40 +1,101 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { X } from '$lib/icons';
 
 	let {
 		children,
 		kind = 'primary',
 		openCallback = () => {},
-		closeCallback = () => {}
+		closeCallback = () => {},
+		titleId = '',
+		descriptionId = '',
+		initialFocusSelector = '',
+		closeOnBackdrop = true,
+		showCloseButton = true,
+		closeLabel = 'Закрыть окно'
 	}: {
 		children?: Snippet;
 		kind?: 'primary' | 'danger';
 		openCallback?: () => void;
 		closeCallback?: () => void;
+		titleId?: string;
+		descriptionId?: string;
+		initialFocusSelector?: string;
+		closeOnBackdrop?: boolean;
+		showCloseButton?: boolean;
+		closeLabel?: string;
 	} = $props();
 
 	let dialog = $state<HTMLDialogElement>();
+	let previousFocusedElement: HTMLElement | null = null;
+
+	const focusInitialElement = () => {
+		if (!dialog) {
+			return;
+		}
+
+		const explicitTarget = initialFocusSelector
+			? dialog.querySelector<HTMLElement>(initialFocusSelector)
+			: null;
+
+		const defaultTarget = dialog.querySelector<HTMLElement>(
+			'[data-autofocus], button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+		);
+
+		(explicitTarget || defaultTarget)?.focus();
+	};
+
+	const restoreFocus = () => {
+		if (previousFocusedElement && document.contains(previousFocusedElement)) {
+			previousFocusedElement.focus();
+		}
+
+		previousFocusedElement = null;
+	};
+
 	export const open = () => {
 		openCallback();
+		previousFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+		if (dialog?.open) {
+			return;
+		}
+
 		dialog?.showModal();
+		queueMicrotask(() => {
+			focusInitialElement();
+		});
 	};
 
 	export const close = () => {
-		closeCallback();
 		dialog?.close();
+	};
+
+	const onDialogClose = () => {
+		closeCallback();
+		restoreFocus();
 	};
 </script>
 
 <dialog
 	bind:this={dialog}
 	class={kind}
+	aria-labelledby={titleId || undefined}
+	aria-describedby={descriptionId || undefined}
+	aria-modal="true"
+	onclose={onDialogClose}
 	onclick={(e: MouseEvent) => {
-		if (e.target === dialog) {
+		if (closeOnBackdrop && e.target === dialog) {
 			close();
 		}
 	}}
 >
 	<div class="modal-content">
+		{#if showCloseButton}
+			<button class="close-modal" type="button" aria-label={closeLabel} title={closeLabel} onclick={close}>
+				<X size={18} />
+			</button>
+		{/if}
 		{@render children?.()}
 	</div>
 </dialog>
@@ -56,6 +117,9 @@
 		backdrop-filter: blur(18px);
 
 		transition: var(--transition);
+		max-width: min(680px, calc(100vw - 1rem));
+		max-height: calc(100vh - 1rem);
+		overflow: auto;
 	}
 
 	.primary {
@@ -89,5 +153,27 @@
 
 	div.modal-content {
 		padding: 20px;
+		position: relative;
+	}
+
+	.close-modal {
+		all: unset;
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 28px;
+		height: 28px;
+		border-radius: var(--border-radius-regular);
+		border: var(--border-regular);
+		background: var(--color-background-object);
+		cursor: pointer;
+		transition: var(--transition);
+	}
+
+	.close-modal:hover {
+		background: color-mix(in hsl, var(--color-background-object) 94%, var(--color-accent-30) 6%);
 	}
 </style>

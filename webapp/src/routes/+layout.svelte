@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { Button, Card, IconButton, Link } from '$lib/components';
@@ -14,7 +15,9 @@
 
 	const logout = async () => {
 		await fetch('/api/auth/logout', { method: 'POST' });
-		window.location.reload();
+		closeMenu();
+		await invalidateAll();
+		await goto('/login');
 	};
 
 	const syncTheme = () => {
@@ -83,12 +86,19 @@
 		<Card border cornerBorder class="header-card">
 			<div class="brand-group">
 				<Link href={resolve('/')} onclick={closeMenu}><span class="logo">ХОСТАМАТ</span></Link>
-				<button class="menu-toggle" onclick={() => (menuOpen = !menuOpen)} aria-label="Открыть меню">
+				<button
+					type="button"
+					class="menu-toggle"
+					onclick={() => (menuOpen = !menuOpen)}
+					aria-controls="primary-navigation"
+					aria-expanded={menuOpen}
+					aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
+				>
 					Меню
 				</button>
 			</div>
 
-			<nav class={[menuOpen && 'open']}>
+			<nav id="primary-navigation" class={[menuOpen && 'open']}>
 				<Link href={resolve('/dashboard')} onclick={closeMenu}>Дашборд</Link>
 				<Link href={resolve('/about')} onclick={closeMenu}>О сервисе</Link>
 				<Link href={resolve('/faq')} onclick={closeMenu}>FAQ</Link>
@@ -96,9 +106,9 @@
 
 			<div class="user-info">
 				<IconButton
+					label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
 					onclick={toggleTheme}
 					title={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
-					aria-label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
 					class="theme-toggle"
 				>
 					{#if theme === 'light'}
@@ -111,7 +121,7 @@
 					<Link href="/profile">{data.username}</Link>
 					<Button onclick={logout}>Выйти</Button>
 				{:else}
-					<Button link="/login">Войти</Button>
+					<Button href="/login" onclick={closeMenu}>Войти</Button>
 				{/if}
 			</div>
 		</Card>

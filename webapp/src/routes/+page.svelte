@@ -17,8 +17,8 @@
 				дашборд.
 			</p>
 			<div class="hero-actions">
-				<Button link="/register" filled>Запустить свой сайт</Button>
-				<Button link="/about">Узнать о платформе</Button>
+				<Button href="/register" filled>Запустить свой сайт</Button>
+				<Button href="/about">Узнать о платформе</Button>
 			</div>
 		</Card>
 

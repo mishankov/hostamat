@@ -1,9 +1,39 @@
 <script lang="ts">
-	let { children, onclick, class: className = '', kind = 'primary', ...restProps } = $props();
+	type IconButtonProps = {
+		label: string;
+		children?: any;
+		onclick?: (event: Event) => void;
+		class?: string;
+		kind?: 'primary' | 'danger';
+		title?: string;
+		type?: 'button' | 'submit' | 'reset';
+		disabled?: boolean;
+		[key: string]: any;
+	};
+
+	let {
+		label,
+		children,
+		onclick,
+		class: className = '',
+		kind = 'primary',
+		title = '',
+		type = 'button',
+		disabled = false,
+		...restProps
+	}: IconButtonProps = $props();
 </script>
 
-<button class={[kind, className]} {onclick} {...restProps}>
-	{@render children()}
+<button
+	{type}
+	{disabled}
+	class={[kind, className]}
+	aria-label={label}
+	title={title || label}
+	{onclick}
+	{...restProps}
+>
+	{@render children?.()}
 </button>
 
 <style>
@@ -24,16 +54,23 @@
 			border-color 260ms ease-out;
 	}
 
-	button:hover {
+	button:hover:enabled {
 		transition-duration: 90ms;
 		background: var(--color-accent-20);
 		cursor: pointer;
 		transform: none;
 	}
 
-	button.danger:hover {
+	button.danger:hover:enabled {
 		transition-duration: 90ms;
 		background: var(--color-danger-20);
 		cursor: pointer;
+	}
+
+	button:disabled {
+		background-color: var(--color-inactive-90);
+		border-color: var(--color-inactive-70);
+		color: var(--color-inactive-50);
+		cursor: not-allowed;
 	}
 </style>

@@ -1,4 +1,5 @@
 <script>
+	import '$lib/styles/legal-page.css';
 	import { Card, Link } from '$lib/components';
 </script>
 
@@ -162,89 +163,5 @@
 				<p>9.4. В случае возникновения споров применяется законодательство Российской Федерации.</p>
 			</section>
 		</Card>
-
-		<Card border>
-			<section class="legal-section">
-				<h2>6. Ответственность</h2>
-				<p>
-					6.1. Пользователь несет полную ответственность за размещаемый контент и его соответствие
-					законодательству.
-				</p>
-				<p>
-					6.2. Администрация не несет ответственности за убытки, возникшие в результате
-					использования Сервиса.
-				</p>
-				<p>6.3. Администрация не несет ответственности за содержание сайтов пользователей.</p>
-			</section>
-		</Card>
-
-		<Card border>
-			<section class="legal-section">
-				<h2>7. Конфиденциальность</h2>
-				<p>
-					Обработка персональных данных Пользователя осуществляется в соответствии с <Link
-						href="/privacy"
-						alwaysUnderline>Политикой конфиденциальности</Link
-					>.
-				</p>
-			</section>
-		</Card>
-
-		<Card border>
-			<section class="legal-section">
-				<h2>8. Заключительные положения</h2>
-				<p>8.1. Настоящее Соглашение может быть изменено Администрацией в одностороннем порядке.</p>
-				<p>8.2. Изменения вступают в силу с момента их публикации на Сайте.</p>
-				<p>8.3. В случае возникновения споров применяется законодательство Российской Федерации.</p>
-			</section>
-		</Card>
 	</div>
 </main>
-
-<style>
-	.legal-page {
-		gap: 0.8rem;
-		padding-bottom: 2rem;
-	}
-
-	.legal-page h1 {
-		font-size: clamp(1.8rem, 4vw, 2.3rem);
-		margin-bottom: 0.3rem;
-	}
-
-	.legal-section {
-		padding: 1rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.6rem;
-	}
-
-	.legal-section h2 {
-		font-size: clamp(1.2rem, 1.4vw, 1.45rem);
-		line-height: 1.25;
-	}
-
-	.legal-section h3 {
-		font-size: 1.05rem;
-		margin-top: 0.2rem;
-		margin-bottom: 0.1rem;
-	}
-
-	.legal-section p {
-		line-height: 1.6;
-		color: var(--color-text-secondary);
-	}
-
-	.legal-section ul,
-	.legal-section ol {
-		padding-left: 1.2rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.35rem;
-		line-height: 1.6;
-	}
-
-	.legal-section li {
-		color: var(--color-text-secondary);
-	}
-</style>

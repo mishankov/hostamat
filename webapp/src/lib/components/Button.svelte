@@ -1,43 +1,78 @@
 <script lang="ts">
 	type ButtonKind = 'primary' | 'confirm' | 'danger' | 'action';
+	type ButtonType = 'button' | 'submit' | 'reset';
 
 	type ButtonProps = {
 		kind?: ButtonKind;
 		disabled?: boolean;
 		filled?: boolean;
-		link?: string;
+		href?: string;
+		link?: string; // Deprecated alias kept for compatibility.
+		type?: ButtonType;
 		ref?: any;
 		children?: any;
 		onclick?: (e: Event) => void;
+		[key: string]: any;
 	};
 
 	let {
 		kind = 'primary',
 		disabled = false,
 		filled = false,
+		href = '',
 		link = '',
+		type = 'button',
 		children = undefined,
 		ref = $bindable(null),
-		onclick = undefined
+		onclick = undefined,
+		...restProps
 	}: ButtonProps = $props();
+
+	const resolvedHref = $derived(href || link);
+
+	const handleAnchorClick = (event: MouseEvent) => {
+		if (disabled) {
+			event.preventDefault();
+			event.stopPropagation();
+			return;
+		}
+
+		onclick?.(event);
+	};
 </script>
 
-{#if link}
-	<a href={link}>
-		<button {disabled} bind:this={ref} class={[kind, filled && 'filled']} {onclick}>
-			{@render children?.()}
-		</button>
+{#if resolvedHref}
+	<a
+		href={resolvedHref}
+		bind:this={ref}
+		class={['button', kind, filled && 'filled']}
+		aria-disabled={disabled ? 'true' : undefined}
+		tabindex={disabled ? -1 : undefined}
+		onclick={handleAnchorClick}
+		{...restProps}
+	>
+		{@render children?.()}
 	</a>
 {:else}
-	<button {disabled} bind:this={ref} class={[kind, filled && 'filled']} {onclick}>
+	<button
+		{type}
+		{disabled}
+		bind:this={ref}
+		class={['button', kind, filled && 'filled']}
+		{onclick}
+		{...restProps}
+	>
 		{@render children?.()}
 	</button>
 {/if}
 
 <style>
-	button {
+	.button {
 		appearance: none;
 		width: fit-content;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 
 		border-width: 1px;
 		border-style: solid;
@@ -50,6 +85,8 @@
 
 		font-weight: 650;
 		letter-spacing: 0.01em;
+		text-decoration: none;
+		cursor: pointer;
 
 		transition:
 			color 260ms ease-out,
@@ -95,7 +132,8 @@
 		--color-background-filled: var(--color-accent-70);
 	}
 
-	button:hover:enabled {
+	button.button:hover:enabled,
+	a.button:hover:not([aria-disabled='true']) {
 		box-shadow: none;
 		transform: none;
 		transition-duration: 90ms;
@@ -104,22 +142,29 @@
 		border-color: color-mix(in hsl, var(--color-border) 82%, var(--color) 18%);
 	}
 
-	button.filled:hover:enabled {
+	button.button.filled:hover:enabled,
+	a.button.filled:hover:not([aria-disabled='true']) {
 		transition-duration: 90ms;
 		color: var(--color-background);
 		background-color: color-mix(in hsl, var(--color-background-filled) 88%, var(--color) 12%);
 		border-color: color-mix(in hsl, var(--color-background-filled) 88%, var(--color) 12%);
 	}
 
-	button:active:enabled {
+	button.button:active:enabled,
+	a.button:active:not([aria-disabled='true']) {
 		box-shadow: none;
 		transform: none;
 	}
 
-	button:disabled {
+	button.button:disabled,
+	a.button[aria-disabled='true'] {
 		background-color: var(--color-inactive-90);
 		color: var(--color-inactive-50);
 		border-color: var(--color-inactive-70);
 		cursor: not-allowed;
+	}
+
+	a.button[aria-disabled='true'] {
+		pointer-events: none;
 	}
 </style>

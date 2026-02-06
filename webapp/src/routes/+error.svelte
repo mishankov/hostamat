@@ -33,9 +33,9 @@
 			</p>
 			<div class="action-buttons">
 				{#if data.isAuthenticated}
-					<Button link="/dashboard" kind="primary" filled>Вернуться на дашборд</Button>
+					<Button href="/dashboard" kind="primary" filled>Вернуться на дашборд</Button>
 				{/if}
-				<Button link="/" kind="primary">Вернуться на главную</Button>
+				<Button href="/" kind="primary">Вернуться на главную</Button>
 			</div>
 		</Card>
 	</div>
@@ -53,7 +53,7 @@
 		gap: 20px;
 	}
 
-	.error-content {
+	:global(.error-content) {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;

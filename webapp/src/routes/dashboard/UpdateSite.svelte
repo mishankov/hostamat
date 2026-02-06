@@ -8,17 +8,25 @@
 	let modal = $state<Modal>();
 	let newName = $state('');
 	let errorMessage = $state('');
+
+	const modalTitleId = $derived(`update-site-title-${siteId}`);
+	const inputId = $derived(`update-site-name-${siteId}`);
 </script>
 
-<IconButton onclick={() => modal?.open()} title="Изменить сайт">
+<IconButton label="Изменить сайт" onclick={() => modal?.open()} title="Изменить сайт">
 	<Edit size={25} />
 </IconButton>
-<Modal bind:this={modal} kind="primary" openCallback={() => (newName = siteName)}>
-	<div style="display: flex; flex-direction: column; gap: 15px;">
-		<h2>Изменить "{siteName}"</h2>
-		<Input id="site-name" label="Название" bind:value={newName} maxlength="25" {errorMessage}
-		></Input>
-		<div style="display: flex; gap: 15px; align-items: center;">
+<Modal
+	bind:this={modal}
+	kind="primary"
+	titleId={modalTitleId}
+	initialFocusSelector={"#" + inputId}
+	openCallback={() => (newName = siteName)}
+>
+	<div class="modal-body">
+		<h2 id={modalTitleId}>Изменить "{siteName}"</h2>
+		<Input id={inputId} label="Название" bind:value={newName} maxlength="25" {errorMessage}></Input>
+		<div class="modal-actions">
 			<Button
 				filled
 				disabled={loading}
@@ -44,8 +52,27 @@
 			>
 			<Button disabled={loading} onclick={() => modal?.close()}>Отмена</Button>
 			{#if loading}
-				<Spinner size={30} />
+				<span class="action-spinner"><Spinner size={30} /></span>
 			{/if}
 		</div>
 	</div>
 </Modal>
+
+<style>
+	.modal-body {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+	}
+
+	.modal-actions {
+		display: flex;
+		gap: 15px;
+		align-items: center;
+	}
+
+	.action-spinner {
+		display: inline-flex;
+		align-items: center;
+	}
+</style>

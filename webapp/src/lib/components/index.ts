@@ -1,3 +1,4 @@
+import Alert from './Alert.svelte';
 import Badge from './Badge.svelte';
 import Button from './Button.svelte';
 import Card from './Card.svelte';
@@ -13,6 +14,7 @@ import Separator from './Separator.svelte';
 import Success from './Success.svelte';
 
 export {
+	Alert,
 	Badge,
 	Button,
 	Card,
