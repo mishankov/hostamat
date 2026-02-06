@@ -1,5 +1,5 @@
 <script>
-	import { Link } from '$lib/components';
+	import { Card, Link } from '$lib/components';
 </script>
 
 <svelte:head>
@@ -7,7 +7,7 @@
 </svelte:head>
 
 <main class="page-shell">
-	<div class="page-content document legal-document">
+	<Card border class="page-content document">
 		<h1>Пользовательское соглашение</h1>
 
 		<section>
@@ -171,7 +171,7 @@
 			<p>8.2. Изменения вступают в силу с момента их публикации на Сайте.</p>
 			<p>8.3. В случае возникновения споров применяется законодательство Российской Федерации.</p>
 		</section>
-	</div>
+	</Card>
 </main>
 
 <style>

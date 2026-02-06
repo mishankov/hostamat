@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { dev } from '$app/environment';
-	import { Button } from '$lib/components';
+	import { Button, Card } from '$lib/components';
 
 	let { data } = $props();
 </script>
@@ -12,7 +12,7 @@
 
 <main class="page-shell">
 	<div class="page-content error-page">
-		<div class="error-content legal-document">
+		<Card border class="error-content">
 			<h1 class="error-code">{page.status}</h1>
 			<h2 class="title">
 				{#if page.status === 404}
@@ -37,7 +37,7 @@
 				{/if}
 				<Button link="/" kind="primary">Вернуться на главную</Button>
 			</div>
-		</div>
+		</Card>
 	</div>
 </main>
 

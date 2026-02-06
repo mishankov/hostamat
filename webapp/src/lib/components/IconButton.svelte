@@ -1,8 +1,8 @@
 <script lang="ts">
-	let { children, onclick, kind = 'primary', ...restProps } = $props();
+	let { children, onclick, class: className = '', kind = 'primary', ...restProps } = $props();
 </script>
 
-<button class={kind} {onclick} {...restProps}>
+<button class={[kind, className]} {onclick} {...restProps}>
 	{@render children()}
 </button>
 

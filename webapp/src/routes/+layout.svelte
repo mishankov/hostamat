@@ -80,7 +80,7 @@
 
 <header>
 	<div class="header-shell">
-		<div class="header-card">
+		<Card border cornerBorder class="header-card">
 			<div class="brand-group">
 				<Link href={resolve('/')} onclick={closeMenu}><span class="logo">ХОСТАМАТ</span></Link>
 				<button class="menu-toggle" onclick={() => (menuOpen = !menuOpen)} aria-label="Открыть меню">
@@ -114,7 +114,7 @@
 					<Button link="/login">Войти</Button>
 				{/if}
 			</div>
-		</div>
+		</Card>
 	</div>
 </header>
 
@@ -148,18 +148,13 @@
 		justify-content: center;
 	}
 
-	.header-card {
+	:global(.header-card) {
 		width: var(--layout-width);
 		display: grid;
 		grid-template-columns: auto 1fr auto;
 		align-items: center;
 		gap: 1.2rem;
 		padding: 0.8rem 1rem;
-		border: var(--border-regular);
-		border-radius: calc(var(--border-radius-regular) + 2px);
-		background: var(--color-background-object);
-		backdrop-filter: blur(16px);
-		box-shadow: var(--shadow-soft);
 	}
 
 	.brand-group {
@@ -249,7 +244,7 @@
 	}
 
 	@media (max-width: 900px) {
-		.header-card {
+		:global(.header-card) {
 			grid-template-columns: 1fr;
 			gap: 0.8rem;
 		}

@@ -1,5 +1,5 @@
 <script>
-	import { Link } from '$lib/components';
+	import { Card, Link } from '$lib/components';
 </script>
 
 <svelte:head>
@@ -7,7 +7,7 @@
 </svelte:head>
 
 <main class="page-shell">
-	<div class="page-content document legal-document">
+	<Card border class="page-content document">
 		<h1>Политика конфиденциальности</h1>
 
 		<section>
@@ -95,7 +95,7 @@
 				редакция Политики вступает в силу с момента ее размещения на Сайте.
 			</p>
 		</section>
-	</div>
+	</Card>
 </main>
 
 <style>

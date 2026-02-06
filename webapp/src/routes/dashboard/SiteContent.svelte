@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Info, Link, Modal } from '$lib/components';
+	import { Button, Card, Info, Link, Modal } from '$lib/components';
 	import { Copy, Trash, Upload } from '$lib/icons';
 
 	import FileUploader from './components/FileUploader.svelte';
@@ -39,7 +39,7 @@
 		<span title="Поддомен" class="subdomain">{subdomain}</span>
 	</div>
 
-	<div class="site-toolbar">
+	<Card border class="site-toolbar">
 		<UpdateSite
 			siteName={site.name}
 			siteId={site.id}
@@ -91,7 +91,7 @@
 			<Copy size={25} background="var(--color-primary-10)" />
 		</IconButton>
 
-		<IconButton title="Удалить сайт" kind="danger" onclick={() => deleteModal?.open()}>
+		<IconButton title="Удалить сайт" kind="danger" class="toolbar-delete" onclick={() => deleteModal?.open()}>
 			<Trash size={25} />
 		</IconButton>
 		<Modal bind:this={deleteModal} kind="danger">
@@ -120,7 +120,7 @@
 				</form>
 			</div>
 		</Modal>
-	</div>
+	</Card>
 </div>
 
 <style>
@@ -148,17 +148,22 @@
 		color: var(--color-text-secondary);
 	}
 
-	.site-toolbar {
+	:global(.site-toolbar) {
 		width: fit-content;
 		justify-self: end;
 
 		display: flex;
 		padding: 3px;
 		margin-top: auto;
-		background: var(--color-background-object);
+	}
 
-		border: var(--border-regular);
-		border-radius: calc(var(--border-radius-regular) + 2px);
+	:global(.site-toolbar > button) {
+		border: none;
+		border-radius: 0;
+	}
+
+	:global(:root[data-theme='dark'] .site-toolbar button.toolbar-delete:hover) {
+		background: var(--color-danger-10);
 	}
 
 	.upload-modal {
