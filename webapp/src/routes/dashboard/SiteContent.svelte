@@ -108,7 +108,7 @@
 				</Alert>
 				<FileUploader
 					bind:this={fileUploader}
-					onclose={uploadModal?.close}
+					onclose={() => uploadModal?.close()}
 					multiple={true}
 					uploadUrl="/api/uploadFile"
 					siteId={site.id}

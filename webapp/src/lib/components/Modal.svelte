@@ -28,7 +28,6 @@
 
 	let dialog = $state<HTMLDialogElement>();
 	let previousFocusedElement: HTMLElement | null = null;
-
 	const focusInitialElement = () => {
 		if (!dialog) {
 			return;
@@ -90,12 +89,12 @@
 		}
 	}}
 >
-	<div class="modal-content">
-		{#if showCloseButton}
-			<button class="close-modal" type="button" aria-label={closeLabel} title={closeLabel} onclick={close}>
-				<X size={18} />
-			</button>
-		{/if}
+		<div class={['modal-content', showCloseButton && 'has-close']}>
+			{#if showCloseButton}
+				<button class="close-modal" type="button" aria-label={closeLabel} title={closeLabel} onclick={close}>
+					<X size={18} color="currentColor" />
+				</button>
+			{/if}
 		{@render children?.()}
 	</div>
 </dialog>
@@ -156,11 +155,15 @@
 		position: relative;
 	}
 
+	div.modal-content.has-close {
+		padding-right: 56px;
+	}
+
 	.close-modal {
 		all: unset;
 		position: absolute;
-		top: 10px;
-		right: 10px;
+		top: 14px;
+		right: 14px;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -169,11 +172,23 @@
 		border-radius: var(--border-radius-regular);
 		border: var(--border-regular);
 		background: var(--color-background-object);
+		color: var(--color-primary-90);
 		cursor: pointer;
 		transition: var(--transition);
 	}
 
 	.close-modal:hover {
 		background: color-mix(in hsl, var(--color-background-object) 94%, var(--color-accent-30) 6%);
+	}
+
+	dialog.danger .close-modal {
+		border-color: var(--color-danger-60);
+		background: transparent;
+		color: var(--color-danger-60);
+	}
+
+	dialog.danger .close-modal:hover {
+		background: color-mix(in hsl, var(--color-danger-60) 90%, var(--color-danger-90) 10%);
+		color: var(--color-background-object);
 	}
 </style>
