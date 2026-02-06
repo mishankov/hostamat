@@ -6,12 +6,15 @@
 	let password = $state('');
 	let passwordAgain = $state('');
 	let error = $state('');
+	let isLoginLengthValid = $derived(login.length >= 5 && login.length <= 20);
+	let isPasswordLengthValid = $derived(password.length >= 8 && password.length <= 100);
+	let isPasswordMatchValid = $derived(
+		password.length > 0 && passwordAgain.length > 0 && password === passwordAgain
+	);
 	let registerButtonDisabled = $derived(
 		!(
-			login.length >= 5 &&
-			login.length <= 20 &&
-			password.length >= 8 &&
-			password.length <= 100 &&
+			isLoginLengthValid &&
+			isPasswordLengthValid &&
 			password === passwordAgain
 		)
 	);
@@ -76,10 +79,11 @@
 	/>
 
 	<Card kind="primary">
-		<div class="password-rules">
-			<p>Логин должен быть от 5 до 20 символов</p>
-			<p>Пароль должен быть от 8 до 100 символов</p>
-		</div>
+		<ul class="password-rules">
+			<li class:valid={isLoginLengthValid}>Логин должен быть от 5 до 20 символов</li>
+			<li class:valid={isPasswordLengthValid}>Пароль должен быть от 8 до 100 символов</li>
+			<li class:valid={isPasswordMatchValid}>Пароли должны совпадать</li>
+		</ul>
 	</Card>
 
 	<div class="actions">
@@ -107,15 +111,25 @@
 
 	.password-rules {
 		padding: 0.9rem;
+		margin: 0;
+		padding-left: calc(0.9rem + 1rem);
 
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
 
-		color: var(--color-text-secondary);
 		font-size: 0.92rem;
 		line-height: 1.35;
 		border-left: 2px solid var(--color-accent-40);
+	}
+
+	.password-rules li {
+		color: var(--color-text-secondary);
+		transition: var(--transition);
+	}
+
+	.password-rules li.valid {
+		color: var(--color-confirm-60);
 	}
 
 	.lead {
