@@ -87,8 +87,10 @@
 			<Card border>
 				<div class="cookie-inner">
 					<p>
-						Мы используем cookie. Подробности в <Link href="/cookies" target="_blank" alwaysUnderline
-							>политике</Link
+						Мы используем cookie. Подробности в <Link
+							href="/cookies"
+							target="_blank"
+							alwaysUnderline>политике</Link
 						>.
 					</p>
 					<Button
@@ -118,7 +120,7 @@
 						aria-expanded={menuOpen}
 						aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
 					>
-						Меню
+						<span class="burger" aria-hidden="true"></span>
 					</button>
 				</div>
 
@@ -128,7 +130,7 @@
 					<Link href={resolve('/faq')} onclick={closeMenu}>FAQ</Link>
 				</nav>
 
-				<div class="user-info">
+				<div class={['user-info', menuOpen && 'open']}>
 					<IconButton
 						label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
 						onclick={toggleTheme}
@@ -262,8 +264,40 @@
 		border: var(--border-regular);
 		border-radius: calc(var(--border-radius-regular) + 2px);
 		background: var(--color-background-object);
-		padding: 0.4rem 0.8rem;
+		width: 2.25rem;
+		height: 2.25rem;
+		padding: 0;
 		color: var(--color-text-regular);
+		align-items: center;
+		justify-content: center;
+	}
+
+	.menu-toggle .burger {
+		position: relative;
+		display: block;
+		width: 1rem;
+		height: 2px;
+		background: currentColor;
+		border-radius: 999px;
+	}
+
+	.menu-toggle .burger::before,
+	.menu-toggle .burger::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		width: 1rem;
+		height: 2px;
+		background: currentColor;
+		border-radius: 999px;
+	}
+
+	.menu-toggle .burger::before {
+		top: -0.32rem;
+	}
+
+	.menu-toggle .burger::after {
+		top: 0.32rem;
 	}
 
 	.cookie {
@@ -347,8 +381,13 @@
 		}
 
 		.user-info {
+			display: none;
 			justify-content: flex-start;
 			flex-wrap: wrap;
+		}
+
+		.user-info.open {
+			display: flex;
 		}
 
 		.footer-inner {
