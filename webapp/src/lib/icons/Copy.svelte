@@ -33,7 +33,7 @@
 <style>
 	rect {
 		stroke: var(--color-primary-90);
-		transition: all 140ms ease-out;
+		transition: all 260ms ease-out;
 	}
 
 	rect {
@@ -41,10 +41,12 @@
 	}
 
 	svg:hover rect {
+		transition-duration: 90ms;
 		stroke: var(--color-primary-90);
 	}
 
 	svg:hover rect.back {
+		transition-duration: 90ms;
 		transform: translateX(5px) translateY(-5px);
 	}
 

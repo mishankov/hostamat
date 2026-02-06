@@ -44,9 +44,10 @@
 
 <style>
 	.arrow {
-		transition: all 140ms ease-out;
+		transition: all 260ms ease-out;
 	}
 	svg:hover .arrow {
+		transition-duration: 90ms;
 		transform: translateY(5px);
 	}
 

@@ -30,10 +30,11 @@
 
 <style>
 	line {
-		transition: all 140ms ease-out;
+		transition: all 260ms ease-out;
 	}
 
 	svg:hover line.animated {
+		transition-duration: 90ms;
 		transform: rotate(90deg);
 	}
 </style>

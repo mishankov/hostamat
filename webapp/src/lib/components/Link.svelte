@@ -12,7 +12,7 @@
 		text-decoration: none;
 		text-decoration-thickness: 1px;
 		text-underline-offset: 3px;
-		transition: var(--transition);
+		transition: color 260ms ease-out;
 	}
 
 	a.underline {
@@ -20,6 +20,7 @@
 	}
 
 	a:hover {
+		transition-duration: 90ms;
 		text-decoration: underline;
 		color: var(--color-accent-60);
 	}

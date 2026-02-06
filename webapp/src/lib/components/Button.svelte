@@ -51,7 +51,10 @@
 		font-weight: 650;
 		letter-spacing: 0.01em;
 
-		transition: var(--transition);
+		transition:
+			color 260ms ease-out,
+			background-color 260ms ease-out,
+			border-color 260ms ease-out;
 
 		color: var(--color);
 		background-color: var(--color-background);
@@ -93,14 +96,24 @@
 	}
 
 	button:hover:enabled {
-		box-shadow: var(--shadow-soft);
-		transform: translateY(-1px) scale(1.01);
+		box-shadow: none;
+		transform: none;
+		transition-duration: 90ms;
+		color: var(--color);
+		background-color: color-mix(in hsl, var(--color-background) 76%, var(--color) 24%);
 		border-color: color-mix(in hsl, var(--color-border) 20%, var(--color));
+	}
+
+	button.filled:hover:enabled {
+		transition-duration: 90ms;
+		color: var(--color-background);
+		background-color: color-mix(in hsl, var(--color-background-filled) 88%, var(--color) 12%);
+		border-color: color-mix(in hsl, var(--color-background-filled) 88%, var(--color) 12%);
 	}
 
 	button:active:enabled {
 		box-shadow: none;
-		transform: translateY(0);
+		transform: none;
 	}
 
 	button:disabled {

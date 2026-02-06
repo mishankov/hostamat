@@ -16,7 +16,7 @@
 		background: var(--color-background-object);
 		backdrop-filter: blur(14px);
 
-		transition: var(--transition);
+		transition: transform 260ms ease-out, box-shadow 260ms ease-out;
 	}
 
 	.primary {
@@ -42,6 +42,7 @@
 	}
 
 	.floating:hover {
+		transition-duration: 90ms;
 		box-shadow: var(--shadow-soft);
 		transform: translateY(-2px);
 	}
