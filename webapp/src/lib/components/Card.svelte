@@ -13,7 +13,8 @@
 
 		border-radius: var(--border-radius-regular);
 
-		background-color: var(--color-primary-10);
+		background: var(--color-background-object);
+		backdrop-filter: blur(14px);
 
 		transition: var(--transition);
 	}
@@ -25,23 +26,23 @@
 	.confirm {
 		color: var(--color-confirm-90);
 		border-color: var(--color-confirm-60);
-		background: var(--gradient-confirm);
+		background: color-mix(in hsl, var(--color-confirm-10) 88%, transparent);
 	}
 
 	.danger {
 		color: var(--color-danger-90);
 		border-color: var(--color-danger-60);
-		background: var(--gradient-danger);
+		background: color-mix(in hsl, var(--color-danger-10) 88%, transparent);
 	}
 
 	.action {
 		color: var(--color-action-90);
 		border-color: var(--color-action-60);
-		background: var(--gradient-action);
+		background: color-mix(in hsl, var(--color-action-10) 88%, transparent);
 	}
 
 	.floating:hover {
-		box-shadow: var(--shadow);
+		box-shadow: var(--shadow-soft);
 		transform: translateY(-2px);
 	}
 

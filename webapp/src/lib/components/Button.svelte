@@ -41,14 +41,17 @@
 
 		border-width: 1px;
 		border-style: solid;
-		border-radius: var(--border-radius-regular);
+		border-radius: calc(var(--border-radius-regular) + 1px);
 
-		padding: 12px 20px;
+		padding: 0.64rem 1.05rem;
 
 		text-align: center;
 		user-select: none;
 
-		transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+		font-weight: 650;
+		letter-spacing: 0.01em;
+
+		transition: var(--transition);
 
 		color: var(--color);
 		background-color: var(--color-background);
@@ -56,56 +59,54 @@
 	}
 
 	.filled {
-		color: var(--color);
+		color: var(--color-background);
 		background-color: var(--color-background-filled);
 		border-color: var(--color-background-filled);
 	}
 
 	.primary {
-		--color: var(--color-primary-90);
-		--color-border: var(--color-primary-90);
-		--color-background: var(--color-primary-10);
-		--color-background-filled: var(--color-primary-90);
-	}
-
-	.primary.filled {
-		color: var(--color-primary-5);
+		--color: var(--color-accent-80);
+		--color-border: var(--color-accent-60);
+		--color-background: var(--color-accent-20);
+		--color-background-filled: var(--color-accent-70);
 	}
 
 	.confirm {
 		--color: var(--color-confirm-90);
 		--color-border: var(--color-confirm-60);
 		--color-background: var(--color-confirm-10);
-		--color-background-filled: var(--color-confirm-50);
+		--color-background-filled: var(--color-confirm-60);
 	}
 
 	.danger {
 		--color: var(--color-danger-90);
 		--color-border: var(--color-danger-60);
 		--color-background: var(--color-danger-10);
-		--color-background-filled: var(--color-danger-50);
+		--color-background-filled: var(--color-danger-60);
 	}
 
 	.action {
-		--color: var(--color-action-90);
-		--color-border: var(--color-action-60);
-		--color-background: var(--color-action-10);
-		--color-background-filled: var(--color-action-50);
+		--color: var(--color-accent-80);
+		--color-border: var(--color-accent-60);
+		--color-background: var(--color-accent-20);
+		--color-background-filled: var(--color-accent-70);
 	}
 
 	button:hover:enabled {
-		box-shadow: var(--shadow);
-		transform: translateY(-1px);
+		box-shadow: var(--shadow-soft);
+		transform: translateY(-1px) scale(1.01);
+		border-color: color-mix(in hsl, var(--color-border) 20%, var(--color));
 	}
 
 	button:active:enabled {
 		box-shadow: none;
-		transform: translateY(+1px);
+		transform: translateY(0);
 	}
 
 	button:disabled {
-		background-color: var(--color-inactive-30);
-		color: var(--color-inactive-90);
-		border-color: var(--color-inactive-90);
+		background-color: var(--color-inactive-90);
+		color: var(--color-inactive-50);
+		border-color: var(--color-inactive-70);
+		cursor: not-allowed;
 	}
 </style>

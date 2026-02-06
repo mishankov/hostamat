@@ -1,68 +1,119 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { resolve } from '$app/paths';
-	import { Button, Card, Link } from '$lib/components';
+	import { onMount } from 'svelte';
+	import { Button, Card, IconButton, Link } from '$lib/components';
+	import { Moon, Sun } from '$lib/icons';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
+
+	let cookieConsent = $state('notset');
+	let menuOpen = $state(false);
+	let theme = $state<'light' | 'dark'>('light');
 
 	const logout = async () => {
 		await fetch('/api/auth/logout', { method: 'POST' });
 		window.location.reload();
 	};
 
-	if (browser) {
-		console.info(
-			'%c📝 Обратная связь %c\nЕсли что-то пошло не так, вот форма обратной связи:\nhttps://forms.yandex.ru/u/6907bbfc49af47f3cae7650a/',
-			'color: hsl(194, 70%, 30%); font-weight: bold; font-size: 16px;',
-			'font-size: 14px;'
-		);
-	}
+	const syncTheme = () => {
+		if (!browser) {
+			return;
+		}
 
-	let cookieConsent = $state('notset');
-	if (browser) {
+		document.documentElement.setAttribute('data-theme', theme);
+		localStorage.setItem('hostamat-theme', theme);
+	};
+
+	const toggleTheme = () => {
+		theme = theme === 'light' ? 'dark' : 'light';
+		syncTheme();
+	};
+
+	onMount(() => {
 		cookieConsent = localStorage.getItem('cookieConsent') || '';
-	}
+
+		const savedTheme = localStorage.getItem('hostamat-theme');
+		if (savedTheme === 'dark' || savedTheme === 'light') {
+			theme = savedTheme;
+		} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+			theme = 'dark';
+		}
+
+		syncTheme();
+
+		console.info(
+			'%cHostamat feedback%c\nЕсли что-то пошло не так, форма обратной связи:\nhttps://forms.yandex.ru/u/6907bbfc49af47f3cae7650a/',
+			'color: hsl(212 60% 42%); font-weight: 700; font-size: 14px;',
+			'font-size: 13px;'
+		);
+	});
+
+	const closeMenu = () => {
+		menuOpen = false;
+	};
 </script>
 
 {#if cookieConsent !== 'notset' && cookieConsent !== 'true'}
 	<div class="cookie">
-		<Card border kind="confirm">
-			<div
-				class="cookie-inner"
-				style="display: flex; flex-direction: column; gap: 20px; padding: 20px;"
-			>
+		<Card border>
+			<div class="cookie-inner">
 				<p>
-					Мы используем куки <Link href="/cookies" target="_blank" alwaysUnderline>вот так</Link>
+					Мы используем cookie. Подробности в <Link href="/cookies" target="_blank" alwaysUnderline
+						>политике</Link
+					>.
 				</p>
 				<Button
 					onclick={() => {
 						cookieConsent = 'true';
 						localStorage.setItem('cookieConsent', 'true');
 					}}
-					kind="confirm">Принять</Button
+					filled
 				>
+					Принять
+				</Button>
 			</div>
 		</Card>
 	</div>
 {/if}
 
 <header>
-	<div class="header-card">
-		<div class="nav-links">
-			<Link href={resolve('/')}><span class="logo">ХОСТАМАТ</span></Link>
-			<Link href={resolve('/dashboard')}>Дашборд</Link>
-			<Link href={resolve('/about')}>О сервисе</Link>
-			<Link href={resolve('/faq')}>FAQ</Link>
-		</div>
+	<div class="header-shell">
+		<div class="header-card">
+			<div class="brand-group">
+				<Link href={resolve('/')} onclick={closeMenu}><span class="logo">ХОСТАМАТ</span></Link>
+				<button class="menu-toggle" onclick={() => (menuOpen = !menuOpen)} aria-label="Открыть меню">
+					Меню
+				</button>
+			</div>
 
-		<div class="user-info">
-			{#if data.isAuthenticated == true}
-				<Link href="/profile">{data.username}</Link>
-				<Button onclick={logout}>Выйти</Button>
-			{:else}
-				<Button link="/login">Войти</Button>
-			{/if}
+			<nav class={[menuOpen && 'open']}>
+				<Link href={resolve('/dashboard')} onclick={closeMenu}>Дашборд</Link>
+				<Link href={resolve('/about')} onclick={closeMenu}>О сервисе</Link>
+				<Link href={resolve('/faq')} onclick={closeMenu}>FAQ</Link>
+			</nav>
+
+			<div class="user-info">
+				<IconButton
+					onclick={toggleTheme}
+					title={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
+					aria-label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
+					class="theme-toggle"
+				>
+					{#if theme === 'light'}
+						<Sun size={18} color="var(--color-accent-70)" />
+					{:else}
+						<Moon size={18} color="var(--color-accent-70)" />
+					{/if}
+				</IconButton>
+				{#if data.isAuthenticated}
+					<Link href="/profile">{data.username}</Link>
+					<Button onclick={logout}>Выйти</Button>
+				{:else}
+					<Button link="/login">Войти</Button>
+				{/if}
+			</div>
 		</div>
 	</div>
 </header>
@@ -70,85 +121,170 @@
 {@render children()}
 
 <footer>
-	<div class="header-card">
-		<div class="nav-links">
-			<Link href="/"
-				><span class="logo" style="color: var(--color-inactive-50);">ХОСТАМАТ</span></Link
-			>
-			<Link href="/cookies" alwaysUnderline style="color: var(--color-inactive-50);">Куки</Link>
-			<Link href="/privacy" alwaysUnderline style="color: var(--color-inactive-50);"
-				>Политика конифиденциальности</Link
-			>
-			<Link href="/rights" alwaysUnderline style="color: var(--color-inactive-50);"
-				>Права потребителя</Link
-			>
-			<Link href="/terms" alwaysUnderline style="color: var(--color-inactive-50);"
-				>Пользовательское соглашение</Link
-			>
+	<div class="footer-shell">
+		<div class="footer-brand">
+			<Link href="/"><span class="logo soft">ХОСТАМАТ</span></Link>
+			<p>Статический хостинг без рутины</p>
+		</div>
+		<div class="footer-links">
+			<Link href="/cookies" alwaysUnderline>Куки</Link>
+			<Link href="/privacy" alwaysUnderline>Политика конфиденциальности</Link>
+			<Link href="/rights" alwaysUnderline>Права потребителя</Link>
+			<Link href="/terms" alwaysUnderline>Пользовательское соглашение</Link>
 		</div>
 	</div>
 </footer>
 
 <style>
-	.cookie {
-		position: fixed;
-		bottom: 10px;
-		right: 10px;
-	}
-
 	header {
-		width: 100%;
-		height: fit-content;
-
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
-
-		background-color: var(--color-primary-10);
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		padding: 0.8rem 0.8rem 0;
 	}
 
-	footer {
-		width: 100%;
-		height: fit-content;
-
+	.header-shell {
 		display: flex;
-		flex-direction: row;
 		justify-content: center;
-		align-items: center;
-
-		background-color: var(--color-primary-10);
 	}
 
 	.header-card {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
+		width: var(--layout-width);
+		display: grid;
+		grid-template-columns: auto 1fr auto;
 		align-items: center;
-		gap: 10px;
-
-		padding: 20px;
-
-		height: 75px;
-		width: clamp(500px, 75%, 1200px);
+		gap: 1.2rem;
+		padding: 0.8rem 1rem;
+		border: var(--border-regular);
+		border-radius: calc(var(--border-radius-regular) + 2px);
+		background: var(--color-background-object);
+		backdrop-filter: blur(16px);
+		box-shadow: var(--shadow-soft);
 	}
 
-	.nav-links {
+	.brand-group {
 		display: flex;
-		flex-direction: row;
-		align-items: end;
-		gap: 20px;
+		align-items: center;
+		gap: 0.8rem;
+	}
+
+	.logo {
+		font-family: var(--font-display);
+		font-size: 1.04rem;
+		font-weight: 700;
+		letter-spacing: 0.16em;
+	}
+
+	.logo.soft {
+		opacity: 0.75;
+	}
+
+	nav {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
 	}
 
 	.user-info {
 		display: flex;
-		flex-direction: row;
 		align-items: center;
-		gap: 20px;
+		justify-content: flex-end;
+		gap: 0.8rem;
 	}
 
-	span.logo {
-		font-size: larger;
-		font-weight: bold;
+	:global(.theme-toggle) {
+		width: 34px;
+		height: 34px;
+	}
+
+	.menu-toggle {
+		display: none;
+		border: var(--border-regular);
+		border-radius: calc(var(--border-radius-regular) + 2px);
+		background: var(--color-background-object);
+		padding: 0.4rem 0.8rem;
+		color: var(--color-text-regular);
+	}
+
+	.cookie {
+		position: fixed;
+		right: 0.8rem;
+		bottom: 0.8rem;
+		z-index: 70;
+		max-width: min(460px, calc(100vw - 1.2rem));
+	}
+
+	.cookie-inner {
+		display: flex;
+		flex-direction: column;
+		gap: 0.9rem;
+		padding: 1rem;
+	}
+
+	footer {
+		padding: 2rem 1.2rem 1.8rem;
+	}
+
+	.footer-shell {
+		width: var(--layout-width);
+		margin: 0 auto;
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 1rem;
+		border-top: var(--border-regular);
+	}
+
+	.footer-brand {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.footer-links {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 0.8rem 1.2rem;
+	}
+
+	@media (max-width: 900px) {
+		.header-card {
+			grid-template-columns: 1fr;
+			gap: 0.8rem;
+		}
+
+		.brand-group {
+			justify-content: space-between;
+		}
+
+		.menu-toggle {
+			display: inline-flex;
+			align-items: center;
+		}
+
+		nav {
+			display: none;
+			flex-direction: column;
+			align-items: flex-start;
+			padding-top: 0.4rem;
+		}
+
+		nav.open {
+			display: flex;
+		}
+
+		.user-info {
+			justify-content: flex-start;
+			flex-wrap: wrap;
+		}
+
+		.footer-shell {
+			flex-direction: column;
+		}
+
+		.footer-links {
+			justify-content: flex-start;
+		}
 	}
 </style>

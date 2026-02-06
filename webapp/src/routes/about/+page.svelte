@@ -1,126 +1,116 @@
 <script>
-	import { Badge, Link } from '$lib/components';
+	import { Badge, Card, Link } from '$lib/components';
 </script>
 
 <svelte:head>
 	<title>О сервисе | Хостамат</title>
 </svelte:head>
 
-<main>
-	<div class="about">
+<main class="page-shell">
+	<div class="page-content about">
 		<h1>О сервисе</h1>
-		<p>
+		<p class="intro">
 			Хостамат (<Link href="https://hostamat.ru" target="_blank" alwaysUnderline>hostamat.ru</Link>)
-			— сервис для простого хостинга статических сайтов.
+			помогает быстро публиковать статические проекты и управлять ими в одном месте.
 		</p>
 
 		<div class="cards">
-			<div class="card">
-				<h2>Простота использования</h2>
-				<p>
-					Для каждого сайта выделяется домен третьего уровня с настроенным TLS, поэтому каждый сайт
-					доступен по HTTPS сразу после загрузки.
-				</p>
-			</div>
+			<Card border>
+				<section class="card-section">
+					<h2>Простота публикации</h2>
+					<p>
+						Для каждого сайта автоматически выделяется домен третьего уровня с настроенным TLS, поэтому
+						HTTPS доступен сразу после загрузки.
+					</p>
+				</section>
+			</Card>
 
-			<div class="card">
-				<h2>Гибкая загрузка</h2>
-				<p>
-					Сайты можно загружать напрямую на сайте сервиса в виде отдельных файлов или .zip архива.
-				</p>
-			</div>
+			<Card border>
+				<section class="card-section">
+					<h2>Гибкая загрузка</h2>
+					<p>Вы можете загрузить отдельные файлы или ZIP-архив.</p>
+				</section>
+			</Card>
 
-			<div class="card">
-				<h2>Поддерживаемые форматы</h2>
-				<h3>Исходный код</h3>
-				<div class="file-types">
-					<Badge text="html" />
-					<Badge text="css" />
-					<Badge text="js" />
-				</div>
+			<Card border>
+				<section class="card-section">
+					<h2>Поддерживаемые форматы</h2>
+					<h3>Исходный код</h3>
+					<div class="file-types">
+						<Badge text="html" />
+						<Badge text="css" />
+						<Badge text="js" />
+					</div>
+					<h3>Изображения</h3>
+					<div class="file-types">
+						<Badge text="png" />
+						<Badge text="jpg" />
+						<Badge text="jpeg" />
+						<Badge text="svg" />
+						<Badge text="gif" />
+						<Badge text="ico" />
+						<Badge text="webp" />
+					</div>
+					<h3>Шрифты</h3>
+					<div class="file-types">
+						<Badge text="woff2" />
+						<Badge text="woff" />
+						<Badge text="ttf" />
+						<Badge text="eot" />
+					</div>
+				</section>
+			</Card>
 
-				<h3>Изображения</h3>
-				<div class="file-types">
-					<Badge text="png" />
-					<Badge text="jpg" />
-					<Badge text="jpeg" />
-					<Badge text="svg" />
-					<Badge text="gif" />
-					<Badge text="ico" />
-					<Badge text="webp" />
-				</div>
-
-				<h3>Шрифты</h3>
-				<div class="file-types">
-					<Badge text="woff2" />
-					<Badge text="woff" />
-					<Badge text="ttf" />
-					<Badge text="eot" />
-				</div>
-			</div>
-
-			<div class="card">
-				<h2>Обратная связь</h2>
-				<p>
-					Для сообщения о возникших ошибках, вопросах или желании оставить какую-либо другую
-					обратную связь можно воспользоваться <Link
-						href="https://forms.yandex.ru/u/6907bbfc49af47f3cae7650a"
-						target="_blank"
-						alwaysUnderline>формой</Link
-					>
-				</p>
-			</div>
+			<Card border>
+				<section class="card-section">
+					<h2>Обратная связь</h2>
+					<p>
+						Если заметили баг или хотите предложить идею, отправьте сообщение через <Link
+							href="https://forms.yandex.ru/u/6907bbfc49af47f3cae7650a"
+							target="_blank"
+							alwaysUnderline>форму</Link
+						>.
+					</p>
+				</section>
+			</Card>
 		</div>
 	</div>
 </main>
 
 <style>
-	main {
-		width: 100%;
-		height: calc(100% - 76px);
-
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: start;
-	}
-
 	.about {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-
-		width: clamp(500px, 75%, 1200px);
-
-		padding: 20px;
+		gap: 1rem;
+		padding-bottom: 2rem;
 	}
 
-	p {
-		font-size: 1.25rem;
-		line-height: 1.6;
-		color: var(--color-text-secondary);
-		max-width: 600px;
+	.intro {
+		max-width: 66ch;
+		font-size: 1.05rem;
 	}
 
 	.cards {
-		display: flex;
-		flex-direction: column;
-		gap: 32px;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(240px, 1fr));
+		gap: 0.9rem;
 	}
 
-	.card {
+	.card-section {
+		height: 100%;
+		padding: 1rem;
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
-	}
-
-	.card h2 {
-		padding-top: 10px;
+		gap: 0.7rem;
 	}
 
 	.file-types {
 		display: flex;
-		gap: 12px;
-		max-width: 600px;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	@media (max-width: 860px) {
+		.cards {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

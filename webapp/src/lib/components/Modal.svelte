@@ -46,12 +46,14 @@
 		transform: translateX(-50%) translateY(-50%);
 
 		border: var(--border-regular);
-		border-radius: var(--border-radius-regular);
+		border-radius: calc(var(--border-radius-regular) + 2px);
 
 		padding: 0;
 
-		background: var(--gradient-primary-7-10);
-		color: var(--color-text);
+		background: var(--color-background-object);
+		color: var(--color-text-regular);
+		box-shadow: var(--shadow-medium);
+		backdrop-filter: blur(18px);
 
 		transition: var(--transition);
 	}
@@ -62,11 +64,11 @@
 
 	.danger {
 		border-color: var(--color-danger-60);
-		background: var(--gradient-danger);
+		background: color-mix(in hsl, var(--color-danger-10) 92%, var(--color-background-object));
 	}
 
 	dialog[open] {
-		animation: fadein 300ms ease-in forwards;
+		animation: fadein 180ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 	}
 
 	@keyframes fadein {
@@ -81,7 +83,8 @@
 	}
 
 	::backdrop {
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: hsl(210 28% 10% / 0.35);
+		backdrop-filter: blur(2px);
 	}
 
 	div.modal-content {

@@ -22,7 +22,7 @@
 		onsiteupdate = async () => {}
 	}: Props = $props();
 
-	const subdomain = site.domain.split('.')[0];
+	const subdomain = $derived(site.domain.split('.')[0]);
 
 	let uploadModal = $state<Modal>();
 	let deleteModal = $state<Modal>();
@@ -36,9 +36,7 @@
 <div class="site-content">
 	<div class="site-url-container">
 		<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
-		<span title="Поддомен" style="font-size: 16px; color: var(--color-text-secondary);"
-			>{subdomain}</span
-		>
+		<span title="Поддомен" class="subdomain">{subdomain}</span>
 	</div>
 
 	<div class="site-toolbar">
@@ -90,7 +88,7 @@
 				navigator.clipboard.writeText(`https://${site.domain}`);
 			}}
 		>
-			<Copy size={25} background="var(--color-primary-7)" />
+			<Copy size={25} background="var(--color-primary-10)" />
 		</IconButton>
 
 		<IconButton title="Удалить сайт" kind="danger" onclick={() => deleteModal?.open()}>
@@ -129,14 +127,11 @@
 	.site-content {
 		display: flex;
 		flex-direction: column;
-		gap: 5px;
+		gap: 0.5rem;
 		min-width: 150px;
 		height: 100%;
 
-		padding-top: 20px;
-		padding-left: 20px;
-		padding-right: 20px;
-		padding-bottom: 20px;
+		padding: 1rem;
 	}
 
 	.site-url-container {
@@ -148,18 +143,22 @@
 		font-size: 18px;
 	}
 
+	.subdomain {
+		font-size: 0.88rem;
+		color: var(--color-text-secondary);
+	}
+
 	.site-toolbar {
 		width: fit-content;
 		justify-self: end;
 
 		display: flex;
-		padding: 2px;
+		padding: 3px;
 		margin-top: auto;
-		/*background: var(--gradient-primary-7-10);*/
-		background: var(--color-primary-7);
+		background: var(--color-background-object);
 
 		border: var(--border-regular);
-		border-radius: 7px;
+		border-radius: calc(var(--border-radius-regular) + 2px);
 	}
 
 	.upload-modal {

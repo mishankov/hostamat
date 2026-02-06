@@ -73,7 +73,7 @@
 	.cap {
 		transform-box: fill-box;
 		transform-origin: center;
-		transition: all 500ms;
+		transition: all 140ms ease-out;
 	}
 
 	svg:hover .cap {

@@ -91,8 +91,8 @@
 	<title>Профиль | Хостамат</title>
 </svelte:head>
 
-<main>
-	<div class="profile">
+<main class="page-shell">
+	<div class="page-content profile">
 		{#if errorMessage || sucessMessage}
 			<div style="max-width: 500px;">
 				{#if errorMessage}
@@ -105,7 +105,10 @@
 			</div>
 		{/if}
 
-		<h1>Профиль</h1>
+		<div class="headline">
+			<h1>Профиль</h1>
+			<p>Управление учётной записью и безопасностью.</p>
+		</div>
 
 		<div class="profile-data">
 			<div class="profile-data-row">
@@ -123,7 +126,8 @@
 			</div>
 		</div>
 
-		<div class="change-password">
+		<Card border>
+			<div class="change-password">
 			<h2>Смена пароля</h2>
 
 			<Input
@@ -151,7 +155,8 @@
 			<Button kind="danger" onclick={changePasswordAction} disabled={changePasswordButtonDisabled}
 				>Сменить пароль</Button
 			>
-		</div>
+			</div>
+		</Card>
 
 		<Card kind="danger" border={true}>
 			<div class="danger-zone">
@@ -182,23 +187,17 @@
 
 <style>
 	main {
-		width: 100%;
-		height: calc(100% - 76px);
-
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: start;
+		padding-bottom: 2rem;
 	}
 
 	.profile {
+		gap: 1rem;
+	}
+
+	.headline {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
-
-		width: clamp(500px, 75%, 1200px);
-
-		padding: 20px;
+		gap: 0.4rem;
 	}
 
 	.profile-data {
@@ -227,19 +226,20 @@
 	.change-password {
 		display: flex;
 		flex-direction: column;
-		gap: 15px;
+		gap: 0.9rem;
 
-		max-width: 300px;
+		max-width: 420px;
+		padding: 1rem;
 	}
 
 	.danger-zone {
 		display: flex;
 		flex-direction: column;
-		gap: 15px;
+		gap: 0.8rem;
 
 		max-width: 500px;
 
-		padding: 20px;
+		padding: 1rem;
 	}
 
 	.danger-zone h2 {
@@ -248,7 +248,7 @@
 
 	.danger-zone-description {
 		color: var(--color-danger-90);
-		font-size: 14px;
+		font-size: 0.9rem;
 		margin: 0;
 	}
 

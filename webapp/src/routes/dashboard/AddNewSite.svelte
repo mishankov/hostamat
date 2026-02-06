@@ -17,7 +17,7 @@
 	resetState();
 </script>
 
-<Card border floating style="height: 150px;" kind="action">
+<Card border floating style="min-height: 170px;" kind="action">
 	<button
 		class="add-site"
 		onclick={() => {
@@ -93,12 +93,13 @@
 		align-items: center;
 		justify-content: center;
 
-		padding-left: 20px;
-		padding-right: 20px;
+		padding: 1rem 1.3rem;
+		cursor: pointer;
 	}
 
 	.add-site-text {
-		color: var(--color-primary-90);
+		color: var(--color-action-90);
+		font-weight: 700;
 		user-select: none;
 	}
 </style>

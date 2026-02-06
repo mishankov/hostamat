@@ -13,15 +13,18 @@
 		align-items: center;
 		justify-content: center;
 
-		padding: 4px;
+		padding: 6px;
 		border-radius: var(--border-radius-regular);
+		border: var(--border-regular);
+		background: var(--color-background-object);
 
 		transition: var(--transition);
 	}
 
 	button:hover {
-		background: var(--color-primary-20);
+		background: var(--color-accent-20);
 		cursor: pointer;
+		transform: translateY(-1px);
 	}
 
 	button.danger:hover {

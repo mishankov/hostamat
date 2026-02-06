@@ -44,6 +44,7 @@
 />
 
 <h1>Вход</h1>
+<p class="lead">Вернитесь к вашим сайтам и публикациям.</p>
 
 {#if error}
 	<Error message={error} />
@@ -72,5 +73,11 @@
 		gap: 10px;
 
 		padding-top: 10px;
+	}
+
+	.lead {
+		font-size: 0.95rem;
+		margin-top: -0.4rem;
+		margin-bottom: 0.4rem;
 	}
 </style>

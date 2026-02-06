@@ -37,9 +37,12 @@
 	<title>Дашборд | Хостамат</title>
 </svelte:head>
 
-<main>
-	<div class="dashboard">
-		<h1>Твои сайты</h1>
+<main class="page-shell">
+	<div class="page-content dashboard">
+		<div class="headline">
+			<h1>Твои сайты</h1>
+			<p>Управляйте публикациями, обновляйте файлы и следите за лимитом альфы.</p>
+		</div>
 
 		{#if errorMessage}
 			<Error message={errorMessage} />
@@ -51,7 +54,7 @@
 			{:then sitesResult}
 				{#if sitesResult.data}
 					{#each sites as site (site.id)}
-						<Card border style="height: 150px;">
+						<Card border style="min-height: 170px;">
 							<SiteContent
 								{site}
 								bind:loading
@@ -91,28 +94,26 @@
 
 <style>
 	main {
-		width: 100%;
-		height: calc(100% - 76px);
-
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: start;
+		padding-bottom: 2rem;
 	}
 
 	.dashboard {
+		gap: 1rem;
+	}
+
+	.headline {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: 0.4rem;
+	}
 
-		width: clamp(500px, 75%, 1200px);
-
-		padding: 20px;
+	.headline p {
+		max-width: 64ch;
 	}
 
 	.site-list {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 10px;
+		gap: 0.8rem;
 	}
 </style>

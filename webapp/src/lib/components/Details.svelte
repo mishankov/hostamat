@@ -9,8 +9,12 @@
 
 <style>
 	summary {
-		padding-bottom: 5px;
+		padding-bottom: 6px;
+		font-weight: 650;
+		color: var(--color-primary-90);
 		text-decoration: underline;
+		text-underline-offset: 3px;
+		cursor: pointer;
 	}
 
 	summary::marker {

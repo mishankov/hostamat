@@ -5,35 +5,28 @@
 	let { children }: LayoutProps = $props();
 </script>
 
-<main>
-	<Card>
-		<div class="form">
-			{@render children()}
-		</div>
-	</Card>
+<main class="page-shell auth-shell">
+	<section class="auth-wrap">
+		<Card border>
+			<div class="form">{@render children()}</div>
+		</Card>
+	</section>
 </main>
 
 <style>
-	main {
-		height: calc(100% - 75px);
-		width: 100vw;
-
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
+	.auth-shell {
+		min-height: calc(100vh - 220px);
 		align-items: center;
 	}
 
-	.form {
-		width: 300px;
+	.auth-wrap {
+		width: min(420px, 100%);
+	}
 
+	.form {
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-
-		gap: 15px;
-
-		padding: 20px;
+		gap: 0.9rem;
+		padding: 1.2rem;
 	}
 </style>

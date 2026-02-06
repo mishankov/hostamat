@@ -8,9 +8,11 @@
 
 <style>
 	a {
-		color: var(--color-primary-90);
+		color: var(--color-accent-80);
 		text-decoration: none;
-		transition: all 500ms;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 3px;
+		transition: var(--transition);
 	}
 
 	a.underline {
@@ -19,5 +21,10 @@
 
 	a:hover {
 		text-decoration: underline;
+		color: var(--color-accent-60);
+	}
+
+	a:visited {
+		color: var(--color-accent-80);
 	}
 </style>

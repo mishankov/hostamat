@@ -18,7 +18,7 @@
 
 <style>
 	circle {
-		animation: rotate 1.4s linear infinite;
+		animation: rotate 1s linear infinite;
 	}
 
 	@keyframes rotate {

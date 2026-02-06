@@ -6,8 +6,8 @@
 	<title>Пользовательское соглашение | Хостамат</title>
 </svelte:head>
 
-<main>
-	<div class="document">
+<main class="page-shell">
+	<div class="page-content document legal-document">
 		<h1>Пользовательское соглашение</h1>
 
 		<section>
@@ -176,46 +176,39 @@
 
 <style>
 	main {
-		width: 100%;
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: center;
+		padding-bottom: 2rem;
 	}
 
 	.document {
-		display: flex;
-		flex-direction: column;
 		gap: 24px;
-		width: clamp(500px, 75%, 1200px);
-		padding: 20px;
+		padding: clamp(1.1rem, 2vw, 1.8rem);
 	}
 
 	h1 {
-		font-size: 2rem;
-		margin-bottom: 10px;
+		font-size: clamp(1.8rem, 4vw, 2.3rem);
+		margin-bottom: 0.3rem;
 	}
 
 	h2 {
-		font-size: 1.5rem;
-		margin-top: 20px;
-		margin-bottom: 10px;
+		font-size: clamp(1.25rem, 3vw, 1.6rem);
+		margin-top: 1rem;
+		margin-bottom: 0.4rem;
 	}
 
 	h3 {
-		font-size: 1.25rem;
-		margin-top: 15px;
-		margin-bottom: 8px;
+		font-size: 1.1rem;
+		margin-top: 0.8rem;
+		margin-bottom: 0.35rem;
 	}
 
 	p {
-		font-size: 1.1rem;
+		font-size: 1rem;
 		line-height: 1.6;
 		color: var(--color-text-secondary);
 	}
 
 	ul {
-		margin-left: 20px;
+		padding-left: 1.2rem;
 		line-height: 1.6;
 	}
 

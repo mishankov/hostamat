@@ -33,7 +33,7 @@
 <style>
 	rect {
 		stroke: var(--color-primary-90);
-		transition: all 500ms;
+		transition: all 140ms ease-out;
 	}
 
 	rect {

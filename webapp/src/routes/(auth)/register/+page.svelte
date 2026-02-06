@@ -57,6 +57,7 @@
 />
 
 <h1>Регистрация</h1>
+<p class="lead">Создайте аккаунт и загрузите первый сайт за пару минут.</p>
 
 {#if error}
 	<Error message={error} />
@@ -102,12 +103,21 @@
 	}
 
 	.password-rules {
-		padding: 10px;
+		padding: 0.9rem;
 
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
 
 		color: var(--color-text-secondary);
+		font-size: 0.92rem;
+		line-height: 1.35;
+		border-left: 2px solid var(--color-accent-40);
+	}
+
+	.lead {
+		font-size: 0.95rem;
+		margin-top: -0.4rem;
+		margin-bottom: 0.4rem;
 	}
 </style>

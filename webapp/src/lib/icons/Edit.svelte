@@ -34,7 +34,7 @@
 
 <style>
 	.stick {
-		transition: all 500ms;
+		transition: all 140ms ease-out;
 	}
 	svg:hover .stick {
 		transform: translateY(-5px);

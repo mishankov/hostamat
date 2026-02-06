@@ -138,7 +138,7 @@
 				// Close upload session on error
 				const { error: closeError } = await closeUploadSession(uploadSession);
 				if (closeError) {
-					console.error('Failed to close upload session:', closeError);
+					error = closeError;
 				}
 				return;
 			}
@@ -323,11 +323,12 @@
 
 	.drop-zone {
 		border: 1px dashed var(--color-action-50);
-		border-radius: var(--border-radius-regular);
+		border-radius: calc(var(--border-radius-regular) + 1px);
 		padding: 2rem;
 		text-align: center;
 		cursor: pointer;
 		transition: var(--transition);
+		background: color-mix(in hsl, var(--color-action-10) 72%, var(--color-background-object));
 	}
 
 	.drop-zone:focus {
@@ -356,6 +357,7 @@
 	.files-list {
 		max-height: 200px;
 		overflow-y: auto;
+		scrollbar-width: thin;
 	}
 
 	.file-item {
