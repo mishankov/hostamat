@@ -64,7 +64,7 @@
 
 	.floating:hover {
 		transition-duration: 90ms;
-		box-shadow: var(--shadow-soft);
+		box-shadow: var(--shadow-md);
 		transform: translateY(-2px);
 	}
 

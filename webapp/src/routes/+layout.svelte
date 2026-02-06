@@ -159,7 +159,7 @@
 		align-items: center;
 		gap: 1.2rem;
 		padding: 0.8rem 1rem;
-		box-shadow: 0 10px 28px hsl(214 35% 12% / 0.09);
+		box-shadow: var(--shadow-sm);
 	}
 
 	.brand-group {
@@ -233,12 +233,12 @@
 	:global(.footer-card) {
 		width: var(--layout-width);
 		padding: 1rem;
-		box-shadow: 0 10px 28px hsl(214 35% 12% / 0.09);
+		box-shadow: var(--shadow-sm);
 	}
 
 	:global(:root[data-theme='dark'] .header-card),
 	:global(:root[data-theme='dark'] .footer-card) {
-		box-shadow: 0 14px 36px hsl(212 60% 3% / 0.42);
+		box-shadow: var(--shadow-md);
 	}
 
 	.footer-inner {

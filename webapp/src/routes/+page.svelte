@@ -120,12 +120,12 @@
 
 	.landing :global(.card) {
 		background: color-mix(in hsl, var(--color-background-object) 96%, var(--color-background));
-		box-shadow: 0 10px 28px hsl(214 35% 12% / 0.09);
+		box-shadow: var(--shadow-sm);
 	}
 
 	:global(:root[data-theme='dark']) .landing :global(.card) {
 		background: color-mix(in hsl, var(--color-background-object) 94%, var(--color-primary-10));
-		box-shadow: 0 14px 36px hsl(212 60% 3% / 0.42);
+		box-shadow: var(--shadow-md);
 	}
 
 	:global(.card-like) {

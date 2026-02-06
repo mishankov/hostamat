@@ -52,7 +52,7 @@
 
 		background: var(--color-background-object);
 		color: var(--color-text-regular);
-		box-shadow: var(--shadow-medium);
+		box-shadow: var(--shadow-lg);
 		backdrop-filter: blur(18px);
 
 		transition: var(--transition);
