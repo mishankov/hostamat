@@ -197,6 +197,11 @@
 		height: 34px;
 	}
 
+	:global(button.theme-toggle:hover) {
+		background: color-mix(in hsl, var(--color-background-object) 95%, var(--color-accent-80) 5%);
+		border-color: color-mix(in hsl, var(--color-accent-60) 82%, var(--color-accent-80) 18%);
+	}
+
 	.menu-toggle {
 		display: none;
 		border: var(--border-regular);

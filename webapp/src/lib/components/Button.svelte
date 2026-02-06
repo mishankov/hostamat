@@ -70,7 +70,7 @@
 	.primary {
 		--color: var(--color-accent-80);
 		--color-border: var(--color-accent-60);
-		--color-background: var(--color-accent-20);
+		--color-background: var(--color-background-object);
 		--color-background-filled: var(--color-accent-70);
 	}
 
@@ -91,7 +91,7 @@
 	.action {
 		--color: var(--color-accent-80);
 		--color-border: var(--color-accent-60);
-		--color-background: var(--color-accent-20);
+		--color-background: var(--color-background-object);
 		--color-background-filled: var(--color-accent-70);
 	}
 
@@ -100,8 +100,8 @@
 		transform: none;
 		transition-duration: 90ms;
 		color: var(--color);
-		background-color: color-mix(in hsl, var(--color-background) 76%, var(--color) 24%);
-		border-color: color-mix(in hsl, var(--color-border) 20%, var(--color));
+		background-color: color-mix(in hsl, var(--color-background) 95%, var(--color) 5%);
+		border-color: color-mix(in hsl, var(--color-border) 82%, var(--color) 18%);
 	}
 
 	button.filled:hover:enabled {
