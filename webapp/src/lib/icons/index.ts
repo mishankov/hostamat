@@ -5,8 +5,10 @@ import I from './I.svelte';
 import Plus from './Plus.svelte';
 import Spinner from './Spinner.svelte';
 import Check from './Check.svelte';
+import Sun from './Sun.svelte';
+import Moon from './Moon.svelte';
 import Trash from './Trash.svelte';
 import Upload from './Upload.svelte';
 import X from './X.svelte';
 
-export { Copy, Download, Edit, I, Plus, Spinner, Check, Trash, Upload, X };
+export { Copy, Download, Edit, I, Plus, Spinner, Check, Sun, Moon, Trash, Upload, X };

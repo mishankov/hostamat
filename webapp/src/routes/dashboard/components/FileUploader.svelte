@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { Button, Card, Details, Error, ProgressBar, Success } from '$lib/components';
+	import { Alert, Button, Card, Details, IconButton, ProgressBar } from '$lib/components';
 	import { Upload, X } from '$lib/icons';
-	import { IconButton } from '$lib/components';
 	import { closeUploadSession, createUploadSession } from '$lib/api-client';
 	import { uploadFile } from './utils';
 
@@ -38,6 +37,7 @@
 	let error: string = $state('');
 	let uploadedFiles: string[] = $state([]);
 	let skippedFiles: string[] = $state([]);
+	let isDragOver = $state(false);
 
 	export function resetUploadState() {
 		uploadedFiles = [];
@@ -67,14 +67,30 @@
 
 	function handleDragOver(event: DragEvent): void {
 		event.preventDefault();
-		resetUploadState();
+		isDragOver = true;
 		if (event.dataTransfer) {
 			event.dataTransfer.dropEffect = 'copy';
 		}
 	}
 
+	function handleDragEnter(event: DragEvent): void {
+		event.preventDefault();
+		isDragOver = true;
+	}
+
+	function handleDragLeave(event: DragEvent): void {
+		const target = event.currentTarget as HTMLElement | null;
+		const relatedTarget = event.relatedTarget as Node | null;
+		if (target && relatedTarget && target.contains(relatedTarget)) {
+			return;
+		}
+
+		isDragOver = false;
+	}
+
 	function handleDrop(event: DragEvent): void {
 		event.preventDefault();
+		isDragOver = false;
 		if (!event.dataTransfer) return;
 
 		resetUploadState();
@@ -138,7 +154,7 @@
 				// Close upload session on error
 				const { error: closeError } = await closeUploadSession(uploadSession);
 				if (closeError) {
-					console.error('Failed to close upload session:', closeError);
+					error = closeError;
 				}
 				return;
 			}
@@ -195,7 +211,8 @@
 	}
 
 	function handleKeyDown(event: KeyboardEvent): void {
-		if (event.key === 'Enter') {
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault();
 			fileInput.click();
 		}
 	}
@@ -203,11 +220,11 @@
 
 <div class="file-upload-container">
 	{#if error}
-		<Error message={error} />
+		<Alert variant="error" message={error} />
 	{/if}
 
 	{#if uploadProgress == 100}
-		<Success header="Загрузка успешно завершена">
+		<Alert variant="success" title="Загрузка успешно завершена">
 			<div class="success-message">
 				{#if uploadedFiles.length > 0}
 					<div class="uploaded-files">
@@ -232,13 +249,15 @@
 					</div>
 				{/if}
 			</div>
-		</Success>
+		</Alert>
 	{/if}
 
 	<div
 		class="drop-zone"
-		class:drag-over={false}
+		class:drag-over={isDragOver}
+		ondragenter={handleDragEnter}
 		ondragover={handleDragOver}
+		ondragleave={handleDragLeave}
 		ondrop={handleDrop}
 		role="button"
 		tabindex="0"
@@ -262,12 +281,12 @@
 		{multiple}
 		accept="text/html, text/css, application/javascript, image/png, image/jpeg, image/jpeg, image/svg+xml, application/x-zip-compressed"
 		onchange={handleFileSelect}
-		style="display: none;"
+		class="file-input-hidden"
 		{disabled}
 	/>
 
 	{#if selectedFiles.length > 0}
-		<Card style="width: 100%;">
+		<Card class="selected-files-card">
 			<div class="selected-files">
 				<div class="files-header">
 					<h3>Выбранные файлы ({selectedFiles.length})</h3>
@@ -282,7 +301,7 @@
 								<span class="file-size">{formatFileSize(file.size)}</span>
 							</div>
 
-							<IconButton onclick={() => removeFile(index)} title="Удалить">
+							<IconButton label="Удалить файл" onclick={() => removeFile(index)} title="Удалить">
 								<X size={20} />
 							</IconButton>
 						</div>
@@ -323,15 +342,21 @@
 
 	.drop-zone {
 		border: 1px dashed var(--color-action-50);
-		border-radius: var(--border-radius-regular);
+		border-radius: calc(var(--border-radius-regular) + 1px);
 		padding: 2rem;
 		text-align: center;
 		cursor: pointer;
 		transition: var(--transition);
+		background: color-mix(in hsl, var(--color-action-10) 72%, var(--color-background-object));
 	}
 
-	.drop-zone:focus {
-		outline: var(--border-width) var(--border-style) var(--color-action);
+	.drop-zone.drag-over {
+		border-color: var(--color-action-60);
+		background: color-mix(in hsl, var(--color-action-15) 68%, var(--color-background-object));
+	}
+
+	.drop-zone:focus-visible {
+		outline: var(--border-width) var(--border-style) var(--color-action-60);
 		outline-offset: 2px;
 	}
 
@@ -356,6 +381,7 @@
 	.files-list {
 		max-height: 200px;
 		overflow-y: auto;
+		scrollbar-width: thin;
 	}
 
 	.file-item {
@@ -385,6 +411,14 @@
 
 	.file-size {
 		color: var(--color-text-secondary);
+	}
+
+	.file-input-hidden {
+		display: none;
+	}
+
+	:global(.selected-files-card) {
+		width: 100%;
 	}
 
 	.actions {

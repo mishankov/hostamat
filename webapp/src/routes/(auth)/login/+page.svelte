@@ -1,7 +1,6 @@
-<script>
-	import Button from '$lib/components/Button.svelte';
-	import Error from '$lib/components/Error.svelte';
-	import Input from '$lib/components/Input.svelte';
+<script lang="ts">
+	import { navigateAfterAuthChange } from '$lib/auth/navigation';
+	import { Alert, Button, Input } from '$lib/components';
 
 	let login = $state('');
 	let password = $state('');
@@ -19,7 +18,7 @@
 		});
 
 		if (res.ok) {
-			window.location.href = '/dashboard';
+			await navigateAfterAuthChange('/dashboard');
 			return;
 		}
 
@@ -29,41 +28,47 @@
 			error = 'Ошибка сервера';
 		}
 	};
+
+	const onSubmit = async (event: SubmitEvent) => {
+		event.preventDefault();
+		await loginAction();
+	};
 </script>
 
 <svelte:head>
 	<title>Вход | Хостамат</title>
 </svelte:head>
 
-<svelte:window
-	on:keydown={(e) => {
-		if (e.key === 'Enter' && !loginButtonDisabled) {
-			loginAction();
-		}
-	}}
-/>
-
 <h1>Вход</h1>
+<p class="lead">Вернитесь к вашим сайтам и публикациям.</p>
 
 {#if error}
-	<Error message={error} />
+	<Alert variant="error" message={error} />
 {/if}
 
-<Input id="login" type="text" label="Логин" bind:value={login} placeholder="ivan" />
-<Input
-	id="password"
-	type="password"
-	label="Пароль"
-	bind:value={password}
-	placeholder="verysecure"
-/>
+<form class="auth-form" onsubmit={onSubmit}>
+	<Input id="login" type="text" label="Логин" bind:value={login} placeholder="ivan" />
+	<Input
+		id="password"
+		type="password"
+		label="Пароль"
+		bind:value={password}
+		placeholder="verysecure"
+	/>
 
-<div class="actions">
-	<Button filled onclick={loginAction} disabled={loginButtonDisabled}>Войти</Button>
-	<Button link="/register">Создать аккаунт</Button>
-</div>
+	<div class="actions">
+		<Button type="submit" filled disabled={loginButtonDisabled}>Войти</Button>
+		<Button href="/register">Создать аккаунт</Button>
+	</div>
+</form>
 
 <style>
+	.auth-form {
+		display: flex;
+		flex-direction: column;
+		gap: 0.9rem;
+	}
+
 	.actions {
 		width: 100%;
 
@@ -72,5 +77,11 @@
 		gap: 10px;
 
 		padding-top: 10px;
+	}
+
+	.lead {
+		font-size: 0.95rem;
+		margin-top: -0.4rem;
+		margin-bottom: 0.4rem;
 	}
 </style>

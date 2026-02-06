@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Button, Card, Error, Input, Link, Separator } from '$lib/components';
-	import Success from '$lib/components/Success.svelte';
+	import { Alert, Button, Card, Input, Link, Separator } from '$lib/components';
 	import { Copy, Download, Plus, Spinner, Trash, Upload, X } from '$lib/icons';
 	import Check from '$lib/icons/Check.svelte';
 </script>
@@ -78,13 +77,13 @@
 	<h2>Error card</h2>
 
 	<div style="width: 300px;">
-		<Error header="Error message" />
+		<Alert variant="error" title="Error message" />
 	</div>
 
 	<h2>Success card</h2>
 
 	<div style="width: 300px;">
-		<Success header="Success message" />
+		<Alert variant="success" title="Success message" />
 	</div>
 
 	<h1>Separator</h1>

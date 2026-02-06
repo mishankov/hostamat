@@ -11,17 +11,17 @@
 	.progress-bar {
 		position: relative;
 		width: 100%;
-		height: 30px;
+		height: 34px;
 
-		background-color: var(--color-primary-10);
+		background-color: var(--color-primary-15);
 
-		/*border: var(--border-regular);*/
+		border: var(--border-regular);
 		border-radius: var(--border-radius-regular);
 	}
 
 	.progress-fill {
 		height: 100%;
-		background-color: var(--color-primary-95);
+		background: var(--color-accent-60);
 		border-radius: var(--border-radius-regular);
 		transition: var(--transition);
 	}
@@ -39,6 +39,6 @@
 	}
 
 	p.dark {
-		color: var(--color-primary-10);
+		color: var(--color-primary-95);
 	}
 </style>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { dev } from '$app/environment';
-	import { Button } from '$lib/components';
+	import { Button, Card } from '$lib/components';
 
 	let { data } = $props();
 </script>
@@ -10,9 +10,9 @@
 	<title>{page.status} - Хостамат</title>
 </svelte:head>
 
-<main>
-	<div class="error-page">
-		<div class="error-content">
+<main class="page-shell">
+	<div class="page-content error-page">
+		<Card border class="error-content">
 			<h1 class="error-code">{page.status}</h1>
 			<h2 class="title">
 				{#if page.status === 404}
@@ -33,21 +33,17 @@
 			</p>
 			<div class="action-buttons">
 				{#if data.isAuthenticated}
-					<Button link="/dashboard" kind="primary" filled>Вернуться на дашборд</Button>
+					<Button href="/dashboard" kind="primary" filled>Вернуться на дашборд</Button>
 				{/if}
-				<Button link="/" kind="primary">Вернуться на главную</Button>
+				<Button href="/" kind="primary">Вернуться на главную</Button>
 			</div>
-		</div>
+		</Card>
 	</div>
 </main>
 
 <style>
 	main {
-		min-height: calc(100vh - 80px);
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
+		min-height: calc(100vh - 220px);
 		align-items: center;
 	}
 
@@ -57,15 +53,18 @@
 		gap: 20px;
 	}
 
-	.error-content {
+	:global(.error-content) {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 20px;
+		padding: 1.4rem;
 	}
 
 	.error-code {
 		font-weight: bold;
+		font-size: clamp(3rem, 8vw, 5.5rem);
+		line-height: 1;
 	}
 
 	.title {

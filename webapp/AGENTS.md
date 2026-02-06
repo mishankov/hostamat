@@ -5,6 +5,7 @@
 ## OVERVIEW
 
 SvelteKit 2.x frontend with Bun adapter. Result pattern for error handling, component-driven UI, API proxy to backend.
+Unit tests are not used in this webapp.
 
 ## STRUCTURE
 
@@ -26,7 +27,7 @@ webapp/
 │       ├── +layout.svelte     # Root layout
 │       └── +page.svelte       # Landing page
 ├── svelte.config.js           # Bun adapter, experimental tracing
-└── package.json               # Vitest, Prettier, ESLint
+└── package.json               # Scripts, Prettier, ESLint
 ```
 
 ## WHERE TO LOOK
@@ -73,6 +74,10 @@ export const createSite = async (name: string): AsyncResult<boolean, string> => 
 - Example: `getSites(fetch, request)` in `+page.server.ts`
 - API proxy: `/api/proxy` with `X-Method` header routes to backend
 
+### Testing Policy
+- Do not add or maintain unit tests in this webapp.
+- Do not create `*.test.*` or `*.spec.*` files.
+
 ## ANTI-PATTERNS
 
 - ❌ Bare `fetch()` → Use `safeFetch()`
@@ -80,3 +85,4 @@ export const createSite = async (name: string): AsyncResult<boolean, string> => 
 - ❌ `console.log` for errors → Return error in Result
 - ❌ Ignoring `.error` in Result → Always check both paths
 - ❌ Direct backend calls from client → Use `/api/proxy` routes
+- ❌ Adding unit test files (`*.test.*`, `*.spec.*`)

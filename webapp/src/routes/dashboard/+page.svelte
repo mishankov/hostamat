@@ -2,7 +2,7 @@
 	import type { PageProps } from './$types';
 	import { invalidateAll } from '$app/navigation';
 
-	import { Card, Error, Info } from '$lib/components';
+	import { Alert, Card } from '$lib/components';
 	import { Spinner } from '$lib/icons';
 
 	import { type Site } from '$lib/types';
@@ -37,23 +37,26 @@
 	<title>Дашборд | Хостамат</title>
 </svelte:head>
 
-<main>
-	<div class="dashboard">
-		<h1>Твои сайты</h1>
+<main class="page-shell dashboard-shell">
+	<div class="page-content dashboard">
+		<div class="headline">
+			<h1>Твои сайты</h1>
+			<p>Управляйте публикациями, обновляйте файлы и следите за лимитом альфы.</p>
+		</div>
 
 		{#if errorMessage}
-			<Error message={errorMessage} />
+			<Alert variant="error" message={errorMessage} />
 		{/if}
 
 		<div class="site-list">
 			{#await data.sitesResp}
 				<Spinner size={50} />
 			{:then sitesResult}
-				{#if sitesResult.data}
-					{#each sites as site (site.id)}
-						<Card border style="height: 150px;">
-							<SiteContent
-								{site}
+					{#if sitesResult.data}
+						{#each sites as site (site.id)}
+							<Card border class="site-card">
+								<SiteContent
+									{site}
 								bind:loading
 								bind:errorMessage
 								onsiteupdate={async () => {
@@ -72,47 +75,74 @@
 								updateState();
 							}}
 						/>
-					{:else if loading === false}
-						<div style="height: 110px; display: flex; align-items: center;">
-							<Info header="Максимальное количество сайтов в альфа версии">
-								Для добавления нового сайта, удалите один из существующих
-							</Info>
-						</div>
+						{:else if loading === false}
+							<div class="limit-info-wrap">
+								<Alert variant="info" title="Максимальное количество сайтов в альфа версии">
+									Для добавления нового сайта, удалите один из существующих
+								</Alert>
+							</div>
+						{/if}
+					{:else}
+						<Alert variant="error" message="Ошибка при загрузке сайтов: {sitesResult.error}" />
 					{/if}
-				{:else}
-					<Error message="Ошибка при загрузке сайтов: {sitesResult.error}" />
-				{/if}
-			{:catch error}
-				<Error message="Ошибка при загрузке сайтов: {error.message}" />
-			{/await}
+				{:catch error}
+					<Alert variant="error" message="Ошибка при загрузке сайтов: {error.message}" />
+				{/await}
+			</div>
 		</div>
-	</div>
 </main>
 
 <style>
 	main {
-		width: 100%;
-		height: calc(100% - 76px);
+		padding-bottom: 2rem;
+	}
 
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: start;
+	.dashboard-shell {
+		position: relative;
+		isolation: isolate;
 	}
 
 	.dashboard {
+		gap: 1rem;
+	}
+
+	.headline {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: 0.4rem;
+	}
 
-		width: clamp(500px, 75%, 1200px);
-
-		padding: 20px;
+	.headline p {
+		max-width: 64ch;
 	}
 
 	.site-list {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 10px;
+		gap: 0.8rem;
+	}
+
+	.limit-info-wrap {
+		height: 110px;
+		display: flex;
+		align-items: center;
+	}
+
+	@media (max-width: 820px) {
+		.site-list {
+			flex-direction: column;
+		}
+
+		:global(.site-list > .card) {
+			width: 100%;
+		}
+
+		.limit-info-wrap {
+			height: auto;
+		}
+	}
+
+	:global(.site-card) {
+		min-height: 170px;
 	}
 </style>

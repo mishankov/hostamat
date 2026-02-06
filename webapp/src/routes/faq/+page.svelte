@@ -1,112 +1,114 @@
 <script>
 	import { resolve } from '$app/paths';
-	import { Link } from '$lib/components';
+	import { Card, Link } from '$lib/components';
 </script>
 
 <svelte:head>
 	<title>FAQ | Хостамат</title>
 </svelte:head>
 
-<main>
-	<div class="faq">
+<main class="page-shell">
+	<div class="page-content faq">
 		<h1>FAQ</h1>
 
-		<h2>
-			Я загрузил сайт, но по адресу https://xxxx-yyyy-1234.hostamat.ru/ возвращается страница с
-			ошибкой 404.
-		</h2>
+		<Card border>
+			<section class="qa">
+				<h2>После загрузки сайта возвращается 404</h2>
+				<p>
+					Чаще всего файл <span class="path">index.html</span> лежит не в корне архива, а внутри
+					вложенной папки. Убедитесь, что архив содержит файлы напрямую.
+				</p>
+				<p>Правила поиска страниц:</p>
+				<ul>
+					<li>
+						Для <span class="path">/</span> нужен файл <span class="path">index.html</span> в корне
+						архива или загруженный отдельно.
+					</li>
+					<li>
+						Для <span class="path">/aaa</span> сервис проверяет
+						<span class="path">/aaa</span>, <span class="path">/aaa.html</span> и
+						<span class="path">/aaa/index.html</span>.
+					</li>
+				</ul>
+			</section>
+		</Card>
 
-		<p>
-			<strong>Самая частая причина:</strong> файл
-			<span class="path">index.html</span> находится не в корне архива, а внутри вложенной папки. При
-			создании архива убедитесь, что вы добавляете файлы напрямую, а не папку с ними.
-		</p>
+		<Card border>
+			<section class="qa">
+				<h2>Какой максимальный размер файла?</h2>
+				<p>До 20 МБ на архив или отдельный файл.</p>
+			</section>
+		</Card>
 
-		<p>Хостамат следует нескольким правилам при поиске файлов для отображения:</p>
+		<Card border>
+			<section class="qa">
+				<h2>Как долго хранится сайт?</h2>
+				<p>Бессрочно, пока вы не удалите его вручную.</p>
+			</section>
+		</Card>
 
-		<ul>
-			<li>
-				<span class="path">/</span> (корневой путь) - для отображения корневого пути должен быть
-				файл
-				<span class="path">index.html</span>, либо загруженый отдельно, либо лежащий в корне
-				загруженного архива
-			</li>
-			<li>
-				<span class="path">/aaa</span> (вложенный путь) - для отображения вложенного пути идёт поиск
-				сначала файла <span class="path">/aaa</span>, потом <span class="path">/aaa.html</span>, и
-				после него <span class="path">/aaa/index.html</span>. Если ни одного из этих файлов не
-				найдено, возвращается ошибка 404
-			</li>
-		</ul>
+		<Card border>
+			<section class="qa">
+				<h2>Можно обновить или удалить сайт?</h2>
+				<p>
+					Да, все действия доступны в <Link href={resolve('/dashboard')}>Дашборде</Link>.
+				</p>
+			</section>
+		</Card>
 
-		<h2>Какой максимальный размер загружаемого файла?</h2>
-		<p>Максимальный размер загружаемого архива или отдельного файла — 20 МБ.</p>
+		<Card border>
+			<section class="qa">
+				<h2>Какие форматы файлов поддерживаются?</h2>
+				<p>
+					Список доступен на странице <Link href={resolve('/about')}>«О сервисе»</Link>. Архивы
+					принимаются только в формате <span class="path">.zip</span>.
+				</p>
+			</section>
+		</Card>
 
-		<h2>Как долго хранится загруженный сайт?</h2>
-		<p>Загруженные сайты хранятся бессрочно, пока вы не удалите их вручную.</p>
-
-		<h2>Можно ли обновить или удалить загруженный сайт?</h2>
-		<p>
-			Да, вы можете обновить или удалить свой сайт на <Link href={resolve('/dashboard')}
-				>Дашборде</Link
-			>.
-		</p>
-
-		<h2>Какие форматы файлов поддерживаются?</h2>
-		<p>
-			Информация о поддерживаемых форматах доступна на странице <Link href={resolve('/about')}
-				>«О сервисе»</Link
-			>. Архивы принимаются только в формате <span class="path">.zip</span>.
-		</p>
-
-		<h2>Что означает «альфа-тестирование»?</h2>
-		<p>
-			Сервис находится на стадии альфа-тестирования. Это означает, что функциональность может
-			меняться, а некоторые возможности — работать нестабильно. Мы будем благодарны за обратную
-			связь и сообщения об ошибках. Её можно оставить с помощью <Link
-				href="https://forms.yandex.ru/u/6907bbfc49af47f3cae7650a"
-				target="_blank">формы</Link
-			>.
-		</p>
+		<Card border>
+			<section class="qa">
+				<h2>Что означает «альфа-тестирование»?</h2>
+				<p>
+					Сервис активно развивается: часть функций может меняться, а стабильность не всегда финальная.
+					Нам важна обратная связь через <Link
+						href="https://forms.yandex.ru/u/6907bbfc49af47f3cae7650a"
+						target="_blank">форму</Link
+					>.
+				</p>
+			</section>
+		</Card>
 	</div>
 </main>
 
 <style>
-	main {
-		width: 100%;
-		height: calc(100% - 76px);
-
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		align-items: start;
+	.faq {
+		gap: 0.8rem;
+		padding-bottom: 2rem;
 	}
 
-	.faq {
+	.qa {
+		padding: 1rem;
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
-
-		width: clamp(500px, 75%, 1200px);
-
-		padding: 20px;
+		gap: 0.6rem;
 	}
 
-	h2 {
-		/*font-weight: 400;*/
-		padding-top: 10px;
+	.qa h2 {
+		font-size: clamp(1.15rem, 1.2vw, 1.35rem);
+		line-height: 1.24;
 	}
 
-	p,
-	li {
-		font-size: 1.25rem;
-		line-height: 1.6;
-		color: var(--color-text-secondary);
-		max-width: 600px;
+	.qa ul {
+		padding-left: 1.2rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
 	}
 
-	span.path {
-		font-family: monospace;
-		color: var(--color-text-regular);
+	.path {
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+			monospace;
+		color: var(--color-primary-90);
 	}
 </style>

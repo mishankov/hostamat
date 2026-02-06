@@ -17,8 +17,9 @@
 	resetState();
 </script>
 
-<Card border floating style="height: 150px;" kind="action">
+<Card border floating class="add-site-card" kind="action">
 	<button
+		type="button"
 		class="add-site"
 		onclick={() => {
 			resetState();
@@ -35,17 +36,22 @@
 	</button>
 </Card>
 
-<Modal bind:this={modal}>
-	<div style="display: flex; flex-direction: column; gap: 15px; min-width: 270px;">
-		<h2>Новый сайт</h2>
+<Modal
+	bind:this={modal}
+	titleId="new-site-modal-title"
+	initialFocusSelector="#new-site-name"
+	closeLabel="Закрыть форму создания сайта"
+>
+	<div class="modal-body">
+		<h2 id="new-site-modal-title">Новый сайт</h2>
 		<Input
-			id="site-name"
+			id="new-site-name"
 			label="Название"
 			errorMessage={newSiteNameError}
 			bind:value={newSiteName}
 			maxlength="25"
 		></Input>
-		<div style="display: flex; gap: 15px; align-items: center; ">
+		<div class="modal-actions">
 			<Button
 				filled
 				disabled={loading}
@@ -76,29 +82,66 @@
 				}}>Отмена</Button
 			>
 			{#if loading}
-				<Spinner size={30} />
+				<span class="action-spinner"><Spinner size={30} /></span>
 			{/if}
 		</div>
 	</div>
 </Modal>
 
 <style>
+	:global(.add-site-card) {
+		min-height: 170px;
+		display: flex;
+	}
+
 	.add-site {
 		all: unset;
 
+		width: 100%;
 		height: 100%;
+		min-height: 170px;
+		box-sizing: border-box;
 
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		gap: 0.5rem;
+		text-align: center;
 
-		padding-left: 20px;
-		padding-right: 20px;
+		padding: 1rem 1.3rem;
+		cursor: pointer;
+	}
+
+	.add-site p {
+		width: 100%;
+		margin: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.add-site-text {
-		color: var(--color-primary-90);
+		color: var(--color-action-90);
+		font-weight: 700;
 		user-select: none;
+	}
+
+	.modal-body {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+		min-width: 270px;
+	}
+
+	.modal-actions {
+		display: flex;
+		gap: 15px;
+		align-items: center;
+	}
+
+	.action-spinner {
+		display: inline-flex;
+		align-items: center;
 	}
 </style>
