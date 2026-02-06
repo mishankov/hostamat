@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { navigateAfterAuthChange } from '$lib/auth/navigation';
 	import { Alert, Button, Input } from '$lib/components';
 
 	let login = $state('');
@@ -18,7 +18,7 @@
 		});
 
 		if (res.ok) {
-			await goto('/dashboard');
+			await navigateAfterAuthChange('/dashboard');
 			return;
 		}
 

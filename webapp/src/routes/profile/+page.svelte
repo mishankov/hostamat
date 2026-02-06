@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { navigateAfterAuthChange } from '$lib/auth/navigation';
 	import { onDestroy } from 'svelte';
 	import { Alert, Button, Card, IconButton, Input, Modal } from '$lib/components';
 	import { Copy } from '$lib/icons';
-	import { goto } from '$app/navigation';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -80,7 +80,7 @@
 				return;
 			}
 
-			goto('/login');
+			await navigateAfterAuthChange('/login');
 		} catch (error) {
 			errorMessage = 'Ошибка при удалении аккаунта';
 			deleteAccountModal?.close();

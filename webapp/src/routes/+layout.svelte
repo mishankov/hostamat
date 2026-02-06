@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { navigateAfterAuthChange } from '$lib/auth/navigation';
 	import { onMount } from 'svelte';
 	import { Button, Card, IconButton, Link } from '$lib/components';
 	import { Moon, Sun } from '$lib/icons';
@@ -11,12 +12,23 @@
 
 	let cookieConsent = $state('notset');
 	let menuOpen = $state(false);
-	let theme = $state<'light' | 'dark'>('light');
+	const resolveInitialTheme = (): 'light' | 'dark' => {
+		if (!browser) {
+			return 'light';
+		}
+
+		return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+	};
+	let theme = $state<'light' | 'dark'>(resolveInitialTheme());
 
 	const logout = async () => {
 		await fetch('/api/auth/logout', { method: 'POST' });
 		closeMenu();
-		await invalidateAll();
+		await navigateAfterAuthChange('/login');
+	};
+
+	const openLogin = async () => {
+		closeMenu();
 		await goto('/login');
 	};
 
@@ -26,7 +38,11 @@
 		}
 
 		document.documentElement.setAttribute('data-theme', theme);
-		localStorage.setItem('hostamat-theme', theme);
+		try {
+			localStorage.setItem('hostamat-theme', theme);
+		} catch {
+			// Ignore storage write failures.
+		}
 	};
 
 	const toggleTheme = () => {
@@ -35,16 +51,23 @@
 	};
 
 	onMount(() => {
-		cookieConsent = localStorage.getItem('cookieConsent') || '';
+		try {
+			cookieConsent = localStorage.getItem('cookieConsent') || '';
 
-		const savedTheme = localStorage.getItem('hostamat-theme');
-		if (savedTheme === 'dark' || savedTheme === 'light') {
-			theme = savedTheme;
-		} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-			theme = 'dark';
+			const savedTheme = localStorage.getItem('hostamat-theme');
+			if (savedTheme === 'dark' || savedTheme === 'light') {
+				theme = savedTheme;
+			} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				theme = 'dark';
+			}
+		} catch {
+			cookieConsent = '';
+			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				theme = 'dark';
+			}
+		} finally {
+			syncTheme();
 		}
-
-		syncTheme();
 
 		console.info(
 			'%cHostamat feedback%c\nЕсли что-то пошло не так, форма обратной связи:\nhttps://forms.yandex.ru/u/6907bbfc49af47f3cae7650a/',
@@ -111,17 +134,18 @@
 					title={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
 					class="theme-toggle"
 				>
-					{#if theme === 'light'}
+					<span class="theme-icon theme-icon-light" aria-hidden="true">
 						<Sun size={18} color="var(--color-accent-70)" />
-					{:else}
+					</span>
+					<span class="theme-icon theme-icon-dark" aria-hidden="true">
 						<Moon size={18} color="var(--color-accent-70)" />
-					{/if}
+					</span>
 				</IconButton>
 				{#if data.isAuthenticated}
 					<Link href="/profile">{data.username}</Link>
 					<Button onclick={logout}>Выйти</Button>
 				{:else}
-					<Button href="/login" onclick={closeMenu}>Войти</Button>
+					<Button onclick={openLogin}>Войти</Button>
 				{/if}
 			</div>
 		</Card>
@@ -205,6 +229,20 @@
 	:global(.theme-toggle) {
 		width: 34px;
 		height: 34px;
+	}
+
+	:global(.theme-toggle .theme-icon) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	:global(:root[data-theme='light'] .theme-toggle .theme-icon-dark) {
+		display: none;
+	}
+
+	:global(:root[data-theme='dark'] .theme-toggle .theme-icon-light) {
+		display: none;
 	}
 
 	:global(button.theme-toggle:hover) {
