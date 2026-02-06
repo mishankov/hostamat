@@ -91,20 +91,34 @@
 <style>
 	:global(.add-site-card) {
 		min-height: 170px;
+		display: flex;
 	}
 
 	.add-site {
 		all: unset;
 
+		width: 100%;
 		height: 100%;
+		min-height: 170px;
+		box-sizing: border-box;
 
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		gap: 0.5rem;
+		text-align: center;
 
 		padding: 1rem 1.3rem;
 		cursor: pointer;
+	}
+
+	.add-site p {
+		width: 100%;
+		margin: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.add-site-text {
