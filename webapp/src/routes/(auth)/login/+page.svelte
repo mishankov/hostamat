@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { navigateAfterAuthChange } from '$lib/auth/navigation';
 	import { Alert, Button, Input } from '$lib/components';
+	import { onMount } from 'svelte';
 
 	let login = $state('');
 	let password = $state('');
@@ -33,10 +34,43 @@
 		event.preventDefault();
 		await loginAction();
 	};
+
+	onMount(async () => {
+		console.log('window onload called');
+
+		// TODO: fix this hack
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
+		window.YaAuthSuggest.init(
+			{
+				client_id: 'af7d560e82f349a5be6a69ec17e82a70',
+				response_type: 'token',
+				redirect_uri: 'http://localhost:5173/oauth-redirect'
+			},
+			'http://localhost', // TODO: different for prod
+			{
+				view: 'button',
+				parentId: 'oauthContainer',
+				buttonSize: 'm',
+				buttonView: 'main',
+				buttonTheme: 'light',
+				buttonBorderRadius: '9',
+				buttonIcon: 'ya'
+			}
+		)
+			.then(({ handler }) => handler())
+			.then((data) => console.log('Сообщение с токеном', data))
+			.catch((error) => console.log('Обработка ошибки', error));
+	});
 </script>
 
 <svelte:head>
 	<title>Вход | Хостамат</title>
+
+	<script
+		src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-with-polyfills-latest.js"
+	>
+	</script>
 </svelte:head>
 
 <h1>Вход</h1>
@@ -46,42 +80,16 @@
 	<Alert variant="error" message={error} />
 {/if}
 
-<form class="auth-form" onsubmit={onSubmit}>
-	<Input id="login" type="text" label="Логин" bind:value={login} placeholder="ivan" />
-	<Input
-		id="password"
-		type="password"
-		label="Пароль"
-		bind:value={password}
-		placeholder="verysecure"
-	/>
-
-	<div class="actions">
-		<Button type="submit" filled disabled={loginButtonDisabled}>Войти</Button>
-		<Button href="/register">Создать аккаунт</Button>
-	</div>
-</form>
+<div id="oauthContainer"></div>
 
 <style>
-	.auth-form {
-		display: flex;
-		flex-direction: column;
-		gap: 0.9rem;
-	}
-
-	.actions {
-		width: 100%;
-
-		display: flex;
-		justify-content: space-between;
-		gap: 10px;
-
-		padding-top: 10px;
-	}
-
 	.lead {
 		font-size: 0.95rem;
 		margin-top: -0.4rem;
 		margin-bottom: 0.4rem;
+	}
+
+	div#oauthContainer {
+		width: 100%;
 	}
 </style>
