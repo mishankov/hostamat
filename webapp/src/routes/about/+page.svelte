@@ -107,6 +107,12 @@
 		line-height: 1.25;
 	}
 
+	.card-section h3 {
+		font-size: clamp(1.02rem, 1.2vw, 1.18rem);
+		line-height: 1.3;
+		margin: 0.35rem 0 0;
+	}
+
 	.file-types {
 		display: flex;
 		flex-wrap: wrap;
