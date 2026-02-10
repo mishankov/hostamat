@@ -29,7 +29,7 @@
 
 	const openLogin = async () => {
 		closeMenu();
-		await goto('/login');
+		await goto(resolve('/signin'));
 	};
 
 	const syncTheme = () => {
@@ -88,7 +88,7 @@
 				<div class="cookie-inner">
 					<p>
 						Мы используем cookie. Подробности в <Link
-							href="/cookies"
+							href={resolve('/cookies')}
 							target="_blank"
 							alwaysUnderline>политике</Link
 						>.

@@ -1,4 +1,5 @@
 <script>
+	import { resolve } from '$app/paths';
 	import { Badge, Button, Card } from '$lib/components';
 </script>
 
@@ -16,7 +17,7 @@
 				панели.
 			</p>
 			<div class="hero-actions">
-				<Button href="/register" filled>Запустить свой сайт</Button>
+				<Button href={resolve('/signin')} filled>Запустить свой сайт</Button>
 				<Button href="/about">Узнать о платформе</Button>
 			</div>
 		</Card>

@@ -36,10 +36,10 @@
 	};
 
 	onMount(async () => {
-		console.log('window onload called');
+		console.log('onMount called');
 
 		// TODO: fix this hack
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		// await new Promise((resolve) => setTimeout(resolve, 1000));
 
 		window.YaAuthSuggest.init(
 			{
@@ -58,19 +58,24 @@
 				buttonIcon: 'ya'
 			}
 		)
-			.then(({ handler }) => handler())
+			.then(({ handler }) => {
+				console.log('got handler');
+				handler();
+			})
 			.then((data) => console.log('Сообщение с токеном', data))
 			.catch((error) => console.log('Обработка ошибки', error));
+
+		console.log('onMount finished');
 	});
 </script>
 
 <svelte:head>
 	<title>Вход | Хостамат</title>
 
-	<script
+	<!-- <script
 		src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-with-polyfills-latest.js"
 	>
-	</script>
+	</script> -->
 </svelte:head>
 
 <h1>Вход</h1>
