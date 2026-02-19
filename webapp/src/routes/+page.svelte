@@ -2,29 +2,28 @@
 	import { Badge, Button, Card } from '$lib/components';
 
 	const heroAsciiLines = [
-		'┌──────────────────────────────────────────────────────────────┐',
-		'│ aaaa-bbb-111.hostamat.ru                                   × │',
-		'├──────────────────────────────────────────────────────────────┤',
-		'│                                                              │',
-		'│    ┌────────────────────────────────────────────────────┐    │',
-		'│    │ Мой сайт                                           │    │',
-		'│    ├────────────────────────────────────────────────────┤    │',
-		'│    │                                                    │    │',
-		'│    │     ┌────────┐      ┌────────┐     ┌────────┐      │    │',
-		'│    │     │  ────┐ │      │   ┌────┤     │  ───┐  │      │    │',
-		'│    │     │      │ │      │   │    │     │     │  │      │    │',
-		'│    │     │      │ │      ├───┘    │     │     └─ │      │    │',
-		'│    │     └──────┴─┘      └────────┘     └────────┘      │    │',
-		'│    │                                                    │    │',
-		'│    └────────────────────────────────────────────────────┘    │',
-		'│                                                              │',
-		'└──────────────────────────────────────────────────────────────┘'
+		'┌─ deploy@hostamat ───────────────────────────────────────────────┐',
+		'│  _   _  ___  ____ _____  _    __  __                            │',
+		'│ | | | |/ _ \\/ ___|_   _|/ \\  |  \\/  |                        │',
+		'│ | |_| | | | \\___ \\ | | / _ \\ | |\\/| |                       │',
+		'│ |  _  | |_| |___) || |/ ___ \\| |  | |                          │',
+		'│ |_| |_|\\___/|____/ |_/_/   \\_\\_|  |_|                        │',
+		'├─────────────────────────────────────────────────────────────────┤',
+		'│ $ hostamat publish ./portfolio.zip                              │',
+		'│ [01] unpack assets ................................ [ok]        │',
+		'│ [02] reserve subdomain ............................ [ok]        │',
+		'│ [03] issue tls certificate ........................ [ok]        │',
+		'│ [04] warm edge cache .............................. [ok]        │',
+		'├─────────────────────────────────────────────────────────────────┤',
+		'│ domain: happy-cappy-12345.hostamat.ru                           │',
+		'│ status: live | https                                            │',
+		'└─────────────────────────────────────────────────────────────────┘'
 	];
 	const heroAsciiWidth = heroAsciiLines.reduce(
 		(maxWidth, line) => Math.max(maxWidth, line.length),
 		0
 	);
-	const heroAsciiArt = heroAsciiLines.map((line) => line.padEnd(heroAsciiWidth, ' ')).join('\n');
+	const heroAsciiRows = heroAsciiLines.map((line) => line.padEnd(heroAsciiWidth, ' '));
 </script>
 
 <svelte:head>
@@ -48,7 +47,10 @@
 					</div>
 				</div>
 				<div class="hero-ascii" aria-hidden="true">
-					<pre>{heroAsciiArt}</pre>
+					<pre>{#each heroAsciiRows as row, idx}<span
+								class="ascii-line"
+								style={`--line-index: ${idx};`}>{row}</span
+							>{/each}</pre>
 				</div>
 			</div>
 		</Card>
@@ -135,31 +137,92 @@
 
 	.hero-ascii {
 		margin-top: 0.1rem;
+		position: relative;
 		overflow: hidden;
 		inline-size: 100%;
+		border: var(--border-width) var(--border-style)
+			color-mix(in hsl, var(--color-border) 75%, var(--color-accent-30) 25%);
+		border-radius: 12px;
+		background: linear-gradient(
+			180deg,
+			color-mix(in hsl, var(--color-background-object) 90%, var(--color-accent-20) 10%) 0%,
+			color-mix(in hsl, var(--color-background-object) 94%, var(--color-primary-10) 6%) 100%
+		);
+		box-shadow:
+			inset 0 1px 0 color-mix(in hsl, var(--color-background-object) 75%, white 25%),
+			inset 0 0 0 1px color-mix(in hsl, var(--color-accent-20) 65%, transparent),
+			0 10px 24px color-mix(in hsl, var(--color-accent-30) 16%, transparent);
+	}
+
+	.hero-ascii::after {
+		content: '';
+		position: absolute;
+		inset-inline: 0;
+		top: -22%;
+		height: 18%;
+		pointer-events: none;
+		background: linear-gradient(
+			180deg,
+			transparent 0%,
+			color-mix(in hsl, var(--color-accent-40) 64%, transparent) 50%,
+			transparent 100%
+		);
+		opacity: 0;
+		animation: asciiScanPass 1100ms ease-out 580ms 1 both;
 	}
 
 	.hero-ascii pre {
 		margin: 0;
-		font-family:
-			'Cascadia Mono',
-			'SF Mono',
-			'SFMono-Regular',
-			Menlo,
-			Consolas,
-			'Liberation Mono',
-			monospace;
-		font-size: 0.84rem;
+		display: block;
+		padding: 0.85rem 0.95rem;
+		font-family: var(--font-body);
+		font-size: clamp(0.54rem, 1.05vw, 0.86rem);
 		line-height: 1;
 		letter-spacing: 0;
 		font-kerning: none;
 		font-variant-ligatures: none;
-		white-space: pre;
-		color: var(--color-accent-60);
+		white-space: normal;
+		color: var(--color-accent-70);
+		text-shadow: 0 0 0.35rem color-mix(in hsl, var(--color-accent-30) 12%, transparent);
 	}
 
 	:global(:root[data-theme='dark']) .hero-ascii pre {
-		color: var(--color-accent-70);
+		color: var(--color-accent-80);
+		text-shadow: 0 0 0.45rem color-mix(in hsl, var(--color-accent-60) 14%, transparent);
+	}
+
+	.ascii-line {
+		display: block;
+		white-space: pre;
+		opacity: 0;
+		transform: translateY(0.22rem);
+		animation: asciiLineReveal 360ms cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
+		animation-delay: calc(var(--line-index) * 32ms);
+	}
+
+	@keyframes asciiLineReveal {
+		from {
+			opacity: 0;
+			transform: translateY(0.22rem);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes asciiScanPass {
+		0% {
+			opacity: 0;
+			transform: translateY(0%);
+		}
+		16% {
+			opacity: 0.38;
+		}
+		100% {
+			opacity: 0;
+			transform: translateY(680%);
+		}
 	}
 
 	.hero-actions {
@@ -201,29 +264,37 @@
 		}
 
 		.hero-ascii pre {
-			font-size: 0.68rem;
-			line-height: 1;
+			font-size: clamp(0.5rem, 1.5vw, 0.72rem);
+			line-height: 1.04;
 		}
 	}
 
 	@media (max-width: 680px) {
 		.hero-ascii pre {
-			font-size: 0.5rem;
-			line-height: 0.97;
-		}
-	}
-
-	@media (max-width: 480px) {
-		.hero-ascii pre {
-			font-size: 0.39rem;
-			line-height: 0.94;
-			letter-spacing: -0.015em;
+			font-size: clamp(0.5rem, 1.95vw, 0.62rem);
+			line-height: 1;
 		}
 	}
 
 	@media (max-width: 800px) {
 		.steps {
 			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hero-ascii::after,
+		.ascii-line {
+			animation: none;
+		}
+
+		.hero-ascii::after {
+			opacity: 0;
+		}
+
+		.ascii-line {
+			opacity: 1;
+			transform: none;
 		}
 	}
 </style>
