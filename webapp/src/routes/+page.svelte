@@ -1,29 +1,34 @@
 <script>
 	import { Badge, Button, Card } from '$lib/components';
 
+	const heroAsciiInnerWidth = 65;
+	const frameRow = (text = '') => `|${text.padEnd(heroAsciiInnerWidth, ' ')}|`;
+	const frameTop = (label = '') => {
+		const prefix = `- ${label} `;
+		return `+${prefix}${'-'.repeat(Math.max(0, heroAsciiInnerWidth - prefix.length))}+`;
+	};
+	const frameDivider = () => frameRow('-'.repeat(heroAsciiInnerWidth));
+	const frameBottom = () => `+${'-'.repeat(heroAsciiInnerWidth)}+`;
+
 	const heroAsciiLines = [
-		'┌─ deploy@hostamat ───────────────────────────────────────────────┐',
-		'│  _   _  ___  ____ _____  _    __  __                            │',
-		'│ | | | |/ _ \\/ ___|_   _|/ \\  |  \\/  |                        │',
-		'│ | |_| | | | \\___ \\ | | / _ \\ | |\\/| |                       │',
-		'│ |  _  | |_| |___) || |/ ___ \\| |  | |                          │',
-		'│ |_| |_|\\___/|____/ |_/_/   \\_\\_|  |_|                        │',
-		'├─────────────────────────────────────────────────────────────────┤',
-		'│ $ hostamat publish ./portfolio.zip                              │',
-		'│ [01] unpack assets ................................ [ok]        │',
-		'│ [02] reserve subdomain ............................ [ok]        │',
-		'│ [03] issue tls certificate ........................ [ok]        │',
-		'│ [04] warm edge cache .............................. [ok]        │',
-		'├─────────────────────────────────────────────────────────────────┤',
-		'│ domain: happy-cappy-12345.hostamat.ru                           │',
-		'│ status: live | https                                            │',
-		'└─────────────────────────────────────────────────────────────────┘'
+		frameTop('deploy@hostamat'),
+		frameRow(' _   _  ___  ____ _____   _    __  __    _    _____'),
+		frameRow('| | | |/ _ \\/ ___|_   _| / \\  |  \\/  |  / \\  |_   _|'),
+		frameRow('| |_| | | | \\___ \\ | |  / _ \\ | |\\/| | / _ \\   | |'),
+		frameRow('|  _  | |_| |___) || | / ___ \\| |  | |/ ___ \\  | |'),
+		frameRow('|_| |_|\\___/|____/ |_|/_/   \\_\\_|  |_/_/   \\_\\ |_|'),
+		frameDivider(),
+		frameRow(' $ hostamat publish ./portfolio.zip'),
+		frameRow(' [01] unpack assets ................................ [ok]'),
+		frameRow(' [02] reserve subdomain ............................ [ok]'),
+		frameRow(' [03] issue tls certificate ........................ [ok]'),
+		frameRow(' [04] warm edge cache .............................. [ok]'),
+		frameDivider(),
+		frameRow(' domain: happy-cappy-12345.hostamat.ru'),
+		frameRow(' status: live | https'),
+		frameBottom()
 	];
-	const heroAsciiWidth = heroAsciiLines.reduce(
-		(maxWidth, line) => Math.max(maxWidth, line.length),
-		0
-	);
-	const heroAsciiRows = heroAsciiLines.map((line) => line.padEnd(heroAsciiWidth, ' '));
+	const heroAsciiRows = heroAsciiLines;
 </script>
 
 <svelte:head>
