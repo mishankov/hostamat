@@ -1,3 +1,5 @@
+name: "hostamat_test"
+
 services:
   proxymini:
     image: ghcr.io/mishankov/proxymini:main

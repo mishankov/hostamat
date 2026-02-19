@@ -1,5 +1,30 @@
 <script>
 	import { Badge, Button, Card } from '$lib/components';
+
+	const heroAsciiLines = [
+		'┌──────────────────────────────────────────────────────────────┐',
+		'│ aaaa-bbb-111.hostamat.ru                                   × │',
+		'├──────────────────────────────────────────────────────────────┤',
+		'│                                                              │',
+		'│    ┌────────────────────────────────────────────────────┐    │',
+		'│    │ Мой сайт                                           │    │',
+		'│    ├────────────────────────────────────────────────────┤    │',
+		'│    │                                                    │    │',
+		'│    │     ┌────────┐      ┌────────┐     ┌────────┐      │    │',
+		'│    │     │  ────┐ │      │   ┌────┤     │  ───┐  │      │    │',
+		'│    │     │      │ │      │   │    │     │     │  │      │    │',
+		'│    │     │      │ │      ├───┘    │     │     └─ │      │    │',
+		'│    │     └──────┴─┘      └────────┘     └────────┘      │    │',
+		'│    │                                                    │    │',
+		'│    └────────────────────────────────────────────────────┘    │',
+		'│                                                              │',
+		'└──────────────────────────────────────────────────────────────┘'
+	];
+	const heroAsciiWidth = heroAsciiLines.reduce(
+		(maxWidth, line) => Math.max(maxWidth, line.length),
+		0
+	);
+	const heroAsciiArt = heroAsciiLines.map((line) => line.padEnd(heroAsciiWidth, ' ')).join('\n');
 </script>
 
 <svelte:head>
@@ -9,15 +34,22 @@
 <main class="page-shell">
 	<section class="page-content landing">
 		<Card border cornerBorder class="card-like">
-			<Badge text="Альфа-тестирование" />
-			<h1>Хостинг статических сайтов без лишней настройки</h1>
-			<p class="hero-description">
-				Загрузите файлы или ZIP-архив, получите HTTPS-поддомен и управляйте проектом в удобной
-				панели.
-			</p>
-			<div class="hero-actions">
-				<Button href="/register" filled>Запустить свой сайт</Button>
-				<Button href="/about">Узнать о платформе</Button>
+			<div class="hero-main">
+				<div class="hero-copy">
+					<Badge text="Альфа-тестирование" />
+					<h1>Хостинг статических сайтов без лишней настройки</h1>
+					<p class="hero-description">
+						Загрузите файлы или ZIP-архив, получите HTTPS-поддомен и управляйте проектом в удобной
+						панели.
+					</p>
+					<div class="hero-actions">
+						<Button href="/register" filled>Запустить свой сайт</Button>
+						<Button href="/about">Узнать о платформе</Button>
+					</div>
+				</div>
+				<div class="hero-ascii" aria-hidden="true">
+					<pre>{heroAsciiArt}</pre>
+				</div>
 			</div>
 		</Card>
 
@@ -74,9 +106,20 @@
 
 	:global(.card-like) {
 		padding: clamp(1.2rem, 2.5vw, 2.2rem);
+	}
+
+	.hero-main {
+		display: grid;
+		grid-template-columns: minmax(320px, 0.95fr) minmax(500px, 1.2fr);
+		align-items: center;
+		gap: clamp(1rem, 2.4vw, 2.4rem);
+	}
+
+	.hero-copy {
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+		min-width: 0;
 	}
 
 	h1 {
@@ -86,8 +129,37 @@
 	}
 
 	.hero-description {
-		max-width: 55ch;
+		max-width: 44ch;
 		font-size: 1.05rem;
+	}
+
+	.hero-ascii {
+		margin-top: 0.1rem;
+		overflow: hidden;
+		inline-size: 100%;
+	}
+
+	.hero-ascii pre {
+		margin: 0;
+		font-family:
+			'Cascadia Mono',
+			'SF Mono',
+			'SFMono-Regular',
+			Menlo,
+			Consolas,
+			'Liberation Mono',
+			monospace;
+		font-size: 0.84rem;
+		line-height: 1;
+		letter-spacing: 0;
+		font-kerning: none;
+		font-variant-ligatures: none;
+		white-space: pre;
+		color: var(--color-accent-60);
+	}
+
+	:global(:root[data-theme='dark']) .hero-ascii pre {
+		color: var(--color-accent-70);
 	}
 
 	.hero-actions {
@@ -120,6 +192,33 @@
 
 	.step h2 {
 		font-size: 1.4rem;
+	}
+
+	@media (max-width: 920px) {
+		.hero-main {
+			grid-template-columns: 1fr;
+			gap: 0.9rem;
+		}
+
+		.hero-ascii pre {
+			font-size: 0.68rem;
+			line-height: 1;
+		}
+	}
+
+	@media (max-width: 680px) {
+		.hero-ascii pre {
+			font-size: 0.5rem;
+			line-height: 0.97;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.hero-ascii pre {
+			font-size: 0.39rem;
+			line-height: 0.94;
+			letter-spacing: -0.015em;
+		}
 	}
 
 	@media (max-width: 800px) {
