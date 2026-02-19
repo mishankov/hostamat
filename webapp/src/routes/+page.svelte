@@ -1,34 +1,5 @@
 <script>
 	import { Badge, Button, Card } from '$lib/components';
-
-	const heroAsciiInnerWidth = 65;
-	const frameRow = (text = '') => `|${text.padEnd(heroAsciiInnerWidth, ' ')}|`;
-	const frameTop = (label = '') => {
-		const prefix = `- ${label} `;
-		return `+${prefix}${'-'.repeat(Math.max(0, heroAsciiInnerWidth - prefix.length))}+`;
-	};
-	const frameDivider = () => frameRow('-'.repeat(heroAsciiInnerWidth));
-	const frameBottom = () => `+${'-'.repeat(heroAsciiInnerWidth)}+`;
-
-	const heroAsciiLines = [
-		frameTop('deploy@hostamat'),
-		frameRow(' _   _  ___  ____ _____   _    __  __    _    _____'),
-		frameRow('| | | |/ _ \\/ ___|_   _| / \\  |  \\/  |  / \\  |_   _|'),
-		frameRow('| |_| | | | \\___ \\ | |  / _ \\ | |\\/| | / _ \\   | |'),
-		frameRow('|  _  | |_| |___) || | / ___ \\| |  | |/ ___ \\  | |'),
-		frameRow('|_| |_|\\___/|____/ |_|/_/   \\_\\_|  |_/_/   \\_\\ |_|'),
-		frameDivider(),
-		frameRow(' $ hostamat publish ./portfolio.zip'),
-		frameRow(' [01] unpack assets ................................ [ok]'),
-		frameRow(' [02] reserve subdomain ............................ [ok]'),
-		frameRow(' [03] issue tls certificate ........................ [ok]'),
-		frameRow(' [04] warm edge cache .............................. [ok]'),
-		frameDivider(),
-		frameRow(' domain: happy-cappy-12345.hostamat.ru'),
-		frameRow(' status: live | https'),
-		frameBottom()
-	];
-	const heroAsciiRows = heroAsciiLines;
 </script>
 
 <svelte:head>
@@ -51,11 +22,53 @@
 						<Button href="/about">Узнать о платформе</Button>
 					</div>
 				</div>
-				<div class="hero-ascii" aria-hidden="true">
-					<pre>{#each heroAsciiRows as row, idx}<span
-								class="ascii-line"
-								style={`--line-index: ${idx};`}>{row}</span
-							>{/each}</pre>
+				<div class="hero-ascii">
+					<div class="hero-terminal" aria-hidden="true">
+						<div class="terminal-head terminal-line" style="--line-index: 0;">
+							<span class="terminal-head-label">deploy@hostamat</span>
+							<span class="terminal-head-rule"></span>
+						</div>
+						<p class="terminal-brand terminal-line" style="--line-index: 1;">HOSTAMAT</p>
+						<div class="terminal-divider terminal-line" style="--line-index: 2;"></div>
+						<p class="terminal-command terminal-line" style="--line-index: 3;">
+							$ hostamat publish ./portfolio.zip
+						</p>
+						<ul class="terminal-steps">
+							<li class="terminal-step terminal-line" style="--line-index: 4;">
+								<span class="terminal-step-index">[01]</span>
+								<span class="terminal-step-text">unpack assets</span>
+								<span class="terminal-step-fill"></span>
+								<span class="terminal-step-status">[ok]</span>
+							</li>
+							<li class="terminal-step terminal-line" style="--line-index: 5;">
+								<span class="terminal-step-index">[02]</span>
+								<span class="terminal-step-text">reserve subdomain</span>
+								<span class="terminal-step-fill"></span>
+								<span class="terminal-step-status">[ok]</span>
+							</li>
+							<li class="terminal-step terminal-line" style="--line-index: 6;">
+								<span class="terminal-step-index">[03]</span>
+								<span class="terminal-step-text">issue tls certificate</span>
+								<span class="terminal-step-fill"></span>
+								<span class="terminal-step-status">[ok]</span>
+							</li>
+							<li class="terminal-step terminal-line" style="--line-index: 7;">
+								<span class="terminal-step-index">[04]</span>
+								<span class="terminal-step-text">warm edge cache</span>
+								<span class="terminal-step-fill"></span>
+								<span class="terminal-step-status">[ok]</span>
+							</li>
+						</ul>
+						<div class="terminal-divider terminal-line" style="--line-index: 8;"></div>
+						<p class="terminal-meta-row terminal-line" style="--line-index: 9;">
+							<span class="terminal-meta-key">domain:</span>
+							<span class="terminal-meta-value">happy-cappy-12345.hostamat.ru</span>
+						</p>
+						<p class="terminal-meta-row terminal-line" style="--line-index: 10;">
+							<span class="terminal-meta-key">status:</span>
+							<span class="terminal-meta-value">live | https</span>
+						</p>
+					</div>
 				</div>
 			</div>
 		</Card>
@@ -159,6 +172,22 @@
 			0 10px 24px color-mix(in hsl, var(--color-accent-30) 16%, transparent);
 	}
 
+	.hero-terminal {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		gap: 0.3rem;
+		padding: 0.92rem 1.02rem;
+		font-family: var(--font-body);
+		font-size: clamp(0.58rem, 1.04vw, 0.9rem);
+		line-height: 1.1;
+		letter-spacing: 0;
+		font-kerning: none;
+		font-variant-ligatures: none;
+		color: var(--color-accent-70);
+		text-shadow: 0 0 0.35rem color-mix(in hsl, var(--color-accent-30) 12%, transparent);
+	}
+
 	.hero-ascii::after {
 		content: '';
 		position: absolute;
@@ -176,29 +205,112 @@
 		animation: asciiScanPass 1100ms ease-out 580ms 1 both;
 	}
 
-	.hero-ascii pre {
-		margin: 0;
-		display: block;
-		padding: 0.85rem 0.95rem;
-		font-family: var(--font-body);
-		font-size: clamp(0.54rem, 1.05vw, 0.86rem);
-		line-height: 1;
-		letter-spacing: 0;
-		font-kerning: none;
-		font-variant-ligatures: none;
-		white-space: normal;
-		color: var(--color-accent-70);
-		text-shadow: 0 0 0.35rem color-mix(in hsl, var(--color-accent-30) 12%, transparent);
+	.terminal-head {
+		display: flex;
+		align-items: center;
+		gap: 0.48rem;
 	}
 
-	:global(:root[data-theme='dark']) .hero-ascii pre {
+	.terminal-head-label {
+		color: var(--color-accent-80);
+		font-weight: 600;
+		white-space: nowrap;
+	}
+
+	.terminal-head-rule {
+		flex: 1;
+		height: 1px;
+		background: repeating-linear-gradient(
+			90deg,
+			color-mix(in hsl, var(--color-accent-50) 72%, transparent) 0 8px,
+			transparent 8px 12px
+		);
+	}
+
+	.terminal-brand {
+		margin: 0;
+		padding-top: 0.04em;
+		font-family: var(--font-display);
+		font-size: clamp(1.82rem, 4.3vw, 4.3rem);
+		font-weight: 700;
+		line-height: 0.88;
+		letter-spacing: 0.05em;
+		color: color-mix(in hsl, var(--color-accent-70) 92%, var(--color-background-object));
+		text-shadow:
+			0 0 0.6rem color-mix(in hsl, var(--color-accent-30) 18%, transparent),
+			0 0 1px color-mix(in hsl, var(--color-accent-40) 45%, transparent);
+		-webkit-text-stroke: 1px color-mix(in hsl, var(--color-accent-50) 44%, transparent);
+	}
+
+	.terminal-divider {
+		margin: 0.1rem 0 0.05rem;
+		border-top: 1px dashed color-mix(in hsl, var(--color-accent-50) 72%, transparent);
+	}
+
+	.terminal-command {
+		margin: 0;
+		overflow-wrap: anywhere;
+	}
+
+	.terminal-steps {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		gap: 0.18rem;
+	}
+
+	.terminal-step {
+		display: grid;
+		grid-template-columns: auto auto minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 0.46rem;
+		min-width: 0;
+	}
+
+	.terminal-step-index {
+		color: color-mix(in hsl, var(--color-accent-60) 86%, var(--color-accent-90));
+	}
+
+	.terminal-step-text {
+		overflow-wrap: anywhere;
+	}
+
+	.terminal-step-fill {
+		border-bottom: 1px dotted color-mix(in hsl, var(--color-accent-50) 72%, transparent);
+		transform: translateY(-0.08rem);
+	}
+
+	.terminal-step-status {
+		color: color-mix(in hsl, var(--color-confirm-60) 58%, var(--color-accent-70));
+	}
+
+	.terminal-meta-row {
+		margin: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0 0.36rem;
+	}
+
+	.terminal-meta-key {
+		color: color-mix(in hsl, var(--color-accent-60) 86%, var(--color-accent-90));
+	}
+
+	.terminal-meta-value {
+		overflow-wrap: anywhere;
+	}
+
+	:global(:root[data-theme='dark']) .hero-terminal {
 		color: var(--color-accent-80);
 		text-shadow: 0 0 0.45rem color-mix(in hsl, var(--color-accent-60) 14%, transparent);
 	}
 
-	.ascii-line {
-		display: block;
-		white-space: pre;
+	:global(:root[data-theme='dark']) .terminal-brand {
+		color: color-mix(in hsl, var(--color-accent-80) 92%, var(--color-background-object));
+		-webkit-text-stroke: 1px color-mix(in hsl, var(--color-accent-70) 52%, transparent);
+	}
+
+	.terminal-line {
 		opacity: 0;
 		transform: translateY(0.22rem);
 		animation: asciiLineReveal 360ms cubic-bezier(0.2, 0.75, 0.25, 1) forwards;
@@ -268,16 +380,41 @@
 			gap: 0.9rem;
 		}
 
-		.hero-ascii pre {
-			font-size: clamp(0.5rem, 1.5vw, 0.72rem);
+		.hero-terminal {
+			font-size: clamp(0.56rem, 1.5vw, 0.78rem);
 			line-height: 1.04;
+		}
+
+		.terminal-brand {
+			font-size: clamp(1.64rem, 8vw, 3rem);
 		}
 	}
 
 	@media (max-width: 680px) {
-		.hero-ascii pre {
-			font-size: clamp(0.5rem, 1.95vw, 0.62rem);
+		.hero-terminal {
+			font-size: clamp(0.56rem, 1.95vw, 0.68rem);
 			line-height: 1;
+		}
+
+		.terminal-step {
+			grid-template-columns: auto minmax(0, 1fr) auto;
+		}
+
+		.terminal-step-index {
+			grid-column: 1;
+		}
+
+		.terminal-step-text {
+			grid-column: 2;
+		}
+
+		.terminal-step-fill {
+			display: none;
+		}
+
+		.terminal-step-status {
+			grid-column: 3;
+			justify-self: end;
 		}
 	}
 
@@ -289,7 +426,7 @@
 
 	@media (prefers-reduced-motion: reduce) {
 		.hero-ascii::after,
-		.ascii-line {
+		.terminal-line {
 			animation: none;
 		}
 
@@ -297,7 +434,7 @@
 			opacity: 0;
 		}
 
-		.ascii-line {
+		.terminal-line {
 			opacity: 1;
 			transform: none;
 		}
