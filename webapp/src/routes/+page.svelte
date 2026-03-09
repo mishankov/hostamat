@@ -42,9 +42,13 @@
 						панели.
 					</p>
 					<div class="hero-actions">
-						<Button onclick={openAuth} filled disabled={isAuthStarting}>
-							{isAuthStarting ? 'Переходим в Яндекс...' : 'Войти через Яндекс'}
-						</Button>
+						{#if data.isAuthenticated}
+							<Button href="/dashboard" filled>Открыть дашборд</Button>
+						{:else}
+							<Button onclick={openAuth} filled disabled={isAuthStarting}>
+								{isAuthStarting ? 'Переходим в Яндекс...' : 'Войти через Яндекс'}
+							</Button>
+						{/if}
 						<Button href="/about">Узнать о платформе</Button>
 					</div>
 				</div>
