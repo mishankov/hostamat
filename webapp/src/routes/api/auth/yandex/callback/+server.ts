@@ -14,11 +14,11 @@ export const GET = async ({ request, url }) => {
 		});
 
 		if (!response.ok) {
-			return Response.redirect(new URL('/login?error=oauth_failed', url), 302);
+			return Response.redirect(new URL('/?authError=oauth_failed', url), 302);
 		}
 
 		const payload = (await response.json()) as { redirectTo?: string };
-		const location = payload.redirectTo || '/login?error=oauth_failed';
+		const location = payload.redirectTo || '/?authError=oauth_failed';
 		const headers = new Headers();
 
 		for (const [key, value] of response.headers.entries()) {
@@ -35,6 +35,6 @@ export const GET = async ({ request, url }) => {
 		});
 	} catch (error) {
 		console.error('Proxy error:', error);
-		return Response.redirect(new URL('/login?error=oauth_failed', url), 302);
+		return Response.redirect(new URL('/?authError=oauth_failed', url), 302);
 	}
 };

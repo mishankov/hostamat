@@ -6,7 +6,7 @@ export const load = (async ({ fetch, request, parent }) => {
 	const { isAuthenticated } = await parent();
 
 	if (!isAuthenticated) {
-		return redirect(302, '/login');
+		return redirect(302, '/');
 	}
 
 	return { sitesResp: getSites(fetch, request) };

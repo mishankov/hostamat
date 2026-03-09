@@ -54,7 +54,7 @@ func TestYandexCallbackHandler_ReturnsDeniedRedirectTarget(t *testing.T) {
 		t.Fatalf("failed to decode response: %v", err)
 	}
 
-	if payload.RedirectTo != "/login?error=oauth_denied" {
+	if payload.RedirectTo != "/?authError=oauth_denied" {
 		t.Fatalf("unexpected redirect target: %s", payload.RedirectTo)
 	}
 }
@@ -75,7 +75,7 @@ func TestYandexCallbackHandler_ReturnsFailedRedirectTargetForInvalidState(t *tes
 		t.Fatalf("failed to decode response: %v", err)
 	}
 
-	if payload.RedirectTo != "/login?error=oauth_failed" {
+	if payload.RedirectTo != "/?authError=oauth_failed" {
 		t.Fatalf("unexpected redirect target: %s", payload.RedirectTo)
 	}
 }
@@ -140,7 +140,7 @@ func TestYandexCallbackHandler_ReturnsFailedRedirectTargetWhenExchangeFails(t *t
 		t.Fatalf("failed to decode response: %v", err)
 	}
 
-	if payload.RedirectTo != "/login?error=oauth_failed" {
+	if payload.RedirectTo != "/?authError=oauth_failed" {
 		t.Fatalf("unexpected redirect target: %s", payload.RedirectTo)
 	}
 }

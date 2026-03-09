@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { navigateAfterAuthChange } from '$lib/auth/navigation';
+	import { startYandexAuth } from '$lib/auth/start';
 	import { onMount } from 'svelte';
 	import { Button, Card, IconButton, Link } from '$lib/components';
 	import { Moon, Sun } from '$lib/icons';
@@ -12,6 +12,7 @@
 
 	let cookieConsent = $state('notset');
 	let menuOpen = $state(false);
+	let isAuthStarting = $state(false);
 	const resolveInitialTheme = (): 'light' | 'dark' => {
 		if (!browser) {
 			return 'light';
@@ -24,12 +25,13 @@
 	const logout = async () => {
 		await fetch('/api/auth/logout', { method: 'POST' });
 		closeMenu();
-		await navigateAfterAuthChange('/login');
+		await navigateAfterAuthChange('/');
 	};
 
 	const openLogin = async () => {
 		closeMenu();
-		await goto('/login');
+		isAuthStarting = true;
+		await startYandexAuth();
 	};
 
 	const syncTheme = () => {
@@ -148,7 +150,9 @@
 						<Link href="/profile">{data.username}</Link>
 						<Button onclick={logout}>Выйти</Button>
 					{:else}
-						<Button onclick={openLogin}>Войти</Button>
+						<Button onclick={openLogin} disabled={isAuthStarting}>
+							{isAuthStarting ? 'Переходим...' : 'Войти'}
+						</Button>
 					{/if}
 				</div>
 			</Card>

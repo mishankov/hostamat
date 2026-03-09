@@ -28,7 +28,7 @@
 				return;
 			}
 
-			await navigateAfterAuthChange('/login');
+			await navigateAfterAuthChange('/');
 		} catch {
 			errorMessage = 'Ошибка при удалении аккаунта';
 			deleteAccountModal?.close();

@@ -32,20 +32,20 @@ func (h *YandexCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 	query := r.URL.Query()
 	if query.Get("error") != "" {
 		clearCookie(w, h.service.OAuthStateCookieName(), h.service.OAuthStateCookiePath(), requestIsSecure(r))
-		writeRedirectTarget(w, "/login?error=oauth_denied")
+		writeRedirectTarget(w, "/?authError=oauth_denied")
 		return
 	}
 
 	if !isValidState(r, h.service.OAuthStateCookieName(), query.Get("state")) {
 		clearCookie(w, h.service.OAuthStateCookieName(), h.service.OAuthStateCookiePath(), requestIsSecure(r))
-		writeRedirectTarget(w, "/login?error=oauth_failed")
+		writeRedirectTarget(w, "/?authError=oauth_failed")
 		return
 	}
 
 	sessionID, err := h.service.CreateSessionFromYandexCode(r.Context(), query.Get("code"))
 	if err != nil {
 		clearCookie(w, h.service.OAuthStateCookieName(), h.service.OAuthStateCookiePath(), requestIsSecure(r))
-		writeRedirectTarget(w, "/login?error=oauth_failed")
+		writeRedirectTarget(w, "/?authError=oauth_failed")
 		return
 	}
 
