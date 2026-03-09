@@ -1,0 +1,60 @@
+package userauth
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"net/http"
+
+	platformauth "github.com/platforma-dev/platforma/auth"
+	"github.com/platforma-dev/platforma/log"
+)
+
+type getUserService interface {
+	GetFromSession(ctx context.Context, sessionID string) (*platformauth.User, error)
+	CookieName() string
+}
+
+type GetHandler struct {
+	service getUserService
+}
+
+func NewGetHandler(service getUserService) *GetHandler {
+	return &GetHandler{service: service}
+}
+
+func (h *GetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	cookie, err := r.Cookie(h.service.CookieName())
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	user, err := h.service.GetFromSession(r.Context(), cookie.Value)
+	if errors.Is(err, platformauth.ErrUserNotFound) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	if err != nil {
+		http.Error(w, "failed to get user", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	resp := struct {
+		Username string   `json:"username"`
+		Provider Provider `json:"provider"`
+	}{
+		Username: user.Username,
+		Provider: ProviderYandex,
+	}
+
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		log.ErrorContext(r.Context(), "failed to encode response", "error", err)
+	}
+}

@@ -1,11 +1,12 @@
 import { Config } from '$lib/config';
 
-export const POST = async ({ request }) => {
+export const POST = async ({ request, url }) => {
 	try {
 		const response = await fetch(Config.auth.logoutUrl, {
 			method: 'POST',
 			headers: {
-				Cookie: request.headers.get('Cookie') || ''
+				Cookie: request.headers.get('Cookie') || '',
+				'X-Forwarded-Proto': url.protocol.replace(':', '')
 			}
 		});
 

@@ -6,19 +6,20 @@ import (
 	"hostamat/internal/adapters/caddy"
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/s3"
+	"hostamat/internal/adapters/yandexoauth"
 	"hostamat/internal/file"
 	"hostamat/internal/middlewares"
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/internal/uploadsession"
 	"hostamat/internal/user"
+	"hostamat/internal/userauth"
 	"os"
 	"time"
 
 	"hostamat/internal/httpclient"
 
 	"github.com/platforma-dev/platforma/application"
-	"github.com/platforma-dev/platforma/auth"
 	"github.com/platforma-dev/platforma/database"
 	"github.com/platforma-dev/platforma/httpserver"
 	"github.com/platforma-dev/platforma/log"
@@ -66,7 +67,16 @@ func main() {
 	siteDomain := site.New(conn, subdomainDomain.Service, fileDomain.Service, uploadSessionDomain.Service)
 	sessionDomain := session.New(conn)
 	userDomain := user.New(siteDomain.Service, uploadSessionDomain.Service)
-	authDomain := auth.New(conn, sessionDomain.Service, "hsessionid", nil, nil, userDomain.CleanupQueue)
+	yandexClient := yandexoauth.New(
+		httpClient,
+		conf.Auth.YandexAuthorizeURL,
+		conf.Auth.YandexTokenURL,
+		conf.Auth.YandexUserInfoURL,
+		conf.Auth.YandexClientID,
+		conf.Auth.YandexClientSecret,
+		conf.Auth.YandexRedirectURI,
+	)
+	authDomain := userauth.New(conn, sessionDomain.Service, yandexClient, "hsessionid", conf.Auth.YandexRedirectURI, userDomain.CleanupQueue)
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()

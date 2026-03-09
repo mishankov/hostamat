@@ -1,37 +1,49 @@
 <script lang="ts">
-	import { navigateAfterAuthChange } from '$lib/auth/navigation';
-	import { Alert, Button, Input } from '$lib/components';
+	import { Alert, Button } from '$lib/components';
+	import type { PageProps } from './$types';
 
-	let login = $state('');
-	let password = $state('');
-	let error = $state('');
-	let loginButtonDisabled = $derived(!(login.length > 0 && password.length > 0));
+	let { data }: PageProps = $props();
+	let isLoading = $state(false);
+	let startErrorMessage = $state('');
 
-	const loginAction = async () => {
-		error = '';
-		const res = await fetch('/api/auth/login', {
-			method: 'POST',
-			body: JSON.stringify({
-				login,
-				password
-			})
-		});
-
-		if (res.ok) {
-			await navigateAfterAuthChange('/dashboard');
-			return;
+	let errorMessage = $derived.by(() => {
+		if (startErrorMessage) {
+			return startErrorMessage;
 		}
 
-		if (res.status === 401) {
-			error = 'Неверный логин или пароль';
-		} else {
-			error = 'Ошибка сервера';
+		switch (data.error) {
+			case 'oauth_denied':
+				return 'Вход через Яндекс был отменён.';
+			case 'oauth_failed':
+				return 'Не удалось завершить вход через Яндекс.';
+			default:
+				return '';
 		}
-	};
+	});
 
-	const onSubmit = async (event: SubmitEvent) => {
-		event.preventDefault();
-		await loginAction();
+	const startYandexAuth = async () => {
+		isLoading = true;
+		startErrorMessage = '';
+
+		try {
+			const response = await fetch('/api/auth/yandex/start');
+			if (!response.ok) {
+				startErrorMessage = 'Не удалось начать вход через Яндекс.';
+				return;
+			}
+
+			const payload = (await response.json()) as { authUrl?: string };
+			if (!payload.authUrl) {
+				startErrorMessage = 'Не удалось начать вход через Яндекс.';
+				return;
+			}
+
+			window.location.href = payload.authUrl;
+		} catch {
+			startErrorMessage = 'Не удалось начать вход через Яндекс.';
+		} finally {
+			isLoading = false;
+		}
 	};
 </script>
 
@@ -40,43 +52,23 @@
 </svelte:head>
 
 <h1>Вход</h1>
-<p class="lead">Вернитесь к вашим сайтам и публикациям.</p>
+<p class="lead">Войдите через Яндекс, чтобы вернуться к вашим сайтам и публикациям.</p>
 
-{#if error}
-	<Alert variant="error" message={error} />
+{#if errorMessage}
+	<Alert variant="error" message={errorMessage} />
 {/if}
 
-<form class="auth-form" onsubmit={onSubmit}>
-	<Input id="login" type="text" label="Логин" bind:value={login} placeholder="ivan" />
-	<Input
-		id="password"
-		type="password"
-		label="Пароль"
-		bind:value={password}
-		placeholder="verysecure"
-	/>
-
-	<div class="actions">
-		<Button type="submit" filled disabled={loginButtonDisabled}>Войти</Button>
-		<Button href="/register">Создать аккаунт</Button>
-	</div>
-</form>
+<div class="auth-form">
+	<Button onclick={startYandexAuth} filled disabled={isLoading}>
+		{isLoading ? 'Переходим в Яндекс...' : 'Продолжить с Яндексом'}
+	</Button>
+</div>
 
 <style>
 	.auth-form {
 		display: flex;
 		flex-direction: column;
 		gap: 0.9rem;
-	}
-
-	.actions {
-		width: 100%;
-
-		display: flex;
-		justify-content: space-between;
-		gap: 10px;
-
-		padding-top: 10px;
 	}
 
 	.lead {

@@ -18,7 +18,7 @@
 						панели.
 					</p>
 					<div class="hero-actions">
-						<Button href="/register" filled>Запустить свой сайт</Button>
+						<Button href="/login" filled>Войти через Яндекс</Button>
 						<Button href="/about">Узнать о платформе</Button>
 					</div>
 				</div>
@@ -83,8 +83,8 @@
 			<Card floating border cornerBorder>
 				<div class="step">
 					<span>01</span>
-					<h2>Создайте аккаунт</h2>
-					<p>Регистрация занимает меньше минуты.</p>
+					<h2>Войдите через Яндекс</h2>
+					<p>Авторизация занимает пару кликов.</p>
 				</div>
 			</Card>
 			<Card floating border cornerBorder>
