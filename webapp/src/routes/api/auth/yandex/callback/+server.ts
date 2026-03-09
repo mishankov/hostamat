@@ -13,12 +13,28 @@ export const GET = async ({ request, url }) => {
 			}
 		});
 
-		return new Response(response.body, {
-			status: response.status,
-			headers: response.headers
+		if (!response.ok) {
+			return Response.redirect(new URL('/login?error=oauth_failed', url), 302);
+		}
+
+		const payload = (await response.json()) as { redirectTo?: string };
+		const location = payload.redirectTo || '/login?error=oauth_failed';
+		const headers = new Headers();
+
+		for (const [key, value] of response.headers.entries()) {
+			if (key.toLowerCase() === 'set-cookie') {
+				headers.append(key, value);
+			}
+		}
+
+		headers.set('Location', new URL(location, url).toString());
+
+		return new Response(null, {
+			status: 302,
+			headers
 		});
 	} catch (error) {
 		console.error('Proxy error:', error);
-		return new Response('Proxy error', { status: 500 });
+		return Response.redirect(new URL('/login?error=oauth_failed', url), 302);
 	}
 };

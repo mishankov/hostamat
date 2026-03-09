@@ -3,6 +3,7 @@ package userauth
 import (
 	"context"
 	"crypto/subtle"
+	"encoding/json"
 	"net/http"
 	"time"
 )
@@ -31,20 +32,20 @@ func (h *YandexCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 	query := r.URL.Query()
 	if query.Get("error") != "" {
 		clearCookie(w, h.service.OAuthStateCookieName(), h.service.OAuthStateCookiePath(), requestIsSecure(r))
-		http.Redirect(w, r, "/login?error=oauth_denied", http.StatusFound)
+		writeRedirectTarget(w, "/login?error=oauth_denied")
 		return
 	}
 
 	if !isValidState(r, h.service.OAuthStateCookieName(), query.Get("state")) {
 		clearCookie(w, h.service.OAuthStateCookieName(), h.service.OAuthStateCookiePath(), requestIsSecure(r))
-		http.Redirect(w, r, "/login?error=oauth_failed", http.StatusFound)
+		writeRedirectTarget(w, "/login?error=oauth_failed")
 		return
 	}
 
 	sessionID, err := h.service.CreateSessionFromYandexCode(r.Context(), query.Get("code"))
 	if err != nil {
 		clearCookie(w, h.service.OAuthStateCookieName(), h.service.OAuthStateCookiePath(), requestIsSecure(r))
-		http.Redirect(w, r, "/login?error=oauth_failed", http.StatusFound)
+		writeRedirectTarget(w, "/login?error=oauth_failed")
 		return
 	}
 
@@ -58,7 +59,7 @@ func (h *YandexCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 	})
 	clearCookie(w, h.service.OAuthStateCookieName(), h.service.OAuthStateCookiePath(), requestIsSecure(r))
 
-	http.Redirect(w, r, "/dashboard", http.StatusFound)
+	writeRedirectTarget(w, "/dashboard")
 }
 
 func isValidState(r *http.Request, cookieName, state string) bool {
@@ -84,5 +85,15 @@ func clearCookie(w http.ResponseWriter, name, path string, secure bool) {
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
 		Secure:   secure,
+	})
+}
+
+func writeRedirectTarget(w http.ResponseWriter, redirectTo string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(struct {
+		RedirectTo string `json:"redirectTo"`
+	}{
+		RedirectTo: redirectTo,
 	})
 }
