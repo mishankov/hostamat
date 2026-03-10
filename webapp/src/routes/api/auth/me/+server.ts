@@ -1,11 +1,12 @@
 import { Config } from '$lib/config';
 
-export const GET = async ({ request }) => {
+export const GET = async ({ request, url }) => {
 	try {
 		const response = await fetch(Config.auth.meUrl, {
 			method: 'GET',
 			headers: {
-				Cookie: request.headers.get('Cookie') || ''
+				Cookie: request.headers.get('Cookie') || '',
+				'X-Forwarded-Proto': url.protocol.replace(':', '')
 			}
 		});
 
@@ -19,12 +20,13 @@ export const GET = async ({ request }) => {
 	}
 };
 
-export const DELETE = async ({ request }) => {
+export const DELETE = async ({ request, url }) => {
 	try {
 		const response = await fetch(Config.auth.meUrl, {
 			method: 'DELETE',
 			headers: {
-				Cookie: request.headers.get('Cookie') || ''
+				Cookie: request.headers.get('Cookie') || '',
+				'X-Forwarded-Proto': url.protocol.replace(':', '')
 			}
 		});
 

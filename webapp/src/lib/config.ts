@@ -9,10 +9,9 @@ export const Config = {
 	},
 	uploadSessionsUrl: `${env.API_BASE || 'http://localhost:1001'}/api/uploadsessions`,
 	auth: {
-		loginUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/login`,
 		logoutUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/logout`,
-		registerUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/register`,
-		changePasswordUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/change-password`,
-		meUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/me`
+		meUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/me`,
+		yandexStartUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/yandex/start`,
+		yandexCallbackUrl: `${env.API_BASE || 'http://localhost:1001'}/auth/yandex/callback`
 	}
 } as const;

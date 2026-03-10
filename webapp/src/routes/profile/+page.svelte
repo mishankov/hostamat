@@ -1,71 +1,19 @@
 <script lang="ts">
 	import { navigateAfterAuthChange } from '$lib/auth/navigation';
 	import { onDestroy } from 'svelte';
-	import { Alert, Button, Card, IconButton, Input, Modal } from '$lib/components';
+	import { Alert, Button, Card, IconButton, Modal } from '$lib/components';
 	import { Copy } from '$lib/icons';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
-	let currentPassword = $state('');
-	let newPassword = $state('');
-	let newPasswordAgain = $state('');
-	let changePasswordButtonDisabled = $derived(
-		!(
-			currentPassword.length > 0 &&
-			newPassword.length >= 8 &&
-			newPassword.length <= 100 &&
-			newPasswordAgain.length >= 8 &&
-			newPasswordAgain.length <= 100 &&
-			newPassword === newPasswordAgain
-		)
-	);
-
 	let errorMessage = $state('');
-	let successMessage = $state('');
 	let deleteAccountModal = $state<Modal>();
 	let loginCopied = $state(false);
 	let copyTimer: ReturnType<typeof setTimeout> | null = null;
 
-	const clearMessages = () => {
-		errorMessage = '';
-		successMessage = '';
-	};
-
-	const clearPasswords = () => {
-		currentPassword = '';
-		newPassword = '';
-		newPasswordAgain = '';
-	};
-
-	const changePasswordAction = async () => {
-		clearMessages();
-		const res = await fetch('/api/auth/change-password', {
-			method: 'POST',
-			body: JSON.stringify({
-				currentPassword,
-				newPassword
-			})
-		});
-
-		if (res.ok) {
-			successMessage = 'Пароль успешно изменён!';
-			clearPasswords();
-			return;
-		}
-
-		const data = await res.text();
-		if (res.status === 401) {
-			errorMessage = 'Неверный текущий пароль';
-		} else if (data.trim() == 'invalid password') {
-			errorMessage = 'Пароль не соответствует требованиям';
-		} else {
-			errorMessage = 'Ошибка сервера';
-		}
-	};
-
 	const deleteAccountAction = async () => {
-		clearMessages();
+		errorMessage = '';
 		try {
 			const res = await fetch('/api/auth/me', {
 				method: 'DELETE',
@@ -81,7 +29,7 @@
 			}
 
 			await navigateAfterAuthChange('/login');
-		} catch (error) {
+		} catch {
 			errorMessage = 'Ошибка при удалении аккаунта';
 			deleteAccountModal?.close();
 		}
@@ -104,11 +52,6 @@
 		}
 	};
 
-	const submitChangePassword = async (event: SubmitEvent) => {
-		event.preventDefault();
-		await changePasswordAction();
-	};
-
 	onDestroy(() => {
 		if (copyTimer) {
 			clearTimeout(copyTimer);
@@ -122,69 +65,31 @@
 
 <main class="page-shell">
 	<div class="page-content profile">
-		{#if errorMessage || successMessage}
+		{#if errorMessage}
 			<div class="alerts">
-				{#if errorMessage}
-					<Alert variant="error" message={errorMessage} />
-				{/if}
-
-				{#if successMessage}
-					<Alert variant="success" message={successMessage} />
-				{/if}
+				<Alert variant="error" message={errorMessage} />
 			</div>
 		{/if}
 
 		<div class="headline">
 			<h1>Профиль</h1>
-			<p>Управление учётной записью и безопасностью.</p>
+			<p>Управление учётной записью Яндекса и вашими данными.</p>
 		</div>
 
 		<div class="profile-data">
 			<div class="profile-data-row">
-				<span class="label">Логин</span>
+				<span class="label">Яндекс логин</span>
 				<div class="profile-data-value">
 					<span>{data.username}</span>
-					<IconButton label="Скопировать логин" onclick={copyLogin}>
+					<IconButton label="Скопировать логин Яндекса" onclick={copyLogin}>
 						<Copy size={15} />
 					</IconButton>
 				</div>
 			</div>
 			{#if loginCopied}
-				<p class="copy-feedback" aria-live="polite">Логин скопирован</p>
+				<p class="copy-feedback" aria-live="polite">Логин Яндекса скопирован</p>
 			{/if}
 		</div>
-
-		<Card border>
-			<form class="change-password" onsubmit={submitChangePassword}>
-				<h2>Смена пароля</h2>
-
-				<Input
-					id="oldPassword"
-					type="password"
-					label="Текущий пароль"
-					bind:value={currentPassword}
-					placeholder="verysecure"
-				/>
-				<Input
-					id="newPassword"
-					type="password"
-					label="Новый пароль"
-					bind:value={newPassword}
-					placeholder="verysecure2"
-				/>
-				<Input
-					id="newPasswordAgain"
-					type="password"
-					label="Новый пароль ещё раз"
-					bind:value={newPasswordAgain}
-					placeholder="verysecure2"
-				/>
-
-				<Button type="submit" kind="danger" disabled={changePasswordButtonDisabled}
-					>Сменить пароль</Button
-				>
-			</form>
-		</Card>
 
 		<Card kind="danger" border={true}>
 			<div class="danger-zone">
@@ -252,7 +157,6 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-
 		gap: 20px;
 	}
 
@@ -272,22 +176,11 @@
 		color: var(--color-confirm-60);
 	}
 
-	.change-password {
-		display: flex;
-		flex-direction: column;
-		gap: 0.9rem;
-
-		max-width: 420px;
-		padding: 1rem;
-	}
-
 	.danger-zone {
 		display: flex;
 		flex-direction: column;
 		gap: 0.8rem;
-
 		max-width: 500px;
-
 		padding: 1rem;
 	}
 

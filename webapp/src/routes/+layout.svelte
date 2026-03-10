@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { navigateAfterAuthChange } from '$lib/auth/navigation';
 	import { onMount } from 'svelte';
@@ -29,7 +28,7 @@
 
 	const openLogin = async () => {
 		closeMenu();
-		await goto('/login');
+		await navigateAfterAuthChange('/login');
 	};
 
 	const syncTheme = () => {

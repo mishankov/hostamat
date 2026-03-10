@@ -14,5 +14,5 @@ export const load = (async ({ request, fetch }) => {
 
 	const data = await meResponse.json();
 
-	return { isAuthenticated: true, username: data.username };
+	return { isAuthenticated: true, username: data.username, provider: data.provider };
 }) satisfies LayoutServerLoad;
