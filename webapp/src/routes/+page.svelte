@@ -1,26 +1,8 @@
 <script lang="ts">
-	import { Badge, Button, Card, Alert } from '$lib/components';
-	import { startYandexAuth } from '$lib/auth/start';
+	import { Badge, Button, Card } from '$lib/components';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
-	let isAuthStarting = $state(false);
-
-	let authErrorMessage = $derived.by(() => {
-		switch (data.authError) {
-			case 'oauth_denied':
-				return 'Вход через Яндекс был отменён.';
-			case 'oauth_failed':
-				return 'Не удалось завершить вход через Яндекс.';
-			default:
-				return '';
-		}
-	});
-
-	const openAuth = async () => {
-		isAuthStarting = true;
-		await startYandexAuth();
-	};
 </script>
 
 <svelte:head>
@@ -34,9 +16,6 @@
 				<div class="hero-copy">
 					<Badge text="Альфа-тестирование" />
 					<h1>Хостинг статических сайтов без лишней настройки</h1>
-					{#if authErrorMessage}
-						<Alert variant="error" message={authErrorMessage} />
-					{/if}
 					<p class="hero-description">
 						Загрузите файлы или ZIP-архив, получите HTTPS-поддомен и управляйте проектом в удобной
 						панели.
@@ -45,9 +24,7 @@
 						{#if data.isAuthenticated}
 							<Button href="/dashboard" filled>Открыть дашборд</Button>
 						{:else}
-							<Button onclick={openAuth} filled disabled={isAuthStarting}>
-								{isAuthStarting ? 'Переходим в Яндекс...' : 'Войти через Яндекс'}
-							</Button>
+							<Button href="/dashboard" filled>Запустить свой сайт</Button>
 						{/if}
 						<Button href="/about">Узнать о платформе</Button>
 					</div>

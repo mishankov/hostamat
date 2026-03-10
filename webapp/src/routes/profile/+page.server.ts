@@ -5,6 +5,6 @@ export const load = (async ({ parent }) => {
 	const { isAuthenticated } = await parent();
 
 	if (!isAuthenticated) {
-		return redirect(302, '/');
+		return redirect(302, '/login');
 	}
 }) satisfies PageServerLoad;

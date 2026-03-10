@@ -2,7 +2,6 @@
 	import { browser } from '$app/environment';
 	import { resolve } from '$app/paths';
 	import { navigateAfterAuthChange } from '$lib/auth/navigation';
-	import { startYandexAuth } from '$lib/auth/start';
 	import { onMount } from 'svelte';
 	import { Button, Card, IconButton, Link } from '$lib/components';
 	import { Moon, Sun } from '$lib/icons';
@@ -12,7 +11,6 @@
 
 	let cookieConsent = $state('notset');
 	let menuOpen = $state(false);
-	let isAuthStarting = $state(false);
 	const resolveInitialTheme = (): 'light' | 'dark' => {
 		if (!browser) {
 			return 'light';
@@ -25,13 +23,12 @@
 	const logout = async () => {
 		await fetch('/api/auth/logout', { method: 'POST' });
 		closeMenu();
-		await navigateAfterAuthChange('/');
+		await navigateAfterAuthChange('/login');
 	};
 
 	const openLogin = async () => {
 		closeMenu();
-		isAuthStarting = true;
-		await startYandexAuth();
+		await navigateAfterAuthChange('/login');
 	};
 
 	const syncTheme = () => {
@@ -150,9 +147,7 @@
 						<Link href="/profile">{data.username}</Link>
 						<Button onclick={logout}>Выйти</Button>
 					{:else}
-						<Button onclick={openLogin} disabled={isAuthStarting}>
-							{isAuthStarting ? 'Переходим...' : 'Войти'}
-						</Button>
+						<Button onclick={openLogin}>Войти</Button>
 					{/if}
 				</div>
 			</Card>
