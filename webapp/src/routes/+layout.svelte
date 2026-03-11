@@ -3,25 +3,24 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { navigateAfterAuthChange } from '$lib/auth/navigation';
+	import {
+		provideThemeController,
+		resolveDocumentTheme,
+		ThemeController
+	} from '$lib/theme/controller.svelte';
 	import { onMount } from 'svelte';
-	import { Button, Card, IconButton, Link } from '$lib/components';
-	import { Moon, Sun } from '$lib/icons';
+	import { Button, Card, Link, ThemeToggle } from '$lib/components';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
 
 	let cookieConsent = $state('notset');
 	let menuOpen = $state(false);
-	const resolveInitialTheme = (): 'light' | 'dark' => {
-		if (!browser) {
-			return 'light';
-		}
-
-		return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-	};
-	let theme = $state<'light' | 'dark'>(resolveInitialTheme());
 	const isAppRoute = $derived(
 		page.url.pathname.startsWith('/dashboard') || page.url.pathname.startsWith('/profile')
+	);
+	const themeController = provideThemeController(
+		new ThemeController(browser ? resolveDocumentTheme() : 'light')
 	);
 
 	const logout = async () => {
@@ -35,49 +34,13 @@
 		await navigateAfterAuthChange('/login');
 	};
 
-	const syncTheme = () => {
-		if (!browser) {
-			return;
-		}
-
-		document.documentElement.setAttribute('data-theme', theme);
-		try {
-			localStorage.setItem('hostamat-theme', theme);
-		} catch {
-			// Ignore storage write failures.
-		}
-	};
-
-	const toggleTheme = () => {
-		theme = theme === 'light' ? 'dark' : 'light';
-		syncTheme();
-	};
-
-	const handleThemeChange = () => {
-		if (!browser) {
-			return;
-		}
-
-		theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-	};
-
 	onMount(() => {
 		try {
 			cookieConsent = localStorage.getItem('cookieConsent') || '';
-
-			const savedTheme = localStorage.getItem('hostamat-theme');
-			if (savedTheme === 'dark' || savedTheme === 'light') {
-				theme = savedTheme;
-			} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-				theme = 'dark';
-			}
 		} catch {
 			cookieConsent = '';
-			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-				theme = 'dark';
-			}
 		} finally {
-			syncTheme();
+			themeController.initializeFromBrowser();
 		}
 
 		console.info(
@@ -85,12 +48,6 @@
 			'color: hsl(212 60% 42%); font-weight: 700; font-size: 14px;',
 			'font-size: 13px;'
 		);
-
-		window.addEventListener('hostamat-theme-change', handleThemeChange);
-
-		return () => {
-			window.removeEventListener('hostamat-theme-change', handleThemeChange);
-		};
 	});
 
 	const closeMenu = () => {
@@ -149,19 +106,7 @@
 					</nav>
 
 					<div class={['user-info', menuOpen && 'open']}>
-						<IconButton
-							label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
-							onclick={toggleTheme}
-							title={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
-							class="theme-toggle"
-						>
-							<span class="theme-icon theme-icon-light" aria-hidden="true">
-								<Sun size={18} color="var(--color-accent-70)" />
-							</span>
-							<span class="theme-icon theme-icon-dark" aria-hidden="true">
-								<Moon size={18} color="var(--color-accent-70)" />
-							</span>
-						</IconButton>
+						<ThemeToggle />
 						{#if data.isAuthenticated}
 							<Link href="/profile">{data.username}</Link>
 							<Button onclick={logout}>Выйти</Button>
@@ -263,30 +208,6 @@
 		align-items: center;
 		justify-content: flex-end;
 		gap: 0.8rem;
-	}
-
-	:global(.theme-toggle) {
-		width: 34px;
-		height: 34px;
-	}
-
-	:global(.theme-toggle .theme-icon) {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	:global(:root[data-theme='light'] .theme-toggle .theme-icon-dark) {
-		display: none;
-	}
-
-	:global(:root[data-theme='dark'] .theme-toggle .theme-icon-light) {
-		display: none;
-	}
-
-	:global(button.theme-toggle:hover) {
-		background: color-mix(in hsl, var(--color-background-object) 95%, var(--color-accent-80) 5%);
-		border-color: color-mix(in hsl, var(--color-accent-60) 82%, var(--color-accent-80) 18%);
 	}
 
 	.menu-toggle {

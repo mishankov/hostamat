@@ -12,6 +12,7 @@ import Modal from './Modal.svelte';
 import ProgressBar from './ProgressBar.svelte';
 import Separator from './Separator.svelte';
 import Success from './Success.svelte';
+import ThemeToggle from './ThemeToggle.svelte';
 
 export {
 	Alert,
@@ -27,5 +28,6 @@ export {
 	ProgressBar,
 	Link,
 	Separator,
-	Success
+	Success,
+	ThemeToggle
 };

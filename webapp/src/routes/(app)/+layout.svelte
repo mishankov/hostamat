@@ -1,10 +1,7 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { page } from '$app/state';
 	import { navigateAfterAuthChange } from '$lib/auth/navigation';
-	import { onMount } from 'svelte';
-	import { Badge, Button, IconButton, Link } from '$lib/components';
-	import { Moon, Sun } from '$lib/icons';
+	import { Badge, Button, Link, ThemeToggle } from '$lib/components';
 	import type { LayoutProps } from './$types';
 	import { resolve } from '$app/paths';
 
@@ -29,56 +26,11 @@
 	let { children, data }: LayoutProps = $props();
 
 	const currentPath = $derived(page.url.pathname);
-	const resolveInitialTheme = (): 'light' | 'dark' => {
-		if (!browser) {
-			return 'light';
-		}
-
-		return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-	};
-	let theme = $state<'light' | 'dark'>(resolveInitialTheme());
 
 	const logout = async () => {
 		await fetch('/api/auth/logout', { method: 'POST' });
 		await navigateAfterAuthChange('/login');
 	};
-
-	const syncTheme = () => {
-		if (!browser) {
-			return;
-		}
-
-		document.documentElement.setAttribute('data-theme', theme);
-
-		try {
-			localStorage.setItem('hostamat-theme', theme);
-			window.dispatchEvent(new Event('hostamat-theme-change'));
-		} catch {
-			// Ignore storage write failures.
-		}
-	};
-
-	const toggleTheme = () => {
-		theme = theme === 'light' ? 'dark' : 'light';
-		syncTheme();
-	};
-
-	onMount(() => {
-		try {
-			const savedTheme = localStorage.getItem('hostamat-theme');
-			if (savedTheme === 'dark' || savedTheme === 'light') {
-				theme = savedTheme;
-			} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-				theme = 'dark';
-			}
-		} catch {
-			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-				theme = 'dark';
-			}
-		} finally {
-			syncTheme();
-		}
-	});
 </script>
 
 <main class="app-shell">
@@ -114,19 +66,7 @@
 						</div>
 					{/if}
 					<div class="account-actions">
-						<IconButton
-							label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
-							title={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
-							onclick={toggleTheme}
-							class="theme-toggle"
-						>
-							<span class="theme-icon theme-icon-light" aria-hidden="true">
-								<Sun size={16} color="var(--color-accent-70)" />
-							</span>
-							<span class="theme-icon theme-icon-dark" aria-hidden="true">
-								<Moon size={16} color="var(--color-accent-70)" />
-							</span>
-						</IconButton>
+						<ThemeToggle />
 						<Button onclick={logout}>Выйти</Button>
 					</div>
 				</div>
@@ -259,25 +199,6 @@
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
-	}
-
-	:global(.theme-toggle) {
-		width: 34px;
-		height: 34px;
-	}
-
-	:global(.theme-toggle .theme-icon) {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	:global(:root[data-theme='light'] .theme-toggle .theme-icon-dark) {
-		display: none;
-	}
-
-	:global(:root[data-theme='dark'] .theme-toggle .theme-icon-light) {
-		display: none;
 	}
 
 	.app-panel {
