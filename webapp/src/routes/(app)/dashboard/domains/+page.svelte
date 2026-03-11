@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { Badge, Card } from '$lib/components';
+	import type { PageProps } from './$types';
+
+	import { Alert, Card } from '$lib/components';
+	import { Spinner } from '$lib/icons';
+
+	import DomainCard from './DomainCard.svelte';
+
+	let { data }: PageProps = $props();
 </script>
 
 <svelte:head>
@@ -8,23 +15,35 @@
 
 <div class="domains-page">
 	<div class="headline">
-		<div class="headline-row">
-			<h1>Домены</h1>
-			<Badge text="Soon" />
-		</div>
+		<h1>Домены</h1>
 		<p>Просматривайте и управляете доменами и поддоменами</p>
+	</div>
+
+	<div class="domains-list">
+		{#await data.sitesResp}
+			<div class="loading-state" aria-live="polite">
+				<Spinner size={50} />
+			</div>
+		{:then sitesResult}
+			{#if sitesResult.data}
+				{#each sitesResult.data.sites as site (site.id)}
+					<DomainCard {site} />
+				{/each}
+			{:else}
+				<Alert variant="error" message="Ошибка при загрузке доменов: {sitesResult.error}" />
+			{/if}
+		{:catch error}
+			<Alert variant="error" message="Ошибка при загрузке доменов: {error.message}" />
+		{/await}
 	</div>
 
 	<Card border cornerBorder class="domains-card">
 		<div class="domains-card-content">
-			<h2>Как это работает сейчас</h2>
+			<h2>Подключение собственных доменов</h2>
+			<p>Поддомены для ваших статических сайтов уже создаются автоматически и отображаются выше.</p>
 			<p>
-				Каждый статический сайт в Хостамат уже получает собственный поддомен автоматически после
-				создания.
-			</p>
-			<p>
-				Когда раздел доменов будет запущен, здесь появится управление подключением ваших доменов к
-				существующим сайтам.
+				Управление подключением собственных доменов к существующим сайтам появится в этом разделе
+				позже.
 			</p>
 		</div>
 	</Card>
@@ -41,14 +60,32 @@
 	.headline {
 		display: flex;
 		flex-direction: column;
-		gap: 0.45rem;
+		gap: 0.4rem;
 	}
 
-	.headline-row {
+	.headline p {
+		max-width: 64ch;
+	}
+
+	.domains-list {
+		--site-tile-width: 320px;
+
 		display: flex;
 		flex-wrap: wrap;
+		gap: 0.8rem;
+		align-items: stretch;
+	}
+
+	.loading-state {
+		display: flex;
 		align-items: center;
-		gap: 0.75rem;
+		justify-content: center;
+		min-height: 170px;
+		width: var(--site-tile-width);
+	}
+
+	:global(.domains-list > :global(.alert)) {
+		width: 100%;
 	}
 
 	:global(.domains-card) {
@@ -65,5 +102,11 @@
 
 	.domains-card-content h2 {
 		font-size: clamp(1.15rem, 1.7vw, 1.45rem);
+	}
+
+	@media (max-width: 820px) {
+		.domains-list {
+			--site-tile-width: 100%;
+		}
 	}
 </style>
