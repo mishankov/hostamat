@@ -1,3 +1,4 @@
+import AccountMenu from './AccountMenu.svelte';
 import Alert from './Alert.svelte';
 import Badge from './Badge.svelte';
 import Button from './Button.svelte';
@@ -15,6 +16,7 @@ import Success from './Success.svelte';
 import ThemeToggle from './ThemeToggle.svelte';
 
 export {
+	AccountMenu,
 	Alert,
 	Badge,
 	Button,

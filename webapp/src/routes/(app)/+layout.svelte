@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { navigateAfterAuthChange } from '$lib/auth/navigation';
-	import { Badge, Button, Link, ThemeToggle } from '$lib/components';
+	import { AccountMenu, Badge, Link } from '$lib/components';
 	import type { LayoutProps } from './$types';
 	import { resolve } from '$app/paths';
 
@@ -58,13 +58,7 @@
 			</nav>
 
 			<div class="sidebar-footer">
-				<div class="account">
-					<Link href="/profile" class="account-link">{data.username}</Link>
-				</div>
-				<div class="sidebar-footer-actions">
-					<ThemeToggle />
-					<Button onclick={logout}>Выйти</Button>
-				</div>
+				<AccountMenu username={data.username} onlogout={logout} context="sidebar" />
 			</div>
 		</aside>
 
@@ -169,25 +163,6 @@
 		flex-direction: column;
 		justify-content: start;
 		gap: 0.7rem;
-	}
-
-	.sidebar-footer-actions {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 0.7rem;
-	}
-
-	.account {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 0.9rem;
-		padding: 0 0.2rem;
-	}
-
-	:global(.account-link) {
-		word-break: break-word;
 	}
 
 	.app-panel {

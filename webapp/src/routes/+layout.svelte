@@ -9,7 +9,7 @@
 		ThemeController
 	} from '$lib/theme/controller.svelte';
 	import { onMount } from 'svelte';
-	import { Button, Card, Link, ThemeToggle } from '$lib/components';
+	import { AccountMenu, Button, Card, Link } from '$lib/components';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
@@ -106,10 +106,8 @@
 					</nav>
 
 					<div class={['user-info', menuOpen && 'open']}>
-						<ThemeToggle />
 						{#if data.isAuthenticated}
-							<Link href="/profile">{data.username}</Link>
-							<Button onclick={logout}>Выйти</Button>
+							<AccountMenu username={data.username} onlogout={logout} context="header" />
 						{:else}
 							<Button onclick={openLogin}>Войти</Button>
 						{/if}
