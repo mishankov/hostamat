@@ -20,7 +20,7 @@
 	bind:this={modal}
 	kind="primary"
 	titleId={modalTitleId}
-	initialFocusSelector={"#" + inputId}
+	initialFocusSelector={'#' + inputId}
 	openCallback={() => (newName = siteName)}
 >
 	<div class="modal-body">

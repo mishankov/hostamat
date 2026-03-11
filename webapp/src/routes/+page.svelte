@@ -22,9 +22,9 @@
 					</p>
 					<div class="hero-actions">
 						{#if data.isAuthenticated}
-							<Button href="/dashboard" filled>Открыть дашборд</Button>
+							<Button href="/dashboard/sites" filled>Открыть дашборд</Button>
 						{:else}
-							<Button href="/dashboard" filled>Запустить свой сайт</Button>
+							<Button href="/dashboard/sites" filled>Запустить свой сайт</Button>
 						{/if}
 						<Button href="/about">Узнать о платформе</Button>
 					</div>

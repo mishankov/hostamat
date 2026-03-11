@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import { navigateAfterAuthChange } from '$lib/auth/navigation';
 	import { onMount } from 'svelte';
 	import { Button, Card, IconButton, Link } from '$lib/components';
@@ -19,6 +20,9 @@
 		return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
 	};
 	let theme = $state<'light' | 'dark'>(resolveInitialTheme());
+	const isAppRoute = $derived(
+		page.url.pathname.startsWith('/dashboard') || page.url.pathname.startsWith('/profile')
+	);
 
 	const logout = async () => {
 		await fetch('/api/auth/logout', { method: 'POST' });
@@ -49,6 +53,14 @@
 		syncTheme();
 	};
 
+	const handleThemeChange = () => {
+		if (!browser) {
+			return;
+		}
+
+		theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+	};
+
 	onMount(() => {
 		try {
 			cookieConsent = localStorage.getItem('cookieConsent') || '';
@@ -73,6 +85,12 @@
 			'color: hsl(212 60% 42%); font-weight: 700; font-size: 14px;',
 			'font-size: 13px;'
 		);
+
+		window.addEventListener('hostamat-theme-change', handleThemeChange);
+
+		return () => {
+			window.removeEventListener('hostamat-theme-change', handleThemeChange);
+		};
 	});
 
 	const closeMenu = () => {
@@ -80,7 +98,7 @@
 	};
 </script>
 
-<div class="site-chrome ambient-grid">
+<div class={['site-chrome', !isAppRoute && 'ambient-grid', isAppRoute && 'dashboard-chrome']}>
 	{#if cookieConsent !== 'notset' && cookieConsent !== 'true'}
 		<div class="cookie">
 			<Card border>
@@ -106,80 +124,93 @@
 		</div>
 	{/if}
 
-	<header>
-		<div class="header-shell">
-			<Card border cornerBorder class="header-card">
-				<div class="brand-group">
-					<Link href={resolve('/')} onclick={closeMenu}><span class="logo">ХОСТАМАТ</span></Link>
-					<button
-						type="button"
-						class="menu-toggle"
-						onclick={() => (menuOpen = !menuOpen)}
-						aria-controls="primary-navigation"
-						aria-expanded={menuOpen}
-						aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
-					>
-						<span class="burger" aria-hidden="true"></span>
-					</button>
-				</div>
+	{#if !isAppRoute}
+		<header>
+			<div class="header-shell">
+				<Card border cornerBorder class="header-card">
+					<div class="brand-group">
+						<Link href={resolve('/')} onclick={closeMenu}><span class="logo">ХОСТАМАТ</span></Link>
+						<button
+							type="button"
+							class="menu-toggle"
+							onclick={() => (menuOpen = !menuOpen)}
+							aria-controls="primary-navigation"
+							aria-expanded={menuOpen}
+							aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
+						>
+							<span class="burger" aria-hidden="true"></span>
+						</button>
+					</div>
 
-				<nav id="primary-navigation" class={[menuOpen && 'open']}>
-					<Link href={resolve('/dashboard')} onclick={closeMenu}>Дашборд</Link>
-					<Link href={resolve('/about')} onclick={closeMenu}>О сервисе</Link>
-					<Link href={resolve('/faq')} onclick={closeMenu}>FAQ</Link>
-				</nav>
+					<nav id="primary-navigation" class={[menuOpen && 'open']}>
+						<Link href={resolve('/dashboard/sites')} onclick={closeMenu}>Дашборд</Link>
+						<Link href={resolve('/about')} onclick={closeMenu}>О сервисе</Link>
+						<Link href={resolve('/faq')} onclick={closeMenu}>FAQ</Link>
+					</nav>
 
-				<div class={['user-info', menuOpen && 'open']}>
-					<IconButton
-						label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
-						onclick={toggleTheme}
-						title={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
-						class="theme-toggle"
-					>
-						<span class="theme-icon theme-icon-light" aria-hidden="true">
-							<Sun size={18} color="var(--color-accent-70)" />
-						</span>
-						<span class="theme-icon theme-icon-dark" aria-hidden="true">
-							<Moon size={18} color="var(--color-accent-70)" />
-						</span>
-					</IconButton>
-					{#if data.isAuthenticated}
-						<Link href="/profile">{data.username}</Link>
-						<Button onclick={logout}>Выйти</Button>
-					{:else}
-						<Button onclick={openLogin}>Войти</Button>
-					{/if}
-				</div>
-			</Card>
-		</div>
-	</header>
+					<div class={['user-info', menuOpen && 'open']}>
+						<IconButton
+							label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
+							onclick={toggleTheme}
+							title={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
+							class="theme-toggle"
+						>
+							<span class="theme-icon theme-icon-light" aria-hidden="true">
+								<Sun size={18} color="var(--color-accent-70)" />
+							</span>
+							<span class="theme-icon theme-icon-dark" aria-hidden="true">
+								<Moon size={18} color="var(--color-accent-70)" />
+							</span>
+						</IconButton>
+						{#if data.isAuthenticated}
+							<Link href="/profile">{data.username}</Link>
+							<Button onclick={logout}>Выйти</Button>
+						{:else}
+							<Button onclick={openLogin}>Войти</Button>
+						{/if}
+					</div>
+				</Card>
+			</div>
+		</header>
+	{/if}
 
 	{@render children()}
 
-	<footer>
-		<div class="footer-shell">
-			<Card border cornerBorder class="footer-card">
-				<div class="footer-inner">
-					<div class="footer-brand">
-						<Link href="/"><span class="logo soft">ХОСТАМАТ</span></Link>
-						<p>Статический хостинг без рутины</p>
+	{#if !isAppRoute}
+		<footer>
+			<div class="footer-shell">
+				<Card border cornerBorder class="footer-card">
+					<div class="footer-inner">
+						<div class="footer-brand">
+							<Link href="/"><span class="logo soft">ХОСТАМАТ</span></Link>
+							<p>Статический хостинг без рутины</p>
+						</div>
+						<div class="footer-links">
+							<Link href="/cookies" alwaysUnderline>Куки</Link>
+							<Link href="/privacy" alwaysUnderline>Политика конфиденциальности</Link>
+							<Link href="/rights" alwaysUnderline>Права потребителя</Link>
+							<Link href="/terms" alwaysUnderline>Пользовательское соглашение</Link>
+						</div>
 					</div>
-					<div class="footer-links">
-						<Link href="/cookies" alwaysUnderline>Куки</Link>
-						<Link href="/privacy" alwaysUnderline>Политика конфиденциальности</Link>
-						<Link href="/rights" alwaysUnderline>Права потребителя</Link>
-						<Link href="/terms" alwaysUnderline>Пользовательское соглашение</Link>
-					</div>
-				</div>
-			</Card>
-		</div>
-	</footer>
+				</Card>
+			</div>
+		</footer>
+	{/if}
 </div>
 
 <style>
 	.site-chrome {
 		position: relative;
 		z-index: 1;
+		min-height: 100vh;
+	}
+
+	.dashboard-chrome {
+		background: linear-gradient(
+			180deg,
+			color-mix(in hsl, var(--color-background) 92%, var(--color-accent-20) 8%) 0%,
+			var(--color-background) 100%
+		);
 	}
 
 	header {

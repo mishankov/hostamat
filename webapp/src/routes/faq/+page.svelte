@@ -22,8 +22,8 @@
 				<p>Правила поиска страниц:</p>
 				<ul>
 					<li>
-						Для <span class="path">/</span> нужен файл <span class="path">index.html</span> в корне
-						архива или загруженный отдельно.
+						Для <span class="path">/</span> нужен файл <span class="path">index.html</span> в корне архива
+						или загруженный отдельно.
 					</li>
 					<li>
 						Для <span class="path">/aaa</span> сервис проверяет
@@ -52,7 +52,7 @@
 			<section class="qa">
 				<h2>Можно обновить или удалить сайт?</h2>
 				<p>
-					Да, все действия доступны в <Link href={resolve('/dashboard')}>Дашборде</Link>.
+					Да, все действия доступны в <Link href={resolve('/dashboard/sites')}>Дашборде</Link>.
 				</p>
 			</section>
 		</Card>
@@ -71,8 +71,8 @@
 			<section class="qa">
 				<h2>Что означает «альфа-тестирование»?</h2>
 				<p>
-					Сервис активно развивается: некоторые функции могут работать нестабильно.
-					Нам важна обратная связь через <Link
+					Сервис активно развивается: некоторые функции могут работать нестабильно. Нам важна
+					обратная связь через <Link
 						href="https://forms.yandex.ru/u/6907bbfc49af47f3cae7650a"
 						target="_blank">форму</Link
 					>.
@@ -108,7 +108,8 @@
 	}
 
 	.path {
-		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+		font-family:
+			ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
 			monospace;
 		display: inline-block;
 		font-size: 0.93em;

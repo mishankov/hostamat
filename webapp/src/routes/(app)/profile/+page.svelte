@@ -63,77 +63,74 @@
 	<title>Профиль | Хостамат</title>
 </svelte:head>
 
-<main class="page-shell">
-	<div class="page-content profile">
-		{#if errorMessage}
-			<div class="alerts">
-				<Alert variant="error" message={errorMessage} />
-			</div>
-		{/if}
-
-		<div class="headline">
-			<h1>Профиль</h1>
-			<p>Управление учётной записью Яндекса и вашими данными.</p>
+<div class="profile">
+	{#if errorMessage}
+		<div class="alerts">
+			<Alert variant="error" message={errorMessage} />
 		</div>
+	{/if}
 
-		<div class="profile-data">
-			<div class="profile-data-row">
-				<span class="label">Яндекс логин</span>
-				<div class="profile-data-value">
-					<span>{data.username}</span>
-					<IconButton label="Скопировать логин Яндекса" onclick={copyLogin}>
-						<Copy size={15} />
-					</IconButton>
-				</div>
-			</div>
-			{#if loginCopied}
-				<p class="copy-feedback" aria-live="polite">Логин Яндекса скопирован</p>
-			{/if}
-		</div>
-
-		<Card kind="danger" border={true}>
-			<div class="danger-zone">
-				<h2>Опасная зона</h2>
-				<p class="danger-zone-description">
-					Удаление аккаунта нельзя отменить. Все ваши сайты и файлы будут удалены навсегда.
-				</p>
-				<Button kind="danger" filled onclick={() => deleteAccountModal?.open()}>
-					Удалить аккаунт
-				</Button>
-			</div>
-		</Card>
-
-		<Modal
-			bind:this={deleteAccountModal}
-			kind="danger"
-			titleId="delete-account-title"
-			descriptionId="delete-account-description"
-			initialFocusSelector="#delete-account-confirm"
-		>
-			<div class="delete-modal">
-				<h2 id="delete-account-title">Подтвердите удаление</h2>
-				<p id="delete-account-description" class="delete-modal-text">
-					Вы уверены, что хотите удалить свой аккаунт? Это приведёт к безвозвратному удалению всех
-					ваших сайтов и файлов.
-				</p>
-				<div class="delete-actions">
-					<Button id="delete-account-confirm" kind="danger" filled onclick={deleteAccountAction}
-						>Удалить</Button
-					>
-					<Button kind="danger" onclick={() => deleteAccountModal?.close()}>Отмена</Button>
-				</div>
-			</div>
-		</Modal>
+	<div class="headline">
+		<h1>Профиль</h1>
+		<p>Управление учётной записью Яндекса и вашими данными.</p>
 	</div>
-</main>
+
+	<div class="profile-data">
+		<div class="profile-data-row">
+			<span class="label">Яндекс логин</span>
+			<div class="profile-data-value">
+				<span>{data.username}</span>
+				<IconButton label="Скопировать логин Яндекса" onclick={copyLogin}>
+					<Copy size={15} />
+				</IconButton>
+			</div>
+		</div>
+		{#if loginCopied}
+			<p class="copy-feedback" aria-live="polite">Логин Яндекса скопирован</p>
+		{/if}
+	</div>
+
+	<Card kind="danger" border={true}>
+		<div class="danger-zone">
+			<h2>Опасная зона</h2>
+			<p class="danger-zone-description">
+				Удаление аккаунта нельзя отменить. Все ваши сайты и файлы будут удалены навсегда.
+			</p>
+			<Button kind="danger" filled onclick={() => deleteAccountModal?.open()}>
+				Удалить аккаунт
+			</Button>
+		</div>
+	</Card>
+
+	<Modal
+		bind:this={deleteAccountModal}
+		kind="danger"
+		titleId="delete-account-title"
+		descriptionId="delete-account-description"
+		initialFocusSelector="#delete-account-confirm"
+	>
+		<div class="delete-modal">
+			<h2 id="delete-account-title">Подтвердите удаление</h2>
+			<p id="delete-account-description" class="delete-modal-text">
+				Вы уверены, что хотите удалить свой аккаунт? Это приведёт к безвозвратному удалению всех
+				ваших сайтов и файлов.
+			</p>
+			<div class="delete-actions">
+				<Button id="delete-account-confirm" kind="danger" filled onclick={deleteAccountAction}
+					>Удалить</Button
+				>
+				<Button kind="danger" onclick={() => deleteAccountModal?.close()}>Отмена</Button>
+			</div>
+		</div>
+	</Modal>
+</div>
 
 <style>
-	main {
-		padding-bottom: 2rem;
-	}
-
 	.profile {
+		padding-bottom: 2rem;
 		gap: 1rem;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.alerts {

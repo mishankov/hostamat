@@ -119,11 +119,7 @@
 			</div>
 		</Modal>
 
-		<IconButton
-			label="Скопировать URL"
-			title="Скопировать URL"
-			onclick={copySiteUrl}
-		>
+		<IconButton label="Скопировать URL" title="Скопировать URL" onclick={copySiteUrl}>
 			<Copy size={25} background="var(--color-primary-10)" />
 		</IconButton>
 
@@ -141,7 +137,7 @@
 			kind="danger"
 			titleId={deleteTitleId}
 			descriptionId={deleteDescId}
-			initialFocusSelector={"#" + deleteButtonId}
+			initialFocusSelector={'#' + deleteButtonId}
 		>
 			<div class="delete-modal">
 				<h2 id={deleteTitleId}>Подтверждение удаления</h2>

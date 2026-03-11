@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import type { LayoutServerLoad } from './$types';
 
 export const load = (async ({ parent }) => {
 	const { isAuthenticated } = await parent();
@@ -7,4 +7,6 @@ export const load = (async ({ parent }) => {
 	if (!isAuthenticated) {
 		return redirect(302, '/login');
 	}
-}) satisfies PageServerLoad;
+
+	return {};
+}) satisfies LayoutServerLoad;
