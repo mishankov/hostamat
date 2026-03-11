@@ -59,16 +59,11 @@
 
 			<div class="sidebar-footer">
 				<div class="account">
-					{#if data.isAuthenticated}
-						<div class="account-meta">
-							<p class="account-label">Аккаунт</p>
-							<Link href="/profile" class="account-link">{data.username}</Link>
-						</div>
-					{/if}
-					<div class="account-actions">
-						<ThemeToggle />
-						<Button onclick={logout}>Выйти</Button>
-					</div>
+					<Link href="/profile" class="account-link">{data.username}</Link>
+				</div>
+				<div class="sidebar-footer-actions">
+					<ThemeToggle />
+					<Button onclick={logout}>Выйти</Button>
 				</div>
 			</div>
 		</aside>
@@ -169,36 +164,30 @@
 
 	.sidebar-footer {
 		margin-top: auto;
+
+		display: flex;
+		flex-direction: column;
+		justify-content: start;
+		gap: 0.7rem;
+	}
+
+	.sidebar-footer-actions {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 0.7rem;
 	}
 
 	.account {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
+		align-items: center;
 		gap: 0.9rem;
 		padding: 0 0.2rem;
 	}
 
-	.account-meta {
-		display: flex;
-		flex-direction: column;
-		gap: 0.3rem;
-	}
-
-	.account-label {
-		font-size: 0.74rem;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		color: var(--color-text-secondary);
-	}
-
 	:global(.account-link) {
 		word-break: break-word;
-	}
-
-	.account-actions {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
 	}
 
 	.app-panel {
