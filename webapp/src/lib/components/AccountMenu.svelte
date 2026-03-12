@@ -1,5 +1,7 @@
 <script lang="ts">
+	/* eslint-disable svelte/no-navigation-without-resolve */
 	import { tick } from 'svelte';
+	import { useThemeController } from '$lib/theme/controller.svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
 
 	type AccountMenuProps = {
@@ -22,6 +24,7 @@
 	let triggerRef = $state<HTMLButtonElement | null>(null);
 	let firstActionRef = $state<HTMLAnchorElement | null>(null);
 	let wrapperRef = $state<HTMLDivElement | null>(null);
+	const theme = useThemeController();
 
 	const menuId = $derived.by(() => {
 		const normalized = username
@@ -89,7 +92,10 @@
 
 <svelte:document onclick={handleDocumentClick} onkeydown={handleDocumentKeydown} />
 
-<div bind:this={wrapperRef} class={['account-menu', context, className]}>
+<div
+	bind:this={wrapperRef}
+	class={['account-menu', context, theme.current === 'dark' && 'theme-dark', className]}
+>
 	<button
 		bind:this={triggerRef}
 		type="button"
@@ -104,11 +110,7 @@
 	</button>
 
 	{#if open}
-		<div
-			id={menuId}
-			class="menu-panel"
-			aria-label={`Меню аккаунта ${username}`}
-		>
+		<div id={menuId} class="menu-panel" aria-label={`Меню аккаунта ${username}`}>
 			<a
 				bind:this={firstActionRef}
 				href={profileHref}
@@ -124,7 +126,9 @@
 
 			<div class="menu-row theme-row">
 				<span class="theme-label">Тема</span>
-				<ThemeToggle />
+				<div class="theme-toggle-wrap">
+					<ThemeToggle />
+				</div>
 			</div>
 		</div>
 	{/if}
@@ -176,13 +180,13 @@
 		box-shadow: var(--shadow-sm);
 	}
 
-	:global(:root[data-theme='dark']) .menu-trigger {
+	.account-menu.theme-dark .menu-trigger {
 		color: var(--color-text-regular);
 		background: color-mix(in hsl, var(--color-background-object) 94%, var(--color-accent-20) 6%);
 	}
 
-	:global(:root[data-theme='dark']) .menu-trigger:hover,
-	:global(:root[data-theme='dark']) .menu-trigger.open {
+	.account-menu.theme-dark .menu-trigger:hover,
+	.account-menu.theme-dark .menu-trigger.open {
 		background: color-mix(in hsl, var(--color-background-object) 74%, var(--color-accent-30) 26%);
 		border-color: color-mix(in hsl, var(--color-accent-60) 36%, var(--color-border));
 		color: var(--color-primary-95);
@@ -291,7 +295,7 @@
 		color: var(--color-text-secondary);
 	}
 
-	.theme-row :global(button) {
+	.theme-toggle-wrap {
 		flex: none;
 	}
 

@@ -1,6 +1,9 @@
-<script>
+<script lang="ts">
 	import { resolve } from '$app/paths';
 	import { Card, Link } from '$lib/components';
+	import { useThemeController } from '$lib/theme/controller.svelte';
+
+	const theme = useThemeController();
 </script>
 
 <svelte:head>
@@ -8,7 +11,7 @@
 </svelte:head>
 
 <main class="page-shell">
-	<div class="page-content faq">
+	<div class={['page-content', 'faq', theme.current === 'dark' && 'theme-dark']}>
 		<h1>FAQ</h1>
 
 		<Card border>
@@ -133,11 +136,11 @@
 		background: color-mix(in hsl, var(--color-background-object) 36%, var(--color-accent-40) 64%);
 	}
 
-	:global(:root[data-theme='dark']) .path {
+	.faq.theme-dark .path {
 		background: color-mix(in hsl, var(--color-background-object) 42%, var(--color-accent-30) 58%);
 	}
 
-	:global(:root[data-theme='dark']) .path:hover {
+	.faq.theme-dark .path:hover {
 		background: color-mix(in hsl, var(--color-background-object) 32%, var(--color-accent-40) 68%);
 	}
 </style>

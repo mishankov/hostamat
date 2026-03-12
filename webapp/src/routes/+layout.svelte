@@ -22,6 +22,7 @@
 	const themeController = provideThemeController(
 		new ThemeController(browser ? resolveDocumentTheme() : 'light')
 	);
+	const chromeCardStyle = 'box-shadow: var(--chrome-card-shadow);';
 
 	const logout = async () => {
 		await fetch('/api/auth/logout', { method: 'POST' });
@@ -55,7 +56,14 @@
 	};
 </script>
 
-<div class={['site-chrome', !isAppRoute && 'ambient-grid', isAppRoute && 'dashboard-chrome']}>
+<div
+	class={[
+		'site-chrome',
+		themeController.current === 'dark' && 'theme-dark',
+		!isAppRoute && 'ambient-grid',
+		isAppRoute && 'dashboard-chrome'
+	]}
+>
 	{#if cookieConsent !== 'notset' && cookieConsent !== 'true'}
 		<div class="cookie">
 			<Card border>
@@ -84,35 +92,41 @@
 	{#if !isAppRoute}
 		<header>
 			<div class="header-shell">
-				<Card border cornerBorder class="header-card">
-					<div class="brand-group">
-						<Link href={resolve('/')} onclick={closeMenu}><span class="logo">ХОСТАМАТ</span></Link>
-						<button
-							type="button"
-							class="menu-toggle"
-							onclick={() => (menuOpen = !menuOpen)}
-							aria-controls="primary-navigation"
-							aria-expanded={menuOpen}
-							aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
-						>
-							<span class="burger" aria-hidden="true"></span>
-						</button>
-					</div>
+				<div class="header-card-shell">
+					<Card border cornerBorder style={chromeCardStyle}>
+						<div class="header-card">
+							<div class="brand-group">
+								<Link href={resolve('/')} onclick={closeMenu}
+									><span class="logo">ХОСТАМАТ</span></Link
+								>
+								<button
+									type="button"
+									class="menu-toggle"
+									onclick={() => (menuOpen = !menuOpen)}
+									aria-controls="primary-navigation"
+									aria-expanded={menuOpen}
+									aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
+								>
+									<span class="burger" aria-hidden="true"></span>
+								</button>
+							</div>
 
-					<nav id="primary-navigation" class={[menuOpen && 'open']}>
-						<Link href={resolve('/dashboard/sites')} onclick={closeMenu}>Дашборд</Link>
-						<Link href={resolve('/about')} onclick={closeMenu}>О сервисе</Link>
-						<Link href={resolve('/faq')} onclick={closeMenu}>FAQ</Link>
-					</nav>
+							<nav id="primary-navigation" class={[menuOpen && 'open']}>
+								<Link href={resolve('/dashboard/sites')} onclick={closeMenu}>Дашборд</Link>
+								<Link href={resolve('/about')} onclick={closeMenu}>О сервисе</Link>
+								<Link href={resolve('/faq')} onclick={closeMenu}>FAQ</Link>
+							</nav>
 
-					<div class={['user-info', menuOpen && 'open']}>
-						{#if data.isAuthenticated}
-							<AccountMenu username={data.username} onlogout={logout} context="header" />
-						{:else}
-							<Button onclick={openLogin}>Войти</Button>
-						{/if}
-					</div>
-				</Card>
+							<div class={['user-info', menuOpen && 'open']}>
+								{#if data.isAuthenticated}
+									<AccountMenu username={data.username} onlogout={logout} context="header" />
+								{:else}
+									<Button onclick={openLogin}>Войти</Button>
+								{/if}
+							</div>
+						</div>
+					</Card>
+				</div>
 			</div>
 		</header>
 	{/if}
@@ -122,20 +136,24 @@
 	{#if !isAppRoute}
 		<footer>
 			<div class="footer-shell">
-				<Card border cornerBorder class="footer-card">
-					<div class="footer-inner">
-						<div class="footer-brand">
-							<Link href="/"><span class="logo soft">ХОСТАМАТ</span></Link>
-							<p>Статический хостинг без рутины</p>
+				<div class="footer-card-shell">
+					<Card border cornerBorder style={chromeCardStyle}>
+						<div class="footer-card">
+							<div class="footer-inner">
+								<div class="footer-brand">
+									<Link href="/"><span class="logo soft">ХОСТАМАТ</span></Link>
+									<p>Статический хостинг без рутины</p>
+								</div>
+								<div class="footer-links">
+									<Link href="/cookies" alwaysUnderline>Куки</Link>
+									<Link href="/privacy" alwaysUnderline>Политика конфиденциальности</Link>
+									<Link href="/rights" alwaysUnderline>Права потребителя</Link>
+									<Link href="/terms" alwaysUnderline>Пользовательское соглашение</Link>
+								</div>
+							</div>
 						</div>
-						<div class="footer-links">
-							<Link href="/cookies" alwaysUnderline>Куки</Link>
-							<Link href="/privacy" alwaysUnderline>Политика конфиденциальности</Link>
-							<Link href="/rights" alwaysUnderline>Права потребителя</Link>
-							<Link href="/terms" alwaysUnderline>Пользовательское соглашение</Link>
-						</div>
-					</div>
-				</Card>
+					</Card>
+				</div>
 			</div>
 		</footer>
 	{/if}
@@ -146,6 +164,11 @@
 		position: relative;
 		z-index: 1;
 		min-height: 100vh;
+		--chrome-card-shadow: var(--shadow-sm);
+	}
+
+	.site-chrome.theme-dark {
+		--chrome-card-shadow: var(--shadow-md);
 	}
 
 	.dashboard-chrome {
@@ -168,14 +191,17 @@
 		justify-content: center;
 	}
 
-	:global(.header-card) {
+	.header-card-shell {
+		width: var(--layout-width);
+	}
+
+	.header-card {
 		width: var(--layout-width);
 		display: grid;
 		grid-template-columns: auto 1fr auto;
 		align-items: center;
 		gap: 1.2rem;
 		padding: 0.8rem 1rem;
-		box-shadow: var(--shadow-sm);
 	}
 
 	.brand-group {
@@ -273,15 +299,12 @@
 		justify-content: center;
 	}
 
-	:global(.footer-card) {
+	.footer-card-shell {
 		width: var(--layout-width);
-		padding: 1rem;
-		box-shadow: var(--shadow-sm);
 	}
 
-	:global(:root[data-theme='dark'] .header-card),
-	:global(:root[data-theme='dark'] .footer-card) {
-		box-shadow: var(--shadow-md);
+	.footer-card {
+		padding: 1rem;
 	}
 
 	.footer-inner {
@@ -304,7 +327,7 @@
 	}
 
 	@media (max-width: 900px) {
-		:global(.header-card) {
+		.header-card {
 			grid-template-columns: 1fr;
 			gap: 0.8rem;
 		}

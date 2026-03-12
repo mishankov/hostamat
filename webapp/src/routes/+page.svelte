@@ -1,8 +1,15 @@
 <script lang="ts">
 	import { Badge, Button, Card } from '$lib/components';
+	import { useThemeController } from '$lib/theme/controller.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
+	const theme = useThemeController();
+	const landingCardStyle = $derived.by(() =>
+		theme.current === 'dark'
+			? 'background: color-mix(in hsl, var(--color-background-object) 94%, var(--color-primary-10)); box-shadow: var(--shadow-md);'
+			: 'background: color-mix(in hsl, var(--color-background-object) 96%, var(--color-background)); box-shadow: var(--shadow-sm);'
+	);
 </script>
 
 <svelte:head>
@@ -10,75 +17,77 @@
 </svelte:head>
 
 <main class="page-shell">
-	<section class="page-content landing">
-		<Card border cornerBorder class="card-like">
-			<div class="hero-main">
-				<div class="hero-copy">
-					<Badge text="Альфа-тестирование" />
-					<h1>Хостинг статических сайтов без лишней настройки</h1>
-					<p class="hero-description">
-						Загрузите файлы или ZIP-архив, получите HTTPS-поддомен и управляйте проектом в удобной
-						панели.
-					</p>
-					<div class="hero-actions">
-						{#if data.isAuthenticated}
-							<Button href="/dashboard/sites" filled>Открыть дашборд</Button>
-						{:else}
-							<Button href="/dashboard/sites" filled>Запустить свой сайт</Button>
-						{/if}
-						<Button href="/about">Узнать о платформе</Button>
-					</div>
-				</div>
-				<div class="hero-ascii">
-					<div class="terminal-window" aria-hidden="true">
-						<div class="terminal-titlebar">
-							<div class="terminal-controls">
-								<span class="terminal-control is-close"></span>
-								<span class="terminal-control is-minimize"></span>
-								<span class="terminal-control is-zoom"></span>
-							</div>
-							<p class="terminal-title">Terminal — deploy@hostamat</p>
+	<section class={['page-content', 'landing', theme.current === 'dark' && 'theme-dark']}>
+		<Card border cornerBorder style={landingCardStyle}>
+			<div class="hero-card">
+				<div class="hero-main">
+					<div class="hero-copy">
+						<Badge text="Альфа-тестирование" />
+						<h1>Хостинг статических сайтов без лишней настройки</h1>
+						<p class="hero-description">
+							Загрузите файлы или ZIP-архив, получите HTTPS-поддомен и управляйте проектом в удобной
+							панели.
+						</p>
+						<div class="hero-actions">
+							{#if data.isAuthenticated}
+								<Button href="/dashboard/sites" filled>Открыть дашборд</Button>
+							{:else}
+								<Button href="/dashboard/sites" filled>Запустить свой сайт</Button>
+							{/if}
+							<Button href="/about">Узнать о платформе</Button>
 						</div>
-						<div class="terminal-body">
-							<div class="hero-terminal">
-								<div class="terminal-head terminal-line" style="--line-index: 0;">
-									<span class="terminal-head-label">deploy@hostamat</span>
-									<span class="terminal-head-rule"></span>
+					</div>
+					<div class="hero-ascii">
+						<div class="terminal-window" aria-hidden="true">
+							<div class="terminal-titlebar">
+								<div class="terminal-controls">
+									<span class="terminal-control is-close"></span>
+									<span class="terminal-control is-minimize"></span>
+									<span class="terminal-control is-zoom"></span>
 								</div>
-								<p class="terminal-brand terminal-line" style="--line-index: 1;">HOSTAMAT</p>
-								<div class="terminal-divider terminal-line" style="--line-index: 2;"></div>
-								<p class="terminal-command terminal-line" style="--line-index: 3;">
-									$ hostamat publish ./portfolio.zip
-								</p>
-								<ul class="terminal-steps">
-									<li class="terminal-step terminal-line" style="--line-index: 4;">
-										<span class="terminal-step-index">[01]</span>
-										<span class="terminal-step-text">unpack assets</span>
-										<span class="terminal-step-fill"></span>
-										<span class="terminal-step-status">[ok]</span>
-									</li>
-									<li class="terminal-step terminal-line" style="--line-index: 5;">
-										<span class="terminal-step-index">[02]</span>
-										<span class="terminal-step-text">reserve subdomain</span>
-										<span class="terminal-step-fill"></span>
-										<span class="terminal-step-status">[ok]</span>
-									</li>
-									<li class="terminal-step terminal-line" style="--line-index: 6;">
-										<span class="terminal-step-index">[03]</span>
-										<span class="terminal-step-text">issue tls certificate</span>
-										<span class="terminal-step-fill"></span>
-										<span class="terminal-step-status">[ok]</span>
-									</li>
-								</ul>
-								<div class="terminal-divider terminal-line" style="--line-index: 8;"></div>
-								<p class="terminal-meta-row terminal-line" style="--line-index: 9;">
-									<span class="terminal-meta-key">domain:</span>
-									<span class="terminal-meta-value">happy-cappy-12345.hostamat.ru</span>
-								</p>
-								<p class="terminal-meta-row terminal-line" style="--line-index: 10;">
-									<span class="terminal-meta-key">status:</span>
-									<span class="terminal-meta-value">live | https</span>
-								</p>
+								<p class="terminal-title">Terminal — deploy@hostamat</p>
+							</div>
+							<div class="terminal-body">
+								<div class="hero-terminal">
+									<div class="terminal-head terminal-line" style="--line-index: 0;">
+										<span class="terminal-head-label">deploy@hostamat</span>
+										<span class="terminal-head-rule"></span>
+									</div>
+									<p class="terminal-brand terminal-line" style="--line-index: 1;">HOSTAMAT</p>
+									<div class="terminal-divider terminal-line" style="--line-index: 2;"></div>
+									<p class="terminal-command terminal-line" style="--line-index: 3;">
+										$ hostamat publish ./portfolio.zip
+									</p>
+									<ul class="terminal-steps">
+										<li class="terminal-step terminal-line" style="--line-index: 4;">
+											<span class="terminal-step-index">[01]</span>
+											<span class="terminal-step-text">unpack assets</span>
+											<span class="terminal-step-fill"></span>
+											<span class="terminal-step-status">[ok]</span>
+										</li>
+										<li class="terminal-step terminal-line" style="--line-index: 5;">
+											<span class="terminal-step-index">[02]</span>
+											<span class="terminal-step-text">reserve subdomain</span>
+											<span class="terminal-step-fill"></span>
+											<span class="terminal-step-status">[ok]</span>
+										</li>
+										<li class="terminal-step terminal-line" style="--line-index: 6;">
+											<span class="terminal-step-index">[03]</span>
+											<span class="terminal-step-text">issue tls certificate</span>
+											<span class="terminal-step-fill"></span>
+											<span class="terminal-step-status">[ok]</span>
+										</li>
+									</ul>
+									<div class="terminal-divider terminal-line" style="--line-index: 8;"></div>
+									<p class="terminal-meta-row terminal-line" style="--line-index: 9;">
+										<span class="terminal-meta-key">domain:</span>
+										<span class="terminal-meta-value">happy-cappy-12345.hostamat.ru</span>
+									</p>
+									<p class="terminal-meta-row terminal-line" style="--line-index: 10;">
+										<span class="terminal-meta-key">status:</span>
+										<span class="terminal-meta-value">live | https</span>
+									</p>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -87,28 +96,28 @@
 		</Card>
 
 		<div class="steps">
-			<Card floating border cornerBorder>
+			<Card floating border cornerBorder style={landingCardStyle}>
 				<div class="step">
 					<span>01</span>
 					<h2>Войдите через Яндекс</h2>
 					<p>Авторизация занимает пару кликов.</p>
 				</div>
 			</Card>
-			<Card floating border cornerBorder>
+			<Card floating border cornerBorder style={landingCardStyle}>
 				<div class="step">
 					<span>02</span>
 					<h2>Загрузите файлы</h2>
 					<p>Можно загрузить отдельные файлы или ZIP-архив.</p>
 				</div>
 			</Card>
-			<Card floating border cornerBorder>
+			<Card floating border cornerBorder style={landingCardStyle}>
 				<div class="step">
 					<span>03</span>
 					<h2>Поделитесь ссылкой</h2>
 					<p>Сайт сразу доступен по HTTPS-поддомену.</p>
 				</div>
 			</Card>
-			<Card floating border cornerBorder kind="action">
+			<Card floating border cornerBorder kind="action" style={landingCardStyle}>
 				<div class="step">
 					<span>04</span>
 					<h2>До 5 сайтов бесплатно</h2>
@@ -127,17 +136,7 @@
 		padding-bottom: 2rem;
 	}
 
-	.landing :global(.card) {
-		background: color-mix(in hsl, var(--color-background-object) 96%, var(--color-background));
-		box-shadow: var(--shadow-sm);
-	}
-
-	:global(:root[data-theme='dark']) .landing :global(.card) {
-		background: color-mix(in hsl, var(--color-background-object) 94%, var(--color-primary-10));
-		box-shadow: var(--shadow-md);
-	}
-
-	:global(.card-like) {
+	.hero-card {
 		padding: clamp(1.2rem, 2.5vw, 2.2rem);
 	}
 
@@ -402,7 +401,7 @@
 		color: var(--terminal-text-dim);
 	}
 
-	:global(:root[data-theme='dark']) .terminal-window {
+	.landing.theme-dark .terminal-window {
 		--terminal-window-border: color-mix(
 			in hsl,
 			var(--color-border) 64%,

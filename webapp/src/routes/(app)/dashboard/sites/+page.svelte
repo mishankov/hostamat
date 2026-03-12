@@ -55,17 +55,19 @@
 		{:then sitesResult}
 			{#if sitesResult.data}
 				{#each sites as site (site.id)}
-					<Card border class="site-card">
-						<SiteContent
-							{site}
-							bind:loading
-							bind:errorMessage
-							onsiteupdate={async () => {
-								await invalidateAll();
-								updateState();
-							}}
-						/>
-					</Card>
+					<div class="site-card-shell">
+						<Card border style="height: 100%;">
+							<SiteContent
+								{site}
+								bind:loading
+								bind:errorMessage
+								onsiteupdate={async () => {
+									await invalidateAll();
+									updateState();
+								}}
+							/>
+						</Card>
+					</div>
 				{/each}
 
 				{#if !sites || sites.length < maxAmount}
@@ -133,7 +135,8 @@
 		align-items: center;
 	}
 
-	:global(.site-card) {
+	.site-card-shell {
+		display: flex;
 		min-height: 170px;
 		min-width: 0;
 	}

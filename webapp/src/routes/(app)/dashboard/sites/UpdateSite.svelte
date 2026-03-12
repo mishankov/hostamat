@@ -3,7 +3,13 @@
 	import { Edit, Spinner } from '$lib/icons';
 	import { updateSite } from '$lib/api-client';
 
-	let { siteName = '', siteId = '', loading = false, onsuccess = async () => {} } = $props();
+	let {
+		siteName = '',
+		siteId = '',
+		loading = false,
+		iconButtonGrouped = false,
+		onsuccess = async () => {}
+	} = $props();
 
 	let modal = $state<Modal>();
 	let newName = $state('');
@@ -13,7 +19,12 @@
 	const inputId = $derived(`update-site-name-${siteId}`);
 </script>
 
-<IconButton label="Изменить сайт" onclick={() => modal?.open()} title="Изменить сайт">
+<IconButton
+	label="Изменить сайт"
+	grouped={iconButtonGrouped}
+	onclick={() => modal?.open()}
+	title="Изменить сайт"
+>
 	<Edit size={25} />
 </IconButton>
 <Modal

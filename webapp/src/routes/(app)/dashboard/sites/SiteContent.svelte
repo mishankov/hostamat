@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { Alert, Button, Card, IconButton, Link, Modal } from '$lib/components';
+	import { useThemeController } from '$lib/theme/controller.svelte';
 	import { Copy, Trash, Upload } from '$lib/icons';
 
 	import FileUploader from './components/FileUploader.svelte';
@@ -23,6 +24,7 @@
 	}: Props = $props();
 
 	const subdomain = $derived(site.domain.split('.')[0]);
+	const theme = useThemeController();
 
 	let uploadModal = $state<Modal>();
 	let deleteModal = $state<Modal>();
@@ -64,7 +66,7 @@
 	});
 </script>
 
-<div class="site-content">
+<div class={['site-content', theme.current === 'dark' && 'theme-dark']}>
 	<div class="site-url-container">
 		<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
 		<span title="Поддомен" class="subdomain">{subdomain}</span>
@@ -73,103 +75,114 @@
 		{/if}
 	</div>
 
-	<Card border class="site-toolbar">
-		<UpdateSite
-			siteName={site.name}
-			siteId={site.id}
-			onsuccess={async () => {
-				resetState();
-				await onsiteupdate();
-			}}
-		/>
-
-		<IconButton label="Загрузить сайт" onclick={() => uploadModal?.open()} title="Загрузить сайт">
-			<Upload size={25} />
-		</IconButton>
-		<Modal
-			bind:this={uploadModal}
-			kind="primary"
-			titleId={uploadTitleId}
-			descriptionId={uploadDescId}
-			initialFocusSelector=".drop-zone"
-			closeCallback={() => {
-				fileUploader?.resetUploadState();
-			}}
-		>
-			<div class="upload-modal">
-				<h2 id={uploadTitleId} class="upload-title">Загрузить файлы для "{site.name}"</h2>
-				<Alert variant="info" title="Информация о загрузке сайтов">
-					<p>При загрузке файлов все старые файлы будут удалены</p>
-					<p id={uploadDescId}>
-						Разрешённые типы файлов <Link href="/about" target="_blank" alwaysUnderline
-							>на странице</Link
-						>
-					</p>
-				</Alert>
-				<FileUploader
-					bind:this={fileUploader}
-					onclose={() => uploadModal?.close()}
-					multiple={true}
-					uploadUrl="/api/uploadFile"
+	<div class="site-toolbar-shell">
+		<Card border>
+			<div class="site-toolbar">
+				<UpdateSite
+					siteName={site.name}
 					siteId={site.id}
-					additionalHeaders={{
-						'H-Site-Id': site.id
+					iconButtonGrouped={true}
+					onsuccess={async () => {
+						resetState();
+						await onsiteupdate();
 					}}
 				/>
+
+				<IconButton
+					grouped
+					label="Загрузить сайт"
+					onclick={() => uploadModal?.open()}
+					title="Загрузить сайт"
+				>
+					<Upload size={25} />
+				</IconButton>
+				<IconButton grouped label="Скопировать URL" title="Скопировать URL" onclick={copySiteUrl}>
+					<Copy size={25} background="var(--color-primary-10)" />
+				</IconButton>
+
+				<IconButton
+					grouped
+					label="Удалить сайт"
+					title="Удалить сайт"
+					kind="danger"
+					onclick={() => deleteModal?.open()}
+				>
+					<Trash size={25} />
+				</IconButton>
 			</div>
-		</Modal>
+		</Card>
+	</div>
 
-		<IconButton label="Скопировать URL" title="Скопировать URL" onclick={copySiteUrl}>
-			<Copy size={25} background="var(--color-primary-10)" />
-		</IconButton>
-
-		<IconButton
-			label="Удалить сайт"
-			title="Удалить сайт"
-			kind="danger"
-			class="toolbar-delete"
-			onclick={() => deleteModal?.open()}
-		>
-			<Trash size={25} />
-		</IconButton>
-		<Modal
-			bind:this={deleteModal}
-			kind="danger"
-			titleId={deleteTitleId}
-			descriptionId={deleteDescId}
-			initialFocusSelector={'#' + deleteButtonId}
-		>
-			<div class="delete-modal">
-				<h2 id={deleteTitleId}>Подтверждение удаления</h2>
-				<p id={deleteDescId} class="delete-modal-text">
-					Вы уверены, что хотите удалить сайт "{site.name}"?
-				</p>
-				<div class="delete-actions">
-					<Button
-						id={deleteButtonId}
-						kind="danger"
-						filled
-						onclick={async () => {
-							const { data, error } = await deleteSite(site.id);
-
-							if (error) {
-								errorMessage = error;
-								deleteModal?.close();
-								return;
-							}
-
-							if (data) {
-								resetState();
-								deleteModal?.close();
-								await onsiteupdate();
-							}
-						}}>Удалить</Button
+	<Modal
+		bind:this={uploadModal}
+		kind="primary"
+		titleId={uploadTitleId}
+		descriptionId={uploadDescId}
+		initialFocusSelector=".drop-zone"
+		closeCallback={() => {
+			fileUploader?.resetUploadState();
+		}}
+	>
+		<div class="upload-modal">
+			<h2 id={uploadTitleId} class="upload-title">Загрузить файлы для "{site.name}"</h2>
+			<Alert variant="info" title="Информация о загрузке сайтов">
+				<p>При загрузке файлов все старые файлы будут удалены</p>
+				<p id={uploadDescId}>
+					Разрешённые типы файлов <Link href="/about" target="_blank" alwaysUnderline
+						>на странице</Link
 					>
-					<Button kind="danger" onclick={() => deleteModal?.close()}>Отмена</Button>
-				</div>
+				</p>
+			</Alert>
+			<FileUploader
+				bind:this={fileUploader}
+				onclose={() => uploadModal?.close()}
+				multiple={true}
+				uploadUrl="/api/uploadFile"
+				siteId={site.id}
+				additionalHeaders={{
+					'H-Site-Id': site.id
+				}}
+			/>
+		</div>
+	</Modal>
+
+	<Modal
+		bind:this={deleteModal}
+		kind="danger"
+		titleId={deleteTitleId}
+		descriptionId={deleteDescId}
+		initialFocusSelector={'#' + deleteButtonId}
+	>
+		<div class="delete-modal">
+			<h2 id={deleteTitleId}>Подтверждение удаления</h2>
+			<p id={deleteDescId} class="delete-modal-text">
+				Вы уверены, что хотите удалить сайт "{site.name}"?
+			</p>
+			<div class="delete-actions">
+				<Button
+					id={deleteButtonId}
+					kind="danger"
+					filled
+					onclick={async () => {
+						const { data, error } = await deleteSite(site.id);
+
+						if (error) {
+							errorMessage = error;
+							deleteModal?.close();
+							return;
+						}
+
+						if (data) {
+							resetState();
+							deleteModal?.close();
+							await onsiteupdate();
+						}
+					}}>Удалить</Button
+				>
+				<Button kind="danger" onclick={() => deleteModal?.close()}>Отмена</Button>
 			</div>
-		</Modal>
-	</Card>
+		</div>
+	</Modal>
 </div>
 
 <style>
@@ -202,22 +215,15 @@
 		color: var(--color-confirm-60);
 	}
 
-	:global(.site-toolbar) {
+	.site-toolbar-shell {
 		width: fit-content;
-		justify-self: end;
+		margin-top: auto;
+		align-self: flex-start;
+	}
 
+	.site-toolbar {
 		display: flex;
 		padding: 3px;
-		margin-top: auto;
-	}
-
-	:global(.site-toolbar > button) {
-		border: none;
-		border-radius: 0;
-	}
-
-	:global(:root[data-theme='dark'] .site-toolbar button.toolbar-delete:hover) {
-		background: var(--color-danger-10);
 	}
 
 	.upload-modal {
@@ -246,8 +252,11 @@
 	}
 
 	@media (max-width: 620px) {
-		:global(.site-toolbar) {
+		.site-toolbar-shell {
 			width: 100%;
+		}
+
+		.site-toolbar {
 			justify-content: space-between;
 			gap: 4px;
 		}

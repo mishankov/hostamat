@@ -1,14 +1,17 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
+
 	type IconButtonProps = {
 		label: string;
-		children?: any;
-		onclick?: (event: Event) => void;
+		children?: Snippet;
+		onclick?: (event: MouseEvent) => void;
 		class?: string;
 		kind?: 'primary' | 'danger';
+		grouped?: boolean;
 		title?: string;
 		type?: 'button' | 'submit' | 'reset';
 		disabled?: boolean;
-		[key: string]: any;
+		[key: string]: unknown;
 	};
 
 	let {
@@ -17,6 +20,7 @@
 		onclick,
 		class: className = '',
 		kind = 'primary',
+		grouped = false,
 		title = '',
 		type = 'button',
 		disabled = false,
@@ -27,7 +31,7 @@
 <button
 	{type}
 	{disabled}
-	class={[kind, className]}
+	class={[kind, grouped && 'grouped', className]}
 	aria-label={label}
 	title={title || label}
 	{onclick}
@@ -54,6 +58,11 @@
 			border-color 260ms ease-out;
 	}
 
+	button.grouped {
+		border: none;
+		border-radius: 0;
+	}
+
 	button:hover:enabled {
 		transition-duration: 90ms;
 		background: var(--color-accent-20);
@@ -63,7 +72,7 @@
 
 	button.danger:hover:enabled {
 		transition-duration: 90ms;
-		background: var(--color-danger-20);
+		background: color-mix(in hsl, var(--color-danger-10) 72%, var(--color-background-object));
 		cursor: pointer;
 	}
 

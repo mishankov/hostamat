@@ -286,29 +286,31 @@
 	/>
 
 	{#if selectedFiles.length > 0}
-		<Card class="selected-files-card">
-			<div class="selected-files">
-				<div class="files-header">
-					<h3>Выбранные файлы ({selectedFiles.length})</h3>
-					<Button kind="danger" onclick={clearAll}>Очистить</Button>
-				</div>
+		<div class="selected-files-shell">
+			<Card>
+				<div class="selected-files">
+					<div class="files-header">
+						<h3>Выбранные файлы ({selectedFiles.length})</h3>
+						<Button kind="danger" onclick={clearAll}>Очистить</Button>
+					</div>
 
-				<div class="files-list">
-					{#each selectedFiles as file, index (index)}
-						<div class="file-item">
-							<div class="file-info">
-								<span class="file-name">{file.name}</span>
-								<span class="file-size">{formatFileSize(file.size)}</span>
+					<div class="files-list">
+						{#each selectedFiles as file, index (index)}
+							<div class="file-item">
+								<div class="file-info">
+									<span class="file-name">{file.name}</span>
+									<span class="file-size">{formatFileSize(file.size)}</span>
+								</div>
+
+								<IconButton label="Удалить файл" onclick={() => removeFile(index)} title="Удалить">
+									<X size={20} />
+								</IconButton>
 							</div>
-
-							<IconButton label="Удалить файл" onclick={() => removeFile(index)} title="Удалить">
-								<X size={20} />
-							</IconButton>
-						</div>
-					{/each}
+						{/each}
+					</div>
 				</div>
-			</div>
-		</Card>
+			</Card>
+		</div>
 	{/if}
 
 	<ProgressBar bind:uploadProgress />
@@ -417,7 +419,7 @@
 		display: none;
 	}
 
-	:global(.selected-files-card) {
+	.selected-files-shell {
 		width: 100%;
 	}
 

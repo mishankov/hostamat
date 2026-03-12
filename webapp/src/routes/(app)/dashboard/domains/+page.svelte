@@ -30,23 +30,31 @@
 					<DomainCard {site} />
 				{/each}
 			{:else}
-				<Alert variant="error" message="Ошибка при загрузке доменов: {sitesResult.error}" />
+				<div class="domains-alert">
+					<Alert variant="error" message="Ошибка при загрузке доменов: {sitesResult.error}" />
+				</div>
 			{/if}
 		{:catch error}
-			<Alert variant="error" message="Ошибка при загрузке доменов: {error.message}" />
+			<div class="domains-alert">
+				<Alert variant="error" message="Ошибка при загрузке доменов: {error.message}" />
+			</div>
 		{/await}
 	</div>
 
-	<Card border cornerBorder class="domains-card">
-		<div class="domains-card-content">
-			<h2>Подключение собственных доменов</h2>
-			<p>Поддомены для ваших статических сайтов уже создаются автоматически и отображаются выше.</p>
-			<p>
-				Управление подключением собственных доменов к существующим сайтам появится в этом разделе
-				позже.
-			</p>
-		</div>
-	</Card>
+	<div class="domains-card-shell">
+		<Card border cornerBorder style="box-shadow: var(--shadow-sm);">
+			<div class="domains-card-content">
+				<h2>Подключение собственных доменов</h2>
+				<p>
+					Поддомены для ваших статических сайтов уже создаются автоматически и отображаются выше.
+				</p>
+				<p>
+					Управление подключением собственных доменов к существующим сайтам появится в этом разделе
+					позже.
+				</p>
+			</div>
+		</Card>
+	</div>
 </div>
 
 <style>
@@ -84,12 +92,12 @@
 		width: var(--site-tile-width);
 	}
 
-	:global(.domains-list > :global(.alert)) {
+	.domains-alert {
 		width: 100%;
 	}
 
-	:global(.domains-card) {
-		box-shadow: var(--shadow-sm);
+	.domains-card-shell {
+		width: 100%;
 	}
 
 	.domains-card-content {

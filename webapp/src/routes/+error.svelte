@@ -12,30 +12,32 @@
 
 <main class="page-shell">
 	<div class="page-content error-page">
-		<Card border class="error-content">
-			<h1 class="error-code">{page.status}</h1>
-			<h2 class="title">
-				{#if page.status === 404}
-					Страница не найдена
-				{:else}
-					Произошла ошибка
-				{/if}
-			</h2>
-			<p class="message">
-				{#if page.status === 404}
-					Запрашиваемая страница не существует или была удалена.<br />
-					Проверьте правильность адреса или вернитесь на главную страницу.
-				{:else if dev}
-					{page.error?.message || 'Произошла непредвиденная ошибка.'}
-				{:else}
-					Произошла непредвиденная ошибка. Попробуйте позже или обратитесь в поддержку.
-				{/if}
-			</p>
-			<div class="action-buttons">
-				{#if data.isAuthenticated}
-					<Button href="/dashboard/sites" kind="primary" filled>Вернуться на дашборд</Button>
-				{/if}
-				<Button href="/" kind="primary">Вернуться на главную</Button>
+		<Card border>
+			<div class="error-content">
+				<h1 class="error-code">{page.status}</h1>
+				<h2 class="title">
+					{#if page.status === 404}
+						Страница не найдена
+					{:else}
+						Произошла ошибка
+					{/if}
+				</h2>
+				<p class="message">
+					{#if page.status === 404}
+						Запрашиваемая страница не существует или была удалена.<br />
+						Проверьте правильность адреса или вернитесь на главную страницу.
+					{:else if dev}
+						{page.error?.message || 'Произошла непредвиденная ошибка.'}
+					{:else}
+						Произошла непредвиденная ошибка. Попробуйте позже или обратитесь в поддержку.
+					{/if}
+				</p>
+				<div class="action-buttons">
+					{#if data.isAuthenticated}
+						<Button href="/dashboard/sites" kind="primary" filled>Вернуться на дашборд</Button>
+					{/if}
+					<Button href="/" kind="primary">Вернуться на главную</Button>
+				</div>
 			</div>
 		</Card>
 	</div>
@@ -53,7 +55,7 @@
 		gap: 20px;
 	}
 
-	:global(.error-content) {
+	.error-content {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;

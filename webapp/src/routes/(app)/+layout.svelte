@@ -1,23 +1,23 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { navigateAfterAuthChange } from '$lib/auth/navigation';
-	import { AccountMenu, Badge, Link } from '$lib/components';
+	import { AccountMenu, Badge } from '$lib/components';
 	import type { LayoutProps } from './$types';
 	import { resolve } from '$app/paths';
 
 	type AppShellNavItem = {
-		href: string;
+		route: '/dashboard/sites' | '/dashboard/domains';
 		label: string;
 		badge?: string;
 	};
 
 	const navigationItems: AppShellNavItem[] = [
 		{
-			href: resolve('/dashboard/sites'),
+			route: '/dashboard/sites',
 			label: 'Статические сайты'
 		},
 		{
-			href: resolve('/dashboard/domains'),
+			route: '/dashboard/domains',
 			label: 'Домены',
 			badge: 'Soon'
 		}
@@ -37,17 +37,17 @@
 	<div class="app-layout">
 		<aside class="app-sidebar">
 			<div class="brand-block">
-				<Link href="/" class="brand-link">
+				<a href={resolve('/')} class="brand-link">
 					<span class="brand">ХОСТАМАТ</span>
-				</Link>
+				</a>
 			</div>
 
 			<nav aria-label="Навигация по приложению" class="nav-list">
-				{#each navigationItems as item (item.href)}
+				{#each navigationItems as item (item.route)}
 					<a
-						href={item.href}
-						class={['nav-link', currentPath === item.href && 'active']}
-						aria-current={currentPath === item.href ? 'page' : undefined}
+						href={resolve(item.route)}
+						class={['nav-link', currentPath === resolve(item.route) && 'active']}
+						aria-current={currentPath === resolve(item.route) ? 'page' : undefined}
 					>
 						<span class="nav-link-text">{item.label}</span>
 						{#if item.badge}
@@ -97,11 +97,12 @@
 		padding: 0 0.5rem;
 	}
 
-	:global(.brand-link) {
+	.brand-link {
+		color: inherit;
 		text-decoration: none;
 	}
 
-	:global(.brand-link:hover) {
+	.brand-link:hover {
 		text-decoration: none;
 	}
 

@@ -17,24 +17,26 @@
 	resetState();
 </script>
 
-<Card border floating class="add-site-card" kind="action">
-	<button
-		type="button"
-		class="add-site"
-		onclick={() => {
-			resetState();
-			modal?.open();
-		}}
-	>
-		{#if loading}
-			<p><Spinner size={40} /></p>
-			<p class="add-site-text">Добавляем сайт</p>
-		{:else}
-			<p><Plus size={40} /></p>
-			<p class="add-site-text">Добавить сайт</p>
-		{/if}
-	</button>
-</Card>
+<div class="add-site-card-shell">
+	<Card border floating kind="action" style="height: 100%;">
+		<button
+			type="button"
+			class="add-site"
+			onclick={() => {
+				resetState();
+				modal?.open();
+			}}
+		>
+			{#if loading}
+				<p><Spinner size={40} /></p>
+				<p class="add-site-text">Добавляем сайт</p>
+			{:else}
+				<p><Plus size={40} /></p>
+				<p class="add-site-text">Добавить сайт</p>
+			{/if}
+		</button>
+	</Card>
+</div>
 
 <Modal
 	bind:this={modal}
@@ -89,9 +91,9 @@
 </Modal>
 
 <style>
-	:global(.add-site-card) {
-		min-height: 170px;
+	.add-site-card-shell {
 		display: flex;
+		min-height: 170px;
 	}
 
 	.add-site {
