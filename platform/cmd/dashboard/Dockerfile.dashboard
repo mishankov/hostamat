@@ -7,4 +7,4 @@ FROM alpine:3
 WORKDIR /app
 COPY --from=buildgo /app/build/dashboard /app/dashboard
 EXPOSE 4444
-ENTRYPOINT ["/app/dashboard"]
+ENTRYPOINT ["/app/dashboard", "run"]

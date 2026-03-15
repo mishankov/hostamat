@@ -1,11 +1,15 @@
+[vars]
+cr = "hostamat-container-registry.registry.twcstorage.ru"
+
 [[steps]]
 id = "push-backend"
 name = "Push backend"
 dir = "./platform"
+vars = { tag = "hostamat/backend:latest" }
 cmds = [
-    "docker build --tag hostamat/backend:latest --platform linux/amd64 .",
-    "docker tag hostamat/backend:latest hostamat-container-registry.registry.twcstorage.ru/hostamat/backend:latest",
-    "docker push hostamat-container-registry.registry.twcstorage.ru/hostamat/backend:latest"
+    "docker build --tag @{tag} --platform linux/amd64 .",
+    "docker tag @{tag} @{cr}/@{tag}",
+    "docker push @{cr}/@{tag}"
 ]
 
 
@@ -13,20 +17,23 @@ cmds = [
 id = "push-webapp"
 name = "Push webapp"
 dir = "./webapp"
+vars = { tag = "hostamat/webapp:latest" }
 cmds = [
-    "docker build --tag hostamat/webapp:latest --platform linux/amd64 .",
-    "docker tag hostamat/webapp:latest hostamat-container-registry.registry.twcstorage.ru/hostamat/webapp:latest",
-    "docker push hostamat-container-registry.registry.twcstorage.ru/hostamat/webapp:latest"
+    "docker build --tag @{tag} --platform linux/amd64 .",
+    "docker tag @{tag} @{cr}/@{tag}",
+    "docker push @{cr}/@{tag}"
 ]
+
 
 [[steps]]
 id = "push-dashboard"
 name = "Push dashboard"
 dir = "./platform"
+vars = { tag = "hostamat/dashboard:latest" }
 cmds = [
-    "docker build --tag hostamat/dashboard:latest --platform linux/amd64 .",
-    "docker tag hostamat/dashboard:latest hostamat-container-registry.registry.twcstorage.ru/hostamat/dashboard:latest",
-    "docker push hostamat-container-registry.registry.twcstorage.ru/hostamat/dashboard:latest"
+    "docker build --tag @{tag} --platform linux/amd64 .",
+    "docker tag @{tag} @{cr}/@{tag}",
+    "docker push @{cr}/@{tag}"
 ]
 
 
@@ -34,8 +41,18 @@ cmds = [
 id = "push-caddy"
 name = "Push caddy"
 dir = "./infra/prod"
+vars = { tag = "hostamat/caddy:latest" }
 cmds = [
-    "docker build --tag hostamat/caddy:latest --platform linux/amd64 --file Dockerfile.caddy .",
-    "docker tag hostamat/caddy:latest hostamat-container-registry.registry.twcstorage.ru/hostamat/caddy:latest",
-    "docker push hostamat-container-registry.registry.twcstorage.ru/hostamat/caddy:latest"
+    "docker build --tag @{tag} --platform linux/amd64 --file Dockerfile.caddy .",
+    "docker tag @{tag} @{cr}/@{tag}",
+    "docker push @{cr}/@{tag}"
 ]
+
+
+# [[steps]]
+# id = "deploy"
+# name = "Deploy stack"
+# needs = ["push-backend", "push-webapp", "push-dashboard", "push-caddy"]
+# cmds = [
+#     "cat ./infra/prod/scripts/deploy-stack.sh | ssh -t -i ~/.ssh/hostamat_admin root@5.129.199.174"
+# ]

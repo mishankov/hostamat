@@ -3,9 +3,10 @@ package uploadsession
 import (
 	"context"
 	"database/sql"
+	"hostamat/internal/uploadsession/migrations"
+	"io/fs"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/platforma-dev/platforma/database"
 )
 
 type Repository struct {
@@ -78,27 +79,6 @@ func (r *Repository) DeleteByUser(ctx context.Context, userId string) error {
 	return err
 }
 
-func (r *Repository) Migrations() []database.Migration {
-	return []database.Migration{{
-		ID: "init",
-		Up: `CREATE TABLE IF NOT EXISTS uploadsessions (
-			id VARCHAR(255) PRIMARY KEY,
-			"user" VARCHAR(255) NOT NULL,
-			site VARCHAR(255) NOT NULL,
-			created_at TIMESTAMP NOT NULL,
-			updated_at TIMESTAMP NOT NULL,
-			status VARCHAR(255) NOT NULL
-		)`,
-		Down: `DROP TABLE uploadsessions`,
-	}, {
-		ID: "add_files_table",
-		Up: `CREATE TABLE IF NOT EXISTS files (
-			id VARCHAR(255) PRIMARY KEY,
-			upload_session VARCHAR(255) NOT NULL,
-			name VARCHAR(255) NOT NULL,
-			uploaded BOOLEAN NOT NULL,
-			size INT NOT NULL
-		)`,
-		Down: `DROP TABLE files`,
-	}}
+func (r *Repository) Migrations() fs.FS {
+	return migrations.FS
 }

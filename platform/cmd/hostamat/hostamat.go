@@ -80,7 +80,7 @@ func main() {
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
-	traceId := httpserver.NewTraceIDMiddleware(nil, "Hostamat-Trace-Id")
+	traceId := log.NewTraceIDMiddleware(nil, "Hostamat-Trace-Id")
 	requestLogger := middlewares.NewRequestLogger(logger)
 
 	// API with authentication

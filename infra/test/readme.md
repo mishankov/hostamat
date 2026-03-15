@@ -7,6 +7,8 @@ Start backend
 task backend
 ```
 
+`task backend` starts the backend service, and the backend Docker entrypoint runs migrations before `run`.
+
 Start webapp
 ```bash
 task webapp
