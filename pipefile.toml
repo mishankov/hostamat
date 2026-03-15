@@ -1,6 +1,7 @@
 [[steps]]
 id = "push-backend"
 name = "Push backend"
+dir = "./platform"
 cmds = [
     "docker build --tag hostamat/backend:latest --platform linux/amd64 .",
     "docker tag hostamat/backend:latest hostamat-container-registry.registry.twcstorage.ru/hostamat/backend:latest",
@@ -11,6 +12,7 @@ cmds = [
 [[steps]]
 id = "push-webapp"
 name = "Push webapp"
+dir = "./webapp"
 cmds = [
     "docker build --tag hostamat/webapp:latest --platform linux/amd64 .",
     "docker tag hostamat/webapp:latest hostamat-container-registry.registry.twcstorage.ru/hostamat/webapp:latest",
@@ -20,8 +22,20 @@ cmds = [
 [[steps]]
 id = "push-dashboard"
 name = "Push dashboard"
+dir = "./platform"
 cmds = [
     "docker build --tag hostamat/dashboard:latest --platform linux/amd64 .",
     "docker tag hostamat/dashboard:latest hostamat-container-registry.registry.twcstorage.ru/hostamat/dashboard:latest",
     "docker push hostamat-container-registry.registry.twcstorage.ru/hostamat/dashboard:latest"
+]
+
+
+[[steps]]
+id = "push-caddy"
+name = "Push caddy"
+dir = "./infra/prod"
+cmds = [
+    "docker build --tag hostamat/caddy:latest --platform linux/amd64 .",
+    "docker tag hostamat/caddy:latest hostamat-container-registry.registry.twcstorage.ru/hostamat/caddy:latest",
+    "docker push hostamat-container-registry.registry.twcstorage.ru/hostamat/caddy:latest"
 ]
