@@ -35,7 +35,7 @@ id = "push-caddy"
 name = "Push caddy"
 dir = "./infra/prod"
 cmds = [
-    "docker build --tag hostamat/caddy:latest --platform linux/amd64 .",
+    "docker build --tag hostamat/caddy:latest --platform linux/amd64 --file Dockerfile.caddy .",
     "docker tag hostamat/caddy:latest hostamat-container-registry.registry.twcstorage.ru/hostamat/caddy:latest",
     "docker push hostamat-container-registry.registry.twcstorage.ru/hostamat/caddy:latest"
 ]
