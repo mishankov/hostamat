@@ -29,16 +29,26 @@ import (
 
 func main() {
 	ctx := context.Background()
+	conf := config.New()
+
+	// Logging
+	evLogger := log.NewWideEventLogger(
+		os.Stdout,
+		log.NewDefaultSampler(1*time.Second, 400, 1),
+		"json",
+		nil,
+	)
+	evLoggerMiddleware := log.NewWideEventMiddleware(evLogger, "http_server", nil)
+
+	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, nil)
+	log.SetDefault(logger)
 
 	// Basic components
-	conf := config.New()
-	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, nil)
 	httpClient := httpclient.New(10 * time.Second)
 
 	logger.DebugContext(ctx, "config", "config", conf)
 
 	// Setting default logger for platforma pkg
-	log.SetDefault(logger)
 
 	// API adapters
 	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL, "srv0") // Default server name
@@ -101,7 +111,7 @@ func main() {
 
 	httpServer.Handle("/metrics", promhttp.Handler())
 
-	httpServer.Use(recoverMiddleware, traceId, requestLogger)
+	httpServer.Use(recoverMiddleware, evLoggerMiddleware, traceId, requestLogger)
 
 	// Application
 	app := application.New()

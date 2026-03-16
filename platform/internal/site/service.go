@@ -8,6 +8,7 @@ import (
 	"hostamat/internal/subdomain"
 	"hostamat/internal/uploadsession"
 	"io"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -135,12 +136,22 @@ func (s *Service) GetByDomainNoAuth(ctx context.Context, domain string) (*Site, 
 }
 
 func (s *Service) GetList(ctx context.Context) ([]*Site, error) {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "GetList")
+
 	user := auth.UserFromContext(ctx)
 	if user == nil {
+		err := errors.New("access denied")
+		ev.AddError(err)
+
 		return nil, errors.New("access denied")
 	}
 
-	return s.repository.GetList(ctx, user.ID)
+	sites, err := s.repository.GetList(ctx, user.ID)
+	ev.AddError(err)
+
+	return sites, err
 }
 
 func (s *Service) UpdateName(ctx context.Context, id, name string) error {
