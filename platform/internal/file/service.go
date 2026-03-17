@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"log/slog"
 	"path/filepath"
 	"strings"
 	"time"
@@ -45,13 +46,33 @@ func NewService(repo repository, bucketName string) *Service {
 }
 
 func (s *Service) GetFile(ctx context.Context, path string) (io.Reader, string, error) {
-	path = strings.TrimPrefix(path, "/")
+	ev := log.EventFromContext(ctx)
+	ev.AddStep(slog.LevelInfo, "file.GetFile")
 
-	log.DebugContext(ctx, "get file", "path", path)
+	path = strings.TrimPrefix(path, "/")
+	originalPath := path
+	ev.AddAttrs(map[string]any{
+		"file.path": path,
+	})
 
 	// If path has a known file extension, try exact match only
 	if isAllowedExtension(path) {
 		reader, err := s.repo.GetObject(ctx, s.bucketName, path)
+		if err != nil {
+			if errors.Is(err, ErrFileNotFound) {
+				ev.AddStep(slog.LevelInfo, "file.GetFile.not_found")
+			} else {
+				ev.AddError(err)
+			}
+		}
+
+		if err == nil {
+			ev.AddAttrs(map[string]any{
+				"file.resolved_path": path,
+			})
+
+		}
+
 		return reader, path, err
 	}
 
@@ -63,22 +84,36 @@ func (s *Service) GetFile(ctx context.Context, path string) (io.Reader, string, 
 	}
 
 	for _, p := range pathsToTry {
-		exists, err := s.repo.ObjectExists(ctx, s.bucketName, p)
-		if err != nil {
+		reader, err := s.repo.GetObject(ctx, s.bucketName, p)
+		if errors.Is(err, ErrFileNotFound) {
 			continue
 		}
-		if exists {
-			reader, err := s.repo.GetObject(ctx, s.bucketName, p)
-			return reader, p, err
+		if err != nil {
+			ev.AddError(err)
+			return nil, originalPath, err
 		}
+
+		ev.AddAttrs(map[string]any{
+			"file.resolved_path": p,
+		})
+
+		return reader, p, nil
 	}
 
-	// If none found, return error for the original path
-	reader, err := s.repo.GetObject(ctx, s.bucketName, path)
-	return reader, path, err
+	ev.AddStep(slog.LevelInfo, "file.GetFile.not_found")
+	return nil, originalPath, ErrFileNotFound
 }
 
 func (s *Service) UploadFile(ctx context.Context, path, filename string, file io.Reader, size int64) ([]File, []File, error) {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "file.UploadFile")
+	ev.AddAttrs(map[string]any{
+		"file.path": path,
+		"file.name": filename,
+		"file.size": size,
+	})
+
 	var uploaded, skipped []File
 
 	switch filepath.Ext(filename) {
@@ -86,12 +121,19 @@ func (s *Service) UploadFile(ctx context.Context, path, filename string, file io
 		var err error
 		uploaded, skipped, err = s.uploadZipArchive(ctx, path, file, size)
 		if err != nil {
+			ev.AddError(err)
 			return nil, nil, err
 		}
 	default:
 		if err := s.uploadSingleFile(ctx, path, filename, file, size); err != nil {
 			if errors.Is(err, ErrInvalidFileType) {
+				ev.AddAttrs(map[string]any{
+					"file.invalidType": true,
+				})
+
 				skipped = []File{{filename, 0}}
+			} else {
+				ev.AddError(err)
 			}
 			return nil, nil, err
 		} else {
@@ -103,16 +145,34 @@ func (s *Service) UploadFile(ctx context.Context, path, filename string, file io
 }
 
 func (s *Service) DeleteFromFolderAsync(ctx context.Context, folder string) error {
-	return s.deleteFolderProcessor.Enqueue(ctx, folder)
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "file.DeleteFromFolderAsync")
+	ev.AddAttrs(map[string]any{
+		"file.path": folder,
+	})
+
+	err := s.deleteFolderProcessor.Enqueue(ctx, folder)
+	if err != nil {
+		ev.AddError(err)
+	}
+
+	return err
 }
 
 func (s *Service) DeleteFromFolder(ctx context.Context, folder string) error {
+	ev := log.EventFromContext(ctx)
+	ev.AddStep(slog.LevelInfo, "file.DeleteFromFolder")
+	ev.AddAttrs(map[string]any{
+		"file.path": folder,
+	})
+
 	err := s.repo.DeleteFromFolder(ctx, s.bucketName, folder)
 	if err != nil {
+		ev.AddError(err)
 		return err
 	}
 
-	log.InfoContext(ctx, "files deleted", "folder", folder)
 	return nil
 }
 
