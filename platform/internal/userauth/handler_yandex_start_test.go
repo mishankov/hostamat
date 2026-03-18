@@ -1,10 +1,13 @@
 package userauth
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/platforma-dev/platforma/log"
 )
 
 type mockStartYandexAuthService struct {
@@ -33,6 +36,7 @@ func TestYandexStartHandler_ReturnsAuthURLAndSetsCookie(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodGet, "/auth/yandex/start", nil)
 	req.Header.Set("X-Forwarded-Proto", "https")
+	req = req.WithContext(context.WithValue(req.Context(), log.WideEventKey, log.NewEvent("test")))
 	rec := httptest.NewRecorder()
 
 	handler.ServeHTTP(rec, req)

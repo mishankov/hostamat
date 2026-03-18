@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/url"
 	"strings"
 	"time"
@@ -87,22 +88,47 @@ func (s *Service) StartYandexAuth() (string, string, error) {
 }
 
 func (s *Service) CreateSessionFromYandexCode(ctx context.Context, code string) (string, error) {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "userauth.CreateSessionFromYandexCode")
+	ev.AddAttrs(map[string]any{
+		"auth.provider": "yandex",
+	})
+
 	if strings.TrimSpace(code) == "" {
+
+		ev.AddStep(slog.LevelWarn, "userauth.CreateSessionFromYandexCode.missing_code")
+
 		return "", fmt.Errorf("oauth code is required")
 	}
 
+	ev.AddStep(slog.LevelInfo, "userauth.CreateSessionFromYandexCode.exchange_code")
+
 	accessToken, err := s.yandexClient.ExchangeCode(ctx, code)
 	if err != nil {
+
+		ev.AddError(err)
+
 		return "", err
 	}
+
+	ev.AddStep(slog.LevelInfo, "userauth.CreateSessionFromYandexCode.fetch_userinfo")
 
 	userInfo, err := s.yandexClient.GetUserInfo(ctx, accessToken)
 	if err != nil {
+
+		ev.AddError(err)
+
 		return "", err
 	}
 
+	ev.AddStep(slog.LevelInfo, "userauth.CreateSessionFromYandexCode.load_user")
+
 	user, err := s.repo.GetByProviderUserID(ctx, ProviderYandex, userInfo.ID)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+
+		ev.AddError(err)
+
 		return "", fmt.Errorf("failed to fetch existing oauth user: %w", err)
 	}
 
@@ -122,18 +148,38 @@ func (s *Service) CreateSessionFromYandexCode(ctx context.Context, code string) 
 			ProviderUserID: &providerUserID,
 		}
 
+		ev.AddStep(slog.LevelInfo, "userauth.CreateSessionFromYandexCode.create_user")
+
 		if err := s.repo.Create(ctx, user); err != nil {
+
+			ev.AddError(err)
+
 			return "", fmt.Errorf("failed to create oauth user: %w", err)
 		}
 	} else if user.Username != username {
+
+		ev.AddStep(slog.LevelInfo, "userauth.CreateSessionFromYandexCode.update_username")
+
 		if err := s.repo.UpdateUsername(ctx, user.ID, username); err != nil {
+
+			ev.AddError(err)
+
 			return "", fmt.Errorf("failed to update oauth username: %w", err)
 		}
 		user.Username = username
 	}
 
+	ev.AddAttrs(map[string]any{
+		"user.id":       user.ID,
+		"user.provider": string(user.Provider),
+	})
+	ev.AddStep(slog.LevelInfo, "userauth.CreateSessionFromYandexCode.create_session")
+
 	sessionID, err := s.authStorage.CreateSessionForUser(ctx, user.ID)
 	if err != nil {
+
+		ev.AddError(err)
+
 		return "", fmt.Errorf("failed to create session: %w", err)
 	}
 
@@ -141,26 +187,56 @@ func (s *Service) CreateSessionFromYandexCode(ctx context.Context, code string) 
 }
 
 func (s *Service) GetFromSession(ctx context.Context, sessionID string) (*platformauth.User, error) {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "userauth.GetFromSession")
+	ev.AddAttrs(map[string]any{
+		"auth.provider": "yandex",
+	})
+
 	userID, err := s.authStorage.GetUserIdFromSessionId(ctx, sessionID)
 	if err != nil {
+
+		ev.AddError(err)
+
 		return nil, fmt.Errorf("failed to get user id from session: %w", err)
 	}
 
 	if userID == "" {
+
+		ev.AddStep(slog.LevelInfo, "userauth.GetFromSession.user_not_found")
+
 		return nil, platformauth.ErrUserNotFound
 	}
 
+	ev.AddAttrs(map[string]any{
+		"user.id": userID,
+	})
+
 	user, err := s.repo.Get(ctx, userID)
 	if errors.Is(err, sql.ErrNoRows) {
+
+		ev.AddStep(slog.LevelInfo, "userauth.GetFromSession.user_not_found")
+
 		return nil, platformauth.ErrUserNotFound
 	}
 	if err != nil {
+
+		ev.AddError(err)
+
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 
 	if user.Provider != ProviderYandex {
+
+		ev.AddStep(slog.LevelWarn, "userauth.GetFromSession.invalid_provider")
+
 		return nil, platformauth.ErrUserNotFound
 	}
+
+	ev.AddAttrs(map[string]any{
+		"user.provider": string(user.Provider),
+	})
 
 	return &platformauth.User{
 		ID:       user.ID,
@@ -174,7 +250,14 @@ func (s *Service) GetFromSession(ctx context.Context, sessionID string) (*platfo
 }
 
 func (s *Service) DeleteSession(ctx context.Context, sessionID string) error {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "userauth.DeleteSession")
+
 	if err := s.authStorage.DeleteSession(ctx, sessionID); err != nil {
+
+		ev.AddError(err)
+
 		return fmt.Errorf("failed to delete session: %w", err)
 	}
 
@@ -182,16 +265,36 @@ func (s *Service) DeleteSession(ctx context.Context, sessionID string) error {
 }
 
 func (s *Service) DeleteUser(ctx context.Context) error {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "userauth.DeleteUser")
+	ev.AddAttrs(map[string]any{
+		"auth.provider": "yandex",
+	})
+
 	user := platformauth.UserFromContext(ctx)
 	if user == nil {
+
+		ev.AddStep(slog.LevelWarn, "userauth.DeleteUser.user_not_found")
+
 		return platformauth.ErrUserNotFound
 	}
 
+	ev.AddAttrs(map[string]any{
+		"user.id": user.ID,
+	})
+
 	if err := s.authStorage.DeleteSessionsByUserId(ctx, user.ID); err != nil {
+
+		ev.AddError(err)
+
 		return fmt.Errorf("failed to delete user sessions: %w", err)
 	}
 
 	if err := s.repo.Delete(ctx, user.ID); err != nil {
+
+		ev.AddError(err)
+
 		return fmt.Errorf("failed to delete user: %w", err)
 	}
 
@@ -201,6 +304,9 @@ func (s *Service) DeleteUser(ctx context.Context) error {
 			DeletedAt: time.Now(),
 		}
 		if err := s.cleanupEnqueuer.Enqueue(ctx, job); err != nil {
+
+			ev.AddError(err)
+
 			log.ErrorContext(ctx, "failed to enqueue cleanup job", "error", err, "user_id", user.ID)
 		}
 	}

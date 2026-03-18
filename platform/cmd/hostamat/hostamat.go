@@ -8,7 +8,6 @@ import (
 	"hostamat/internal/adapters/s3"
 	"hostamat/internal/adapters/yandexoauth"
 	"hostamat/internal/file"
-	"hostamat/internal/middlewares"
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/internal/uploadsession"
@@ -91,7 +90,6 @@ func main() {
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
 	traceId := log.NewTraceIDMiddleware(nil, "Hostamat-Trace-Id")
-	requestLogger := middlewares.NewRequestLogger(logger)
 
 	// API with authentication
 	apiGroup := httpserver.NewHandlerGroup()
@@ -111,7 +109,7 @@ func main() {
 
 	httpServer.Handle("/metrics", promhttp.Handler())
 
-	httpServer.Use(recoverMiddleware, evLoggerMiddleware, traceId, requestLogger)
+	httpServer.Use(recoverMiddleware, traceId, evLoggerMiddleware)
 
 	// Application
 	app := application.New()
