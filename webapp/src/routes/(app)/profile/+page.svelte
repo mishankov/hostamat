@@ -105,12 +105,12 @@
 	<Modal
 		bind:this={deleteAccountModal}
 		kind="danger"
+		title="Подтвердите удаление"
 		titleId="delete-account-title"
 		descriptionId="delete-account-description"
 		initialFocusSelector="#delete-account-confirm"
 	>
 		<div class="delete-modal">
-			<h2 id="delete-account-title">Подтвердите удаление</h2>
 			<p id="delete-account-description" class="delete-modal-text">
 				Вы уверены, что хотите удалить свой аккаунт? Это приведёт к безвозвратному удалению всех
 				ваших сайтов и файлов.

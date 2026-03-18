@@ -116,6 +116,8 @@
 	<Modal
 		bind:this={uploadModal}
 		kind="primary"
+		title={`Загрузить файлы для "${site.name}"`}
+		panelWidth="540px"
 		titleId={uploadTitleId}
 		descriptionId={uploadDescId}
 		initialFocusSelector=".drop-zone"
@@ -124,7 +126,6 @@
 		}}
 	>
 		<div class="upload-modal">
-			<h2 id={uploadTitleId} class="upload-title">Загрузить файлы для "{site.name}"</h2>
 			<Alert variant="info" title="Информация о загрузке сайтов">
 				<p>При загрузке файлов все старые файлы будут удалены</p>
 				<p id={uploadDescId}>
@@ -149,12 +150,12 @@
 	<Modal
 		bind:this={deleteModal}
 		kind="danger"
+		title="Подтверждение удаления"
 		titleId={deleteTitleId}
 		descriptionId={deleteDescId}
 		initialFocusSelector={'#' + deleteButtonId}
 	>
 		<div class="delete-modal">
-			<h2 id={deleteTitleId}>Подтверждение удаления</h2>
 			<p id={deleteDescId} class="delete-modal-text">
 				Вы уверены, что хотите удалить сайт "{site.name}"?
 			</p>
@@ -230,10 +231,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
-	}
-
-	.upload-title {
-		max-width: 500px;
 	}
 
 	.delete-modal {

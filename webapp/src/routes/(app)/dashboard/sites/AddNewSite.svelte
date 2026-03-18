@@ -40,12 +40,12 @@
 
 <Modal
 	bind:this={modal}
+	title="Новый сайт"
 	titleId="new-site-modal-title"
 	initialFocusSelector="#new-site-name"
 	closeLabel="Закрыть форму создания сайта"
 >
 	<div class="modal-body">
-		<h2 id="new-site-modal-title">Новый сайт</h2>
 		<Input
 			id="new-site-name"
 			label="Название"
