@@ -153,12 +153,16 @@ services:
 configs:
   caddyfile:
     external: true
+    name: ${CADDYFILE_CONFIG}
   dozzle_users:
     external: true
+    name: ${DOZZLE_USERS_CONFIG}
   gatus_config:
     external: true
+    name: ${GATUS_CONFIG}
   prometheus_config:
     external: true
+    name: ${PROMETHEUS_CONFIG}
 
 volumes:
   caddy-data:

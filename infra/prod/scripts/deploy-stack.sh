@@ -2,15 +2,35 @@
 set -eu
 
 cd ./hostamat/infra/prod
-git pull
 
-docker stack rm hostamat || true
-docker config rm caddyfile dozzle_users gatus_config prometheus_config 2>/dev/null || true
+# Pulling latest git and remembering the hash
+git pull --ff-only
+REV=$(git rev-parse --short=12 HEAD)
 
-docker config create caddyfile config/Caddyfile
-docker config create dozzle_users config/dozzle/users.yml
-docker config create gatus_config config/gatus/config.yaml
-docker config create prometheus_config config/prometheus.yaml
+# Exporting unique config namse to use in compose file
+export CADDYFILE_CONFIG="caddyfile-$REV"
+export DOZZLE_USERS_CONFIG="dozzle_users-$REV"
+export GATUS_CONFIG="gatus_config-$REV"
+export PROMETHEUS_CONFIG="prometheus_config-$REV"
 
-docker stack config -c compose.yml > swarm.yml
-(r=3;while ! docker stack deploy --compose-file swarm.yml --prune --with-registry-auth --detach=true hostamat ; do ((--r))||exit;sleep 5;done)
+# Creating new configs
+docker config inspect "$CADDYFILE_CONFIG" >/dev/null 2>&1 ||
+  docker config create "$CADDYFILE_CONFIG" config/Caddyfile
+
+docker config inspect "$DOZZLE_USERS_CONFIG" >/dev/null 2>&1 ||
+  docker config create "$DOZZLE_USERS_CONFIG" config/dozzle/users.yml
+
+docker config inspect "$GATUS_CONFIG" >/dev/null 2>&1 ||
+  docker config create "$GATUS_CONFIG" config/gatus/config.yaml
+
+docker config inspect "$PROMETHEUS_CONFIG" >/dev/null 2>&1 ||
+  docker config create "$PROMETHEUS_CONFIG" config/prometheus.yaml
+
+# Generating random temporary swarm.yml file
+TMP_SWARM_YML=$(mktemp)
+trap 'rm -f "$TMP_SWARM_YML"' EXIT INT TERM HUP
+
+docker stack config -c compose.yml > "$TMP_SWARM_YML"
+
+# Deploying stack using the temporary swarm.yml file
+docker stack deploy --compose-file "$TMP_SWARM_YML" --prune --with-registry-auth --detach=true hostamat
