@@ -109,8 +109,8 @@ github.com/philhofer/fwd v1.1.3-0.20240916144458-20a13a1f6b7c h1:dAMKvw0MlJT1Gsh
 github.com/philhofer/fwd v1.1.3-0.20240916144458-20a13a1f6b7c/go.mod h1:RqIHx9QI14HlwKwm98g9Re5prTQ6LdeRQn+gXJFxsJM=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
-github.com/platforma-dev/platforma v0.1.0-alpha.22 h1:OQ/9uq2rz3yY0Ezt3+xwkyQE+i1ynGCG3Dre8lYpu1c=
-github.com/platforma-dev/platforma v0.1.0-alpha.22/go.mod h1:/5YxgfljYE8aYNm3QAgTsmd1z7kHiNsq7kEVF4iXGTA=
+github.com/platforma-dev/platforma v0.1.0-alpha.23 h1:QaWndSZV0ThBSwEG0T6F7iW+wEzjeKDab9H0P9gv4Y0=
+github.com/platforma-dev/platforma v0.1.0-alpha.23/go.mod h1:/5YxgfljYE8aYNm3QAgTsmd1z7kHiNsq7kEVF4iXGTA=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c h1:ncq/mPwQF4JjgDlrVEn3C11VoGHZN7m8qihwgMEtzYw=

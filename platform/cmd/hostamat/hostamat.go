@@ -31,15 +31,14 @@ func main() {
 	conf := config.New()
 
 	// Logging
-	evLogger := log.NewWideEventLogger(
+	logger := log.NewWideEventLogger(
 		os.Stdout,
 		log.NewDefaultSampler(1*time.Second, 400, 1),
 		"json",
 		nil,
 	)
-	evLoggerMiddleware := log.NewWideEventMiddleware(evLogger, "http_server", nil)
+	loggerMiddleware := log.NewWideEventMiddleware(logger, "http_server", nil)
 
-	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, nil)
 	log.SetDefault(logger)
 
 	// Basic components
@@ -109,7 +108,7 @@ func main() {
 
 	httpServer.Handle("/metrics", promhttp.Handler())
 
-	httpServer.Use(recoverMiddleware, traceId, evLoggerMiddleware)
+	httpServer.Use(recoverMiddleware, traceId, loggerMiddleware)
 
 	// Application
 	app := application.New()
