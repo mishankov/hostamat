@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"net/http"
 
 	platformauth "github.com/platforma-dev/platforma/auth"
@@ -23,7 +24,12 @@ func NewDeleteHandler(service userDeleter) *DeleteHandler {
 }
 
 func (h *DeleteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ev := log.EventFromContext(r.Context())
+
 	if r.Method != http.MethodDelete {
+
+		ev.AddStep(slog.LevelWarn, "userauth.Delete.method_not_allowed")
+
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -40,6 +46,9 @@ func (h *DeleteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode("User deleted successfully"); err != nil {
+
+		ev.AddError(err)
+
 		log.ErrorContext(r.Context(), "failed to encode response", "error", err)
 	}
 }

@@ -30,12 +30,12 @@
 <Modal
 	bind:this={modal}
 	kind="primary"
+	title={`Изменить "${siteName}"`}
 	titleId={modalTitleId}
 	initialFocusSelector={'#' + inputId}
 	openCallback={() => (newName = siteName)}
 >
 	<div class="modal-body">
-		<h2 id={modalTitleId}>Изменить "{siteName}"</h2>
 		<Input id={inputId} label="Название" bind:value={newName} maxlength="25" {errorMessage}></Input>
 		<div class="modal-actions">
 			<Button

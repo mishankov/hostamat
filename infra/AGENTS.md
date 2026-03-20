@@ -67,4 +67,6 @@ infra/
 - **External configs**: Caddyfile, Gatus, Prometheus configs created via `docker config create`
 - **External volumes**: `caddy-data`, `caddy-conf`, `portainer_data`, `prometheus-data` persist data
 - **Registry**: Custom registry at `hostamat-container-registry.registry.twcstorage.ru/hostamat/*`
-- **Deploy command**: `docker stack deploy --compose-file swarm.yml --prune --with-registry-auth hostamat`
+- **Backend runtime**: dashboard images default to `run`; backend images default to `migrate && run` via Docker `ENTRYPOINT`
+- **Migration flow**: backend container startup runs migrations before `run`
+- **Deploy command**: `./scripts/deploy-stack.sh` refreshes configs and executes `docker stack deploy --compose-file swarm.yml --prune --with-registry-auth hostamat`

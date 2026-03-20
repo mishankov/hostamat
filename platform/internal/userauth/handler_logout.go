@@ -2,8 +2,11 @@ package userauth
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/platforma-dev/platforma/log"
 )
 
 type logoutService interface {
@@ -20,7 +23,12 @@ func NewLogoutHandler(service logoutService) *LogoutHandler {
 }
 
 func (h *LogoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ev := log.EventFromContext(r.Context())
+
 	if r.Method != http.MethodPost {
+
+		ev.AddStep(slog.LevelWarn, "userauth.Logout.method_not_allowed")
+
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -31,6 +39,8 @@ func (h *LogoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "failed to logout", http.StatusInternalServerError)
 			return
 		}
+	} else {
+		ev.AddStep(slog.LevelInfo, "userauth.Logout.missing_cookie")
 	}
 
 	http.SetCookie(w, &http.Cookie{

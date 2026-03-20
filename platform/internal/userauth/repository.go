@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-
-	"github.com/platforma-dev/platforma/database"
+	"hostamat/internal/userauth/migrations"
+	"io/fs"
 )
 
 type db interface {
@@ -22,42 +22,8 @@ func NewRepository(db db) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) Migrations() []database.Migration {
-	return []database.Migration{
-		{
-			ID: "init",
-			Up: `CREATE TABLE IF NOT EXISTS users (
-				id VARCHAR(255) PRIMARY KEY,
-				username VARCHAR(255),
-				password TEXT,
-				salt TEXT,
-				created TIMESTAMP,
-				updated TIMESTAMP,
-				status VARCHAR(50),
-				provider VARCHAR(50) NOT NULL DEFAULT 'legacy',
-				provider_user_id VARCHAR(255)
-			)`,
-			Down: "DROP TABLE users",
-		},
-		{
-			ID: "add_provider_columns",
-			Up: `ALTER TABLE users ADD COLUMN IF NOT EXISTS provider VARCHAR(50) NOT NULL DEFAULT 'legacy';
-UPDATE users SET provider = 'legacy' WHERE provider IS NULL;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS provider_user_id VARCHAR(255);`,
-			Down: `ALTER TABLE users DROP COLUMN IF EXISTS provider_user_id;
-ALTER TABLE users DROP COLUMN IF EXISTS provider;`,
-		},
-		{
-			ID:   "drop_username_unique",
-			Up:   `ALTER TABLE users DROP CONSTRAINT IF EXISTS users_username_key;`,
-			Down: `ALTER TABLE users ADD CONSTRAINT users_username_key UNIQUE (username);`,
-		},
-		{
-			ID:   "add_provider_user_id_unique_index",
-			Up:   `CREATE UNIQUE INDEX IF NOT EXISTS users_provider_provider_user_id_idx ON users (provider, provider_user_id) WHERE provider_user_id IS NOT NULL;`,
-			Down: `DROP INDEX IF EXISTS users_provider_provider_user_id_idx;`,
-		},
-	}
+func (r *Repository) Migrations() fs.FS {
+	return migrations.FS
 }
 
 func (r *Repository) Get(ctx context.Context, id string) (*User, error) {

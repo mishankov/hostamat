@@ -26,6 +26,12 @@ func NewServeFileHandler(service *Service) *ServeFileHandler {
 
 func (h *ServeFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	ev := log.EventFromContext(ctx)
+
+	ev.AddAttrs(map[string]any{
+		"site.domain": r.Host,
+		"file.path":   r.URL.Path,
+	})
 
 	filePath := r.URL.Path
 
@@ -33,7 +39,10 @@ func (h *ServeFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(http.StatusNotFound)
-		w.Write(notFoundHTML)
+		_, err = w.Write(notFoundHTML)
+		if err != nil {
+			ev.AddError(err)
+		}
 		return
 	}
 
@@ -44,7 +53,14 @@ func (h *ServeFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", h.getContentType(resolvedPath))
 
+	ev.AddAttrs(map[string]any{
+		"file.resolved_path": resolvedPath,
+	})
+
 	if _, err := io.Copy(w, file); err != nil {
+
+		ev.AddError(err)
+
 		log.ErrorContext(ctx, "failed to copy file to response", "error", err, "path", resolvedPath)
 	}
 }

@@ -4,9 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"hostamat/internal/subdomain/internal/migrations"
-
-	"github.com/platforma-dev/platforma/database"
+	"hostamat/internal/subdomain/migrations"
+	"io/fs"
 )
 
 const (
@@ -27,8 +26,8 @@ func NewRepository(db db) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) Migrations() []database.Migration {
-	return migrations.Migrations
+func (r *Repository) Migrations() fs.FS {
+	return migrations.FS
 }
 
 func (r *Repository) Get(ctx context.Context, id string) (*Subdomain, error) {

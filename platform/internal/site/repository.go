@@ -3,9 +3,8 @@ package site
 import (
 	"context"
 	"database/sql"
-	"hostamat/internal/site/internal/migrations"
-
-	"github.com/platforma-dev/platforma/database"
+	"hostamat/internal/site/migrations"
+	"io/fs"
 )
 
 const (
@@ -29,8 +28,8 @@ func NewRepository(db db) *Repository {
 	}
 }
 
-func (r *Repository) Migrations() []database.Migration {
-	return migrations.Migrations
+func (r *Repository) Migrations() fs.FS {
+	return migrations.FS
 }
 
 func (r *Repository) Create(ctx context.Context, site *Site) error {

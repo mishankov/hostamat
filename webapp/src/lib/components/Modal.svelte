@@ -7,6 +7,8 @@
 		kind = 'primary',
 		openCallback = () => {},
 		closeCallback = () => {},
+		title = '',
+		panelWidth = '',
 		titleId = '',
 		descriptionId = '',
 		initialFocusSelector = '',
@@ -18,6 +20,8 @@
 		kind?: 'primary' | 'danger';
 		openCallback?: () => void;
 		closeCallback?: () => void;
+		title?: string;
+		panelWidth?: string;
 		titleId?: string;
 		descriptionId?: string;
 		initialFocusSelector?: string;
@@ -54,7 +58,8 @@
 
 	export const open = () => {
 		openCallback();
-		previousFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+		previousFocusedElement =
+			document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
 		if (dialog?.open) {
 			return;
@@ -89,13 +94,32 @@
 		}
 	}}
 >
-		<div class={['modal-content', showCloseButton && 'has-close']}>
-			{#if showCloseButton}
-				<button class="close-modal" type="button" aria-label={closeLabel} title={closeLabel} onclick={close}>
-					<X size={18} color="currentColor" />
-				</button>
-			{/if}
-		{@render children?.()}
+	<div class="modal-panel" style:width={panelWidth || undefined}>
+		{#if title || showCloseButton}
+			<div class="modal-header">
+				{#if title}
+					<h2 id={titleId || undefined} class={['modal-title', showCloseButton && 'with-close']}>
+						{title}
+					</h2>
+				{/if}
+
+				{#if showCloseButton}
+					<button
+						class="close-modal"
+						type="button"
+						aria-label={closeLabel}
+						title={closeLabel}
+						onclick={close}
+					>
+						<X size={18} color="currentColor" />
+					</button>
+				{/if}
+			</div>
+		{/if}
+
+		<div class="modal-body">
+			{@render children?.()}
+		</div>
 	</div>
 </dialog>
 
@@ -150,20 +174,31 @@
 		backdrop-filter: blur(2px);
 	}
 
-	div.modal-content {
+	div.modal-panel {
+		box-sizing: border-box;
+		max-width: calc(100vw - 1rem);
 		padding: 20px;
-		position: relative;
 	}
 
-	div.modal-content.has-close {
-		padding-right: 56px;
+	div.modal-header {
+		position: relative;
+		margin-bottom: 20px;
+		min-height: 28px;
+	}
+
+	.modal-title {
+		margin: 0;
+	}
+
+	.modal-title.with-close {
+		padding-right: 48px;
 	}
 
 	.close-modal {
 		all: unset;
 		position: absolute;
-		top: 14px;
-		right: 14px;
+		top: 0;
+		right: 0;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -190,5 +225,19 @@
 	dialog.danger .close-modal:hover {
 		background: color-mix(in hsl, var(--color-danger-60) 90%, var(--color-danger-90) 10%);
 		color: var(--color-background-object);
+	}
+
+	@media (max-width: 520px) {
+		div.modal-panel {
+			padding: 18px;
+		}
+
+		.modal-title {
+			padding-right: 0;
+		}
+
+		.modal-title.with-close {
+			padding-right: 44px;
+		}
 	}
 </style>
