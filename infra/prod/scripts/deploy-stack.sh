@@ -26,11 +26,8 @@ docker config inspect "$GATUS_CONFIG" >/dev/null 2>&1 ||
 docker config inspect "$PROMETHEUS_CONFIG" >/dev/null 2>&1 ||
   docker config create "$PROMETHEUS_CONFIG" config/prometheus.yaml
 
-# Generating random temporary swarm.yml file
-TMP_SWARM_YML=$(mktemp)
-trap 'rm -f "$TMP_SWARM_YML"' EXIT INT TERM HUP
-
-docker stack config -c compose.yml > "$TMP_SWARM_YML"
+# Generating swarm.yml file
+docker stack config -c compose.yml > swarm.yml
 
 # Deploying stack using the temporary swarm.yml file
-docker stack deploy --compose-file "$TMP_SWARM_YML" --prune --with-registry-auth --detach=true hostamat
+docker stack deploy --compose-file swarm.yml --prune --with-registry-auth --detach=true hostamat
