@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"math"
 	"math/rand"
 	"sync"
 
 	"github.com/platforma-dev/platforma/auth"
+	"github.com/platforma-dev/platforma/log"
 
 	"github.com/google/uuid"
 )
@@ -43,13 +45,29 @@ func NewService(repo repository, webserver webserver, baseDomain, shorthandId st
 }
 
 func (s *Service) Get(ctx context.Context, id string) (*Subdomain, error) {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "subdomain.Get")
+	ev.AddAttrs(map[string]any{
+		"subdomain.id": id,
+	})
+
 	subdomain, err := s.repo.Get(ctx, id)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to get subdomain: %w", err)
+		err := fmt.Errorf("failed to get subdomain: %w", err)
+		ev.AddError(err)
+		return nil, err
 	}
 
+	ev.AddAttrs(map[string]any{
+		"subdomain.name":        subdomain.Name,
+		"subdomain.full_domain": subdomain.FullDomain,
+		"user.id":               subdomain.User,
+	})
+
 	if !s.checkAccess(ctx, subdomain) {
+		ev.AddStep(slog.LevelWarn, "subdomain.Get.access_denied")
 		return nil, errors.New("access denied")
 	}
 
@@ -57,12 +75,23 @@ func (s *Service) Get(ctx context.Context, id string) (*Subdomain, error) {
 }
 
 func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "subdomain.Create")
+
 	var err error
 
 	user := auth.UserFromContext(ctx)
 	if user == nil {
+		ev.AddAttrs(map[string]any{
+			"user.accessDenied": true,
+		})
 		return nil, errors.New("access denied")
 	}
+
+	ev.AddAttrs(map[string]any{
+		"user.id": user.ID,
+	})
 
 	name := generateName()
 
@@ -73,9 +102,17 @@ func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
 		FullDomain: name + "." + s.baseDomain,
 	}
 
+	ev.AddAttrs(map[string]any{
+		"subdomain.id":          subdomain.Id,
+		"subdomain.name":        subdomain.Name,
+		"subdomain.full_domain": subdomain.FullDomain,
+	})
+
 	err = s.repo.Create(ctx, subdomain)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create subdomain: %w", err)
+		err := fmt.Errorf("failed to create subdomain: %w", err)
+		ev.AddError(err)
+		return nil, err
 	}
 
 	s.caddyMutex.Lock()
@@ -83,23 +120,40 @@ func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
 
 	err = s.webserver.AddSubdomain(ctx, s.baseDomain, subdomain.Name, s.shorthandId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to add sudomain to webserver: %w", err)
+		err := fmt.Errorf("failed to add sudomain to webserver: %w", err)
+		ev.AddError(err)
+		return nil, err
 	}
 
 	return subdomain, nil
 }
 
 func (s *Service) Delete(ctx context.Context, id string) error {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "subdomain.Delete")
+	ev.AddAttrs(map[string]any{
+		"subdomain.id": id,
+	})
+
 	subdomain, err := s.Get(ctx, id)
 	if err != nil {
 		return err
 	}
+
+	ev.AddAttrs(map[string]any{
+		"subdomain.name":        subdomain.Name,
+		"subdomain.full_domain": subdomain.FullDomain,
+	})
 
 	s.caddyMutex.Lock()
 	defer s.caddyMutex.Unlock()
 
 	hosts, err := s.webserver.GetHostsFromShorthandId(ctx, s.shorthandId)
 	if err != nil {
+
+		ev.AddError(err)
+
 		return err
 	}
 
@@ -112,11 +166,17 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 
 	err = s.webserver.RewriteHostsInShorthandId(ctx, s.shorthandId, newHosts)
 	if err != nil {
+
+		ev.AddError(err)
+
 		return err
 	}
 
 	err = s.repo.Delete(ctx, id)
 	if err != nil {
+
+		ev.AddError(err)
+
 		return fmt.Errorf("failed to delete subdomain from database: %w", err)
 	}
 

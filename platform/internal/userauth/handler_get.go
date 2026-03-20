@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"net/http"
 
 	platformauth "github.com/platforma-dev/platforma/auth"
@@ -24,7 +25,12 @@ func NewGetHandler(service getUserService) *GetHandler {
 }
 
 func (h *GetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ev := log.EventFromContext(r.Context())
+
 	if r.Method != http.MethodGet {
+
+		ev.AddStep(slog.LevelWarn, "userauth.Get.method_not_allowed")
+
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -55,6 +61,9 @@ func (h *GetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
+
+		ev.AddError(err)
+
 		log.ErrorContext(r.Context(), "failed to encode response", "error", err)
 	}
 }

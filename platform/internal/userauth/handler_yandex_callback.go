@@ -4,8 +4,11 @@ import (
 	"context"
 	"crypto/subtle"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/platforma-dev/platforma/log"
 )
 
 type callbackYandexAuthService interface {
@@ -24,28 +27,49 @@ func NewYandexCallbackHandler(service callbackYandexAuthService) *YandexCallback
 }
 
 func (h *YandexCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ev := log.EventFromContext(r.Context())
+
+	ev.AddAttrs(map[string]any{
+		"auth.provider": "yandex",
+	})
+
 	if r.Method != http.MethodGet {
+
+		ev.AddStep(slog.LevelWarn, "userauth.YandexCallback.method_not_allowed")
+
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	query := r.URL.Query()
 	if query.Get("error") != "" {
+
+		ev.AddStep(slog.LevelWarn, "userauth.YandexCallback.provider_denied")
+
 		clearCookie(w, h.service.OAuthStateCookieName(), h.service.OAuthStateCookiePath(), requestIsSecure(r))
-		writeRedirectTarget(w, "/login?error=oauth_denied")
+		if err := writeRedirectTarget(w, "/login?error=oauth_denied"); err != nil {
+			ev.AddError(err)
+		}
 		return
 	}
 
 	if !isValidState(r, h.service.OAuthStateCookieName(), query.Get("state")) {
+
+		ev.AddStep(slog.LevelWarn, "userauth.YandexCallback.invalid_state")
+
 		clearCookie(w, h.service.OAuthStateCookieName(), h.service.OAuthStateCookiePath(), requestIsSecure(r))
-		writeRedirectTarget(w, "/login?error=oauth_failed")
+		if err := writeRedirectTarget(w, "/login?error=oauth_failed"); err != nil {
+			ev.AddError(err)
+		}
 		return
 	}
 
 	sessionID, err := h.service.CreateSessionFromYandexCode(r.Context(), query.Get("code"))
 	if err != nil {
 		clearCookie(w, h.service.OAuthStateCookieName(), h.service.OAuthStateCookiePath(), requestIsSecure(r))
-		writeRedirectTarget(w, "/login?error=oauth_failed")
+		if err := writeRedirectTarget(w, "/login?error=oauth_failed"); err != nil {
+			ev.AddError(err)
+		}
 		return
 	}
 
@@ -59,7 +83,9 @@ func (h *YandexCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 	})
 	clearCookie(w, h.service.OAuthStateCookieName(), h.service.OAuthStateCookiePath(), requestIsSecure(r))
 
-	writeRedirectTarget(w, "/dashboard")
+	if err := writeRedirectTarget(w, "/dashboard"); err != nil {
+		ev.AddError(err)
+	}
 }
 
 func isValidState(r *http.Request, cookieName, state string) bool {
@@ -88,10 +114,10 @@ func clearCookie(w http.ResponseWriter, name, path string, secure bool) {
 	})
 }
 
-func writeRedirectTarget(w http.ResponseWriter, redirectTo string) {
+func writeRedirectTarget(w http.ResponseWriter, redirectTo string) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(struct {
+	return json.NewEncoder(w).Encode(struct {
 		RedirectTo string `json:"redirectTo"`
 	}{
 		RedirectTo: redirectTo,

@@ -2,9 +2,12 @@ package userauth
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/platforma-dev/platforma/log"
 )
 
 type startYandexAuthService interface {
@@ -22,13 +25,25 @@ func NewYandexStartHandler(service startYandexAuthService) *YandexStartHandler {
 }
 
 func (h *YandexStartHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ev := log.EventFromContext(r.Context())
+
+	ev.AddAttrs(map[string]any{
+		"auth.provider": "yandex",
+	})
+
 	if r.Method != http.MethodGet {
+
+		ev.AddStep(slog.LevelWarn, "userauth.YandexStart.method_not_allowed")
+
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	redirectURL, state, err := h.service.StartYandexAuth()
 	if err != nil {
+
+		ev.AddError(err)
+
 		http.Error(w, "failed to start oauth flow", http.StatusInternalServerError)
 		return
 	}
@@ -45,11 +60,14 @@ func (h *YandexStartHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(struct {
+	err = json.NewEncoder(w).Encode(struct {
 		AuthURL string `json:"authUrl"`
 	}{
 		AuthURL: redirectURL,
 	})
+	if err != nil {
+		ev.AddError(err)
+	}
 }
 
 func requestIsSecure(r *http.Request) bool {

@@ -2,7 +2,6 @@ package file
 
 import (
 	"context"
-	"errors"
 	"io"
 
 	"github.com/platforma-dev/platforma/log"
@@ -43,7 +42,7 @@ func (r *Repository) GetObject(ctx context.Context, bucketName, fileName string)
 	}
 
 	if !exist {
-		return nil, errors.New("file not found")
+		return nil, ErrFileNotFound
 	}
 
 	f, err := r.s3Client.GetObject(ctx, bucketName, fileName)

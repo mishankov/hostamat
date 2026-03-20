@@ -7,4 +7,4 @@ FROM alpine:3
 WORKDIR /app
 COPY --from=buildgo /app/build/hostamat /app/hostamat
 EXPOSE 1001
-ENTRYPOINT ["/app/hostamat"]
+ENTRYPOINT ["sh", "-c", "/app/hostamat migrate && /app/hostamat run"]

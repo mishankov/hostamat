@@ -3,6 +3,7 @@ package site
 import (
 	"context"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	"github.com/platforma-dev/platforma/log"
@@ -29,8 +30,12 @@ func NewListSiteHandler(service listSiteService) *ListSiteHandler {
 
 func (h *ListSiteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	ev := log.EventFromContext(ctx)
 
 	if r.Method != http.MethodGet {
+
+		ev.AddStep(slog.LevelWarn, "site.List.method_not_allowed")
+
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -39,18 +44,24 @@ func (h *ListSiteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(handlerError{
+
+		err := json.NewEncoder(w).Encode(handlerError{
 			ErrorCode:    errorCodeOther,
 			ErrorMessage: "Ошибка сервера при получении списка сайтов",
 		})
+		if err != nil {
+			ev.AddError(err)
+		}
+
 		return
 	}
 
 	resp := listReponse{sites, maxSites}
 
 	w.Header().Set("Content-Type", "application/json")
+
 	err = json.NewEncoder(w).Encode(resp)
 	if err != nil {
-		log.ErrorContext(ctx, "failed to send response", "error", err, "resp", resp)
+		ev.AddError(err)
 	}
 }

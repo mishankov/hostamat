@@ -2,10 +2,9 @@
 
 ## Deploy
 
-docker config create caddyfile config/Caddyfile && \
-docker config create dozzle_users config/dozzle/users.yml && \
-docker config create gatus_config config/gatus/config.yaml && \
-docker stack config -c compose.yml > swarm.yml && docker stack deploy --compose-file swarm.yml --prune --with-registry-auth hostamat
+./scripts/deploy-stack.sh
+
+The backend container entrypoint runs `hostamat migrate` before `hostamat run`, so the deploy script only needs to refresh Docker configs and update the swarm stack.
 
 ### Nuke
 

@@ -8,7 +8,6 @@ import (
 	"hostamat/internal/adapters/s3"
 	"hostamat/internal/adapters/yandexoauth"
 	"hostamat/internal/file"
-	"hostamat/internal/middlewares"
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/internal/uploadsession"
@@ -29,16 +28,25 @@ import (
 
 func main() {
 	ctx := context.Background()
+	conf := config.New()
+
+	// Logging
+	logger := log.NewWideEventLogger(
+		os.Stdout,
+		log.NewDefaultSampler(1*time.Second, 400, 1),
+		"json",
+		nil,
+	)
+	loggerMiddleware := log.NewWideEventMiddleware(logger, "http_server", nil)
+
+	log.SetDefault(logger)
 
 	// Basic components
-	conf := config.New()
-	logger := log.New(os.Stdout, conf.Logger.Type, conf.Logger.Level, nil)
 	httpClient := httpclient.New(10 * time.Second)
 
 	logger.DebugContext(ctx, "config", "config", conf)
 
 	// Setting default logger for platforma pkg
-	log.SetDefault(logger)
 
 	// API adapters
 	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL, "srv0") // Default server name
@@ -80,8 +88,7 @@ func main() {
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
-	traceId := httpserver.NewTraceIDMiddleware(nil, "Hostamat-Trace-Id")
-	requestLogger := middlewares.NewRequestLogger(logger)
+	traceId := log.NewTraceIDMiddleware(nil, "Hostamat-Trace-Id")
 
 	// API with authentication
 	apiGroup := httpserver.NewHandlerGroup()
@@ -101,7 +108,7 @@ func main() {
 
 	httpServer.Handle("/metrics", promhttp.Handler())
 
-	httpServer.Use(recoverMiddleware, traceId, requestLogger)
+	httpServer.Use(recoverMiddleware, traceId, loggerMiddleware)
 
 	// Application
 	app := application.New()

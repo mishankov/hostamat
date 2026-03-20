@@ -1,6 +1,6 @@
 # PLATFORM (GO BACKEND) - AGENTS KNOWLEDGE BASE
 
-**Go backend for static site hosting. Domain-driven, platforma framework, sqlx + MinIO.**
+**Go backend for static site hosting. Domain-driven, platforma v0.1.0-alpha.22, sqlx + MinIO.**
 
 ## STRUCTURE
 
@@ -19,7 +19,7 @@ platform/
 │   │   ├── config/     # Env var parsing (HOSTAMAT_*)
 │   │   └── s3/         # MinIO client wrapper
 │   └── middlewares/    # HTTP middleware (logging, etc.)
-└── go.mod              # Go 1.25, platforma, sqlx, minio-go
+└── go.mod              # Go 1.25, platforma v0.1.0-alpha.22, sqlx, minio-go
 ```
 
 ## WHERE TO LOOK
@@ -31,7 +31,7 @@ platform/
 | Database ops | `internal/*/repository.go` | sqlx-based, PostgreSQL |
 | Models/structs | `internal/*/model.go` | Domain entities, constants |
 | Domain wiring | `internal/*/domain.go` | Assembles repository → service → handlers |
-| Migrations | `internal/*/internal/migrations/` | Database schema changes |
+| Migrations | `internal/*/migrations/` | Database schema changes |
 | Config parsing | `internal/adapters/config/config.go` | All `HOSTAMAT_*` env vars |
 | App entry point | `cmd/hostamat/hostamat.go` | Dependency injection, startup logic |
 | Caddy integration | `internal/adapters/caddy/` | Dynamic subdomain routing |
@@ -46,7 +46,7 @@ platform/
 - `handler_*.go` - HTTP handlers, one per operation (e.g., `handler_create.go`, `handler_delete.go`)
 
 **platforma Framework**:
-- Uses `platforma/application` for lifecycle management (OnStart hooks, graceful shutdown)
+- Uses `platforma/application` for lifecycle management (`run` / `migrate`, OnStart hooks, graceful shutdown)
 - `platforma/httpserver` for routing (`HandlerGroup`, middleware chaining)
 - `platforma/auth` for session-based auth (`UserFromContext`)
 - Domains register via `app.RegisterDomain("name", "db_connection_id", domain)`
@@ -60,7 +60,14 @@ platform/
 **Repository**:
 - sqlx named queries (`:param` placeholders)
 - `db` interface defined per domain (not shared)
-- Migrations via `Migrations() []database.Migration`
+- Migrations via `Migrations() fs.FS`
+- SQL migrations live in `internal/*/migrations/*.sql` and are embedded via `go:embed`
+
+**Runtime Commands**:
+- `go run ./cmd/hostamat migrate` applies database migrations and exits
+- `go run ./cmd/hostamat run` starts the backend
+- `go run ./cmd/dashboard run` starts the dashboard
+- Backend Docker images default to `migrate && run` through their Docker `ENTRYPOINT`
 
 ## ANTI-PATTERNS
 
