@@ -85,8 +85,8 @@
 		flex-direction: column;
 		gap: 1rem;
 		padding: 1.6rem 1rem 1rem;
-		background: color-mix(in hsl, var(--color-background) 88%, var(--color-background-object) 12%);
-		border-right: 1px solid color-mix(in hsl, var(--color-border) 88%, transparent);
+		background: var(--color-neutral-surface);
+		border-right: 1px solid var(--color-neutral-border);
 		min-width: 0;
 	}
 
@@ -128,7 +128,7 @@
 		width: 100%;
 		padding: 0.82rem 0.95rem;
 		border: 1px solid transparent;
-		border-radius: 12px;
+		border-radius: 0;
 		background: transparent;
 		color: var(--color-text-regular);
 		text-decoration: none;
@@ -141,15 +141,15 @@
 
 	.nav-link:hover {
 		text-decoration: none;
-		color: var(--color-accent-80);
-		background: color-mix(in hsl, var(--color-background-object) 40%, transparent);
-		border-color: color-mix(in hsl, var(--color-border) 55%, transparent);
+		color: var(--color-accent-text);
+		background: var(--color-background-object);
+		border-color: var(--color-neutral-border);
 	}
 
 	.nav-link.active {
-		color: var(--color-accent-90);
-		background: color-mix(in hsl, var(--color-accent-20) 72%, var(--color-background-object));
-		border-color: color-mix(in hsl, var(--color-accent-40) 55%, transparent);
+		color: var(--color-accent-text);
+		background: var(--color-accent-surface);
+		border-color: var(--color-accent-border);
 	}
 
 	.nav-link-text {
@@ -178,7 +178,7 @@
 
 		.app-sidebar {
 			border-right: none;
-			border-bottom: 1px solid color-mix(in hsl, var(--color-border) 88%, transparent);
+			border-bottom: 1px solid var(--color-neutral-border);
 			padding: 1.1rem 1rem;
 		}
 

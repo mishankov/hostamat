@@ -13,22 +13,20 @@
 
 	<Button>Snippet</Button>
 
-	<h2>Button kinds</h2>
+	<h2>Button tones</h2>
 
 	<div style="display: flex; gap: 10px">
-		<Button kind="primary">Primary</Button>
-		<Button kind="confirm">Confirm</Button>
-		<Button kind="danger">Danger</Button>
-		<Button kind="action">Action</Button>
+		<Button tone="accent">Accent</Button>
+		<Button tone="success">Success</Button>
+		<Button tone="danger">Danger</Button>
 	</div>
 
-	<h3>Filled</h3>
+	<h3>Solid</h3>
 
 	<div style="display: flex; gap: 10px">
-		<Button kind="primary" filled>Primary</Button>
-		<Button kind="confirm" filled>Confirm</Button>
-		<Button kind="danger" filled>Danger</Button>
-		<Button kind="action" filled>Action</Button>
+		<Button tone="accent" emphasis="solid">Accent</Button>
+		<Button tone="success" emphasis="solid">Success</Button>
+		<Button tone="danger" emphasis="solid">Danger</Button>
 	</div>
 
 	<h2>On click event</h2>
@@ -53,24 +51,16 @@
 			<div style="padding: 10px;">Card content</div>
 		</Card>
 
-		<Card kind="confirm">
+		<Card tone="success">
 			<div style="padding: 10px;">Card content</div>
 		</Card>
 
-		<Card kind="danger">
+		<Card tone="danger">
 			<div style="padding: 10px;">Card content</div>
 		</Card>
 
-		<Card kind="action">
-			<div style="padding: 10px;">Card content</div>
-		</Card>
-	</div>
-
-	<h2>Floating card</h2>
-
-	<div style="width: 300px;">
-		<Card floating>
-			<div style="padding: 10px;">Floating card</div>
+		<Card surface="chrome">
+			<div style="padding: 10px;">Chrome card</div>
 		</Card>
 	</div>
 

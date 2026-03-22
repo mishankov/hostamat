@@ -42,7 +42,7 @@
 	</div>
 
 	<div class="domains-card-shell">
-		<Card border cornerBorder style="box-shadow: var(--shadow-sm);">
+		<Card surface="chrome" style="box-shadow: var(--shadow-sm);">
 			<div class="domains-card-content">
 				<h2>Подключение собственных доменов</h2>
 				<p>

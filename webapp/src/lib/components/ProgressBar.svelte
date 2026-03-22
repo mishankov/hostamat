@@ -13,16 +13,16 @@
 		width: 100%;
 		height: 34px;
 
-		background-color: var(--color-primary-15);
+		background-color: var(--color-neutral-surface);
 
 		border: var(--border-regular);
-		border-radius: var(--border-radius-regular);
+		border-radius: 0;
 	}
 
 	.progress-fill {
 		height: 100%;
-		background: var(--color-accent-60);
-		border-radius: var(--border-radius-regular);
+		background: var(--color-accent-strong);
+		border-radius: 0;
 		transition: var(--transition);
 	}
 
@@ -39,6 +39,6 @@
 	}
 
 	p.dark {
-		color: var(--color-primary-95);
+		color: var(--color-neutral-strong);
 	}
 </style>

@@ -29,14 +29,14 @@ if (error) return { data: null, error: error.message };
 ```typescript
 // Define props interface
 type ButtonProps = {
-  kind?: 'primary' | 'confirm' | 'danger' | 'action';
+  tone?: 'accent' | 'success' | 'danger';
+  emphasis?: 'quiet' | 'solid';
   disabled?: boolean;
-  filled?: boolean;
   onclick?: (e: Event) => void;
 };
 
 // Destructure with $props()
-let { kind = 'primary', disabled = false }: ButtonProps = $props();
+let { tone = 'accent', emphasis = 'quiet', disabled = false }: ButtonProps = $props();
 ```
 
 ### API Client (api-client/)

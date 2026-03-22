@@ -2,9 +2,13 @@
 	import type { Snippet } from 'svelte';
 	import { X } from '$lib/icons';
 
+	type ModalTone = 'neutral' | 'danger';
+	type LegacyModalKind = 'primary' | 'danger';
+
 	let {
 		children,
-		kind = 'primary',
+		tone = undefined,
+		kind = undefined,
 		openCallback = () => {},
 		closeCallback = () => {},
 		title = '',
@@ -17,7 +21,8 @@
 		closeLabel = 'Закрыть окно'
 	}: {
 		children?: Snippet;
-		kind?: 'primary' | 'danger';
+		tone?: ModalTone;
+		kind?: LegacyModalKind;
 		openCallback?: () => void;
 		closeCallback?: () => void;
 		title?: string;
@@ -29,6 +34,8 @@
 		showCloseButton?: boolean;
 		closeLabel?: string;
 	} = $props();
+
+	const resolvedTone = $derived<ModalTone>(tone || (kind === 'danger' ? 'danger' : 'neutral'));
 
 	let dialog = $state<HTMLDialogElement>();
 	let previousFocusedElement: HTMLElement | null = null;
@@ -83,7 +90,7 @@
 
 <dialog
 	bind:this={dialog}
-	class={kind}
+	class={resolvedTone}
 	aria-labelledby={titleId || undefined}
 	aria-describedby={descriptionId || undefined}
 	aria-modal="true"
@@ -130,7 +137,7 @@
 		transform: translateX(-50%) translateY(-50%);
 
 		border: var(--border-regular);
-		border-radius: calc(var(--border-radius-regular) + 2px);
+		border-radius: 0;
 
 		padding: 0;
 
@@ -145,13 +152,13 @@
 		overflow: auto;
 	}
 
-	.primary {
+	.neutral {
 		border-color: var(--color-border);
 	}
 
 	.danger {
-		border-color: var(--color-danger-60);
-		background: color-mix(in hsl, var(--color-danger-10) 92%, var(--color-background-object));
+		border-color: var(--color-danger-border);
+		background: var(--color-danger-surface);
 	}
 
 	dialog[open] {
@@ -204,7 +211,7 @@
 		justify-content: center;
 		width: 28px;
 		height: 28px;
-		border-radius: var(--border-radius-regular);
+		border-radius: 0;
 		border: var(--border-regular);
 		background: var(--color-background-object);
 		color: var(--color-primary-90);
@@ -213,17 +220,17 @@
 	}
 
 	.close-modal:hover {
-		background: color-mix(in hsl, var(--color-background-object) 94%, var(--color-accent-30) 6%);
+		background: var(--color-accent-surface);
 	}
 
 	dialog.danger .close-modal {
-		border-color: var(--color-danger-60);
+		border-color: var(--color-danger-border);
 		background: transparent;
-		color: var(--color-danger-60);
+		color: var(--color-danger-strong);
 	}
 
 	dialog.danger .close-modal:hover {
-		background: color-mix(in hsl, var(--color-danger-60) 90%, var(--color-danger-90) 10%);
+		background: var(--color-danger-strong);
 		color: var(--color-background-object);
 	}
 

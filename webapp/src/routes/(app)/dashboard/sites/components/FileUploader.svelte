@@ -291,7 +291,7 @@
 				<div class="selected-files">
 					<div class="files-header">
 						<h3>Выбранные файлы ({selectedFiles.length})</h3>
-						<Button kind="danger" onclick={clearAll}>Очистить</Button>
+						<Button tone="danger" onclick={clearAll}>Очистить</Button>
 					</div>
 
 					<div class="files-list">
@@ -317,7 +317,7 @@
 
 	<div class="actions">
 		<Button
-			filled
+			emphasis="solid"
 			onclick={uploadFiles}
 			disabled={disabled || uploading || selectedFiles.length === 0}
 		>
@@ -343,22 +343,22 @@
 	}
 
 	.drop-zone {
-		border: 1px dashed var(--color-action-50);
-		border-radius: calc(var(--border-radius-regular) + 1px);
+		border: 1px dashed var(--color-accent-border);
+		border-radius: 0;
 		padding: 2rem;
 		text-align: center;
 		cursor: pointer;
 		transition: var(--transition);
-		background: color-mix(in hsl, var(--color-action-10) 72%, var(--color-background-object));
+		background: var(--color-accent-surface);
 	}
 
 	.drop-zone.drag-over {
-		border-color: var(--color-action-60);
-		background: color-mix(in hsl, var(--color-action-15) 68%, var(--color-background-object));
+		border-color: var(--color-accent-strong);
+		background: var(--color-background-object);
 	}
 
 	.drop-zone:focus-visible {
-		outline: var(--border-width) var(--border-style) var(--color-action-60);
+		outline: var(--border-width) var(--border-style) var(--color-accent-strong);
 		outline-offset: 2px;
 	}
 

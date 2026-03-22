@@ -29,7 +29,7 @@
 </IconButton>
 <Modal
 	bind:this={modal}
-	kind="primary"
+	tone="neutral"
 	title={`Изменить "${siteName}"`}
 	titleId={modalTitleId}
 	initialFocusSelector={'#' + inputId}
@@ -39,7 +39,7 @@
 		<Input id={inputId} label="Название" bind:value={newName} maxlength="25" {errorMessage}></Input>
 		<div class="modal-actions">
 			<Button
-				filled
+				emphasis="solid"
 				disabled={loading}
 				onclick={async () => {
 					if (newName.length === 0) {

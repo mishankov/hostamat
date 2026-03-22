@@ -5,11 +5,6 @@
 
 	let { data }: PageProps = $props();
 	const theme = useThemeController();
-	const landingCardStyle = $derived.by(() =>
-		theme.current === 'dark'
-			? 'background: color-mix(in hsl, var(--color-background-object) 94%, var(--color-primary-10)); box-shadow: var(--shadow-md);'
-			: 'background: color-mix(in hsl, var(--color-background-object) 96%, var(--color-background)); box-shadow: var(--shadow-sm);'
-	);
 </script>
 
 <svelte:head>
@@ -18,7 +13,7 @@
 
 <main class="page-shell">
 	<section class={['page-content', 'landing', theme.current === 'dark' && 'theme-dark']}>
-		<Card border cornerBorder style={landingCardStyle}>
+		<Card surface="chrome" class="hero-shell">
 			<div class="hero-card">
 				<div class="hero-main">
 					<div class="hero-copy">
@@ -30,9 +25,9 @@
 						</p>
 						<div class="hero-actions">
 							{#if data.isAuthenticated}
-								<Button href="/dashboard/sites" filled>Открыть дашборд</Button>
+								<Button href="/dashboard/sites" emphasis="solid">Открыть дашборд</Button>
 							{:else}
-								<Button href="/dashboard/sites" filled>Запустить свой сайт</Button>
+								<Button href="/dashboard/sites" emphasis="solid">Запустить свой сайт</Button>
 							{/if}
 							<Button href="/about">Узнать о платформе</Button>
 						</div>
@@ -96,28 +91,28 @@
 		</Card>
 
 		<div class="steps">
-			<Card floating border cornerBorder style={landingCardStyle}>
+			<Card class="step-card">
 				<div class="step">
 					<span>01</span>
 					<h2>Войдите через Яндекс</h2>
 					<p>Авторизация занимает пару кликов.</p>
 				</div>
 			</Card>
-			<Card floating border cornerBorder style={landingCardStyle}>
+			<Card class="step-card">
 				<div class="step">
 					<span>02</span>
 					<h2>Загрузите файлы</h2>
 					<p>Можно загрузить отдельные файлы или ZIP-архив.</p>
 				</div>
 			</Card>
-			<Card floating border cornerBorder style={landingCardStyle}>
+			<Card class="step-card">
 				<div class="step">
 					<span>03</span>
 					<h2>Поделитесь ссылкой</h2>
 					<p>Сайт сразу доступен по HTTPS-поддомену.</p>
 				</div>
 			</Card>
-			<Card floating border cornerBorder kind="action" style={landingCardStyle}>
+			<Card class="step-card step-card-featured">
 				<div class="step">
 					<span>04</span>
 					<h2>До 5 сайтов бесплатно</h2>
@@ -138,6 +133,10 @@
 
 	.hero-card {
 		padding: clamp(1.2rem, 2.5vw, 2.2rem);
+	}
+
+	:global(.hero-shell) {
+		box-shadow: var(--shadow-sm);
 	}
 
 	.hero-main {
@@ -484,6 +483,21 @@
 		display: grid;
 		grid-template-columns: repeat(2, minmax(220px, 1fr));
 		gap: 0.9rem;
+	}
+
+	:global(.step-card) {
+		box-shadow: var(--shadow-sm);
+		transition: transform 180ms ease-out, box-shadow 180ms ease-out;
+	}
+
+	:global(.step-card:hover) {
+		box-shadow: var(--shadow-lg);
+		transform: translateY(-2px);
+	}
+
+	:global(.step-card-featured) {
+		background: var(--color-accent-surface);
+		border-color: var(--color-accent-border);
 	}
 
 	.step {

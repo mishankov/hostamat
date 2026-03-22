@@ -61,29 +61,29 @@
 
 		border-width: 1px;
 		border-style: solid;
-		border-radius: calc(var(--border-radius-regular) - 2px);
-		border-color: color-mix(in hsl, var(--color-border) 86%, var(--color-primary-20));
+		border-radius: 0;
+		border-color: var(--color-neutral-border);
 
 		transition: var(--transition);
 	}
 
 	input:focus {
 		outline: none;
-		border-color: var(--color-accent-70);
+		border-color: var(--color-accent-border);
 		box-shadow: var(--focus-ring);
 	}
 
 	input::placeholder {
-		color: var(--color-inactive-50);
+		color: var(--color-disabled-text);
 	}
 
 	input.invalid {
-		border-color: var(--color-danger-50);
-		background: var(--color-danger-10);
+		border-color: var(--color-danger-border);
+		background: var(--color-danger-surface);
 	}
 
 	span.error-message {
-		color: var(--color-danger-50);
+		color: var(--color-danger-border);
 		font-size: 13px;
 	}
 </style>

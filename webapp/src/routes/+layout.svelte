@@ -66,7 +66,7 @@
 >
 	{#if cookieConsent !== 'notset' && cookieConsent !== 'true'}
 		<div class="cookie">
-			<Card border>
+			<Card>
 				<div class="cookie-inner">
 					<p>
 						Мы используем cookie. Подробности в <Link
@@ -80,7 +80,7 @@
 							cookieConsent = 'true';
 							localStorage.setItem('cookieConsent', 'true');
 						}}
-						filled
+						emphasis="solid"
 					>
 						Принять
 					</Button>
@@ -93,7 +93,7 @@
 		<header>
 			<div class="header-shell">
 				<div class="header-card-shell">
-					<Card border cornerBorder style={chromeCardStyle}>
+					<Card surface="chrome" style={chromeCardStyle}>
 						<div class="header-card">
 							<div class="brand-group">
 								<Link href={resolve('/')} onclick={closeMenu}
@@ -137,7 +137,7 @@
 		<footer>
 			<div class="footer-shell">
 				<div class="footer-card-shell">
-					<Card border cornerBorder style={chromeCardStyle}>
+					<Card surface="chrome" style={chromeCardStyle}>
 						<div class="footer-card">
 							<div class="footer-inner">
 								<div class="footer-brand">
@@ -168,13 +168,13 @@
 	}
 
 	.site-chrome.theme-dark {
-		--chrome-card-shadow: var(--shadow-md);
+		--chrome-card-shadow: var(--shadow-lg);
 	}
 
 	.dashboard-chrome {
 		background: linear-gradient(
 			180deg,
-			color-mix(in hsl, var(--color-background) 92%, var(--color-accent-20) 8%) 0%,
+			color-mix(in hsl, var(--color-background) 92%, var(--color-accent-surface) 8%) 0%,
 			var(--color-background) 100%
 		);
 	}
@@ -237,7 +237,7 @@
 	.menu-toggle {
 		display: none;
 		border: var(--border-regular);
-		border-radius: calc(var(--border-radius-regular) + 2px);
+		border-radius: 0;
 		background: var(--color-background-object);
 		width: 2.25rem;
 		height: 2.25rem;

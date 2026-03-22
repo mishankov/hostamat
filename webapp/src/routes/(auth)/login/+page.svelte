@@ -41,7 +41,7 @@
 {/if}
 
 <div class="auth-form">
-	<Button onclick={openAuth} filled disabled={isLoading}>
+	<Button onclick={openAuth} emphasis="solid" disabled={isLoading}>
 		{isLoading ? 'Переходим в Яндекс...' : 'Продолжить с Яндексом'}
 	</Button>
 </div>

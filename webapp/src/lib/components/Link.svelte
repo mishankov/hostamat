@@ -40,7 +40,7 @@
 
 <style>
 	a {
-		color: var(--color-accent-80);
+		color: var(--color-accent-text);
 		text-decoration: none;
 		text-decoration-thickness: 1px;
 		text-underline-offset: 3px;
@@ -54,11 +54,11 @@
 	a:hover {
 		transition-duration: 90ms;
 		text-decoration: underline;
-		color: var(--color-accent-60);
+		color: var(--color-accent-strong);
 	}
 
 	a:visited {
-		color: var(--color-accent-80);
+		color: var(--color-accent-text);
 	}
 
 	a:focus-visible {
