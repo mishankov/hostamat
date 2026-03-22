@@ -161,6 +161,10 @@
 		background: var(--color-danger-surface);
 	}
 
+	dialog.danger .modal-title {
+		color: var(--color-danger-text);
+	}
+
 	dialog[open] {
 		animation: fadein 180ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 	}
