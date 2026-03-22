@@ -6,6 +6,7 @@
 		children?: Snippet;
 		onclick?: (event: MouseEvent) => void;
 		class?: string;
+		tone?: 'neutral' | 'danger';
 		kind?: 'primary' | 'danger';
 		grouped?: boolean;
 		title?: string;
@@ -19,19 +20,22 @@
 		children,
 		onclick,
 		class: className = '',
-		kind = 'primary',
+		tone = undefined,
+		kind = undefined,
 		grouped = false,
 		title = '',
 		type = 'button',
 		disabled = false,
 		...restProps
 	}: IconButtonProps = $props();
+
+	const resolvedTone = $derived<'neutral' | 'danger'>(tone || (kind === 'danger' ? 'danger' : 'neutral'));
 </script>
 
 <button
 	{type}
 	{disabled}
-	class={[kind, grouped && 'grouped', className]}
+	class={[resolvedTone, grouped && 'grouped', className]}
 	aria-label={label}
 	title={title || label}
 	{onclick}
@@ -48,9 +52,10 @@
 		justify-content: center;
 
 		padding: 6px;
-		border-radius: var(--border-radius-regular);
+		border-radius: 0;
 		border: var(--border-regular);
 		background: var(--color-background-object);
+		color: var(--color-text-regular);
 
 		transition:
 			color 260ms ease-out,
@@ -65,21 +70,23 @@
 
 	button:hover:enabled {
 		transition-duration: 90ms;
-		background: var(--color-accent-20);
+		background: var(--color-accent-surface);
 		cursor: pointer;
 		transform: none;
 	}
 
 	button.danger:hover:enabled {
 		transition-duration: 90ms;
-		background: color-mix(in hsl, var(--color-danger-10) 72%, var(--color-background-object));
+		background: var(--color-danger-surface);
+		border-color: var(--color-danger-border);
+		color: var(--color-danger-text);
 		cursor: pointer;
 	}
 
 	button:disabled {
-		background-color: var(--color-inactive-90);
-		border-color: var(--color-inactive-70);
-		color: var(--color-inactive-50);
+		background-color: var(--color-disabled-surface);
+		border-color: var(--color-disabled-border);
+		color: var(--color-disabled-text);
 		cursor: not-allowed;
 	}
 </style>

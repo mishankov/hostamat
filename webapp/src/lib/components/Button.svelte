@@ -1,9 +1,13 @@
 <script lang="ts">
-	type ButtonKind = 'primary' | 'confirm' | 'danger' | 'action';
+	type ButtonTone = 'accent' | 'success' | 'danger';
+	type LegacyButtonKind = 'primary' | 'confirm' | 'danger' | 'action';
 	type ButtonType = 'button' | 'submit' | 'reset';
+	type ButtonEmphasis = 'quiet' | 'solid';
 
 	type ButtonProps = {
-		kind?: ButtonKind;
+		tone?: ButtonTone;
+		emphasis?: ButtonEmphasis;
+		kind?: LegacyButtonKind;
 		disabled?: boolean;
 		filled?: boolean;
 		href?: string;
@@ -16,7 +20,9 @@
 	};
 
 	let {
-		kind = 'primary',
+		tone = undefined,
+		emphasis = undefined,
+		kind = undefined,
 		disabled = false,
 		filled = false,
 		href = '',
@@ -29,6 +35,22 @@
 	}: ButtonProps = $props();
 
 	const resolvedHref = $derived(href || link);
+	const resolvedTone = $derived.by<ButtonTone>(() => {
+		if (tone) {
+			return tone;
+		}
+
+		if (kind === 'confirm') {
+			return 'success';
+		}
+
+		if (kind === 'danger') {
+			return 'danger';
+		}
+
+		return 'accent';
+	});
+	const resolvedEmphasis = $derived<ButtonEmphasis>(emphasis || (filled ? 'solid' : 'quiet'));
 
 	const handleAnchorClick = (event: MouseEvent) => {
 		if (disabled) {
@@ -45,7 +67,7 @@
 	<a
 		href={resolvedHref}
 		bind:this={ref}
-		class={['button', kind, filled && 'filled']}
+		class={['button', resolvedTone, resolvedEmphasis === 'solid' && 'solid']}
 		aria-disabled={disabled ? 'true' : undefined}
 		tabindex={disabled ? -1 : undefined}
 		onclick={handleAnchorClick}
@@ -58,7 +80,7 @@
 		{type}
 		{disabled}
 		bind:this={ref}
-		class={['button', kind, filled && 'filled']}
+		class={['button', resolvedTone, resolvedEmphasis === 'solid' && 'solid']}
 		{onclick}
 		{...restProps}
 	>
@@ -76,7 +98,7 @@
 
 		border-width: 1px;
 		border-style: solid;
-		border-radius: calc(var(--border-radius-regular) + 1px);
+			border-radius: 0;
 
 		padding: 0.64rem 1.05rem;
 
@@ -98,39 +120,35 @@
 		border-color: var(--color-border);
 	}
 
-	.filled {
-		color: var(--color-background);
-		background-color: var(--color-background-filled);
-		border-color: var(--color-background-filled);
-	}
+		.solid {
+			color: var(--tone-solid-text);
+			background-color: var(--tone-strong);
+			border-color: var(--tone-strong);
+		}
 
-	.primary {
-		--color: var(--color-accent-80);
-		--color-border: var(--color-accent-60);
-		--color-background: var(--color-background-object);
-		--color-background-filled: var(--color-accent-70);
-	}
+		.accent {
+			--color: var(--color-accent-text);
+			--color-border: var(--color-accent-border);
+			--color-background: var(--color-background-object);
+			--tone-strong: var(--color-accent-strong);
+			--tone-solid-text: var(--color-background-object);
+		}
 
-	.confirm {
-		--color: var(--color-confirm-90);
-		--color-border: var(--color-confirm-60);
-		--color-background: var(--color-confirm-10);
-		--color-background-filled: var(--color-confirm-60);
-	}
+		.success {
+			--color: var(--color-success-text);
+			--color-border: var(--color-success-border);
+			--color-background: var(--color-success-surface);
+			--tone-strong: var(--color-success-strong);
+			--tone-solid-text: var(--color-background-object);
+		}
 
-	.danger {
-		--color: var(--color-danger-90);
-		--color-border: var(--color-danger-60);
-		--color-background: var(--color-danger-10);
-		--color-background-filled: var(--color-danger-60);
-	}
-
-	.action {
-		--color: var(--color-accent-80);
-		--color-border: var(--color-accent-60);
-		--color-background: var(--color-background-object);
-		--color-background-filled: var(--color-accent-70);
-	}
+		.danger {
+			--color: var(--color-danger-text);
+			--color-border: var(--color-danger-border);
+			--color-background: var(--color-danger-surface);
+			--tone-strong: var(--color-danger-strong);
+			--tone-solid-text: var(--color-background-object);
+		}
 
 	button.button:hover:enabled,
 	a.button:hover:not([aria-disabled='true']) {
@@ -142,13 +160,13 @@
 		border-color: color-mix(in hsl, var(--color-border) 82%, var(--color) 18%);
 	}
 
-	button.button.filled:hover:enabled,
-	a.button.filled:hover:not([aria-disabled='true']) {
-		transition-duration: 90ms;
-		color: var(--color-background);
-		background-color: color-mix(in hsl, var(--color-background-filled) 88%, var(--color) 12%);
-		border-color: color-mix(in hsl, var(--color-background-filled) 88%, var(--color) 12%);
-	}
+		button.button.solid:hover:enabled,
+		a.button.solid:hover:not([aria-disabled='true']) {
+			transition-duration: 90ms;
+			color: var(--tone-solid-text);
+			background-color: color-mix(in hsl, var(--tone-strong) 90%, black 10%);
+			border-color: color-mix(in hsl, var(--tone-strong) 90%, black 10%);
+		}
 
 	button.button:active:enabled,
 	a.button:active:not([aria-disabled='true']) {
@@ -156,13 +174,13 @@
 		transform: none;
 	}
 
-	button.button:disabled,
-	a.button[aria-disabled='true'] {
-		background-color: var(--color-inactive-90);
-		color: var(--color-inactive-50);
-		border-color: var(--color-inactive-70);
-		cursor: not-allowed;
-	}
+		button.button:disabled,
+		a.button[aria-disabled='true'] {
+			background-color: var(--color-disabled-surface);
+			color: var(--color-disabled-text);
+			border-color: var(--color-disabled-border);
+			cursor: not-allowed;
+		}
 
 	a.button[aria-disabled='true'] {
 		pointer-events: none;

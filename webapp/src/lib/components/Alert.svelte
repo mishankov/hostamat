@@ -4,7 +4,7 @@
 	import Card from './Card.svelte';
 
 	type AlertVariant = 'error' | 'info' | 'success';
-	type CardKind = 'danger' | 'action' | 'confirm';
+	type CardTone = 'danger' | 'neutral' | 'success';
 
 	type AlertProps = {
 		variant?: AlertVariant;
@@ -15,16 +15,16 @@
 
 	let { variant = 'info', title = '', message = '', children = undefined }: AlertProps = $props();
 
-	const cardKind = $derived.by<CardKind>(() => {
+	const cardTone = $derived.by<CardTone>(() => {
 		if (variant === 'error') {
 			return 'danger';
 		}
 
 		if (variant === 'success') {
-			return 'confirm';
+			return 'success';
 		}
 
-		return 'action';
+		return 'neutral';
 	});
 
 	const iconColor = $derived.by(() => {
@@ -33,17 +33,17 @@
 		}
 
 		if (variant === 'success') {
-			return 'var(--color-confirm-50)';
+		return 'var(--color-success-border)';
 		}
 
-		return 'var(--color-action-50)';
+		return 'var(--color-accent-border)';
 	});
 
 	const role = $derived(variant === 'error' ? 'alert' : 'status');
 </script>
 
 <div class="alert" {role}>
-	<Card border kind={cardKind}>
+	<Card tone={cardTone}>
 		<div class="alert-card-body">
 			<div class="header">
 				{#if variant === 'error'}

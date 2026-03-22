@@ -104,7 +104,7 @@
 					grouped
 					label="Удалить сайт"
 					title="Удалить сайт"
-					kind="danger"
+					tone="danger"
 					onclick={() => deleteModal?.open()}
 				>
 					<Trash size={25} />
@@ -115,7 +115,7 @@
 
 	<Modal
 		bind:this={uploadModal}
-		kind="primary"
+		tone="neutral"
 		title={`Загрузить файлы для "${site.name}"`}
 		panelWidth="540px"
 		titleId={uploadTitleId}
@@ -149,7 +149,7 @@
 
 	<Modal
 		bind:this={deleteModal}
-		kind="danger"
+		tone="danger"
 		title="Подтверждение удаления"
 		titleId={deleteTitleId}
 		descriptionId={deleteDescId}
@@ -162,8 +162,8 @@
 			<div class="delete-actions">
 				<Button
 					id={deleteButtonId}
-					kind="danger"
-					filled
+					tone="danger"
+					emphasis="solid"
 					onclick={async () => {
 						const { data, error } = await deleteSite(site.id);
 
@@ -180,7 +180,7 @@
 						}
 					}}>Удалить</Button
 				>
-				<Button kind="danger" onclick={() => deleteModal?.close()}>Отмена</Button>
+				<Button tone="danger" onclick={() => deleteModal?.close()}>Отмена</Button>
 			</div>
 		</div>
 	</Modal>
@@ -213,7 +213,7 @@
 
 	.copy-feedback {
 		font-size: 0.82rem;
-		color: var(--color-confirm-60);
+		color: var(--color-success-strong);
 	}
 
 	.site-toolbar-shell {

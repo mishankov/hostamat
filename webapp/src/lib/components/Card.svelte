@@ -1,24 +1,46 @@
 <script lang="ts">
-	type CardKind = 'primary' | 'confirm' | 'danger' | 'action';
+	type CardTone = 'neutral' | 'success' | 'danger';
+	type CardSurface = 'default' | 'chrome';
+	type LegacyCardKind = 'primary' | 'confirm' | 'danger' | 'action';
 	let {
 		children,
 		class: className = '',
+		tone = undefined,
+		surface = undefined,
 		border = false,
 		cornerBorder = false,
 		floating = false,
-		kind = 'primary',
+		kind = undefined,
 		...restProps
 	} = $props();
+
+	const resolvedTone = $derived.by<CardTone>(() => {
+		if (tone) {
+			return tone;
+		}
+
+		if (kind === 'confirm') {
+			return 'success';
+		}
+
+		if (kind === 'danger') {
+			return 'danger';
+		}
+
+		return 'neutral';
+	});
+	const resolvedSurface = $derived<CardSurface>(
+		surface || (border && cornerBorder ? 'chrome' : 'default')
+	);
 </script>
 
 <div
 	class={[
 		'card',
 		className,
-		floating && 'floating',
-		border && 'border',
-		border && cornerBorder && 'border-corners',
-		kind
+		floating && 'floating-compat',
+		resolvedSurface,
+		resolvedTone
 	]}
 	{...restProps}
 >
@@ -29,57 +51,46 @@
 	.card {
 		min-width: fit-content;
 		position: relative;
+		--card-surface: var(--color-background-object);
 		--card-border-color: var(--color-border);
+		--card-text-color: inherit;
 		--card-corner-size: 14px;
-
+		border: var(--border-width) var(--border-style) var(--card-border-color);
 		border-radius: 0;
-
-		background: var(--color-background-object);
+		background: var(--card-surface);
+		color: var(--card-text-color);
 		backdrop-filter: blur(14px);
-
-		transition: transform 260ms ease-out, box-shadow 260ms ease-out;
 	}
 
-	.primary {
+	.neutral {
+		--card-surface: var(--color-background-object);
 		--card-border-color: var(--color-border);
+		--card-text-color: inherit;
 	}
 
-	.confirm {
-		color: var(--color-confirm-90);
-		--card-border-color: var(--color-confirm-60);
-		background: color-mix(in hsl, var(--color-confirm-10) 88%, transparent);
+	.success {
+		--card-surface: var(--color-success-surface);
+		--card-border-color: var(--color-success-border);
+		--card-text-color: var(--color-success-text);
 	}
 
 	.danger {
-		color: var(--color-danger-90);
-		--card-border-color: var(--color-danger-60);
-		background: color-mix(in hsl, var(--color-danger-10) 88%, transparent);
+		--card-surface: var(--color-danger-surface);
+		--card-border-color: var(--color-danger-border);
+		--card-text-color: var(--color-danger-text);
 	}
 
-	.action {
-		color: var(--color-action-90);
-		--card-border-color: var(--color-action-60);
-		background: color-mix(in hsl, var(--color-action-10) 88%, transparent);
+	.default {
+		box-shadow: none;
 	}
 
-	.floating:hover {
-		transition-duration: 90ms;
-		box-shadow: var(--shadow-md);
-		transform: translateY(-2px);
-	}
-
-	.border {
-		border-width: var(--border-width);
-		border-style: var(--border-style);
-		border-color: var(--card-border-color);
-	}
-
-	.border-corners {
+	.chrome {
+		border-radius: 0;
 		border-color: transparent;
 		isolation: isolate;
 	}
 
-	.border-corners::before {
+	.chrome::before {
 		content: '';
 		position: absolute;
 		inset: 0;
@@ -101,5 +112,15 @@
 				var(--border-width) no-repeat,
 			linear-gradient(var(--card-border-color) 0 0) bottom right / var(--border-width)
 				var(--card-corner-size) no-repeat;
+	}
+
+	.floating-compat {
+		box-shadow: var(--shadow-sm);
+		transition: transform 180ms ease-out, box-shadow 180ms ease-out;
+	}
+
+	.floating-compat:hover {
+		box-shadow: var(--shadow-lg);
+		transform: translateY(-2px);
 	}
 </style>

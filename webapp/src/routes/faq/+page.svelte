@@ -119,8 +119,8 @@
 		font-weight: 600;
 		line-height: 1.3;
 		color: var(--color-primary-95);
-		background: color-mix(in hsl, var(--color-background-object) 46%, var(--color-accent-30) 54%);
-		border-radius: calc(var(--border-radius-regular) - 4px);
+		background: var(--color-accent-surface);
+		border-radius: 0;
 		padding: 0.12em 0.34em;
 		margin: 0.14em 0;
 		vertical-align: baseline;
@@ -133,14 +133,14 @@
 	}
 
 	.path:hover {
-		background: color-mix(in hsl, var(--color-background-object) 36%, var(--color-accent-40) 64%);
+		background: var(--color-background-object);
 	}
 
 	.faq.theme-dark .path {
-		background: color-mix(in hsl, var(--color-background-object) 42%, var(--color-accent-30) 58%);
+		background: var(--color-accent-surface);
 	}
 
 	.faq.theme-dark .path:hover {
-		background: color-mix(in hsl, var(--color-background-object) 32%, var(--color-accent-40) 68%);
+		background: var(--color-background-object);
 	}
 </style>

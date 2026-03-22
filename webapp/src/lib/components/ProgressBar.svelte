@@ -1,9 +1,12 @@
 <script lang="ts">
 	let { uploadProgress = $bindable(0) } = $props();
+	const isFilledBehindLabel = $derived(uploadProgress >= 50);
 </script>
 
 <div class="progress-bar">
-	<p class={[uploadProgress > 50 && 'dark']}>{Math.round(uploadProgress)}%</p>
+	<p class={[!isFilledBehindLabel && 'on-surface', isFilledBehindLabel && 'on-fill']}>
+		{Math.round(uploadProgress)}%
+	</p>
 	<div class="progress-fill" style="width: {uploadProgress}%"></div>
 </div>
 
@@ -13,16 +16,16 @@
 		width: 100%;
 		height: 34px;
 
-		background-color: var(--color-primary-15);
+		background-color: var(--color-neutral-surface);
 
 		border: var(--border-regular);
-		border-radius: var(--border-radius-regular);
+		border-radius: 0;
 	}
 
 	.progress-fill {
 		height: 100%;
-		background: var(--color-accent-60);
-		border-radius: var(--border-radius-regular);
+		background: var(--color-accent-strong);
+		border-radius: 0;
 		transition: var(--transition);
 	}
 
@@ -36,9 +39,16 @@
 
 		transition: var(--transition);
 		user-select: none;
+		font-weight: 700;
+		text-shadow: 0 1px 0 hsl(0 0% 100% / 0.14);
 	}
 
-	p.dark {
-		color: var(--color-primary-95);
+	p.on-surface {
+		color: var(--color-neutral-strong);
+	}
+
+	p.on-fill {
+		color: var(--color-background-object);
+		text-shadow: 0 1px 0 hsl(0 0% 0% / 0.18);
 	}
 </style>

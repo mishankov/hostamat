@@ -12,11 +12,11 @@
 <IconButton {label} title={label} onclick={() => theme.toggle()}>
 	{#if theme.current === 'light'}
 		<span class="theme-icon" aria-hidden="true">
-			<Sun size={18} color="var(--color-accent-70)" />
+			<Sun size={18} color="var(--color-accent-strong)" />
 		</span>
 	{:else}
 		<span class="theme-icon" aria-hidden="true">
-			<Moon size={18} color="var(--color-accent-70)" />
+			<Moon size={18} color="var(--color-accent-strong)" />
 		</span>
 	{/if}
 </IconButton>

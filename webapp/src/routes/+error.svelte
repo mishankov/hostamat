@@ -34,9 +34,9 @@
 				</p>
 				<div class="action-buttons">
 					{#if data.isAuthenticated}
-						<Button href="/dashboard/sites" kind="primary" filled>Вернуться на дашборд</Button>
+						<Button href="/dashboard/sites" emphasis="solid">Вернуться на дашборд</Button>
 					{/if}
-					<Button href="/" kind="primary">Вернуться на главную</Button>
+					<Button href="/">Вернуться на главную</Button>
 				</div>
 			</div>
 		</Card>

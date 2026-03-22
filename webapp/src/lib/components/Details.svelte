@@ -11,7 +11,7 @@
 	summary {
 		padding-bottom: 6px;
 		font-weight: 650;
-		color: var(--color-primary-90);
+		color: var(--color-accent-text);
 		text-decoration: underline;
 		text-underline-offset: 3px;
 		cursor: pointer;

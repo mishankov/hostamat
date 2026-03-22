@@ -158,10 +158,10 @@
 		width: 100%;
 		min-width: 0;
 		padding: 0.78rem 0.95rem;
-		border: 1px solid color-mix(in hsl, var(--color-border) 90%, transparent);
-		border-radius: calc(var(--border-radius-regular) + 1px);
-		background: color-mix(in hsl, var(--color-background-object) 92%, var(--color-background) 8%);
-		color: var(--color-accent-90);
+		border: 1px solid var(--color-neutral-border);
+		border-radius: 0;
+		background: var(--color-background-object);
+		color: var(--color-accent-text);
 		font-weight: 650;
 		letter-spacing: 0.01em;
 		cursor: pointer;
@@ -174,27 +174,27 @@
 
 	.menu-trigger:hover,
 	.menu-trigger.open {
-		background: color-mix(in hsl, var(--color-accent-20) 65%, var(--color-background-object));
-		border-color: color-mix(in hsl, var(--color-accent-50) 55%, transparent);
-		color: var(--color-accent-95);
+		background: var(--color-accent-surface);
+		border-color: var(--color-accent-border);
+		color: var(--color-accent-text);
 		box-shadow: var(--shadow-sm);
 	}
 
 	.account-menu.theme-dark .menu-trigger {
 		color: var(--color-text-regular);
-		background: color-mix(in hsl, var(--color-background-object) 94%, var(--color-accent-20) 6%);
+		background: var(--color-background-object);
 	}
 
 	.account-menu.theme-dark .menu-trigger:hover,
 	.account-menu.theme-dark .menu-trigger.open {
-		background: color-mix(in hsl, var(--color-background-object) 74%, var(--color-accent-30) 26%);
-		border-color: color-mix(in hsl, var(--color-accent-60) 36%, var(--color-border));
-		color: var(--color-primary-95);
-		box-shadow: var(--shadow-md);
+		background: var(--color-accent-surface);
+		border-color: var(--color-accent-border);
+		color: var(--color-accent-text);
+		box-shadow: var(--shadow-lg);
 	}
 
 	.menu-trigger:focus-visible {
-		outline: 2px solid color-mix(in hsl, var(--color-accent-60) 80%, transparent);
+		outline: 2px solid var(--color-accent-border);
 		outline-offset: 2px;
 	}
 
@@ -229,10 +229,10 @@
 		flex-direction: column;
 		gap: 0.2rem;
 		padding: 0.45rem;
-		border: 1px solid color-mix(in hsl, var(--color-border) 88%, transparent);
-		border-radius: calc(var(--border-radius-regular) + 1px);
-		background: color-mix(in hsl, var(--color-background-object) 96%, var(--color-background) 4%);
-		box-shadow: var(--shadow-md);
+		border: 1px solid var(--color-neutral-border);
+		border-radius: 0;
+		background: var(--color-background-object);
+		box-shadow: var(--shadow-lg);
 	}
 
 	.sidebar .menu-panel {
@@ -251,7 +251,7 @@
 		min-height: 3rem;
 		padding: 0.85rem 0.95rem;
 		border: 0;
-		border-radius: var(--border-radius-regular);
+		border-radius: 0;
 		background: transparent;
 		color: var(--color-text-regular);
 		font-size: 1rem;
@@ -271,8 +271,8 @@
 
 	.menu-row:hover,
 	.menu-row:focus-visible {
-		background: color-mix(in hsl, var(--color-accent-20) 70%, var(--color-background-object));
-		color: var(--color-accent-90);
+		background: var(--color-accent-surface);
+		color: var(--color-accent-text);
 		text-decoration: none;
 		outline: none;
 	}
@@ -287,7 +287,7 @@
 
 	.theme-row:hover,
 	.theme-row:focus-visible {
-		background: color-mix(in hsl, var(--color-background-object) 84%, var(--color-background) 16%);
+		background: var(--color-neutral-surface);
 		color: var(--color-text-regular);
 	}
 

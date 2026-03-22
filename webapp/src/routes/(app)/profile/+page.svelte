@@ -90,13 +90,13 @@
 		{/if}
 	</div>
 
-	<Card kind="danger" border={true}>
+	<Card tone="danger">
 		<div class="danger-zone">
 			<h2>Опасная зона</h2>
 			<p class="danger-zone-description">
 				Удаление аккаунта нельзя отменить. Все ваши сайты и файлы будут удалены навсегда.
 			</p>
-			<Button kind="danger" filled onclick={() => deleteAccountModal?.open()}>
+			<Button tone="danger" emphasis="solid" onclick={() => deleteAccountModal?.open()}>
 				Удалить аккаунт
 			</Button>
 		</div>
@@ -104,7 +104,7 @@
 
 	<Modal
 		bind:this={deleteAccountModal}
-		kind="danger"
+		tone="danger"
 		title="Подтвердите удаление"
 		titleId="delete-account-title"
 		descriptionId="delete-account-description"
@@ -116,10 +116,10 @@
 				ваших сайтов и файлов.
 			</p>
 			<div class="delete-actions">
-				<Button id="delete-account-confirm" kind="danger" filled onclick={deleteAccountAction}
+				<Button id="delete-account-confirm" tone="danger" emphasis="solid" onclick={deleteAccountAction}
 					>Удалить</Button
 				>
-				<Button kind="danger" onclick={() => deleteAccountModal?.close()}>Отмена</Button>
+				<Button tone="danger" onclick={() => deleteAccountModal?.close()}>Отмена</Button>
 			</div>
 		</div>
 	</Modal>
@@ -170,7 +170,7 @@
 
 	.copy-feedback {
 		font-size: 0.86rem;
-		color: var(--color-confirm-60);
+		color: var(--color-success-strong);
 	}
 
 	.danger-zone {

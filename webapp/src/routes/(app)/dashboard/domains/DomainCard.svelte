@@ -36,7 +36,7 @@
 	}
 
 	.connected {
-		color: var(--color-confirm-50);
+		color: var(--color-success-border);
 		font-weight: bold;
 	}
 </style>

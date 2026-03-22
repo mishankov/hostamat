@@ -18,7 +18,7 @@
 </script>
 
 <div class="add-site-card-shell">
-	<Card border floating kind="action" style="height: 100%;">
+	<Card class="add-site-card" style="height: 100%;">
 		<button
 			type="button"
 			class="add-site"
@@ -55,7 +55,7 @@
 		></Input>
 		<div class="modal-actions">
 			<Button
-				filled
+				emphasis="solid"
 				disabled={loading}
 				onclick={async () => {
 					if (newSiteName.length === 0) {
@@ -124,9 +124,21 @@
 	}
 
 	.add-site-text {
-		color: var(--color-action-90);
+		color: var(--color-accent-text);
 		font-weight: 700;
 		user-select: none;
+	}
+
+	:global(.add-site-card) {
+		box-shadow: var(--shadow-sm);
+		transition: transform 180ms ease-out, box-shadow 180ms ease-out;
+		border-color: var(--color-accent-border);
+		background: var(--color-accent-surface);
+	}
+
+	:global(.add-site-card:hover) {
+		box-shadow: var(--shadow-lg);
+		transform: translateY(-2px);
 	}
 
 	.modal-body {

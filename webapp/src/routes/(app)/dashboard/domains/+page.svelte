@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 
-	import { Alert, Card } from '$lib/components';
+	import { Alert, Info } from '$lib/components';
 	import { Spinner } from '$lib/icons';
 
 	import DomainCard from './DomainCard.svelte';
@@ -41,19 +41,14 @@
 		{/await}
 	</div>
 
-	<div class="domains-card-shell">
-		<Card border cornerBorder style="box-shadow: var(--shadow-sm);">
-			<div class="domains-card-content">
-				<h2>Подключение собственных доменов</h2>
-				<p>
-					Поддомены для ваших статических сайтов уже создаются автоматически и отображаются выше.
-				</p>
-				<p>
-					Управление подключением собственных доменов к существующим сайтам появится в этом разделе
-					позже.
-				</p>
-			</div>
-		</Card>
+	<div class="domains-alert">
+		<Info header="Подключение собственных доменов">
+			<p>Поддомены для ваших статических сайтов уже создаются автоматически и отображаются выше.</p>
+			<p>
+				Управление подключением собственных доменов к существующим сайтам появится в этом разделе
+				позже.
+			</p>
+		</Info>
 	</div>
 </div>
 
@@ -94,22 +89,6 @@
 
 	.domains-alert {
 		width: 100%;
-	}
-
-	.domains-card-shell {
-		width: 100%;
-	}
-
-	.domains-card-content {
-		display: flex;
-		flex-direction: column;
-		gap: 0.8rem;
-		padding: 1.15rem;
-		max-width: 66ch;
-	}
-
-	.domains-card-content h2 {
-		font-size: clamp(1.15rem, 1.7vw, 1.45rem);
 	}
 
 	@media (max-width: 820px) {
