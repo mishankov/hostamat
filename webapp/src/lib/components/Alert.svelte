@@ -77,12 +77,12 @@
 
 	.alert-card-body {
 		height: fit-content;
-		padding: 10px;
+		padding: var(--space-sm);
 	}
 
 	.header {
 		display: flex;
-		gap: 10px;
+		gap: var(--space-sm);
 		align-items: center;
 	}
 
@@ -90,7 +90,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: start;
-		gap: 10px;
-		padding-top: 10px;
+		gap: var(--space-sm);
+		padding-top: var(--space-sm);
 	}
 </style>

@@ -9,7 +9,7 @@
 
 <style>
 	summary {
-		padding-bottom: 6px;
+		padding-bottom: var(--space-xs);
 		font-weight: 650;
 		color: var(--color-accent-text);
 		text-decoration: underline;

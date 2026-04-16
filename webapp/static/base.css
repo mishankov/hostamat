@@ -42,6 +42,12 @@
 	--color-disabled-border: hsl(215 17% 73%);
 	--color-disabled-text: hsl(213 11% 57%);
 
+	--space-xs: 0.25rem;
+	--space-sm: 0.5rem;
+	--space-md: 0.8rem;
+	--space-lg: 1rem;
+	--space-xl: 1.6rem;
+
 	--radius-sm: 0px;
 	--radius-md: 0px;
 
@@ -212,14 +218,14 @@ main.page-shell {
 	width: 100%;
 	display: flex;
 	justify-content: center;
-	padding: 1.2rem;
+	padding: var(--space-lg);
 }
 
 .page-content {
 	width: var(--layout-width);
 	display: flex;
 	flex-direction: column;
-	gap: 1.2rem;
+	gap: var(--space-xl);
 	animation: reveal-up 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -286,7 +292,7 @@ main.page-shell {
 .data-row {
 	display: flex;
 	align-items: baseline;
-	gap: 0.4rem;
+	gap: var(--space-sm);
 	min-width: 0;
 }
 

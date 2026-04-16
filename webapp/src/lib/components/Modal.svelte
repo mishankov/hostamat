@@ -188,12 +188,12 @@
 	div.modal-panel {
 		box-sizing: border-box;
 		max-width: calc(100vw - 1rem);
-		padding: 20px;
+		padding: var(--space-xl);
 	}
 
 	div.modal-header {
 		position: relative;
-		margin-bottom: 20px;
+		margin-bottom: var(--space-xl);
 		min-height: 28px;
 	}
 
@@ -240,7 +240,7 @@
 
 	@media (max-width: 520px) {
 		div.modal-panel {
-			padding: 18px;
+			padding: var(--space-lg);
 		}
 
 		.modal-title {

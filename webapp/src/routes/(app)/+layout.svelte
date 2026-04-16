@@ -87,8 +87,8 @@
 	.app-sidebar {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
-		padding: 1.6rem 1rem 1rem;
+		gap: var(--space-lg);
+		padding: var(--space-xl) var(--space-lg) var(--space-lg);
 		background: var(--color-neutral-surface);
 		border-right: 1px solid var(--color-neutral-border);
 		min-width: 0;
@@ -97,8 +97,8 @@
 	.brand-block {
 		display: flex;
 		flex-direction: column;
-		gap: 1.25rem;
-		padding: 0 0.5rem;
+		gap: var(--space-lg);
+		padding: 0 var(--space-sm);
 	}
 
 	.brand-link {
@@ -121,16 +121,16 @@
 	.nav-list {
 		display: flex;
 		flex-direction: column;
-		gap: 0.3rem;
+		gap: var(--space-xs);
 	}
 
 	.nav-link {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.7rem;
+		gap: var(--space-md);
 		width: 100%;
-		padding: 0.82rem 0.95rem;
+		padding: var(--space-md) 0.95rem;
 		border: 1px solid transparent;
 		border-radius: 0;
 		background: transparent;
@@ -167,17 +167,17 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: start;
-		gap: 0.7rem;
+		gap: var(--space-md);
 	}
 
 	.sidebar-separator {
 		border-top: 1px dashed color-mix(in hsl, var(--color-neutral-border) 50%, transparent);
-		margin: 0 0.5rem;
+		margin: 0 var(--space-sm);
 	}
 
 	.app-panel {
 		min-width: 0;
-		padding: 1.6rem 1.8rem 2rem;
+		padding: var(--space-xl) 1.8rem 2rem;
 	}
 
 	@media (max-width: 980px) {
@@ -188,15 +188,15 @@
 		.app-sidebar {
 			border-right: none;
 			border-bottom: 1px solid var(--color-neutral-border);
-			padding: 1.1rem 1rem;
+			padding: var(--space-lg) var(--space-lg);
 		}
 
 		.app-panel {
-			padding: 1.2rem 1rem 1.5rem;
+			padding: var(--space-md) var(--space-lg) var(--space-lg);
 		}
 
 		.sidebar-footer {
-			margin-top: 0.5rem;
+			margin-top: var(--space-sm);
 		}
 	}
 </style>

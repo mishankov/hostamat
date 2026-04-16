@@ -113,16 +113,16 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		gap: 0.6rem;
+		gap: var(--space-md);
 
-		padding: 1rem 1.3rem;
+		padding: var(--space-lg) 1.3rem;
 		cursor: pointer;
 	}
 
 	.prompt-line {
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: var(--space-sm);
 		font-family: var(--font-body);
 		font-size: 0.9rem;
 	}
@@ -155,13 +155,13 @@
 	.modal-body {
 		display: flex;
 		flex-direction: column;
-		gap: 15px;
+		gap: var(--space-lg);
 		min-width: 270px;
 	}
 
 	.modal-actions {
 		display: flex;
-		gap: 15px;
+		gap: var(--space-lg);
 		align-items: center;
 	}
 

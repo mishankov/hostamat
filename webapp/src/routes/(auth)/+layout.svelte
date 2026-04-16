@@ -25,7 +25,7 @@
 	.form {
 		display: flex;
 		flex-direction: column;
-		gap: 0.9rem;
-		padding: 1.2rem;
+		gap: var(--space-md);
+		padding: var(--space-xl);
 	}
 </style>

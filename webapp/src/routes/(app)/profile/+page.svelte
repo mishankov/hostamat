@@ -130,8 +130,8 @@
 
 <style>
 	.profile {
-		padding-bottom: 2rem;
-		gap: 1rem;
+		padding-bottom: var(--space-xl);
+		gap: var(--space-lg);
 		display: flex;
 		flex-direction: column;
 	}
@@ -143,22 +143,22 @@
 	.headline {
 		display: flex;
 		flex-direction: column;
-		gap: 0.4rem;
-		padding-bottom: 0.8rem;
+		gap: var(--space-sm);
+		padding-bottom: var(--space-md);
 		border-bottom: 1px dashed color-mix(in hsl, var(--color-border) 55%, transparent);
 	}
 
 	.profile-data {
-		padding-top: 10px;
+		padding-top: var(--space-sm);
 		display: flex;
 		flex-direction: column;
-		gap: 0.35rem;
+		gap: var(--space-xs);
 	}
 
 	.profile-data-value {
 		display: flex;
 		flex-direction: row;
-		gap: 4px;
+		gap: var(--space-xs);
 		align-items: center;
 	}
 
@@ -170,9 +170,9 @@
 	.danger-zone {
 		display: flex;
 		flex-direction: column;
-		gap: 0.8rem;
+		gap: var(--space-md);
 		max-width: 500px;
-		padding: 1rem;
+		padding: var(--space-lg);
 	}
 
 	.danger-zone h2 {
@@ -188,7 +188,7 @@
 	.delete-modal {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: var(--space-lg);
 	}
 
 	.delete-modal-text {
@@ -197,6 +197,6 @@
 
 	.delete-actions {
 		display: flex;
-		gap: 10px;
+		gap: var(--space-sm);
 	}
 </style>

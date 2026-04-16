@@ -74,15 +74,15 @@
 
 <style>
 	.faq {
-		gap: 0.8rem;
-		padding-bottom: 2rem;
+		gap: var(--space-md);
+		padding-bottom: var(--space-xl);
 	}
 
 	.qa {
-		padding: 1rem 0;
+		padding: var(--space-lg) 0;
 		display: flex;
 		flex-direction: column;
-		gap: 0.6rem;
+		gap: var(--space-md);
 	}
 
 	.qa + .qa {
@@ -95,10 +95,10 @@
 	}
 
 	.qa ul {
-		padding-left: 1.2rem;
+		padding-left: var(--space-xl);
 		display: flex;
 		flex-direction: column;
-		gap: 0.4rem;
+		gap: var(--space-sm);
 	}
 
 	.path {

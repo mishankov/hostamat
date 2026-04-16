@@ -52,15 +52,15 @@
 	.error-page {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: var(--space-xl);
 	}
 
 	.error-content {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		gap: 20px;
-		padding: 1.4rem;
+		gap: var(--space-xl);
+		padding: var(--space-xl);
 	}
 
 	.error-code {
@@ -82,6 +82,6 @@
 
 	.action-buttons {
 		display: flex;
-		gap: 20px;
+		gap: var(--space-lg);
 	}
 </style>

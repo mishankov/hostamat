@@ -127,12 +127,12 @@
 	.landing {
 		position: relative;
 		z-index: 1;
-		gap: 1.6rem;
-		padding-bottom: 2rem;
+		gap: var(--space-xl);
+		padding-bottom: var(--space-xl);
 	}
 
 	.hero-card {
-		padding: clamp(1.2rem, 2.5vw, 2.2rem);
+		padding: clamp(var(--space-lg), 2.5vw, var(--space-xl));
 	}
 
 	:global(.hero-shell) {
@@ -149,7 +149,7 @@
 	.hero-copy {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: var(--space-lg);
 		min-width: 0;
 	}
 
@@ -475,14 +475,14 @@
 	.hero-actions {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.8rem;
-		padding-top: 0.5rem;
+		gap: var(--space-md);
+		padding-top: var(--space-sm);
 	}
 
 	.steps {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(220px, 1fr));
-		gap: 0.9rem;
+		gap: var(--space-md);
 	}
 
 	:global(.step-card) {
@@ -504,10 +504,10 @@
 
 	.step {
 		min-height: 170px;
-		padding: 1rem;
+		padding: var(--space-lg);
 		display: flex;
 		flex-direction: column;
-		gap: 0.6rem;
+		gap: var(--space-md);
 	}
 
 	.step span {
@@ -524,7 +524,7 @@
 	@media (max-width: 920px) {
 		.hero-main {
 			grid-template-columns: 1fr;
-			gap: 0.9rem;
+			gap: var(--space-md);
 		}
 
 		.hero-terminal {

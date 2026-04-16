@@ -331,7 +331,7 @@
 	.success-message {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: var(--space-sm);
 	}
 
 	.file-upload-container {
@@ -339,13 +339,13 @@
 
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: var(--space-xl);
 	}
 
 	.drop-zone {
 		border: 1px dashed var(--color-accent-border);
 		border-radius: 0;
-		padding: 2rem;
+		padding: var(--space-xl);
 		text-align: center;
 		cursor: pointer;
 		transition: var(--transition);
@@ -370,7 +370,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 1rem;
+		padding: var(--space-lg);
 		border-bottom: var(--border-regular);
 	}
 
@@ -390,7 +390,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 0.75rem 1rem;
+		padding: var(--space-md) var(--space-lg);
 		border-bottom: var(--border-regular);
 	}
 
@@ -425,7 +425,7 @@
 
 	.actions {
 		display: flex;
-		gap: 15px;
+		gap: var(--space-lg);
 		align-items: center;
 	}
 </style>

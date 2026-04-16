@@ -154,7 +154,7 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.7rem;
+		gap: var(--space-md);
 		width: 100%;
 		min-width: 0;
 		padding: 0.78rem 0.95rem;
@@ -221,13 +221,13 @@
 
 	.menu-panel {
 		position: absolute;
-		top: calc(100% + 0.6rem);
+		top: calc(100% + var(--space-sm));
 		right: 0;
 		z-index: 80;
 		width: min(240px, min(100vw - 1.5rem, 100%));
 		display: flex;
 		flex-direction: column;
-		gap: 0.2rem;
+		gap: var(--space-xs);
 		padding: 0.45rem;
 		border: 1px solid var(--color-neutral-border);
 		border-radius: 0;
@@ -237,7 +237,7 @@
 
 	.sidebar .menu-panel {
 		top: auto;
-		bottom: calc(100% + 0.75rem);
+		bottom: calc(100% + var(--space-md));
 		left: 0;
 		right: auto;
 	}
@@ -301,7 +301,7 @@
 
 	@media (max-width: 980px) {
 		.sidebar .menu-panel {
-			top: calc(100% + 0.6rem);
+			top: calc(100% + var(--space-sm));
 			bottom: auto;
 		}
 	}

@@ -190,14 +190,14 @@
 		display: grid;
 		grid-template-columns: auto 1fr auto;
 		align-items: center;
-		gap: 1.2rem;
-		padding: 0.8rem 1rem;
+		gap: var(--space-lg);
+		padding: var(--space-md) var(--space-lg);
 	}
 
 	.brand-group {
 		display: flex;
 		align-items: center;
-		gap: 0.8rem;
+		gap: var(--space-sm);
 	}
 
 	.logo {
@@ -214,14 +214,14 @@
 	nav {
 		display: flex;
 		align-items: center;
-		gap: 1rem;
+		gap: var(--space-md);
 	}
 
 	.user-info {
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-		gap: 0.8rem;
+		gap: var(--space-md);
 	}
 
 	.menu-toggle {
@@ -267,10 +267,10 @@
 
 	.cookie {
 		position: fixed;
-		right: 0.8rem;
-		bottom: 0.8rem;
+		right: var(--space-md);
+		bottom: var(--space-md);
 		z-index: 70;
-		max-width: min(460px, calc(100vw - 1.2rem));
+		max-width: min(460px, calc(100vw - var(--space-xl)));
 		background: var(--color-background-object);
 		border: var(--border-regular);
 	}
@@ -278,12 +278,12 @@
 	.cookie-inner {
 		display: flex;
 		flex-direction: column;
-		gap: 0.9rem;
-		padding: 1rem;
+		gap: var(--space-md);
+		padding: var(--space-lg);
 	}
 
 	footer {
-		padding: 2rem 1.2rem 1.8rem;
+		padding: var(--space-xl) var(--space-xl) var(--space-lg);
 		background: var(--color-background-object);
 		border-top: var(--border-regular);
 	}
@@ -298,32 +298,32 @@
 	}
 
 	.footer-card {
-		padding: 1rem;
+		padding: var(--space-lg);
 	}
 
 	.footer-inner {
 		display: flex;
 		justify-content: space-between;
-		gap: 1rem;
+		gap: var(--space-lg);
 	}
 
 	.footer-brand {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: var(--space-sm);
 	}
 
 	.footer-links {
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: flex-end;
-		gap: 0.8rem 1.2rem;
+		gap: var(--space-md) var(--space-xl);
 	}
 
 	@media (max-width: 900px) {
 		.header-card {
 			grid-template-columns: 1fr;
-			gap: 0.8rem;
+			gap: var(--space-md);
 		}
 
 		.brand-group {
@@ -339,7 +339,7 @@
 			display: none;
 			flex-direction: column;
 			align-items: flex-start;
-			padding-top: 0.4rem;
+			padding-top: var(--space-sm);
 		}
 
 		nav.open {

@@ -56,15 +56,15 @@
 	.domains-page {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: var(--space-lg);
 		min-width: 0;
 	}
 
 	.headline {
 		display: flex;
 		flex-direction: column;
-		gap: 0.4rem;
-		padding-bottom: 0.8rem;
+		gap: var(--space-sm);
+		padding-bottom: var(--space-md);
 		border-bottom: 1px dashed color-mix(in hsl, var(--color-border) 55%, transparent);
 	}
 
@@ -77,7 +77,7 @@
 
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.8rem;
+		gap: var(--space-md);
 		align-items: stretch;
 	}
 

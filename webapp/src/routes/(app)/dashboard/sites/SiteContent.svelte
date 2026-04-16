@@ -200,13 +200,13 @@
 		gap: 0;
 		min-width: 150px;
 		height: 100%;
-		padding: 1rem;
+		padding: var(--space-lg);
 	}
 
 	.site-data {
 		display: flex;
 		flex-direction: column;
-		gap: 0.25rem;
+		gap: var(--space-xs);
 		flex: 1;
 	}
 
@@ -218,7 +218,7 @@
 
 	.site-separator {
 		border-top: 1px dashed color-mix(in hsl, var(--color-border) 55%, transparent);
-		margin: 0.6rem 0;
+		margin: var(--space-sm) 0;
 	}
 
 	.copy-feedback {
@@ -234,7 +234,7 @@
 
 	.site-toolbar {
 		display: flex;
-		padding: 3px;
+		padding: var(--space-xs);
 		border: var(--border-width) var(--border-style) var(--color-border);
 		background: var(--color-background-object);
 	}
@@ -242,13 +242,13 @@
 	.upload-modal {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: var(--space-lg);
 	}
 
 	.delete-modal {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: var(--space-lg);
 	}
 
 	.delete-modal-text {
@@ -257,7 +257,7 @@
 
 	.delete-actions {
 		display: flex;
-		gap: 10px;
+		gap: var(--space-sm);
 	}
 
 	@media (max-width: 620px) {
@@ -267,7 +267,7 @@
 
 		.site-toolbar {
 			justify-content: space-between;
-			gap: 4px;
+			gap: var(--space-xs);
 		}
 	}
 </style>

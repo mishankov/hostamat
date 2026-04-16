@@ -29,9 +29,9 @@
 		display: flex;
 		flex-direction: column;
 		align-items: start;
-		gap: 0.5rem;
+		gap: var(--space-sm);
 		height: 100%;
-		padding: 1rem;
+		padding: var(--space-lg);
 		min-width: 0;
 	}
 </style>

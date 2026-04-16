@@ -50,12 +50,12 @@
 	.auth-form {
 		display: flex;
 		flex-direction: column;
-		gap: 0.9rem;
+		gap: var(--space-md);
 	}
 
 	.lead {
 		font-size: 0.95rem;
-		margin-top: -0.4rem;
-		margin-bottom: 0.4rem;
+		margin-top: calc(-1 * var(--space-sm));
+		margin-bottom: var(--space-sm);
 	}
 </style>

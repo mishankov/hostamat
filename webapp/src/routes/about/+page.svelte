@@ -79,8 +79,8 @@
 
 <style>
 	.about {
-		gap: 1rem;
-		padding-bottom: 2rem;
+		gap: var(--space-lg);
+		padding-bottom: var(--space-xl);
 	}
 
 	.intro {
@@ -91,15 +91,15 @@
 	.cards {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(240px, 1fr));
-		gap: 0.9rem;
+		gap: var(--space-md);
 	}
 
 	.card-section {
 		height: 100%;
-		padding: 1rem;
+		padding: var(--space-lg);
 		display: flex;
 		flex-direction: column;
-		gap: 0.7rem;
+		gap: var(--space-md);
 	}
 
 	.card-section h2 {
@@ -110,13 +110,13 @@
 	.card-section h3 {
 		font-size: clamp(1.02rem, 1.2vw, 1.18rem);
 		line-height: 1.3;
-		margin: 0.35rem 0 0;
+		margin: calc(var(--space-xs) * 1.4) 0 0;
 	}
 
 	.file-types {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: var(--space-sm);
 	}
 
 	@media (max-width: 860px) {

@@ -73,12 +73,12 @@
 	.modal-body {
 		display: flex;
 		flex-direction: column;
-		gap: 15px;
+		gap: var(--space-lg);
 	}
 
 	.modal-actions {
 		display: flex;
-		gap: 15px;
+		gap: var(--space-lg);
 		align-items: center;
 	}
 
