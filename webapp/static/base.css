@@ -159,7 +159,9 @@ body {
 	font-family: var(--font-body);
 	font-size: 16px;
 	line-height: 1.5;
-	transition: background 160ms ease-out, color 140ms ease-out;
+	transition:
+		background 160ms ease-out,
+		color 140ms ease-out;
 }
 
 h1,
@@ -233,8 +235,16 @@ main.page-shell {
 	z-index: 0;
 	pointer-events: none;
 	background:
-		radial-gradient(45% 35% at 12% 8%, color-mix(in hsl, var(--color-accent-border) 18%, transparent) 0%, transparent 70%),
-		radial-gradient(38% 30% at 88% 92%, color-mix(in hsl, var(--color-accent-strong) 14%, transparent) 0%, transparent 72%),
+		radial-gradient(
+			45% 35% at 12% 8%,
+			color-mix(in hsl, var(--color-accent-border) 18%, transparent) 0%,
+			transparent 70%
+		),
+		radial-gradient(
+			38% 30% at 88% 92%,
+			color-mix(in hsl, var(--color-accent-strong) 14%, transparent) 0%,
+			transparent 72%
+		),
 		repeating-linear-gradient(
 			0deg,
 			transparent 0 33px,
@@ -255,6 +265,29 @@ main.page-shell {
 .ambient-grid > * {
 	position: relative;
 	z-index: 1;
+}
+
+.ambient-grid-dim::before {
+	opacity: 0.25;
+}
+
+:root[data-theme='dark'] .ambient-grid-dim::before {
+	opacity: 0.2;
+}
+
+.data-label {
+	font-family: var(--font-body);
+	font-size: 0.78rem;
+	color: var(--color-text-secondary);
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+.data-row {
+	display: flex;
+	align-items: baseline;
+	gap: 0.4rem;
+	min-width: 0;
 }
 
 @keyframes reveal-up {

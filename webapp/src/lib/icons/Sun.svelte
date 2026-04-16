@@ -8,7 +8,15 @@
 	<line x1="0" y1="38" x2="0" y2="28" stroke={color} stroke-width="7" stroke-linecap="round" />
 	<line x1="-38" y1="0" x2="-28" y2="0" stroke={color} stroke-width="7" stroke-linecap="round" />
 	<line x1="38" y1="0" x2="28" y2="0" stroke={color} stroke-width="7" stroke-linecap="round" />
-	<line x1="-27" y1="-27" x2="-20" y2="-20" stroke={color} stroke-width="7" stroke-linecap="round" />
+	<line
+		x1="-27"
+		y1="-27"
+		x2="-20"
+		y2="-20"
+		stroke={color}
+		stroke-width="7"
+		stroke-linecap="round"
+	/>
 	<line x1="27" y1="27" x2="20" y2="20" stroke={color} stroke-width="7" stroke-linecap="round" />
 	<line x1="27" y1="-27" x2="20" y2="-20" stroke={color} stroke-width="7" stroke-linecap="round" />
 	<line x1="-27" y1="27" x2="-20" y2="20" stroke={color} stroke-width="7" stroke-linecap="round" />

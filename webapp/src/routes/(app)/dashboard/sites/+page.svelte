@@ -40,7 +40,12 @@
 <div class="dashboard-page">
 	<div class="headline">
 		<h1>Статические сайты</h1>
-		<p>Добавляйте и загружайте статические сайты</p>
+		<div class="headline-meta">
+			<p>Добавляйте и загружайте статические сайты</p>
+			{#if !loading && maxAmount > 0}
+				<span class="site-counter">sites: {sites.length}/{maxAmount}</span>
+			{/if}
+		</div>
 	</div>
 
 	{#if errorMessage}
@@ -106,10 +111,26 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.4rem;
+		padding-bottom: 0.8rem;
+		border-bottom: 1px dashed color-mix(in hsl, var(--color-border) 55%, transparent);
 	}
 
 	.headline p {
 		max-width: 64ch;
+	}
+
+	.headline-meta {
+		display: flex;
+		align-items: baseline;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.site-counter {
+		font-family: var(--font-body);
+		font-size: 0.82rem;
+		color: var(--color-text-secondary);
+		white-space: nowrap;
 	}
 
 	.site-list {

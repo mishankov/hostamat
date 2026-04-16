@@ -33,7 +33,7 @@
 		}
 
 		if (variant === 'success') {
-		return 'var(--color-success-border)';
+			return 'var(--color-success-border)';
 		}
 
 		return 'var(--color-accent-border)';

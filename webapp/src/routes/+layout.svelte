@@ -59,18 +59,16 @@
 	class={[
 		'site-chrome',
 		themeController.current === 'dark' && 'theme-dark',
-		!isAppRoute && 'ambient-grid',
-		isAppRoute && 'dashboard-chrome'
+		'ambient-grid',
+		isAppRoute && 'ambient-grid-dim'
 	]}
 >
 	{#if cookieConsent !== 'notset' && cookieConsent !== 'true'}
 		<div class="cookie">
 			<div class="cookie-inner">
 				<p>
-					Мы используем cookie. Подробности в <Link
-						href="/cookies"
-						target="_blank"
-						alwaysUnderline>политике</Link
+					Мы используем cookie. Подробности в <Link href="/cookies" target="_blank" alwaysUnderline
+						>политике</Link
 					>.
 				</p>
 				<Button
@@ -87,68 +85,67 @@
 	{/if}
 
 	{#if !isAppRoute}
-	<header>
-		<div class="header-shell">
-			<div class="header-card-shell">
-				<div class="header-card">
-					<div class="brand-group">
-						<Link href={resolve('/')} onclick={closeMenu}
-							><span class="logo">ХОСТАМАТ</span></Link
-						>
-						<button
-							type="button"
-							class="menu-toggle"
-							onclick={() => (menuOpen = !menuOpen)}
-							aria-controls="primary-navigation"
-							aria-expanded={menuOpen}
-							aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
-						>
-							<span class="burger" aria-hidden="true"></span>
-						</button>
-					</div>
+		<header>
+			<div class="header-shell">
+				<div class="header-card-shell">
+					<div class="header-card">
+						<div class="brand-group">
+							<Link href={resolve('/')} onclick={closeMenu}><span class="logo">ХОСТАМАТ</span></Link
+							>
+							<button
+								type="button"
+								class="menu-toggle"
+								onclick={() => (menuOpen = !menuOpen)}
+								aria-controls="primary-navigation"
+								aria-expanded={menuOpen}
+								aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
+							>
+								<span class="burger" aria-hidden="true"></span>
+							</button>
+						</div>
 
-					<nav id="primary-navigation" class={[menuOpen && 'open']}>
-						<Link href={resolve('/dashboard/sites')} onclick={closeMenu}>Дашборд</Link>
-						<Link href={resolve('/about')} onclick={closeMenu}>О сервисе</Link>
-						<Link href={resolve('/faq')} onclick={closeMenu}>FAQ</Link>
-					</nav>
+						<nav id="primary-navigation" class={[menuOpen && 'open']}>
+							<Link href={resolve('/dashboard/sites')} onclick={closeMenu}>Дашборд</Link>
+							<Link href={resolve('/about')} onclick={closeMenu}>О сервисе</Link>
+							<Link href={resolve('/faq')} onclick={closeMenu}>FAQ</Link>
+						</nav>
 
-					<div class={['user-info', menuOpen && 'open']}>
-						{#if data.isAuthenticated}
-							<AccountMenu username={data.username} onlogout={logout} context="header" />
-						{:else}
-							<Button onclick={openLogin}>Войти</Button>
-						{/if}
+						<div class={['user-info', menuOpen && 'open']}>
+							{#if data.isAuthenticated}
+								<AccountMenu username={data.username} onlogout={logout} context="header" />
+							{:else}
+								<Button onclick={openLogin}>Войти</Button>
+							{/if}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</header>
+		</header>
 	{/if}
 
 	{@render children()}
 
 	{#if !isAppRoute}
-	<footer>
-		<div class="footer-shell">
-			<div class="footer-card-shell">
-				<div class="footer-card">
-					<div class="footer-inner">
-						<div class="footer-brand">
-							<Link href="/"><span class="logo soft">ХОСТАМАТ</span></Link>
-							<p>Статический хостинг без рутины</p>
-						</div>
-						<div class="footer-links">
-							<Link href="/cookies" alwaysUnderline>Куки</Link>
-							<Link href="/privacy" alwaysUnderline>Политика конфиденциальности</Link>
-							<Link href="/rights" alwaysUnderline>Права потребителя</Link>
-							<Link href="/terms" alwaysUnderline>Пользовательское соглашение</Link>
+		<footer>
+			<div class="footer-shell">
+				<div class="footer-card-shell">
+					<div class="footer-card">
+						<div class="footer-inner">
+							<div class="footer-brand">
+								<Link href="/"><span class="logo soft">ХОСТАМАТ</span></Link>
+								<p>Статический хостинг без рутины</p>
+							</div>
+							<div class="footer-links">
+								<Link href="/cookies" alwaysUnderline>Куки</Link>
+								<Link href="/privacy" alwaysUnderline>Политика конфиденциальности</Link>
+								<Link href="/rights" alwaysUnderline>Права потребителя</Link>
+								<Link href="/terms" alwaysUnderline>Пользовательское соглашение</Link>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</footer>
+		</footer>
 	{/if}
 </div>
 
@@ -164,14 +161,6 @@
 	.site-chrome > :global(.page-shell),
 	.site-chrome > :global(.app-shell) {
 		flex: 1;
-	}
-
-	.dashboard-chrome {
-		background: linear-gradient(
-			180deg,
-			color-mix(in hsl, var(--color-background) 92%, var(--color-accent-surface) 8%) 0%,
-			var(--color-background) 100%
-		);
 	}
 
 	header {

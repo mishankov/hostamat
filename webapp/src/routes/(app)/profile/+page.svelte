@@ -76,8 +76,8 @@
 	</div>
 
 	<div class="profile-data">
-		<div class="profile-data-row">
-			<span class="label">Яндекс логин</span>
+		<div class="data-row">
+			<span class="data-label">login:</span>
 			<div class="profile-data-value">
 				<span>{data.username}</span>
 				<IconButton label="Скопировать логин Яндекса" onclick={copyLogin}>
@@ -86,7 +86,7 @@
 			</div>
 		</div>
 		{#if loginCopied}
-			<p class="copy-feedback" aria-live="polite">Логин Яндекса скопирован</p>
+			<span class="copy-feedback" aria-live="polite">[copied]</span>
 		{/if}
 	</div>
 
@@ -116,8 +116,11 @@
 				ваших сайтов и файлов.
 			</p>
 			<div class="delete-actions">
-				<Button id="delete-account-confirm" tone="danger" emphasis="solid" onclick={deleteAccountAction}
-					>Удалить</Button
+				<Button
+					id="delete-account-confirm"
+					tone="danger"
+					emphasis="solid"
+					onclick={deleteAccountAction}>Удалить</Button
 				>
 				<Button tone="danger" onclick={() => deleteAccountModal?.close()}>Отмена</Button>
 			</div>
@@ -141,6 +144,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.4rem;
+		padding-bottom: 0.8rem;
+		border-bottom: 1px dashed color-mix(in hsl, var(--color-border) 55%, transparent);
 	}
 
 	.profile-data {
@@ -148,17 +153,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.35rem;
-	}
-
-	.profile-data-row {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 20px;
-	}
-
-	span.label {
-		color: var(--color-text-secondary);
 	}
 
 	.profile-data-value {
@@ -169,7 +163,7 @@
 	}
 
 	.copy-feedback {
-		font-size: 0.86rem;
+		font-size: 0.78rem;
 		color: var(--color-success-strong);
 	}
 

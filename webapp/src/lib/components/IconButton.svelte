@@ -29,7 +29,9 @@
 		...restProps
 	}: IconButtonProps = $props();
 
-	const resolvedTone = $derived<'neutral' | 'danger'>(tone || (kind === 'danger' ? 'danger' : 'neutral'));
+	const resolvedTone = $derived<'neutral' | 'danger'>(
+		tone || (kind === 'danger' ? 'danger' : 'neutral')
+	);
 </script>
 
 <button

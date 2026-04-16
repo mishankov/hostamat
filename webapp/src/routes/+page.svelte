@@ -487,7 +487,9 @@
 
 	:global(.step-card) {
 		box-shadow: var(--shadow-sm);
-		transition: transform 180ms ease-out, box-shadow 180ms ease-out;
+		transition:
+			transform 180ms ease-out,
+			box-shadow 180ms ease-out;
 	}
 
 	:global(.step-card:hover) {

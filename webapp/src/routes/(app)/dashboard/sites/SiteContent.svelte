@@ -67,13 +67,22 @@
 </script>
 
 <div class={['site-content', theme.current === 'dark' && 'theme-dark']}>
-	<div class="site-url-container">
-		<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
-		<span title="Поддомен" class="subdomain">{subdomain}</span>
-		{#if urlCopied}
-			<span class="copy-feedback" aria-live="polite">URL скопирован</span>
-		{/if}
+	<div class="site-data">
+		<div class="data-row">
+			<span class="data-label">name:</span>
+			<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
+		</div>
+		<div class="data-row">
+			<span class="data-label">domain:</span>
+			<span class="subdomain-value" title="Поддомен">{subdomain}</span>
+		</div>
 	</div>
+
+	{#if urlCopied}
+		<span class="copy-feedback" aria-live="polite">[copied]</span>
+	{/if}
+
+	<div class="site-separator" aria-hidden="true"></div>
 
 	<div class="site-toolbar-shell">
 		<div class="site-toolbar">
@@ -188,29 +197,32 @@
 	.site-content {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0;
 		min-width: 150px;
 		height: 100%;
-
 		padding: 1rem;
 	}
 
-	.site-url-container {
+	.site-data {
 		display: flex;
 		flex-direction: column;
-		align-items: start;
-		gap: 5px;
-
-		font-size: 18px;
+		gap: 0.25rem;
+		flex: 1;
 	}
 
-	.subdomain {
+	.subdomain-value {
 		font-size: 0.88rem;
 		color: var(--color-text-secondary);
+		overflow-wrap: anywhere;
+	}
+
+	.site-separator {
+		border-top: 1px dashed color-mix(in hsl, var(--color-border) 55%, transparent);
+		margin: 0.6rem 0;
 	}
 
 	.copy-feedback {
-		font-size: 0.82rem;
+		font-size: 0.78rem;
 		color: var(--color-success-strong);
 	}
 

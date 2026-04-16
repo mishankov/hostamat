@@ -42,6 +42,8 @@
 				</a>
 			</div>
 
+			<div class="sidebar-separator" aria-hidden="true"></div>
+
 			<nav aria-label="Навигация по приложению" class="nav-list">
 				{#each navigationItems as item (item.route)}
 					<a
@@ -56,6 +58,8 @@
 					</a>
 				{/each}
 			</nav>
+
+			<div class="sidebar-separator" aria-hidden="true"></div>
 
 			<div class="sidebar-footer">
 				<AccountMenu username={data.username} onlogout={logout} context="sidebar" />
@@ -164,6 +168,11 @@
 		flex-direction: column;
 		justify-content: start;
 		gap: 0.7rem;
+	}
+
+	.sidebar-separator {
+		border-top: 1px dashed color-mix(in hsl, var(--color-neutral-border) 50%, transparent);
+		margin: 0 0.5rem;
 	}
 
 	.app-panel {

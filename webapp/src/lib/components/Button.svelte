@@ -98,7 +98,7 @@
 
 		border-width: 1px;
 		border-style: solid;
-			border-radius: 0;
+		border-radius: 0;
 
 		padding: 0.64rem 1.05rem;
 
@@ -120,35 +120,35 @@
 		border-color: var(--color-border);
 	}
 
-		.solid {
-			color: var(--tone-solid-text);
-			background-color: var(--tone-strong);
-			border-color: var(--tone-strong);
-		}
+	.solid {
+		color: var(--tone-solid-text);
+		background-color: var(--tone-strong);
+		border-color: var(--tone-strong);
+	}
 
-		.accent {
-			--color: var(--color-accent-text);
-			--color-border: var(--color-accent-border);
-			--color-background: var(--color-background-object);
-			--tone-strong: var(--color-accent-strong);
-			--tone-solid-text: var(--color-background-object);
-		}
+	.accent {
+		--color: var(--color-accent-text);
+		--color-border: var(--color-accent-border);
+		--color-background: var(--color-background-object);
+		--tone-strong: var(--color-accent-strong);
+		--tone-solid-text: var(--color-background-object);
+	}
 
-		.success {
-			--color: var(--color-success-text);
-			--color-border: var(--color-success-border);
-			--color-background: var(--color-success-surface);
-			--tone-strong: var(--color-success-strong);
-			--tone-solid-text: var(--color-background-object);
-		}
+	.success {
+		--color: var(--color-success-text);
+		--color-border: var(--color-success-border);
+		--color-background: var(--color-success-surface);
+		--tone-strong: var(--color-success-strong);
+		--tone-solid-text: var(--color-background-object);
+	}
 
-		.danger {
-			--color: var(--color-danger-text);
-			--color-border: var(--color-danger-border);
-			--color-background: var(--color-danger-surface);
-			--tone-strong: var(--color-danger-strong);
-			--tone-solid-text: var(--color-background-object);
-		}
+	.danger {
+		--color: var(--color-danger-text);
+		--color-border: var(--color-danger-border);
+		--color-background: var(--color-danger-surface);
+		--tone-strong: var(--color-danger-strong);
+		--tone-solid-text: var(--color-background-object);
+	}
 
 	button.button:hover:enabled,
 	a.button:hover:not([aria-disabled='true']) {
@@ -160,13 +160,13 @@
 		border-color: color-mix(in hsl, var(--color-border) 82%, var(--color) 18%);
 	}
 
-		button.button.solid:hover:enabled,
-		a.button.solid:hover:not([aria-disabled='true']) {
-			transition-duration: 90ms;
-			color: var(--tone-solid-text);
-			background-color: color-mix(in hsl, var(--tone-strong) 90%, black 10%);
-			border-color: color-mix(in hsl, var(--tone-strong) 90%, black 10%);
-		}
+	button.button.solid:hover:enabled,
+	a.button.solid:hover:not([aria-disabled='true']) {
+		transition-duration: 90ms;
+		color: var(--tone-solid-text);
+		background-color: color-mix(in hsl, var(--tone-strong) 90%, black 10%);
+		border-color: color-mix(in hsl, var(--tone-strong) 90%, black 10%);
+	}
 
 	button.button:active:enabled,
 	a.button:active:not([aria-disabled='true']) {
@@ -174,13 +174,13 @@
 		transform: none;
 	}
 
-		button.button:disabled,
-		a.button[aria-disabled='true'] {
-			background-color: var(--color-disabled-surface);
-			color: var(--color-disabled-text);
-			border-color: var(--color-disabled-border);
-			cursor: not-allowed;
-		}
+	button.button:disabled,
+	a.button[aria-disabled='true'] {
+		background-color: var(--color-disabled-surface);
+		color: var(--color-disabled-text);
+		border-color: var(--color-disabled-border);
+		cursor: not-allowed;
+	}
 
 	a.button[aria-disabled='true'] {
 		pointer-events: none;

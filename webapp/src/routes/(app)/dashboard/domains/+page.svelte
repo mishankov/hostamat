@@ -64,6 +64,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.4rem;
+		padding-bottom: 0.8rem;
+		border-bottom: 1px dashed color-mix(in hsl, var(--color-border) 55%, transparent);
 	}
 
 	.headline p {

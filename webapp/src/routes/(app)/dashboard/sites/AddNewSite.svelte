@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Card, Modal, Input, Button } from '$lib/components';
-	import { Spinner, Plus } from '$lib/icons';
+	import { Spinner } from '$lib/icons';
 	import { createSite } from '$lib/api-client';
 
 	let { loading = $bindable(false), onsuccess = async () => {} } = $props();
@@ -28,11 +28,16 @@
 			}}
 		>
 			{#if loading}
-				<p><Spinner size={40} /></p>
-				<p class="add-site-text">Добавляем сайт</p>
+				<div class="prompt-line">
+					<span class="prompt-symbol">+</span>
+					<span class="prompt-text">добавляем сайт</span>
+					<Spinner size={16} />
+				</div>
 			{:else}
-				<p><Plus size={40} /></p>
-				<p class="add-site-text">Добавить сайт</p>
+				<div class="prompt-line">
+					<span class="prompt-symbol">+</span>
+					<span class="prompt-text">добавить сайт</span>
+				</div>
 			{/if}
 		</button>
 	</Card>
@@ -108,37 +113,43 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		gap: 0.5rem;
-		text-align: center;
+		gap: 0.6rem;
 
 		padding: 1rem 1.3rem;
 		cursor: pointer;
 	}
 
-	.add-site p {
-		width: 100%;
-		margin: 0;
+	.prompt-line {
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		gap: 0.5rem;
+		font-family: var(--font-body);
+		font-size: 0.9rem;
 	}
 
-	.add-site-text {
-		color: var(--color-accent-text);
-		font-weight: 700;
-		user-select: none;
+	.prompt-symbol {
+		color: var(--color-accent-border);
+		font-weight: 600;
+	}
+
+	.prompt-text {
+		color: var(--color-text-secondary);
 	}
 
 	:global(.add-site-card) {
-		box-shadow: var(--shadow-sm);
-		transition: transform 180ms ease-out, box-shadow 180ms ease-out;
-		border-color: var(--color-accent-border);
-		background: var(--color-accent-surface);
+		border-style: dashed;
+		border-color: var(--color-neutral-border);
+		background: transparent;
+		transition:
+			border-color 180ms ease-out,
+			background 180ms ease-out,
+			box-shadow 180ms ease-out;
 	}
 
 	:global(.add-site-card:hover) {
-		box-shadow: var(--shadow-lg);
-		transform: translateY(-2px);
+		border-color: var(--color-accent-border);
+		background: var(--color-accent-surface);
+		box-shadow: var(--shadow-sm);
 	}
 
 	.modal-body {

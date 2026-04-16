@@ -35,13 +35,7 @@
 </script>
 
 <div
-	class={[
-		'card',
-		className,
-		floating && 'floating-compat',
-		resolvedSurface,
-		resolvedTone
-	]}
+	class={['card', className, floating && 'floating-compat', resolvedSurface, resolvedTone]}
 	{...restProps}
 >
 	{@render children()}
@@ -116,7 +110,9 @@
 
 	.floating-compat {
 		box-shadow: var(--shadow-sm);
-		transition: transform 180ms ease-out, box-shadow 180ms ease-out;
+		transition:
+			transform 180ms ease-out,
+			box-shadow 180ms ease-out;
 	}
 
 	.floating-compat:hover {
