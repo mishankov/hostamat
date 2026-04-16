@@ -41,7 +41,7 @@
 
 	label {
 		background-color: transparent;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		font-weight: 600;
 		color: var(--color-text-secondary);
 		pointer-events: none;
@@ -54,7 +54,7 @@
 
 		padding: 0.74rem 0.82rem;
 
-		font-size: 16px;
+		font-size: 1rem;
 
 		background-color: var(--color-background-object);
 		color: var(--color-text-regular);
@@ -84,6 +84,6 @@
 
 	span.error-message {
 		color: var(--color-danger-border);
-		font-size: 13px;
+		font-size: 0.8125rem;
 	}
 </style>

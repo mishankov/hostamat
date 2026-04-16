@@ -7,8 +7,9 @@
 </script>
 
 <svelte:head>
-	<title>FAQ | Хостамат</title>
-</svelte:head>
+		<title>FAQ | Хостамат</title>
+		<meta name="description" content="Часто задаваемые вопросы о статическом хостинге Хостамат: загрузка файлов, поддомены, ограничения." />
+	</svelte:head>
 
 <main class="page-shell">
 	<div class={['page-content', 'faq', theme.current === 'dark' && 'theme-dark']}>

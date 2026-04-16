@@ -98,7 +98,7 @@
 <style>
 	.add-site-card-shell {
 		display: flex;
-		min-height: 170px;
+		min-height: 10.625rem;
 	}
 
 	.add-site {
@@ -106,7 +106,7 @@
 
 		width: 100%;
 		height: 100%;
-		min-height: 170px;
+		min-height: 10.625rem;
 		box-sizing: border-box;
 
 		display: flex;
@@ -156,7 +156,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-lg);
-		min-width: 270px;
+		min-width: 16.875rem;
 	}
 
 	.modal-actions {

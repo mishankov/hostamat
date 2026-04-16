@@ -53,7 +53,7 @@
 		align-items: center;
 		justify-content: center;
 
-		padding: 6px;
+		padding: 0.4rem;
 		border-radius: 0;
 		border: var(--border-regular);
 		background: var(--color-background-object);

@@ -4,8 +4,9 @@
 </script>
 
 <svelte:head>
-	<title>Пользовательское соглашение | Хостамат</title>
-</svelte:head>
+		<title>Пользовательское соглашение | Хостамат</title>
+		<meta name="description" content="Пользовательское соглашение сервиса статического хостинга Хостамат." />
+	</svelte:head>
 
 <main class="page-shell">
 	<div class="page-content legal-page">

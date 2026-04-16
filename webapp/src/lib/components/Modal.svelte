@@ -147,7 +147,7 @@
 		backdrop-filter: blur(18px);
 
 		transition: var(--transition);
-		max-width: min(680px, calc(100vw - 1rem));
+		max-width: min(42.5rem, calc(100vw - 1rem));
 		max-height: calc(100vh - 1rem);
 		overflow: auto;
 	}
@@ -194,7 +194,7 @@
 	div.modal-header {
 		position: relative;
 		margin-bottom: var(--space-xl);
-		min-height: 28px;
+		min-height: 1.75rem;
 	}
 
 	.modal-title {
@@ -202,7 +202,7 @@
 	}
 
 	.modal-title.with-close {
-		padding-right: 48px;
+		padding-right: 3rem;
 	}
 
 	.close-modal {
@@ -213,8 +213,8 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 28px;
-		height: 28px;
+		width: 1.75rem;
+		height: 1.75rem;
 		border-radius: 0;
 		border: var(--border-regular);
 		background: var(--color-background-object);
@@ -248,7 +248,7 @@
 		}
 
 		.modal-title.with-close {
-			padding-right: 44px;
+			padding-right: 2.75rem;
 		}
 	}
 </style>

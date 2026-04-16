@@ -79,7 +79,7 @@
 
 	.app-layout {
 		display: grid;
-		grid-template-columns: 300px minmax(0, 1fr);
+		grid-template-columns: 18.75rem minmax(0, 1fr);
 		min-height: 100vh;
 		align-items: stretch;
 	}
@@ -177,7 +177,7 @@
 
 	.app-panel {
 		min-width: 0;
-		padding: var(--space-xl) 1.8rem 2rem;
+		padding: var(--space-xl) 1.8rem var(--space-xl);
 	}
 
 	@media (max-width: 980px) {

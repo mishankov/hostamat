@@ -34,8 +34,9 @@
 </script>
 
 <svelte:head>
-	<title>Статические сайты | Хостамат</title>
-</svelte:head>
+		<title>Статические сайты | Хостамат</title>
+		<meta name="description" content="Управляйте статическими сайтами: создание, загрузка файлов и удаление." />
+	</svelte:head>
 
 <div class="dashboard-page">
 	<div class="headline">
@@ -134,7 +135,7 @@
 	}
 
 	.site-list {
-		--site-tile-width: 320px;
+		--site-tile-width: 20rem;
 
 		display: flex;
 		flex-wrap: wrap;
@@ -146,19 +147,19 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 170px;
+		min-height: 10.625rem;
 		width: var(--site-tile-width);
 	}
 
 	.limit-info-wrap {
-		min-height: 110px;
+		min-height: 6.875rem;
 		display: flex;
 		align-items: center;
 	}
 
 	.site-card-shell {
 		display: flex;
-		min-height: 170px;
+		min-height: 10.625rem;
 		min-width: 0;
 	}
 

@@ -138,7 +138,7 @@
 	.account-menu {
 		position: relative;
 		display: inline-flex;
-		width: min(100%, 240px);
+		width: min(100%, 15rem);
 	}
 
 	.account-menu.header {
@@ -224,7 +224,7 @@
 		top: calc(100% + var(--space-sm));
 		right: 0;
 		z-index: 80;
-		width: min(240px, min(100vw - 1.5rem, 100%));
+		width: min(15rem, min(100vw - 1.5rem, 100%));
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-xs);

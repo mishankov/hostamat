@@ -3,8 +3,9 @@
 </script>
 
 <svelte:head>
-	<title>О сервисе | Хостамат</title>
-</svelte:head>
+		<title>О сервисе | Хостамат</title>
+		<meta name="description" content="Хостамат — сервис для быстрой публикации статических сайтов с автоматическими поддоменами и TLS-сертификатами." />
+	</svelte:head>
 
 <main class="page-shell">
 	<div class="page-content about">
@@ -90,7 +91,7 @@
 
 	.cards {
 		display: grid;
-		grid-template-columns: repeat(2, minmax(240px, 1fr));
+		grid-template-columns: repeat(2, minmax(15rem, 1fr));
 		gap: var(--space-md);
 	}
 

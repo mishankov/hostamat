@@ -124,7 +124,7 @@
 		bind:this={uploadModal}
 		tone="neutral"
 		title={`Загрузить файлы для "${site.name}"`}
-		panelWidth="540px"
+		panelWidth="33.75rem"
 		titleId={uploadTitleId}
 		descriptionId={uploadDescId}
 		initialFocusSelector=".drop-zone"
@@ -198,7 +198,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0;
-		min-width: 150px;
+		min-width: 9.375rem;
 		height: 100%;
 		padding: var(--space-lg);
 	}

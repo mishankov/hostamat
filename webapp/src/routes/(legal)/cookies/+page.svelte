@@ -4,8 +4,9 @@
 </script>
 
 <svelte:head>
-	<title>Политика использования cookie | Хостамат</title>
-</svelte:head>
+		<title>Политика использования cookie | Хостамат</title>
+		<meta name="description" content="Политика использования файлов cookie сервисом Хостамат." />
+	</svelte:head>
 
 <main class="page-shell">
 	<div class="page-content legal-page">

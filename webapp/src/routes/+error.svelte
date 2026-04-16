@@ -7,8 +7,9 @@
 </script>
 
 <svelte:head>
-	<title>{page.status} - Хостамат</title>
-</svelte:head>
+		<title>{page.status} - Хостамат</title>
+		<meta name="description" content="Страница не найдена или произошла ошибка." />
+	</svelte:head>
 
 <main class="page-shell">
 	<div class="page-content error-page">
@@ -45,7 +46,7 @@
 
 <style>
 	main {
-		min-height: calc(100vh - 220px);
+		min-height: calc(100vh - 13.75rem);
 		align-items: center;
 	}
 
@@ -74,7 +75,7 @@
 	}
 
 	.message {
-		font-size: 16px;
+		font-size: 1rem;
 		line-height: 1.6;
 		/*color: var(--color-text-secondary);*/
 		margin: 0;

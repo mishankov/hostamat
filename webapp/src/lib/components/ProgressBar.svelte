@@ -14,7 +14,7 @@
 	.progress-bar {
 		position: relative;
 		width: 100%;
-		height: 34px;
+		height: 2.125rem;
 
 		background-color: var(--color-neutral-surface);
 

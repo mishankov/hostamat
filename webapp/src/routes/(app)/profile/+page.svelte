@@ -60,8 +60,9 @@
 </script>
 
 <svelte:head>
-	<title>Профиль | Хостамат</title>
-</svelte:head>
+		<title>Профиль | Хостамат</title>
+		<meta name="description" content="Управление учётной записью и настройками профиля." />
+	</svelte:head>
 
 <div class="profile">
 	{#if errorMessage}
@@ -137,7 +138,7 @@
 	}
 
 	.alerts {
-		max-width: 500px;
+		max-width: 31.25rem;
 	}
 
 	.headline {
@@ -167,11 +168,11 @@
 		color: var(--color-success-strong);
 	}
 
-	.danger-zone {
+.danger-zone {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-md);
-		max-width: 500px;
+		gap: var(--space-lg);
+		max-width: 31.25rem;
 		padding: var(--space-lg);
 	}
 

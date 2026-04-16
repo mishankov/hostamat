@@ -4,8 +4,9 @@
 </script>
 
 <svelte:head>
-	<title>Политика конфиденциальности | Хостамат</title>
-</svelte:head>
+		<title>Политика конфиденциальности | Хостамат</title>
+		<meta name="description" content="Политика конфиденциальности сервиса Хостамат: сбор, обработка и защита персональных данных." />
+	</svelte:head>
 
 <main class="page-shell">
 	<div class="page-content legal-page">

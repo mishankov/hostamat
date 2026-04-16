@@ -335,7 +335,7 @@
 	}
 
 	.file-upload-container {
-		max-width: 500px;
+		max-width: 31.25rem;
 
 		display: flex;
 		flex-direction: column;
@@ -381,7 +381,7 @@
 	}
 
 	.files-list {
-		max-height: 200px;
+		max-height: 12.5rem;
 		overflow-y: auto;
 		scrollbar-width: thin;
 	}

@@ -30,8 +30,9 @@
 </script>
 
 <svelte:head>
-	<title>Вход | Хостамат</title>
-</svelte:head>
+		<title>Вход | Хостамат</title>
+		<meta name="description" content="Войдите в Хостамат через Яндекс для управления статическими сайтами." />
+	</svelte:head>
 
 <h1>Вход</h1>
 <p class="lead">Выберите способ входа, чтобы продолжить работу с сервисом.</p>

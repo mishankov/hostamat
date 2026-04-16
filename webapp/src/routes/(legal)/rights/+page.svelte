@@ -4,8 +4,9 @@
 </script>
 
 <svelte:head>
-	<title>Уведомление о правах потребителей | Хостамат</title>
-</svelte:head>
+		<title>Уведомление о правах потребителей | Хостамат</title>
+		<meta name="description" content="Уведомление о правах потребителей при использовании сервиса Хостамат." />
+	</svelte:head>
 
 <main class="page-shell">
 	<div class="page-content legal-page">

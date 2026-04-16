@@ -48,12 +48,11 @@
 		--card-surface: var(--color-background-object);
 		--card-border-color: var(--color-border);
 		--card-text-color: inherit;
-		--card-corner-size: 14px;
+		--card-corner-size: 0.875rem;
 		border: var(--border-width) var(--border-style) var(--card-border-color);
 		border-radius: 0;
 		background: var(--card-surface);
 		color: var(--card-text-color);
-		backdrop-filter: blur(14px);
 	}
 
 	.neutral {

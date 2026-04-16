@@ -8,8 +8,9 @@
 </script>
 
 <svelte:head>
-	<title>Хостамат</title>
-</svelte:head>
+		<title>Хостамат</title>
+		<meta name="description" content="Хостинг статических сайтов с автоматическими HTTPS-поддоменами. Загрузите файлы — получите готовый сайт." />
+	</svelte:head>
 
 <main class="page-shell">
 	<section class={['page-content', 'landing', theme.current === 'dark' && 'theme-dark']}>
@@ -141,7 +142,7 @@
 
 	.hero-main {
 		display: grid;
-		grid-template-columns: minmax(500px, 1.2fr) minmax(320px, 0.95fr);
+		grid-template-columns: minmax(31.25rem, 1.2fr) minmax(20rem, 0.95fr);
 		align-items: center;
 		gap: clamp(1rem, 2.4vw, 2.4rem);
 	}
@@ -210,7 +211,7 @@
 		--terminal-control-zoom: #28c840;
 		position: relative;
 		overflow: hidden;
-		border-radius: 14px;
+		border-radius: 0.875rem;
 		border: 1px solid var(--terminal-window-border);
 		background: var(--terminal-window-bg);
 		box-shadow: var(--terminal-window-shadow);
@@ -481,7 +482,7 @@
 
 	.steps {
 		display: grid;
-		grid-template-columns: repeat(2, minmax(220px, 1fr));
+		grid-template-columns: repeat(2, minmax(13.75rem, 1fr));
 		gap: var(--space-md);
 	}
 
@@ -503,7 +504,7 @@
 	}
 
 	.step {
-		min-height: 170px;
+		min-height: 10.625rem;
 		padding: var(--space-lg);
 		display: flex;
 		flex-direction: column;

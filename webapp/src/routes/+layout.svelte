@@ -208,7 +208,7 @@
 	}
 
 	.logo.soft {
-		opacity: 0.75;
+		color: var(--color-text-secondary);
 	}
 
 	nav {
@@ -270,7 +270,7 @@
 		right: var(--space-md);
 		bottom: var(--space-md);
 		z-index: 70;
-		max-width: min(460px, calc(100vw - var(--space-xl)));
+		max-width: min(28.75rem, calc(100vw - var(--space-xl)));
 		background: var(--color-background-object);
 		border: var(--border-regular);
 	}

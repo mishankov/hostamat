@@ -12,12 +12,12 @@
 
 <style>
 	.auth-shell {
-		min-height: calc(100vh - 220px);
+		min-height: calc(100vh - 13.75rem);
 		align-items: center;
 	}
 
 	.auth-wrap {
-		width: min(420px, 100%);
+		width: min(26.25rem, 100%);
 		border: var(--border-regular);
 		background: var(--color-background-object);
 	}

@@ -10,8 +10,9 @@
 </script>
 
 <svelte:head>
-	<title>Домены | Хостамат</title>
-</svelte:head>
+		<title>Домены | Хостамат</title>
+		<meta name="description" content="Просмотр и управление поддоменами ваших статических сайтов." />
+	</svelte:head>
 
 <div class="domains-page">
 	<div class="headline">
@@ -73,7 +74,7 @@
 	}
 
 	.domains-list {
-		--site-tile-width: 320px;
+		--site-tile-width: 20rem;
 
 		display: flex;
 		flex-wrap: wrap;
@@ -85,7 +86,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 170px;
+		min-height: 10.625rem;
 		width: var(--site-tile-width);
 	}
 
