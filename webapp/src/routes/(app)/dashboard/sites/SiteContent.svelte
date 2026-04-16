@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { Alert, Button, Card, IconButton, Link, Modal } from '$lib/components';
+	import { Alert, Button, IconButton, Link, Modal } from '$lib/components';
 	import { useThemeController } from '$lib/theme/controller.svelte';
 	import { Copy, Trash, Upload } from '$lib/icons';
 
@@ -76,41 +76,39 @@
 	</div>
 
 	<div class="site-toolbar-shell">
-		<Card border>
-			<div class="site-toolbar">
-				<UpdateSite
-					siteName={site.name}
-					siteId={site.id}
-					iconButtonGrouped={true}
-					onsuccess={async () => {
-						resetState();
-						await onsiteupdate();
-					}}
-				/>
+		<div class="site-toolbar">
+			<UpdateSite
+				siteName={site.name}
+				siteId={site.id}
+				iconButtonGrouped={true}
+				onsuccess={async () => {
+					resetState();
+					await onsiteupdate();
+				}}
+			/>
 
-				<IconButton
-					grouped
-					label="Загрузить сайт"
-					onclick={() => uploadModal?.open()}
-					title="Загрузить сайт"
-				>
-					<Upload size={25} />
-				</IconButton>
-				<IconButton grouped label="Скопировать URL" title="Скопировать URL" onclick={copySiteUrl}>
-					<Copy size={25} background="var(--color-primary-10)" />
-				</IconButton>
+			<IconButton
+				grouped
+				label="Загрузить сайт"
+				onclick={() => uploadModal?.open()}
+				title="Загрузить сайт"
+			>
+				<Upload size={25} />
+			</IconButton>
+			<IconButton grouped label="Скопировать URL" title="Скопировать URL" onclick={copySiteUrl}>
+				<Copy size={25} background="var(--color-primary-10)" />
+			</IconButton>
 
-				<IconButton
-					grouped
-					label="Удалить сайт"
-					title="Удалить сайт"
-					tone="danger"
-					onclick={() => deleteModal?.open()}
-				>
-					<Trash size={25} />
-				</IconButton>
-			</div>
-		</Card>
+			<IconButton
+				grouped
+				label="Удалить сайт"
+				title="Удалить сайт"
+				tone="danger"
+				onclick={() => deleteModal?.open()}
+			>
+				<Trash size={25} />
+			</IconButton>
+		</div>
 	</div>
 
 	<Modal
@@ -225,6 +223,8 @@
 	.site-toolbar {
 		display: flex;
 		padding: 3px;
+		border: var(--border-width) var(--border-style) var(--color-border);
+		background: var(--color-background-object);
 	}
 
 	.upload-modal {

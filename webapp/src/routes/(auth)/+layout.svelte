@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Card } from '$lib/components';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
@@ -7,9 +6,7 @@
 
 <main class="page-shell auth-shell">
 	<section class="auth-wrap">
-		<Card border>
-			<div class="form">{@render children()}</div>
-		</Card>
+		<div class="form">{@render children()}</div>
 	</section>
 </main>
 
@@ -21,6 +18,8 @@
 
 	.auth-wrap {
 		width: min(420px, 100%);
+		border: var(--border-regular);
+		background: var(--color-background-object);
 	}
 
 	.form {
