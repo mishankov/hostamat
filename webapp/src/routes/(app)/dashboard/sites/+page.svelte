@@ -19,7 +19,7 @@
 		const sitesResp = await data.sitesResp;
 
 		if (sitesResp.data) {
-			sites = sitesResp.data.sites;
+			sites = sitesResp.data.sites ?? [];
 			maxAmount = sitesResp.data.maxAmount;
 			errorMessage = '';
 		} else {
@@ -59,7 +59,7 @@
 			</div>
 		{:then sitesResult}
 			{#if sitesResult.data}
-				{#each sites as site (site.id)}
+				{#each sites ?? [] as site (site.id)}
 					<div class="site-card-shell">
 						<Card border style="height: 100%;">
 							<SiteContent
