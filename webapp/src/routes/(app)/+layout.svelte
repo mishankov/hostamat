@@ -18,8 +18,7 @@
 		},
 		{
 			route: '/dashboard/domains',
-			label: 'Домены',
-			badge: 'Soon'
+			label: 'Домены'
 		}
 	];
 

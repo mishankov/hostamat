@@ -1,6 +1,9 @@
 import type { PageServerLoad } from './$types';
-import { getSites } from '$lib/api-client';
+import { getDomains, getSites } from '$lib/api-client';
 
 export const load = (async ({ fetch, request }) => {
-	return { sitesResp: getSites(fetch, request) };
+	return {
+		sitesResp: getSites(fetch, request),
+		domainsResp: getDomains(fetch, request)
+	};
 }) satisfies PageServerLoad;

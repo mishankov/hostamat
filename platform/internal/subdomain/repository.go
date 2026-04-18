@@ -16,6 +16,7 @@ type db interface {
 	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
 	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
 	NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error)
+	SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
 }
 
 type Repository struct {
@@ -62,4 +63,15 @@ func (r *Repository) Delete(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (r *Repository) ListHosts(ctx context.Context) ([]string, error) {
+	const query = `SELECT full_domain FROM ` + tableName + ` ORDER BY full_domain`
+
+	var hosts []string
+	if err := r.db.SelectContext(ctx, &hosts, query); err != nil {
+		return nil, fmt.Errorf("failed to list subdomains: %w", err)
+	}
+
+	return hosts, nil
 }

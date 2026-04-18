@@ -3,6 +3,7 @@ package config
 import (
 	"log/slog"
 	"os"
+	"strings"
 )
 
 type caddy struct {
@@ -41,6 +42,12 @@ type auth struct {
 	YandexUserInfoURL  string
 }
 
+type customDomains struct {
+	VerificationPrefix string
+	ApexIPv4Targets    []string
+	ApexIPv6Targets    []string
+}
+
 type Config struct {
 	Port             string // Port to run http server
 	PublicBaseDomain string // Base domain for uploaded sites
@@ -51,6 +58,7 @@ type Config struct {
 	S3               s3
 	DB               db
 	Auth             auth
+	CustomDomains    customDomains
 }
 
 func New() *Config {
@@ -84,6 +92,11 @@ func New() *Config {
 			YandexTokenURL:     fallbackEnv("HOSTAMAT_AUTH_YANDEX_TOKEN_URL", "https://oauth.yandex.ru/token"),
 			YandexUserInfoURL:  fallbackEnv("HOSTAMAT_AUTH_YANDEX_USERINFO_URL", "https://login.yandex.ru/info?format=json"),
 		},
+		CustomDomains: customDomains{
+			VerificationPrefix: fallbackEnv("HOSTAMAT_CUSTOM_DOMAIN_TXT_PREFIX", "_hostamat"),
+			ApexIPv4Targets:    splitCSV(os.Getenv("HOSTAMAT_CUSTOM_DOMAIN_A_RECORDS")),
+			ApexIPv6Targets:    splitCSV(os.Getenv("HOSTAMAT_CUSTOM_DOMAIN_AAAA_RECORDS")),
+		},
 		Logger: logger{
 			Level: func() slog.Level {
 				switch os.Getenv("HOSTAMAT_LOG_LEVEL") {
@@ -105,4 +118,23 @@ func fallbackEnv(name, fallback string) string {
 	}
 
 	return fallback
+}
+
+func splitCSV(value string) []string {
+	if value == "" {
+		return nil
+	}
+
+	items := strings.Split(value, ",")
+	result := make([]string, 0, len(items))
+	for _, item := range items {
+		item = strings.TrimSpace(item)
+		if item == "" {
+			continue
+		}
+
+		result = append(result, item)
+	}
+
+	return result
 }

@@ -9,9 +9,9 @@ func (d *Domain) GetRepository() any {
 	return d.Repository
 }
 
-func New(db db, webserver webserver, baseDomain, shorthandId string) *Domain {
+func New(db db, hostSync hostSync, baseDomain string) *Domain {
 	repository := NewRepository(db)
-	service := NewService(repository, webserver, baseDomain, shorthandId)
+	service := NewService(repository, hostSync, baseDomain)
 
 	return &Domain{
 		Repository: repository,

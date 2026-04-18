@@ -33,17 +33,24 @@ type subdomainService interface {
 	Delete(ctx context.Context, id string) error
 }
 
+type customDomainService interface {
+	ResolveSiteByHost(ctx context.Context, host string) (*Site, error)
+	DeleteBySite(ctx context.Context, siteID string) error
+}
+
 type Service struct {
 	repository           repository
 	subdomainService     subdomainService
+	customDomainService  customDomainService
 	fileService          *file.Service
 	uploadSessionService *uploadsession.Service
 }
 
-func NewService(repository repository, subdomainService subdomainService, fileService *file.Service, uploadSessionService *uploadsession.Service) *Service {
+func NewService(repository repository, subdomainService subdomainService, customDomainService customDomainService, fileService *file.Service, uploadSessionService *uploadsession.Service) *Service {
 	return &Service{
 		repository:           repository,
 		subdomainService:     subdomainService,
+		customDomainService:  customDomainService,
 		fileService:          fileService,
 		uploadSessionService: uploadSessionService,
 	}
@@ -173,7 +180,7 @@ func (s *Service) GetIdByDomain(ctx context.Context, domain string) (string, err
 		"site.domain": domain,
 	})
 
-	site, err := s.repository.GetByDomain(ctx, domain)
+	site, err := s.resolveByHost(ctx, domain)
 	if err != nil {
 
 		if errors.Is(err, sql.ErrNoRows) {
@@ -200,7 +207,7 @@ func (s *Service) GetByDomain(ctx context.Context, domain string) (*Site, error)
 		"site.domain": domain,
 	})
 
-	site, err := s.repository.GetByDomain(ctx, domain)
+	site, err := s.resolveByHost(ctx, domain)
 	if err != nil {
 
 		if errors.Is(err, sql.ErrNoRows) {
@@ -234,7 +241,7 @@ func (s *Service) GetByDomainNoAuth(ctx context.Context, domain string) (*Site, 
 		"site.domain": domain,
 	})
 
-	site, err := s.repository.GetByDomain(ctx, domain)
+	site, err := s.resolveByHost(ctx, domain)
 	if err != nil {
 
 		if errors.Is(err, sql.ErrNoRows) {
@@ -329,6 +336,13 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 		"subdomain.id": site.Subdomain,
 	})
 
+	if s.customDomainService != nil {
+		err = s.customDomainService.DeleteBySite(ctx, site.Id)
+		if err != nil {
+			return err
+		}
+	}
+
 	err = s.subdomainService.Delete(ctx, site.Subdomain)
 	if err != nil {
 		return err
@@ -349,6 +363,14 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) resolveByHost(ctx context.Context, host string) (*Site, error) {
+	if s.customDomainService != nil {
+		return s.customDomainService.ResolveSiteByHost(ctx, host)
+	}
+
+	return s.repository.GetByDomain(ctx, host)
 }
 
 func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*uploadsession.UploadSession, error) {

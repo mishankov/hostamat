@@ -19,6 +19,7 @@ tasks:
     deps: [test-infra]
     dir: infra/test
     cmds:
+      - docker compose stop hostamat
       - docker compose up hostamat
 
   test-backend:
