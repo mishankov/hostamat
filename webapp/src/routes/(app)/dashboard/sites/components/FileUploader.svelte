@@ -53,7 +53,7 @@
 		resetUploadState();
 
 		const files = Array.from(target.files);
-		selectedFiles = files;
+		selectedFiles = selectedFiles.concat(files);
 
 		// Validate file sizes
 		const filesOverallSize = files.reduce((acc, file) => acc + file.size, 0);
