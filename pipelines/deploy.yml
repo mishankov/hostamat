@@ -1,0 +1,52 @@
+name: Deploy
+
+vars:
+  SSH_PROD: -i ~/.ssh/hostamat_admin root@5.129.199.174
+  CONTAINER_REGISTRY: hostamat-container-registry.registry.twcstorage.ru
+
+jobs:
+  default:
+    desc: Run all tasks
+    depends_on: [push-backend, push-webapp, push-dashboard, push-caddy]
+    steps:
+      - run: cat ./infra/prod/scripts/deploy-stack.sh | ssh -t ${{SSH_PROD}}
+
+  push-backend:
+    vars:
+      TAG: hostamat/backend:latest
+    dir: platform
+    detach: true
+    steps:
+      - run: docker build --tag ${{TAG}} --platform linux/amd64 .
+      - run: docker tag ${{TAG}} ${{CONTAINER_REGISTRY}}/${{TAG}}
+      - run: docker push ${{CONTAINER_REGISTRY}}/${{TAG}}
+
+  push-webapp:
+    vars:
+      TAG: hostamat/webapp:latest
+    dir: webapp
+    detach: true
+    steps:
+      - run: docker build --tag ${{TAG}} --platform linux/amd64 .
+      - run: docker tag ${{TAG}} ${{CONTAINER_REGISTRY}}/${{TAG}}
+      - run: docker push ${{CONTAINER_REGISTRY}}/${{TAG}}
+
+  push-dashboard:
+    vars:
+      TAG: hostamat/dashboard:latest
+    dir: platform
+    detach: true
+    steps:
+      - run: docker build --tag ${{TAG}} --platform linux/amd64 --file Dockerfile.dashboard .
+      - run: docker tag ${{TAG}} ${{CONTAINER_REGISTRY}}/${{TAG}}
+      - run: docker push ${{CONTAINER_REGISTRY}}/${{TAG}}
+
+  push-caddy:
+    vars:
+      TAG: hostamat/caddy:latest
+    dir: infra/prod
+    detach: true
+    steps:
+      - run: docker build --tag ${{TAG}} --platform linux/amd64 --file Dockerfile.caddy .
+      - run: docker tag ${{TAG}} ${{CONTAINER_REGISTRY}}/${{TAG}}
+      - run: docker push ${{CONTAINER_REGISTRY}}/${{TAG}}
