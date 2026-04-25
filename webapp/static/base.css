@@ -12,50 +12,50 @@
 	--font-body: 'Onest', 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 	--font-display: 'Onest', 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-	/* Background hierarchy */
-	--color-background: #fafafa;
+	/* ===== BACKGROUND HIERARCHY — warm off-whites ===== */
+	--color-background: #f8f7f4;
 	--color-background-object: #ffffff;
 	--color-background-elevated: #ffffff;
 
-	/* Text */
-	--color-text-regular: #18181b;
-	--color-text-secondary: #52525b;
-	--color-text-tertiary: #a1a1aa;
+	/* ===== TEXT — warm stone tones ===== */
+	--color-text-regular: #1c1917;
+	--color-text-secondary: #57534e;
+	--color-text-tertiary: #a8a29e;
 
-	/* Borders */
-	--color-border: #e4e4e7;
-	--color-border-strong: #d4d4d8;
+	/* ===== BORDERS — warm subtle ===== */
+	--color-border: #e8e6e1;
+	--color-border-strong: #d6d3cd;
 
-	/* Neutral surfaces */
-	--color-neutral-surface: #f4f4f5;
-	--color-neutral-border: #e4e4e7;
-	--color-neutral-strong: #18181b;
-	--color-neutral-text: #27272a;
+	/* ===== NEUTRAL SURFACES ===== */
+	--color-neutral-surface: #f0eeea;
+	--color-neutral-border: #e8e6e1;
+	--color-neutral-strong: #1c1917;
+	--color-neutral-text: #292524;
 
-	/* Accent — vibrant blue */
-	--color-accent-surface: #eff6ff;
-	--color-accent-border: #bfdbfe;
-	--color-accent-strong: #3b82f6;
-	--color-accent-text: #1d4ed8;
+	/* ===== ACCENT — soft pleasant cornflower blue ===== */
+	--color-accent-surface: #eef4ff;
+	--color-accent-border: #c5d8f0;
+	--color-accent-strong: #4a7de4;
+	--color-accent-text: #1e3a5f;
 
-	/* Success */
-	--color-success-surface: #f0fdf4;
-	--color-success-border: #bbf7d0;
-	--color-success-strong: #22c55e;
-	--color-success-text: #15803d;
+	/* ===== SUCCESS — emerald mint ===== */
+	--color-success-surface: #ecfdf5;
+	--color-success-border: #a7f3d0;
+	--color-success-strong: #10b981;
+	--color-success-text: #047857;
 
-	/* Danger */
-	--color-danger-surface: #fef2f2;
-	--color-danger-border: #fecaca;
-	--color-danger-strong: #ef4444;
-	--color-danger-text: #b91c1c;
+	/* ===== DANGER — soft rose coral ===== */
+	--color-danger-surface: #fff1f2;
+	--color-danger-border: #fecdd3;
+	--color-danger-strong: #f43f5e;
+	--color-danger-text: #be123c;
 
-	/* Disabled */
-	--color-disabled-surface: #f4f4f5;
-	--color-disabled-border: #e4e4e7;
-	--color-disabled-text: #a1a1aa;
+	/* ===== DISABLED ===== */
+	--color-disabled-surface: #f0eeea;
+	--color-disabled-border: #e8e6e1;
+	--color-disabled-text: #a8a29e;
 
-	/* Spacing — slightly more generous */
+	/* ===== SPACING ===== */
 	--space-xs: 0.25rem;
 	--space-sm: 0.5rem;
 	--space-md: 0.75rem;
@@ -63,7 +63,7 @@
 	--space-xl: 1.5rem;
 	--space-2xl: 2rem;
 
-	/* Radius — rounded everywhere */
+	/* ===== RADIUS ===== */
 	--radius-sm: 6px;
 	--radius-md: 10px;
 	--radius-lg: 14px;
@@ -73,26 +73,26 @@
 	--border-regular: var(--border-width) var(--border-style) var(--color-border);
 	--border-radius-regular: var(--radius-md);
 
-	/* Shadows — soft, ambient */
-	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 1px 3px 0 rgb(0 0 0 / 0.06);
-	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-	--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.06), 0 4px 6px -4px rgb(0 0 0 / 0.06);
-	--shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.06), 0 8px 10px -6px rgb(0 0 0 / 0.06);
+	/* ===== SHADOWS — warm ambient ===== */
+	--shadow-sm: 0 1px 2px 0 rgb(28 25 23 / 0.04), 0 1px 3px 0 rgb(28 25 23 / 0.06);
+	--shadow-md: 0 4px 6px -1px rgb(28 25 23 / 0.05), 0 2px 4px -2px rgb(28 25 23 / 0.05);
+	--shadow-lg: 0 10px 15px -3px rgb(28 25 23 / 0.06), 0 4px 6px -4px rgb(28 25 23 / 0.06);
+	--shadow-xl: 0 20px 25px -5px rgb(28 25 23 / 0.06), 0 8px 10px -6px rgb(28 25 23 / 0.06);
 
-	--focus-ring: 0 0 0 3px rgb(59 130 246 / 0.25);
+	--focus-ring: 0 0 0 3px rgb(74 125 228 / 0.22);
 	--transition: all 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
 	--layout-width: min(1160px, calc(100vw - 2.4rem));
 
-	/* Compatibility aliases */
+	/* ===== COMPATIBILITY ALIASES ===== */
 	--color-primary-10: var(--color-neutral-surface);
-	--color-primary-15: #f4f4f5;
+	--color-primary-15: #f0eeea;
 	--color-primary-20: var(--color-neutral-border);
-	--color-primary-80: #3f3f46;
+	--color-primary-80: #44403c;
 	--color-primary-90: var(--color-neutral-text);
 	--color-primary-95: var(--color-neutral-strong);
 
 	--color-accent-20: var(--color-accent-surface);
-	--color-accent-10: #1e3a5f;
+	--color-accent-10: #172554;
 	--color-accent-30: #dbeafe;
 	--color-accent-40: #93c5fd;
 	--color-accent-50: var(--color-accent-border);
@@ -100,7 +100,7 @@
 	--color-accent-70: var(--color-accent-strong);
 	--color-accent-80: var(--color-accent-text);
 	--color-accent-85: #1e40af;
-	--color-accent-90: #1e3a8a;
+	--color-accent-90: #1e3a5f;
 	--color-accent-95: #172554;
 
 	--color-confirm-10: var(--color-success-surface);
@@ -129,60 +129,60 @@
 :root[data-theme='dark'] {
 	color-scheme: dark;
 
-	/* Background hierarchy — deep charcoal */
-	--color-background: #09090b;
-	--color-background-object: #18181b;
-	--color-background-elevated: #27272a;
+	/* ===== BACKGROUND HIERARCHY — warm charcoal ===== */
+	--color-background: #121214;
+	--color-background-object: #1c1c20;
+	--color-background-elevated: #26262b;
 
-	/* Text */
-	--color-text-regular: #fafafa;
-	--color-text-secondary: #a1a1aa;
-	--color-text-tertiary: #71717a;
+	/* ===== TEXT — warm off-whites ===== */
+	--color-text-regular: #f5f5f4;
+	--color-text-secondary: #a8a29e;
+	--color-text-tertiary: #78716c;
 
-	/* Borders */
-	--color-border: #27272a;
+	/* ===== BORDERS ===== */
+	--color-border: #2a2a2e;
 	--color-border-strong: #3f3f46;
 
-	/* Neutral surfaces */
-	--color-neutral-surface: #18181b;
-	--color-neutral-border: #27272a;
-	--color-neutral-strong: #fafafa;
-	--color-neutral-text: #e4e4e7;
+	/* ===== NEUTRAL SURFACES ===== */
+	--color-neutral-surface: #1c1c20;
+	--color-neutral-border: #2a2a2e;
+	--color-neutral-strong: #f5f5f4;
+	--color-neutral-text: #e7e5e4;
 
-	/* Accent — brighter blue for dark */
+	/* ===== ACCENT — gentle sky blue for dark ===== */
 	--color-accent-surface: #172554;
 	--color-accent-border: #1e3a8a;
-	--color-accent-strong: #3b82f6;
-	--color-accent-text: #60a5fa;
+	--color-accent-strong: #7ab8ff;
+	--color-accent-text: #bfdbfe;
 
-	/* Success */
-	--color-success-surface: #052e16;
-	--color-success-border: #14532d;
-	--color-success-strong: #4ade80;
-	--color-success-text: #86efac;
+	/* ===== SUCCESS — mint glow ===== */
+	--color-success-surface: #064e3b;
+	--color-success-border: #065f46;
+	--color-success-strong: #34d399;
+	--color-success-text: #6ee7b7;
 
-	/* Danger */
-	--color-danger-surface: #450a0a;
-	--color-danger-border: #7f1d1d;
-	--color-danger-strong: #f87171;
-	--color-danger-text: #fca5a5;
+	/* ===== DANGER — soft rose glow ===== */
+	--color-danger-surface: #4c0519;
+	--color-danger-border: #831843;
+	--color-danger-strong: #fb7185;
+	--color-danger-text: #fda4af;
 
-	/* Disabled */
-	--color-disabled-surface: #18181b;
-	--color-disabled-border: #27272a;
-	--color-disabled-text: #52525b;
+	/* ===== DISABLED ===== */
+	--color-disabled-surface: #1c1c20;
+	--color-disabled-border: #2a2a2e;
+	--color-disabled-text: #57534e;
 
-	/* Shadows — subtle glow in dark */
-	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2), 0 1px 3px 0 rgb(0 0 0 / 0.15);
-	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.25);
-	--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.35), 0 4px 6px -4px rgb(0 0 0 / 0.3);
-	--shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.35);
+	/* ===== SHADOWS — subtle depth in dark ===== */
+	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.25), 0 1px 3px 0 rgb(0 0 0 / 0.2);
+	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.35), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+	--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.35);
+	--shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.45), 0 8px 10px -6px rgb(0 0 0 / 0.4);
 
-	--focus-ring: 0 0 0 3px rgb(59 130 246 / 0.35);
+	--focus-ring: 0 0 0 3px rgb(122 184 255 / 0.28);
 
-	--color-primary-15: #18181b;
-	--color-primary-70: #3f3f46;
-	--color-primary-80: #a1a1aa;
+	--color-primary-15: #1c1c20;
+	--color-primary-70: #52525b;
+	--color-primary-80: #a8a29e;
 	--color-accent-30: #1e3a8a;
 	--color-accent-40: #1e40af;
 	--color-accent-85: #93c5fd;
@@ -269,7 +269,7 @@ main.page-shell {
 	animation: reveal-up 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Subtle ambient background — soft radial glow instead of grid */
+/* Subtle ambient background — soft radial glow */
 .ambient-grid {
 	position: relative;
 	isolation: isolate;
@@ -284,12 +284,12 @@ main.page-shell {
 	background:
 		radial-gradient(
 			60% 50% at 20% 0%,
-			color-mix(in hsl, var(--color-accent-strong) 6%, transparent) 0%,
+			color-mix(in hsl, var(--color-accent-strong) 5%, transparent) 0%,
 			transparent 70%
 		),
 		radial-gradient(
 			50% 40% at 80% 100%,
-			color-mix(in hsl, var(--color-accent-strong) 4%, transparent) 0%,
+			color-mix(in hsl, var(--color-accent-strong) 3%, transparent) 0%,
 			transparent 70%
 		);
 }
