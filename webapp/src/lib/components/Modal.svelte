@@ -137,13 +137,13 @@
 		transform: translateX(-50%) translateY(-50%);
 
 		border: var(--border-regular);
-		border-radius: 0;
+		border-radius: var(--radius-lg);
 
 		padding: 0;
 
 		background: var(--color-background-object);
 		color: var(--color-text-regular);
-		box-shadow: var(--shadow-lg);
+		box-shadow: var(--shadow-xl);
 		backdrop-filter: blur(18px);
 
 		transition: var(--transition);
@@ -215,7 +215,7 @@
 		justify-content: center;
 		width: 1.75rem;
 		height: 1.75rem;
-		border-radius: 0;
+		border-radius: var(--radius-md);
 		border: var(--border-regular);
 		background: var(--color-background-object);
 		color: var(--color-primary-90);

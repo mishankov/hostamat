@@ -52,17 +52,17 @@
 	input {
 		width: 100%;
 
-		padding: 0.74rem 0.82rem;
+		padding: 0.65rem 0.9rem;
 
-		font-size: 1rem;
+		font-size: 0.95rem;
 
 		background-color: var(--color-background-object);
 		color: var(--color-text-regular);
 
 		border-width: 1px;
 		border-style: solid;
-		border-radius: 0;
-		border-color: var(--color-neutral-border);
+		border-radius: var(--radius-md);
+		border-color: var(--color-border);
 
 		transition: var(--transition);
 	}

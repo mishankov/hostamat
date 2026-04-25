@@ -173,7 +173,7 @@
 	}
 
 	.site-chrome.theme-dark header {
-		box-shadow: var(--shadow-lg);
+		box-shadow: var(--shadow-md);
 	}
 
 	.header-shell {
@@ -202,9 +202,9 @@
 
 	.logo {
 		font-family: var(--font-display);
-		font-size: 1.04rem;
-		font-weight: 700;
-		letter-spacing: 0.04em;
+		font-size: 1.1rem;
+		font-weight: 800;
+		letter-spacing: -0.02em;
 	}
 
 	.logo.soft {
@@ -214,7 +214,22 @@
 	nav {
 		display: flex;
 		align-items: center;
-		gap: var(--space-md);
+		gap: var(--space-sm);
+	}
+
+	:global(nav a) {
+		padding: 0.4rem 0.7rem;
+		border-radius: var(--radius-sm);
+		font-weight: 500;
+		font-size: 0.88rem;
+		color: var(--color-text-secondary);
+		transition: background 140ms ease-out, color 140ms ease-out;
+	}
+
+	:global(nav a:hover) {
+		background: var(--color-neutral-surface);
+		color: var(--color-text-regular);
+		text-decoration: none;
 	}
 
 	.user-info {
@@ -227,7 +242,7 @@
 	.menu-toggle {
 		display: none;
 		border: var(--border-regular);
-		border-radius: 0;
+		border-radius: var(--radius-md);
 		background: var(--color-background-object);
 		width: 2.25rem;
 		height: 2.25rem;
@@ -235,6 +250,12 @@
 		color: var(--color-text-regular);
 		align-items: center;
 		justify-content: center;
+		cursor: pointer;
+		transition: background 140ms ease-out;
+	}
+
+	.menu-toggle:hover {
+		background: var(--color-neutral-surface);
 	}
 
 	.menu-toggle .burger {
@@ -273,6 +294,8 @@
 		max-width: min(28.75rem, calc(100vw - var(--space-xl)));
 		background: var(--color-background-object);
 		border: var(--border-regular);
+		border-radius: var(--radius-lg);
+		box-shadow: var(--shadow-lg);
 	}
 
 	.cookie-inner {
@@ -283,7 +306,7 @@
 	}
 
 	footer {
-		padding: var(--space-xl) var(--space-xl) var(--space-lg);
+		padding: var(--space-2xl) var(--space-xl) var(--space-xl);
 		background: var(--color-background-object);
 		border-top: var(--border-regular);
 	}
@@ -313,11 +336,25 @@
 		gap: var(--space-sm);
 	}
 
+	.footer-brand p {
+		font-size: 0.88rem;
+		color: var(--color-text-tertiary);
+	}
+
 	.footer-links {
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: flex-end;
 		gap: var(--space-md) var(--space-xl);
+	}
+
+	.footer-links :global(a) {
+		font-size: 0.85rem;
+		color: var(--color-text-tertiary);
+	}
+
+	.footer-links :global(a:hover) {
+		color: var(--color-text-regular);
 	}
 
 	@media (max-width: 900px) {

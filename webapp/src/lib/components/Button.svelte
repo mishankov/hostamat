@@ -98,22 +98,25 @@
 
 		border-width: 1px;
 		border-style: solid;
-		border-radius: 0;
+		border-radius: var(--radius-md);
 
-		padding: 0.64rem 1.05rem;
+		padding: 0.55rem 1.1rem;
 
 		text-align: center;
 		user-select: none;
 
-		font-weight: 650;
-		letter-spacing: 0.01em;
+		font-weight: 600;
+		font-size: 0.9rem;
+		letter-spacing: -0.01em;
 		text-decoration: none;
 		cursor: pointer;
 
 		transition:
-			color 260ms ease-out,
-			background-color 260ms ease-out,
-			border-color 260ms ease-out;
+			color 160ms ease-out,
+			background-color 160ms ease-out,
+			border-color 160ms ease-out,
+			box-shadow 160ms ease-out,
+			transform 100ms ease-out;
 
 		color: var(--color);
 		background-color: var(--color-background);
@@ -152,26 +155,29 @@
 
 	button.button:hover:enabled,
 	a.button:hover:not([aria-disabled='true']) {
-		box-shadow: none;
-		transform: none;
-		transition-duration: 90ms;
+		box-shadow: var(--shadow-sm);
+		transform: translateY(-1px);
+		transition-duration: 100ms;
 		color: var(--color);
-		background-color: color-mix(in hsl, var(--color-background) 95%, var(--color) 5%);
-		border-color: color-mix(in hsl, var(--color-border) 82%, var(--color) 18%);
+		background-color: color-mix(in hsl, var(--color-background) 96%, var(--color) 4%);
+		border-color: color-mix(in hsl, var(--color-border) 80%, var(--color) 20%);
 	}
 
 	button.button.solid:hover:enabled,
 	a.button.solid:hover:not([aria-disabled='true']) {
-		transition-duration: 90ms;
+		box-shadow: var(--shadow-md);
+		transform: translateY(-1px);
+		transition-duration: 100ms;
 		color: var(--tone-solid-text);
-		background-color: color-mix(in hsl, var(--tone-strong) 90%, black 10%);
-		border-color: color-mix(in hsl, var(--tone-strong) 90%, black 10%);
+		background-color: color-mix(in hsl, var(--tone-strong) 92%, white 8%);
+		border-color: color-mix(in hsl, var(--tone-strong) 92%, white 8%);
 	}
 
 	button.button:active:enabled,
 	a.button:active:not([aria-disabled='true']) {
 		box-shadow: none;
-		transform: none;
+		transform: translateY(0);
+		transition-duration: 60ms;
 	}
 
 	button.button:disabled,

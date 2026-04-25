@@ -145,8 +145,12 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-sm);
-		padding-bottom: var(--space-md);
-		border-bottom: 1px dashed color-mix(in hsl, var(--color-border) 55%, transparent);
+		padding-bottom: var(--space-lg);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.headline h1 {
+		font-weight: 800;
 	}
 
 	.profile-data {
@@ -165,10 +169,11 @@
 
 	.copy-feedback {
 		font-size: 0.78rem;
+		font-weight: 600;
 		color: var(--color-success-strong);
 	}
 
-.danger-zone {
+	.danger-zone {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-lg);
@@ -178,6 +183,7 @@
 
 	.danger-zone h2 {
 		color: var(--color-danger-90);
+		font-size: 1.1rem;
 	}
 
 	.danger-zone-description {

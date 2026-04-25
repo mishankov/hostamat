@@ -217,12 +217,14 @@
 	}
 
 	.site-separator {
-		border-top: 1px dashed color-mix(in hsl, var(--color-border) 55%, transparent);
+		border-top: 1px solid var(--color-border);
 		margin: var(--space-sm) 0;
+		opacity: 0.5;
 	}
 
 	.copy-feedback {
 		font-size: 0.78rem;
+		font-weight: 600;
 		color: var(--color-success-strong);
 	}
 
@@ -235,8 +237,11 @@
 	.site-toolbar {
 		display: flex;
 		padding: var(--space-xs);
+		gap: var(--space-xs);
 		border: var(--border-width) var(--border-style) var(--color-border);
+		border-radius: var(--radius-md);
 		background: var(--color-background-object);
+		box-shadow: var(--shadow-sm);
 	}
 
 	.upload-modal {

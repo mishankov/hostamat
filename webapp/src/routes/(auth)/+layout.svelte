@@ -19,13 +19,17 @@
 	.auth-wrap {
 		width: min(26.25rem, 100%);
 		border: var(--border-regular);
+		border-radius: var(--radius-lg);
 		background: var(--color-background-object);
+		box-shadow: var(--shadow-lg);
 	}
 
 	.form {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-md);
-		padding: var(--space-xl);
+		gap: var(--space-lg);
+		padding: var(--space-2xl);
 	}
+
+
 </style>

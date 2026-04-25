@@ -54,27 +54,29 @@
 		justify-content: center;
 
 		padding: 0.4rem;
-		border-radius: 0;
+		border-radius: var(--radius-md);
 		border: var(--border-regular);
 		background: var(--color-background-object);
 		color: var(--color-text-regular);
 
 		transition:
-			color 260ms ease-out,
-			background-color 260ms ease-out,
-			border-color 260ms ease-out;
+			color 160ms ease-out,
+			background-color 160ms ease-out,
+			border-color 160ms ease-out,
+			box-shadow 160ms ease-out;
 	}
 
 	button.grouped {
 		border: none;
-		border-radius: 0;
+		border-radius: var(--radius-sm);
 	}
 
 	button:hover:enabled {
-		transition-duration: 90ms;
+		transition-duration: 100ms;
 		background: var(--color-accent-surface);
+		border-color: var(--color-accent-border);
 		cursor: pointer;
-		transform: none;
+		box-shadow: var(--shadow-sm);
 	}
 
 	button.danger:hover:enabled {

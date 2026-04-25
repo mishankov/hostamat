@@ -288,13 +288,10 @@
 		flex-direction: column;
 		gap: 0.9rem;
 		height: 100%;
-		padding: 1rem;
+		padding: 1.1rem;
 		min-width: 0;
-		background: linear-gradient(
-			165deg,
-			color-mix(in hsl, var(--color-background-object) 88%, var(--color-accent-surface) 12%),
-			var(--color-background-object) 74%
-		);
+		background: var(--color-background-object);
+		border-radius: var(--radius-lg);
 	}
 
 	.domain-card-header {
@@ -307,7 +304,7 @@
 	.domain-card-title-block {
 		display: flex;
 		flex-direction: column;
-		gap: 0.45rem;
+		gap: 0.4rem;
 		min-width: 0;
 	}
 
@@ -317,11 +314,11 @@
 	.incident-label,
 	.record-label,
 	.record-meta {
-		font-size: 0.7rem;
+		font-size: 0.68rem;
 		font-weight: 700;
-		letter-spacing: 0.08em;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		color: var(--color-text-secondary);
+		color: var(--color-text-tertiary);
 	}
 
 	.domain-card-title {
@@ -330,8 +327,9 @@
 
 	.hostname {
 		font-family: var(--font-display);
-		font-size: 1.3rem;
-		line-height: 1.1;
+		font-size: 1.25rem;
+		font-weight: 700;
+		line-height: 1.15;
 		color: var(--color-text-regular);
 		overflow-wrap: anywhere;
 	}
@@ -354,14 +352,15 @@
 		flex-direction: column;
 		gap: 0.26rem;
 		padding: 0.72rem;
-		border: 1px solid color-mix(in hsl, var(--color-border) 72%, transparent);
-		background: color-mix(in hsl, var(--color-background-object) 94%, transparent);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		background: var(--color-background);
 		min-width: 0;
 	}
 
 	.signal-cell strong,
 	.signal-cell :global(a) {
-		font-size: 0.9rem;
+		font-size: 0.88rem;
 		line-height: 1.35;
 		overflow-wrap: anywhere;
 	}
@@ -374,13 +373,14 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		padding: 0.24rem 0.62rem;
+		padding: 0.22rem 0.65rem;
+		border-radius: 999px;
 		border: 1px solid var(--chip-border);
 		color: var(--chip-text);
 		background: var(--chip-background);
-		font-size: 0.72rem;
+		font-size: 0.68rem;
 		font-weight: 700;
-		letter-spacing: 0.04em;
+		letter-spacing: 0.03em;
 		white-space: nowrap;
 		text-transform: uppercase;
 	}
@@ -406,6 +406,7 @@
 	.status-description {
 		color: var(--color-text-secondary);
 		max-width: 52ch;
+		font-size: 0.92rem;
 	}
 
 	.incident-log {
@@ -413,12 +414,14 @@
 		flex-direction: column;
 		gap: 0.35rem;
 		padding: 0.8rem;
-		border: 1px solid color-mix(in hsl, var(--color-danger-border) 60%, transparent);
-		background: color-mix(in hsl, var(--color-danger-surface) 90%, transparent);
+		border-radius: var(--radius-md);
+		border: 1px solid color-mix(in hsl, var(--color-danger-border) 50%, transparent);
+		background: color-mix(in hsl, var(--color-danger-surface) 92%, transparent);
 	}
 
 	.incident-log p {
 		color: var(--color-danger-text);
+		font-size: 0.88rem;
 	}
 
 	.records-list {
@@ -432,13 +435,15 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.6rem;
-		padding: 0.85rem;
-		border: 1px solid color-mix(in hsl, var(--color-border) 70%, transparent);
-		background: color-mix(in hsl, var(--color-background-object) 95%, transparent);
+		padding: 0.9rem;
+		border-radius: var(--radius-md);
+		border: 1px solid var(--color-border);
+		background: var(--color-background);
 	}
 
 	.guide-block h3 {
-		font-size: 1rem;
+		font-size: 0.95rem;
+		font-weight: 700;
 	}
 
 	.guide-steps {
@@ -453,12 +458,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.35rem;
-		padding-top: 0.2rem;
-		border-top: 1px dashed color-mix(in hsl, var(--color-border) 60%, transparent);
+		padding-top: 0.3rem;
+		border-top: 1px solid var(--color-border);
 	}
 
 	.guide-notes p {
-		font-size: 0.86rem;
+		font-size: 0.84rem;
+		color: var(--color-text-tertiary);
 	}
 
 	.record-block {
@@ -466,8 +472,9 @@
 		grid-template-columns: minmax(0, 1fr);
 		gap: 0.18rem;
 		padding: 0.75rem;
-		border: 1px dashed color-mix(in hsl, var(--color-border) 68%, transparent);
-		background: color-mix(in hsl, var(--color-background-object) 94%, transparent);
+		border-radius: var(--radius-md);
+		border: 1px solid var(--color-border);
+		background: var(--color-background);
 	}
 
 	.record-label {
@@ -477,7 +484,7 @@
 	.record-value {
 		overflow-wrap: anywhere;
 		font-family: var(--font-mono, monospace);
-		font-size: 0.86rem;
+		font-size: 0.84rem;
 	}
 
 	.domain-toolbar {
@@ -493,9 +500,10 @@
 		align-items: end;
 		justify-content: space-between;
 		gap: 0.8rem;
-		padding: 0.8rem;
-		border: 1px solid color-mix(in hsl, var(--color-danger-border) 58%, transparent);
-		background: color-mix(in hsl, var(--color-danger-surface) 86%, transparent);
+		padding: 0.9rem;
+		border-radius: var(--radius-md);
+		border: 1px solid color-mix(in hsl, var(--color-danger-border) 45%, transparent);
+		background: color-mix(in hsl, var(--color-danger-surface) 90%, transparent);
 	}
 
 	.delete-copy {
@@ -507,6 +515,7 @@
 
 	.delete-copy p {
 		color: var(--color-danger-text);
+		font-size: 0.88rem;
 	}
 
 	@media (max-width: 640px) {

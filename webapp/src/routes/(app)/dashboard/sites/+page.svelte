@@ -112,12 +112,17 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-sm);
-		padding-bottom: var(--space-md);
-		border-bottom: 1px dashed color-mix(in hsl, var(--color-border) 55%, transparent);
+		padding-bottom: var(--space-lg);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.headline h1 {
+		font-weight: 800;
 	}
 
 	.headline p {
 		max-width: 64ch;
+		color: var(--color-text-secondary);
 	}
 
 	.headline-meta {
@@ -130,7 +135,8 @@
 	.site-counter {
 		font-family: var(--font-body);
 		font-size: 0.82rem;
-		color: var(--color-text-secondary);
+		font-weight: 500;
+		color: var(--color-text-tertiary);
 		white-space: nowrap;
 	}
 
@@ -139,7 +145,7 @@
 
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--space-md);
+		gap: var(--space-lg);
 		align-items: stretch;
 	}
 
@@ -161,6 +167,10 @@
 		display: flex;
 		min-height: 10.625rem;
 		min-width: 0;
+	}
+
+	.site-card-shell :global(.card) {
+		border-radius: var(--radius-lg);
 	}
 
 	@media (max-width: 820px) {

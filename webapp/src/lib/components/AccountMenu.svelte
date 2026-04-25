@@ -157,13 +157,14 @@
 		gap: var(--space-md);
 		width: 100%;
 		min-width: 0;
-		padding: 0.78rem 0.95rem;
-		border: 1px solid var(--color-neutral-border);
-		border-radius: 0;
+		padding: 0.7rem 0.9rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
 		background: var(--color-background-object);
 		color: var(--color-accent-text);
-		font-weight: 650;
-		letter-spacing: 0.01em;
+		font-weight: 600;
+		font-size: 0.92rem;
+		letter-spacing: -0.01em;
 		cursor: pointer;
 		transition:
 			border-color 160ms ease-out,
@@ -228,9 +229,9 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-xs);
-		padding: 0.45rem;
-		border: 1px solid var(--color-neutral-border);
-		border-radius: 0;
+		padding: 0.4rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
 		background: var(--color-background-object);
 		box-shadow: var(--shadow-lg);
 	}
@@ -249,14 +250,14 @@
 		justify-content: space-between;
 		width: 100%;
 		min-height: 3rem;
-		padding: 0.85rem 0.95rem;
+		padding: 0.7rem 0.85rem;
 		border: 0;
-		border-radius: 0;
+		border-radius: var(--radius-md);
 		background: transparent;
 		color: var(--color-text-regular);
-		font-size: 1rem;
-		font-weight: 650;
-		letter-spacing: 0.01em;
+		font-size: 0.95rem;
+		font-weight: 600;
+		letter-spacing: -0.01em;
 		text-align: left;
 		text-decoration: none;
 		cursor: pointer;

@@ -112,7 +112,7 @@
 		line-height: 1.3;
 		color: var(--color-primary-95);
 		background: var(--color-accent-surface);
-		border-radius: 0;
+		border-radius: var(--radius-sm);
 		padding: 0.12em 0.34em;
 		margin: 0.14em 0;
 		vertical-align: baseline;

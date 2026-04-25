@@ -19,7 +19,8 @@
 		background-color: var(--color-neutral-surface);
 
 		border: var(--border-regular);
-		border-radius: 0;
+		border-radius: var(--radius-md);
+		overflow: hidden;
 	}
 
 	.progress-fill {

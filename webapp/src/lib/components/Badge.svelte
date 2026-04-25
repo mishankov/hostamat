@@ -12,14 +12,14 @@
 	span {
 		width: fit-content;
 
-		border-radius: 0;
-		border: var(--border-regular);
+		border-radius: 999px;
+		border: 1px solid var(--color-accent-border);
 
-		padding: 0.24rem 0.64rem;
+		padding: 0.2rem 0.65rem;
 
-		font-size: 0.74rem;
+		font-size: 0.72rem;
 		font-weight: 600;
-		letter-spacing: 0.03em;
+		letter-spacing: 0.02em;
 
 		text-align: center;
 		user-select: none;

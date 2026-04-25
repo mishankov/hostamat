@@ -128,23 +128,23 @@
 	.landing {
 		position: relative;
 		z-index: 1;
-		gap: var(--space-xl);
-		padding-bottom: var(--space-xl);
+		gap: var(--space-2xl);
+		padding-bottom: var(--space-2xl);
 	}
 
 	.hero-card {
-		padding: clamp(var(--space-lg), 2.5vw, var(--space-xl));
+		padding: clamp(var(--space-xl), 3vw, var(--space-2xl));
 	}
 
 	:global(.hero-shell) {
-		box-shadow: var(--shadow-sm);
+		box-shadow: var(--shadow-md);
 	}
 
 	.hero-main {
 		display: grid;
 		grid-template-columns: minmax(31.25rem, 1.2fr) minmax(20rem, 0.95fr);
 		align-items: center;
-		gap: clamp(1rem, 2.4vw, 2.4rem);
+		gap: clamp(1.5rem, 3vw, 3rem);
 	}
 
 	.hero-copy {
@@ -155,14 +155,16 @@
 	}
 
 	h1 {
-		font-size: clamp(2rem, 5vw, 3.6rem);
-		line-height: 1.08;
+		font-size: clamp(2.2rem, 5vw, 3.6rem);
+		line-height: 1.1;
 		max-width: 18ch;
+		font-weight: 800;
 	}
 
 	.hero-description {
 		max-width: 44ch;
 		font-size: 1.05rem;
+		line-height: 1.6;
 	}
 
 	.hero-ascii {
@@ -174,44 +176,44 @@
 	.terminal-window {
 		--terminal-window-border: color-mix(
 			in hsl,
-			var(--color-border) 82%,
-			var(--color-accent-30) 18%
+			var(--color-border) 70%,
+			var(--color-accent-30) 30%
 		);
 		--terminal-window-bg: color-mix(
 			in hsl,
-			var(--color-background-object) 97%,
+			var(--color-background-object) 98%,
 			var(--color-background)
 		);
-		--terminal-window-shadow: 0 10px 20px color-mix(in hsl, var(--color-accent-30) 10%, transparent);
+		--terminal-window-shadow: var(--shadow-lg);
 		--terminal-titlebar-bg-top: color-mix(
 			in hsl,
-			var(--color-background-object) 94%,
-			var(--color-accent-20) 6%
+			var(--color-background-object) 96%,
+			var(--color-accent-20) 4%
 		);
 		--terminal-titlebar-bg-bottom: color-mix(
 			in hsl,
-			var(--color-background-object) 97%,
+			var(--color-background-object) 98%,
 			var(--color-background)
 		);
-		--terminal-title-color: color-mix(in hsl, var(--color-accent-80) 72%, var(--color-primary-80));
+		--terminal-title-color: color-mix(in hsl, var(--color-accent-80) 70%, var(--color-primary-80));
 		--terminal-body-bg: color-mix(
 			in hsl,
-			var(--color-background-object) 95%,
-			var(--color-accent-10) 5%
+			var(--color-background-object) 97%,
+			var(--color-accent-10) 3%
 		);
-		--terminal-text: color-mix(in hsl, var(--color-accent-90) 78%, var(--color-primary-90));
-		--terminal-text-dim: color-mix(in hsl, var(--color-accent-70) 82%, var(--color-primary-80));
-		--terminal-line-color: color-mix(in hsl, var(--color-accent-60) 60%, transparent);
-		--terminal-brand-color: color-mix(in hsl, var(--color-accent-80) 84%, var(--color-background));
-		--terminal-brand-stroke: color-mix(in hsl, var(--color-accent-60) 28%, transparent);
-		--terminal-status: color-mix(in hsl, var(--color-confirm-60) 70%, var(--color-accent-70));
-		--terminal-scan: color-mix(in hsl, var(--color-accent-40) 38%, transparent);
+		--terminal-text: color-mix(in hsl, var(--color-accent-90) 75%, var(--color-primary-90));
+		--terminal-text-dim: color-mix(in hsl, var(--color-accent-70) 80%, var(--color-primary-80));
+		--terminal-line-color: color-mix(in hsl, var(--color-accent-60) 55%, transparent);
+		--terminal-brand-color: color-mix(in hsl, var(--color-accent-80) 82%, var(--color-background));
+		--terminal-brand-stroke: color-mix(in hsl, var(--color-accent-60) 24%, transparent);
+		--terminal-status: color-mix(in hsl, var(--color-confirm-60) 65%, var(--color-accent-70));
+		--terminal-scan: color-mix(in hsl, var(--color-accent-40) 32%, transparent);
 		--terminal-control-close: #ff5f57;
 		--terminal-control-minimize: #febc2e;
 		--terminal-control-zoom: #28c840;
 		position: relative;
 		overflow: hidden;
-		border-radius: 0.875rem;
+		border-radius: var(--radius-lg);
 		border: 1px solid var(--terminal-window-border);
 		background: var(--terminal-window-bg);
 		box-shadow: var(--terminal-window-shadow);
@@ -404,34 +406,34 @@
 	.landing.theme-dark .terminal-window {
 		--terminal-window-border: color-mix(
 			in hsl,
-			var(--color-border) 64%,
-			var(--color-accent-20) 36%
+			var(--color-border) 60%,
+			var(--color-accent-20) 40%
 		);
 		--terminal-window-bg: color-mix(
 			in hsl,
-			var(--color-background-object) 88%,
-			var(--color-primary-10) 12%
+			var(--color-background-object) 90%,
+			var(--color-primary-10) 10%
 		);
-		--terminal-window-shadow: 0 14px 28px color-mix(in hsl, var(--color-accent-30) 18%, transparent);
+		--terminal-window-shadow: var(--shadow-xl);
 		--terminal-titlebar-bg-top: color-mix(
 			in hsl,
-			var(--color-background-object) 80%,
-			var(--color-primary-20) 20%
+			var(--color-background-object) 85%,
+			var(--color-primary-20) 15%
 		);
 		--terminal-titlebar-bg-bottom: color-mix(
 			in hsl,
-			var(--color-background-object) 86%,
-			var(--color-primary-10) 14%
+			var(--color-background-object) 90%,
+			var(--color-primary-10) 10%
 		);
-		--terminal-title-color: color-mix(in hsl, var(--color-accent-70) 80%, var(--color-primary-70));
-		--terminal-body-bg: color-mix(in hsl, var(--color-background-object) 84%, black 16%);
-		--terminal-text: color-mix(in hsl, var(--color-accent-80) 84%, var(--color-background));
-		--terminal-text-dim: color-mix(in hsl, var(--color-accent-60) 84%, var(--color-primary-70));
-		--terminal-line-color: color-mix(in hsl, var(--color-accent-50) 62%, transparent);
-		--terminal-brand-color: color-mix(in hsl, var(--color-accent-80) 90%, var(--color-background));
-		--terminal-brand-stroke: color-mix(in hsl, var(--color-accent-70) 38%, transparent);
-		--terminal-status: color-mix(in hsl, var(--color-confirm-60) 64%, var(--color-accent-70));
-		--terminal-scan: color-mix(in hsl, var(--color-accent-40) 42%, transparent);
+		--terminal-title-color: color-mix(in hsl, var(--color-accent-70) 75%, var(--color-primary-70));
+		--terminal-body-bg: color-mix(in hsl, var(--color-background-object) 88%, black 12%);
+		--terminal-text: color-mix(in hsl, var(--color-accent-80) 82%, var(--color-background));
+		--terminal-text-dim: color-mix(in hsl, var(--color-accent-60) 80%, var(--color-primary-70));
+		--terminal-line-color: color-mix(in hsl, var(--color-accent-50) 55%, transparent);
+		--terminal-brand-color: color-mix(in hsl, var(--color-accent-80) 88%, var(--color-background));
+		--terminal-brand-stroke: color-mix(in hsl, var(--color-accent-70) 32%, transparent);
+		--terminal-status: color-mix(in hsl, var(--color-confirm-60) 60%, var(--color-accent-70));
+		--terminal-scan: color-mix(in hsl, var(--color-accent-40) 36%, transparent);
 		--terminal-control-close: #ff5f57;
 		--terminal-control-minimize: #febc2e;
 		--terminal-control-zoom: #28c840;
@@ -483,19 +485,20 @@
 	.steps {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(13.75rem, 1fr));
-		gap: var(--space-md);
+		gap: var(--space-lg);
 	}
 
 	:global(.step-card) {
 		box-shadow: var(--shadow-sm);
+		border-radius: var(--radius-lg);
 		transition:
-			transform 180ms ease-out,
-			box-shadow 180ms ease-out;
+			transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+			box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	:global(.step-card:hover) {
 		box-shadow: var(--shadow-lg);
-		transform: translateY(-2px);
+		transform: translateY(-3px);
 	}
 
 	:global(.step-card-featured) {
@@ -505,7 +508,7 @@
 
 	.step {
 		min-height: 10.625rem;
-		padding: var(--space-lg);
+		padding: var(--space-xl);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-md);
@@ -513,13 +516,15 @@
 
 	.step span {
 		font-family: var(--font-display);
-		font-size: 0.9rem;
-		letter-spacing: 0.15em;
-		color: var(--color-accent-60);
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		color: var(--color-accent-strong);
 	}
 
 	.step h2 {
-		font-size: 1.4rem;
+		font-size: 1.3rem;
+		font-weight: 700;
 	}
 
 	@media (max-width: 920px) {

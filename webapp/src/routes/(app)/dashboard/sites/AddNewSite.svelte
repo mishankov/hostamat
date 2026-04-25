@@ -117,6 +117,7 @@
 
 		padding: var(--space-lg) 1.3rem;
 		cursor: pointer;
+		border-radius: var(--radius-lg);
 	}
 
 	.prompt-line {
@@ -125,11 +126,13 @@
 		gap: var(--space-sm);
 		font-family: var(--font-body);
 		font-size: 0.9rem;
+		font-weight: 500;
 	}
 
 	.prompt-symbol {
-		color: var(--color-accent-border);
-		font-weight: 600;
+		color: var(--color-accent-strong);
+		font-weight: 700;
+		font-size: 1.1rem;
 	}
 
 	.prompt-text {
@@ -138,18 +141,21 @@
 
 	:global(.add-site-card) {
 		border-style: dashed;
-		border-color: var(--color-neutral-border);
+		border-color: var(--color-border);
+		border-radius: var(--radius-lg);
 		background: transparent;
 		transition:
 			border-color 180ms ease-out,
 			background 180ms ease-out,
-			box-shadow 180ms ease-out;
+			box-shadow 180ms ease-out,
+			transform 180ms ease-out;
 	}
 
 	:global(.add-site-card:hover) {
 		border-color: var(--color-accent-border);
 		background: var(--color-accent-surface);
 		box-shadow: var(--shadow-sm);
+		transform: translateY(-2px);
 	}
 
 	.modal-body {

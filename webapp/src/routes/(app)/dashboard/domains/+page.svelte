@@ -142,12 +142,17 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-sm);
-		padding-bottom: var(--space-md);
-		border-bottom: 1px dashed color-mix(in hsl, var(--color-border) 55%, transparent);
+		padding-bottom: var(--space-lg);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.headline h1 {
+		font-weight: 800;
 	}
 
 	.headline p {
 		max-width: 64ch;
+		color: var(--color-text-secondary);
 	}
 
 	.headline-meta {
@@ -160,14 +165,15 @@
 	.domain-counter {
 		font-family: var(--font-body);
 		font-size: 0.82rem;
-		color: var(--color-text-secondary);
+		font-weight: 500;
+		color: var(--color-text-tertiary);
 		white-space: nowrap;
 	}
 
 	.domain-section {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-md);
+		gap: var(--space-lg);
 	}
 
 	.section-head {
@@ -179,12 +185,14 @@
 	}
 
 	.section-head h2 {
-		font-size: 1.2rem;
+		font-size: 1.15rem;
+		font-weight: 700;
 	}
 
 	.section-head p {
 		max-width: 60ch;
 		color: var(--color-text-secondary);
+		font-size: 0.92rem;
 	}
 
 	.section-counter {
@@ -192,10 +200,11 @@
 		align-items: center;
 		justify-content: center;
 		min-width: 2.5rem;
-		padding: 0.3rem 0.65rem;
-		border: 1px solid color-mix(in hsl, var(--color-border) 70%, transparent);
-		background: color-mix(in hsl, var(--color-background-object) 92%, transparent);
-		color: var(--color-text-secondary);
+		padding: 0.3rem 0.7rem;
+		border-radius: var(--radius-md);
+		border: 1px solid var(--color-border);
+		background: var(--color-background-object);
+		color: var(--color-text-tertiary);
 		font-size: 0.82rem;
 		font-weight: 600;
 	}
@@ -205,7 +214,7 @@
 
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--space-md);
+		gap: var(--space-lg);
 		align-items: stretch;
 	}
 
@@ -231,6 +240,7 @@
 
 	.domain-card-shell :global(.card) {
 		height: 100%;
+		border-radius: var(--radius-lg);
 	}
 
 	@media (max-width: 820px) {

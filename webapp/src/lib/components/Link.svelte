@@ -44,7 +44,8 @@
 		text-decoration: none;
 		text-decoration-thickness: 1px;
 		text-underline-offset: 3px;
-		transition: color 260ms ease-out;
+		transition: color 160ms ease-out;
+		font-weight: 500;
 	}
 
 	a.underline {

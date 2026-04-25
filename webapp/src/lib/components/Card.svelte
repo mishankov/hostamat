@@ -50,9 +50,10 @@
 		--card-text-color: inherit;
 		--card-corner-size: 0.875rem;
 		border: var(--border-width) var(--border-style) var(--card-border-color);
-		border-radius: 0;
+		border-radius: var(--radius-lg);
 		background: var(--card-surface);
 		color: var(--card-text-color);
+		box-shadow: var(--shadow-sm);
 	}
 
 	.neutral {
@@ -78,33 +79,11 @@
 	}
 
 	.chrome {
-		border-radius: 0;
-		border-color: transparent;
+		border-radius: var(--radius-lg);
+		border-color: var(--color-border);
+		background: var(--card-surface);
+		box-shadow: var(--shadow-md);
 		isolation: isolate;
-	}
-
-	.chrome::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		pointer-events: none;
-		background:
-			linear-gradient(var(--card-border-color) 0 0) top left / var(--card-corner-size)
-				var(--border-width) no-repeat,
-			linear-gradient(var(--card-border-color) 0 0) top left / var(--border-width)
-				var(--card-corner-size) no-repeat,
-			linear-gradient(var(--card-border-color) 0 0) top right / var(--card-corner-size)
-				var(--border-width) no-repeat,
-			linear-gradient(var(--card-border-color) 0 0) top right / var(--border-width)
-				var(--card-corner-size) no-repeat,
-			linear-gradient(var(--card-border-color) 0 0) bottom left / var(--card-corner-size)
-				var(--border-width) no-repeat,
-			linear-gradient(var(--card-border-color) 0 0) bottom left / var(--border-width)
-				var(--card-corner-size) no-repeat,
-			linear-gradient(var(--card-border-color) 0 0) bottom right / var(--card-corner-size)
-				var(--border-width) no-repeat,
-			linear-gradient(var(--card-border-color) 0 0) bottom right / var(--border-width)
-				var(--card-corner-size) no-repeat;
 	}
 
 	.floating-compat {

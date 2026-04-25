@@ -343,8 +343,8 @@
 	}
 
 	.drop-zone {
-		border: 1px dashed var(--color-accent-border);
-		border-radius: 0;
+		border: 1.5px dashed var(--color-accent-border);
+		border-radius: var(--radius-lg);
 		padding: var(--space-xl);
 		text-align: center;
 		cursor: pointer;
@@ -355,6 +355,7 @@
 	.drop-zone.drag-over {
 		border-color: var(--color-accent-strong);
 		background: var(--color-background-object);
+		border-style: solid;
 	}
 
 	.drop-zone:focus-visible {
@@ -370,14 +371,14 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: var(--space-lg);
-		border-bottom: var(--border-regular);
+		padding: var(--space-lg) var(--space-lg);
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	.files-header h3 {
 		margin: 0;
-		font-size: 1rem;
-		font-weight: 600;
+		font-size: 0.95rem;
+		font-weight: 700;
 	}
 
 	.files-list {
@@ -391,7 +392,7 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: var(--space-md) var(--space-lg);
-		border-bottom: var(--border-regular);
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	.file-item:last-child {

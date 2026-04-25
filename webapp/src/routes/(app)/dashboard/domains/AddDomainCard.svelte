@@ -150,6 +150,7 @@
 		padding: var(--space-lg) 1.3rem;
 		cursor: pointer;
 		text-align: center;
+		border-radius: var(--radius-lg);
 	}
 
 	.prompt-line {
@@ -158,11 +159,13 @@
 		gap: var(--space-sm);
 		font-family: var(--font-body);
 		font-size: 0.9rem;
+		font-weight: 500;
 	}
 
 	.prompt-symbol {
-		color: var(--color-accent-border);
-		font-weight: 600;
+		color: var(--color-accent-strong);
+		font-weight: 700;
+		font-size: 1.1rem;
 	}
 
 	.prompt-text {
@@ -178,18 +181,21 @@
 
 	:global(.add-domain-card) {
 		border-style: dashed;
-		border-color: var(--color-neutral-border);
+		border-color: var(--color-border);
+		border-radius: var(--radius-lg);
 		background: transparent;
 		transition:
 			border-color 180ms ease-out,
 			background 180ms ease-out,
-			box-shadow 180ms ease-out;
+			box-shadow 180ms ease-out,
+			transform 180ms ease-out;
 	}
 
 	:global(.add-domain-card:hover) {
 		border-color: var(--color-accent-border);
 		background: var(--color-accent-surface);
 		box-shadow: var(--shadow-sm);
+		transform: translateY(-2px);
 	}
 
 	.modal-body {
@@ -213,12 +219,13 @@
 
 	.field-group select {
 		width: 100%;
-		padding: 0.74rem 0.82rem;
-		font-size: 1rem;
+		padding: 0.65rem 0.9rem;
+		font-size: 0.95rem;
 		background-color: var(--color-background-object);
 		color: var(--color-text-regular);
-		border: 1px solid var(--color-neutral-border);
-		border-radius: 0;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		transition: var(--transition);
 	}
 
 	.field-group select:focus {
