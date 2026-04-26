@@ -170,40 +170,32 @@
 	}
 
 	.terminal-window {
-		--terminal-window-border: color-mix(
-			in hsl,
-			var(--color-border) 70%,
-			var(--color-accent-30) 30%
-		);
-		--terminal-window-bg: color-mix(
-			in hsl,
-			var(--color-background-object) 98%,
-			var(--color-background)
-		);
+		--terminal-window-border: color-mix(in hsl, var(--color-border) 82%, #8a8177 18%);
+		--terminal-window-bg: color-mix(in hsl, var(--color-background-object) 98%, #f1eee8);
 		--terminal-window-shadow: var(--shadow-lg);
 		--terminal-titlebar-bg-top: color-mix(
 			in hsl,
 			var(--color-background-object) 96%,
-			var(--color-accent-20) 4%
+			#ede8df 4%
 		);
 		--terminal-titlebar-bg-bottom: color-mix(
 			in hsl,
 			var(--color-background-object) 98%,
 			var(--color-background)
 		);
-		--terminal-title-color: color-mix(in hsl, var(--color-accent-80) 70%, var(--color-primary-80));
+		--terminal-title-color: var(--color-text-secondary);
 		--terminal-body-bg: color-mix(
 			in hsl,
 			var(--color-background-object) 97%,
-			var(--color-accent-10) 3%
+			#f4f0e8 3%
 		);
-		--terminal-text: color-mix(in hsl, var(--color-accent-90) 75%, var(--color-primary-90));
-		--terminal-text-dim: color-mix(in hsl, var(--color-accent-70) 80%, var(--color-primary-80));
-		--terminal-line-color: color-mix(in hsl, var(--color-accent-60) 55%, transparent);
-		--terminal-brand-color: color-mix(in hsl, var(--color-accent-80) 82%, var(--color-background));
-		--terminal-brand-stroke: color-mix(in hsl, var(--color-accent-60) 24%, transparent);
-		--terminal-status: color-mix(in hsl, var(--color-confirm-60) 65%, var(--color-accent-70));
-		--terminal-scan: color-mix(in hsl, var(--color-accent-40) 32%, transparent);
+		--terminal-text: #2d2924;
+		--terminal-text-dim: #6b6258;
+		--terminal-line-color: color-mix(in hsl, #8a8177 48%, transparent);
+		--terminal-brand-color: #35312c;
+		--terminal-brand-stroke: color-mix(in hsl, #8a8177 18%, transparent);
+		--terminal-status: #3f7d32;
+		--terminal-scan: color-mix(in hsl, #d6d0c6 34%, transparent);
 		--terminal-control-close: #ff5f57;
 		--terminal-control-minimize: #febc2e;
 		--terminal-control-zoom: #28c840;
@@ -400,36 +392,28 @@
 	}
 
 	.landing.theme-dark .terminal-window {
-		--terminal-window-border: color-mix(
-			in hsl,
-			var(--color-border) 60%,
-			var(--color-accent-20) 40%
-		);
-		--terminal-window-bg: color-mix(
-			in hsl,
-			var(--color-background-object) 90%,
-			var(--color-primary-10) 10%
-		);
+		--terminal-window-border: color-mix(in hsl, var(--color-border) 76%, #80776d 24%);
+		--terminal-window-bg: color-mix(in hsl, var(--color-background-object) 92%, #141312);
 		--terminal-window-shadow: var(--shadow-xl);
 		--terminal-titlebar-bg-top: color-mix(
 			in hsl,
 			var(--color-background-object) 85%,
-			var(--color-primary-20) 15%
+			#2b2925 15%
 		);
 		--terminal-titlebar-bg-bottom: color-mix(
 			in hsl,
 			var(--color-background-object) 90%,
-			var(--color-primary-10) 10%
+			#191817 10%
 		);
-		--terminal-title-color: color-mix(in hsl, var(--color-accent-70) 75%, var(--color-primary-70));
-		--terminal-body-bg: color-mix(in hsl, var(--color-background-object) 88%, black 12%);
-		--terminal-text: color-mix(in hsl, var(--color-accent-80) 82%, var(--color-background));
-		--terminal-text-dim: color-mix(in hsl, var(--color-accent-60) 80%, var(--color-primary-70));
-		--terminal-line-color: color-mix(in hsl, var(--color-accent-50) 55%, transparent);
-		--terminal-brand-color: color-mix(in hsl, var(--color-accent-80) 88%, var(--color-background));
-		--terminal-brand-stroke: color-mix(in hsl, var(--color-accent-70) 32%, transparent);
-		--terminal-status: color-mix(in hsl, var(--color-confirm-60) 60%, var(--color-accent-70));
-		--terminal-scan: color-mix(in hsl, var(--color-accent-40) 36%, transparent);
+		--terminal-title-color: var(--color-text-secondary);
+		--terminal-body-bg: color-mix(in hsl, var(--color-background-object) 90%, black 10%);
+		--terminal-text: #f0ede7;
+		--terminal-text-dim: #ada69c;
+		--terminal-line-color: color-mix(in hsl, #aaa298 48%, transparent);
+		--terminal-brand-color: #f4f1eb;
+		--terminal-brand-stroke: color-mix(in hsl, #aaa298 26%, transparent);
+		--terminal-status: #8dbc75;
+		--terminal-scan: color-mix(in hsl, #837b70 28%, transparent);
 		--terminal-control-close: #ff5f57;
 		--terminal-control-minimize: #febc2e;
 		--terminal-control-zoom: #28c840;
