@@ -4,10 +4,13 @@
 	type ButtonType = 'button' | 'submit' | 'reset';
 	type ButtonEmphasis = 'quiet' | 'solid';
 
+	type ButtonSize = 'default' | 'xs' | 'sm' | 'lg' | 'xl';
+
 	type ButtonProps = {
 		tone?: ButtonTone;
 		emphasis?: ButtonEmphasis;
 		kind?: LegacyButtonKind;
+		size?: ButtonSize;
 		disabled?: boolean;
 		filled?: boolean;
 		href?: string;
@@ -23,6 +26,7 @@
 		tone = undefined,
 		emphasis = undefined,
 		kind = undefined,
+		size = 'default',
 		disabled = false,
 		filled = false,
 		href = '',
@@ -51,6 +55,17 @@
 		return 'accent';
 	});
 	const resolvedEmphasis = $derived<ButtonEmphasis>(emphasis || (filled ? 'solid' : 'quiet'));
+	const resolvedVariant = $derived.by(() => {
+		if (resolvedTone === 'danger') {
+			return resolvedEmphasis === 'solid' ? 'destructive' : 'destructive-outline';
+		}
+
+		if (resolvedTone === 'success') {
+			return resolvedEmphasis === 'solid' ? 'success' : 'success-outline';
+		}
+
+		return resolvedEmphasis === 'solid' ? 'default' : 'outline';
+	});
 
 	const handleAnchorClick = (event: MouseEvent) => {
 		if (disabled) {
@@ -67,7 +82,8 @@
 	<a
 		href={resolvedHref}
 		bind:this={ref}
-		class={['button', resolvedTone, resolvedEmphasis === 'solid' && 'solid']}
+		class={['button', `variant-${resolvedVariant}`, `size-${size}`, disabled && 'is-disabled']}
+		data-slot="button"
 		aria-disabled={disabled ? 'true' : undefined}
 		tabindex={disabled ? -1 : undefined}
 		onclick={handleAnchorClick}
@@ -80,7 +96,8 @@
 		{type}
 		{disabled}
 		bind:this={ref}
-		class={['button', resolvedTone, resolvedEmphasis === 'solid' && 'solid']}
+		class={['button', `variant-${resolvedVariant}`, `size-${size}`]}
+		data-slot="button"
 		{onclick}
 		{...restProps}
 	>
@@ -90,105 +107,377 @@
 
 <style>
 	.button {
-		appearance: none;
-		width: fit-content;
+		--button-height: 2.25rem;
+		--button-padding-x: 0.75rem;
+		--button-gap: 0.5rem;
+		--button-radius: 0.7rem;
+		--button-font-size: 0.92rem;
+		--button-icon-size: 1.125rem;
+		--button-background: var(--color-background-object);
+		--button-border: var(--color-border);
+		--button-text: var(--color-text-regular);
+		--button-hover-background: var(--button-background);
+		--button-hover-border: var(--button-border);
+		--button-hover-text: var(--button-text);
+		--button-active-background: var(--button-hover-background);
+		--button-active-border: var(--button-hover-border);
+		--button-active-text: var(--button-hover-text);
+		--button-shadow: none;
+		--button-inner-shadow: none;
+		--button-active-shadow: none;
+		--button-active-inner-shadow: none;
+
+		position: relative;
 		display: inline-flex;
+		width: fit-content;
+		flex-shrink: 0;
 		align-items: center;
 		justify-content: center;
-
-		border-width: 1px;
-		border-style: solid;
-		border-radius: var(--radius-md);
-
-		padding: 0.55rem 1.1rem;
-
-		text-align: center;
-		user-select: none;
-
+		gap: var(--button-gap);
+		min-height: var(--button-height);
+		padding: 0 calc(var(--button-padding-x) - 1px);
+		border: 1px solid var(--button-border);
+		border-radius: var(--button-radius);
+		background: var(--button-background);
+		box-shadow: var(--button-shadow);
+		color: var(--button-text);
+		font-size: var(--button-font-size);
 		font-weight: 600;
-		font-size: 0.9rem;
-		letter-spacing: -0.01em;
+		line-height: 1;
+		text-align: center;
 		text-decoration: none;
+		white-space: nowrap;
+		user-select: none;
 		cursor: pointer;
-
+		outline: none;
 		transition:
-			color 160ms ease-out,
-			background-color 160ms ease-out,
-			border-color 160ms ease-out,
-			box-shadow 160ms ease-out,
-			transform 100ms ease-out;
-
-		color: var(--color);
-		background-color: var(--color-background);
-		border-color: var(--color-border);
+			background-color 140ms ease,
+			border-color 140ms ease,
+			box-shadow 140ms ease,
+			color 140ms ease,
+			transform 140ms ease;
 	}
 
-	.solid {
-		color: var(--tone-solid-text);
-		background-color: var(--tone-strong);
-		border-color: var(--tone-strong);
-	}
-
-	.accent {
-		--color: var(--color-accent-text);
-		--color-border: var(--color-accent-border);
-		--color-background: var(--color-background-object);
-		--tone-strong: var(--color-accent-strong);
-		--tone-solid-text: var(--color-background-object);
-	}
-
-	.success {
-		--color: var(--color-success-text);
-		--color-border: var(--color-success-border);
-		--color-background: var(--color-success-surface);
-		--tone-strong: var(--color-success-strong);
-		--tone-solid-text: var(--color-background-object);
-	}
-
-	.danger {
-		--color: var(--color-danger-text);
-		--color-border: var(--color-danger-border);
-		--color-background: var(--color-danger-surface);
-		--tone-strong: var(--color-danger-strong);
-		--tone-solid-text: var(--color-background-object);
-	}
-
-	button.button:hover:enabled,
-	a.button:hover:not([aria-disabled='true']) {
-		box-shadow: var(--shadow-sm);
-		transform: translateY(-1px);
-		transition-duration: 100ms;
-		color: var(--color);
-		background-color: color-mix(in hsl, var(--color-background) 96%, var(--color) 4%);
-		border-color: color-mix(in hsl, var(--color-border) 80%, var(--color) 20%);
-	}
-
-	button.button.solid:hover:enabled,
-	a.button.solid:hover:not([aria-disabled='true']) {
-		box-shadow: var(--shadow-md);
-		transform: translateY(-1px);
-		transition-duration: 100ms;
-		color: var(--tone-solid-text);
-		background-color: color-mix(in hsl, var(--tone-strong) 92%, white 8%);
-		border-color: color-mix(in hsl, var(--tone-strong) 92%, white 8%);
-	}
-
-	button.button:active:enabled,
-	a.button:active:not([aria-disabled='true']) {
-		box-shadow: none;
-		transform: translateY(0);
-		transition-duration: 60ms;
-	}
-
-	button.button:disabled,
-	a.button[aria-disabled='true'] {
-		background-color: var(--color-disabled-surface);
-		color: var(--color-disabled-text);
-		border-color: var(--color-disabled-border);
-		cursor: not-allowed;
-	}
-
-	a.button[aria-disabled='true'] {
+	.button::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: calc(var(--button-radius) - 1px);
+		box-shadow: var(--button-inner-shadow);
 		pointer-events: none;
+		transition: box-shadow 140ms ease;
+	}
+
+	.button::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+	}
+
+	.button :global(svg) {
+		width: var(--button-icon-size);
+		height: var(--button-icon-size);
+		flex-shrink: 0;
+		pointer-events: none;
+		opacity: 0.82;
+	}
+
+	.button:hover:not(:disabled):not([aria-disabled='true']) {
+		background: var(--button-hover-background);
+		border-color: var(--button-hover-border);
+		box-shadow: var(--button-shadow);
+		color: var(--button-hover-text);
+	}
+
+	.button:active:not(:disabled):not([aria-disabled='true']) {
+		background: var(--button-active-background);
+		border-color: var(--button-active-border);
+		box-shadow: var(--button-active-shadow);
+		color: var(--button-active-text);
+		transform: translateY(1px);
+	}
+
+	.button:active:not(:disabled):not([aria-disabled='true'])::before {
+		box-shadow: var(--button-active-inner-shadow);
+	}
+
+	.button:focus-visible {
+		box-shadow: var(--button-shadow), var(--focus-ring);
+	}
+
+	.button:focus-visible::before {
+		box-shadow: var(--button-inner-shadow);
+	}
+
+	.button:disabled,
+	.button.is-disabled {
+		background: var(--color-disabled-surface);
+		border-color: var(--color-disabled-border);
+		box-shadow: none;
+		color: var(--color-disabled-text);
+		cursor: not-allowed;
+		opacity: 0.64;
+		pointer-events: none;
+		transform: none;
+	}
+
+	.button:disabled::before,
+	.button.is-disabled::before {
+		box-shadow: none;
+	}
+
+	/* Solid variants: convex by default, concave when pressed */
+	.variant-default {
+		--button-background: var(--color-accent-strong);
+		--button-border: color-mix(in hsl, var(--color-accent-strong) 82%, black 18%);
+		--button-text: var(--color-background-object);
+		--button-hover-background: color-mix(in hsl, var(--color-accent-strong) 90%, black 10%);
+		--button-hover-border: color-mix(in hsl, var(--color-accent-strong) 78%, black 22%);
+		--button-hover-text: var(--color-background-object);
+		--button-active-background: color-mix(in hsl, var(--color-accent-strong) 84%, black 16%);
+		--button-active-border: color-mix(in hsl, var(--color-accent-strong) 72%, black 28%);
+		--button-active-text: var(--color-background-object);
+		--button-shadow:
+			0 1px 2px color-mix(in hsl, var(--color-accent-strong) 24%, transparent),
+			0 6px 14px color-mix(in hsl, var(--color-accent-strong) 22%, transparent);
+		--button-inner-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.16);
+		--button-active-inner-shadow: inset 0 1px 0 hsl(0 0% 0% / 0.1);
+	}
+
+	.variant-destructive {
+		--button-background: var(--color-danger-strong);
+		--button-border: color-mix(in hsl, var(--color-danger-strong) 82%, black 18%);
+		--button-text: var(--color-background-object);
+		--button-hover-background: color-mix(in hsl, var(--color-danger-strong) 90%, black 10%);
+		--button-hover-border: color-mix(in hsl, var(--color-danger-strong) 78%, black 22%);
+		--button-hover-text: var(--color-background-object);
+		--button-active-background: color-mix(in hsl, var(--color-danger-strong) 84%, black 16%);
+		--button-active-border: color-mix(in hsl, var(--color-danger-strong) 72%, black 28%);
+		--button-active-text: var(--color-background-object);
+		--button-shadow:
+			0 1px 2px color-mix(in hsl, var(--color-danger-strong) 24%, transparent),
+			0 6px 14px color-mix(in hsl, var(--color-danger-strong) 22%, transparent);
+		--button-inner-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.16);
+		--button-active-inner-shadow: inset 0 1px 0 hsl(0 0% 0% / 0.1);
+	}
+
+	.variant-success {
+		--button-background: var(--color-success-strong);
+		--button-border: color-mix(in hsl, var(--color-success-strong) 82%, black 18%);
+		--button-text: var(--color-background-object);
+		--button-hover-background: color-mix(in hsl, var(--color-success-strong) 90%, black 10%);
+		--button-hover-border: color-mix(in hsl, var(--color-success-strong) 78%, black 22%);
+		--button-hover-text: var(--color-background-object);
+		--button-active-background: color-mix(in hsl, var(--color-success-strong) 84%, black 16%);
+		--button-active-border: color-mix(in hsl, var(--color-success-strong) 72%, black 28%);
+		--button-active-text: var(--color-background-object);
+		--button-shadow:
+			0 1px 2px color-mix(in hsl, var(--color-success-strong) 24%, transparent),
+			0 6px 14px color-mix(in hsl, var(--color-success-strong) 22%, transparent);
+		--button-inner-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.16);
+		--button-active-inner-shadow: inset 0 1px 0 hsl(0 0% 0% / 0.1);
+	}
+
+	/* Outline variants: subtle convex lift, flatten on press */
+	.variant-outline {
+		--button-background: color-mix(in hsl, var(--color-background-object) 96%, transparent);
+		--button-border: color-mix(in hsl, var(--color-border) 92%, transparent);
+		--button-text: var(--color-text-regular);
+		--button-hover-background: color-mix(
+			in hsl,
+			var(--color-accent-surface) 46%,
+			var(--color-background-object)
+		);
+		--button-hover-border: color-mix(in hsl, var(--color-accent-border) 54%, var(--color-border));
+		--button-hover-text: var(--color-text-regular);
+		--button-active-background: color-mix(
+			in hsl,
+			var(--color-accent-surface) 62%,
+			var(--color-background-object)
+		);
+		--button-active-border: color-mix(in hsl, var(--color-accent-border) 68%, var(--color-border));
+		--button-active-text: var(--color-text-regular);
+		--button-shadow: 0 1px 2px hsl(214 30% 12% / 0.06);
+		--button-inner-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.2);
+		--button-active-shadow: none;
+		--button-active-inner-shadow: inset 0 1px 0 hsl(0 0% 0% / 0.08);
+	}
+
+	.variant-destructive-outline {
+		--button-background: color-mix(in hsl, var(--color-background-object) 96%, transparent);
+		--button-border: color-mix(
+			in hsl,
+			var(--color-danger-border) 78%,
+			var(--color-danger-surface)
+		);
+		--button-text: var(--color-danger-text);
+		--button-hover-background: color-mix(
+			in hsl,
+			var(--color-danger-surface) 62%,
+			var(--color-background-object)
+		);
+		--button-hover-border: color-mix(
+			in hsl,
+			var(--color-danger-border) 86%,
+			var(--color-danger-strong)
+		);
+		--button-hover-text: var(--color-danger-text);
+		--button-active-background: color-mix(
+			in hsl,
+			var(--color-danger-surface) 76%,
+			var(--color-background-object)
+		);
+		--button-active-border: color-mix(
+			in hsl,
+			var(--color-danger-border) 70%,
+			var(--color-danger-strong)
+		);
+		--button-active-text: var(--color-danger-text);
+		--button-shadow: 0 1px 2px hsl(214 30% 12% / 0.06);
+		--button-inner-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.2);
+		--button-active-shadow: none;
+		--button-active-inner-shadow: inset 0 1px 0 hsl(0 0% 0% / 0.08);
+	}
+
+	.variant-success-outline {
+		--button-background: color-mix(in hsl, var(--color-background-object) 96%, transparent);
+		--button-border: color-mix(in hsl, var(--color-success-border) 56%, var(--color-border));
+		--button-text: var(--color-success-text);
+		--button-hover-background: color-mix(
+			in hsl,
+			var(--color-success-surface) 62%,
+			var(--color-background-object)
+		);
+		--button-hover-border: color-mix(in hsl, var(--color-success-border) 78%, transparent);
+		--button-hover-text: var(--color-success-text);
+		--button-active-background: color-mix(
+			in hsl,
+			var(--color-success-surface) 76%,
+			var(--color-background-object)
+		);
+		--button-active-border: color-mix(in hsl, var(--color-success-border) 90%, transparent);
+		--button-active-text: var(--color-success-text);
+		--button-shadow: 0 1px 2px hsl(214 30% 12% / 0.06);
+		--button-inner-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.2);
+		--button-active-shadow: none;
+		--button-active-inner-shadow: inset 0 1px 0 hsl(0 0% 0% / 0.08);
+	}
+
+	/* Subtle secondary with tactile press */
+	.variant-secondary {
+		--button-background: var(--color-neutral-surface);
+		--button-border: color-mix(in hsl, var(--color-neutral-border) 86%, transparent);
+		--button-text: var(--color-text-regular);
+		--button-hover-background: color-mix(in hsl, var(--color-neutral-surface) 84%, black 16%);
+		--button-hover-border: color-mix(in hsl, var(--color-neutral-border) 90%, black 10%);
+		--button-hover-text: var(--color-text-regular);
+		--button-active-background: color-mix(in hsl, var(--color-neutral-surface) 76%, black 24%);
+		--button-active-border: color-mix(in hsl, var(--color-neutral-border) 94%, black 6%);
+		--button-active-text: var(--color-text-regular);
+	}
+
+	.variant-secondary::before {
+		box-shadow: none;
+	}
+
+	/* Ghost flattens on interaction */
+	.variant-ghost {
+		--button-background: transparent;
+		--button-border: transparent;
+		--button-text: var(--color-text-regular);
+		--button-hover-background: color-mix(
+			in hsl,
+			var(--color-accent-surface) 44%,
+			var(--color-background-object)
+		);
+		--button-hover-border: transparent;
+		--button-hover-text: var(--color-text-regular);
+		--button-active-background: color-mix(
+			in hsl,
+			var(--color-accent-surface) 60%,
+			var(--color-background-object)
+		);
+		--button-active-border: transparent;
+		--button-active-text: var(--color-text-regular);
+	}
+
+	.variant-ghost::before {
+		box-shadow: none;
+	}
+
+	/* Link is flat and underlined on hover */
+	.variant-link {
+		--button-background: transparent;
+		--button-border: transparent;
+		--button-text: var(--color-text-regular);
+		--button-hover-background: transparent;
+		--button-hover-border: transparent;
+		--button-hover-text: var(--color-text-regular);
+		--button-active-background: transparent;
+		--button-active-border: transparent;
+		--button-active-text: var(--color-text-regular);
+		padding-inline: 0;
+		box-shadow: none;
+		text-underline-offset: 0.26em;
+	}
+
+	.variant-link:hover:not(:disabled):not([aria-disabled='true']) {
+		text-decoration: underline;
+	}
+
+	.variant-link::before,
+	.variant-ghost::before,
+	.variant-secondary::before {
+		box-shadow: none;
+	}
+
+	/* Sizes */
+	.size-default {
+		--button-height: 2.25rem;
+		--button-padding-x: 0.75rem;
+	}
+
+	.size-xs {
+		--button-height: 1.75rem;
+		--button-padding-x: 0.5rem;
+		--button-gap: 0.25rem;
+		--button-radius: 0.5rem;
+		--button-font-size: 0.78rem;
+		--button-icon-size: 1rem;
+	}
+
+	.size-sm {
+		--button-height: 2rem;
+		--button-padding-x: 0.625rem;
+		--button-gap: 0.375rem;
+		--button-font-size: 0.84rem;
+	}
+
+	.size-lg {
+		--button-height: 2.5rem;
+		--button-padding-x: 0.875rem;
+	}
+
+	.size-xl {
+		--button-height: 2.75rem;
+		--button-padding-x: 1rem;
+		--button-font-size: 1rem;
+		--button-icon-size: 1.25rem;
+	}
+
+	@media (max-width: 640px) {
+		.button {
+			--button-font-size: 0.875rem;
+		}
+
+		.size-xs {
+			--button-font-size: 0.75rem;
+		}
+
+		.size-xl {
+			--button-font-size: 0.95rem;
+		}
 	}
 </style>
