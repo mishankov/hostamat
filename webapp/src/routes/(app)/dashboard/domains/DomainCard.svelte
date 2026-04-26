@@ -309,7 +309,7 @@
 	.incident-label,
 	.record-label,
 	.record-meta {
-		font-size: 0.68rem;
+		font-size: 0.75rem;
 		font-weight: 700;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
@@ -373,7 +373,7 @@
 		border: 1px solid var(--chip-border);
 		color: var(--chip-text);
 		background: var(--chip-background);
-		font-size: 0.68rem;
+		font-size: 0.75rem;
 		font-weight: 700;
 		letter-spacing: 0.03em;
 		white-space: nowrap;

@@ -67,7 +67,7 @@
 		bottom: calc(100% + 0.35rem);
 		left: 50%;
 		transform: translateX(-50%);
-		font-size: 0.72rem;
+		font-size: 0.75rem;
 		font-weight: 600;
 		color: var(--color-success-strong);
 		background: var(--color-background-object);

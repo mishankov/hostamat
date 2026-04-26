@@ -103,9 +103,7 @@
 	}
 
 	.path {
-		font-family:
-			ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
-			monospace;
+		font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
 		display: inline-block;
 		font-size: 0.93em;
 		font-weight: 600;

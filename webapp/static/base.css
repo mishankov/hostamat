@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700&family=Martian+Mono:wght@400;500&display=swap');
 
 * {
 	margin: 0;
@@ -9,8 +9,17 @@
 :root[data-theme='light'] {
 	color-scheme: light;
 
-	--font-body: 'Onest', 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-	--font-display: 'Onest', 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--font-display: 'Overpass', 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--font-body: 'Sora', 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--font-mono: 'Martian Mono', 'SFMono-Regular', ui-monospace, Menlo, Monaco, Consolas, monospace;
+
+	/* ===== TYPE SCALE ===== */
+	--font-size-caption: 0.75rem;
+	--font-size-label: 0.8125rem;
+	--font-size-body: 1rem;
+	--font-size-subheading: 1.25rem;
+	--font-size-heading: 1.5rem;
+	--font-size-display: 1.875rem;
 
 	/* ===== BACKGROUND HIERARCHY — warm off-whites ===== */
 	--color-background: #f8f7f4;
@@ -200,9 +209,10 @@ body {
 	background-attachment: fixed;
 	color: var(--color-text-regular);
 	font-family: var(--font-body);
-	font-size: 15px;
-	line-height: 1.55;
+	font-size: var(--font-size-body);
+	line-height: 1.6;
 	letter-spacing: -0.005em;
+	font-kerning: normal;
 	transition:
 		background 180ms ease-out,
 		color 160ms ease-out;
@@ -221,18 +231,19 @@ h6 {
 	letter-spacing: -0.02em;
 	line-height: 1.15;
 	text-wrap: balance;
+	font-kerning: normal;
 }
 
 h1 {
-	font-size: clamp(1.75rem, 4vw, 2.75rem);
+	font-size: var(--font-size-display);
 }
 
 h2 {
-	font-size: clamp(1.4rem, 2.8vw, 1.9rem);
+	font-size: var(--font-size-heading);
 }
 
 h3 {
-	font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+	font-size: var(--font-size-subheading);
 }
 
 p,
@@ -323,7 +334,7 @@ main.page-shell {
 
 .data-label {
 	font-family: var(--font-body);
-	font-size: 0.72rem;
+	font-size: var(--font-size-caption);
 	font-weight: 600;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;

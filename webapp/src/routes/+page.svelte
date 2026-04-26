@@ -270,7 +270,7 @@
 			-apple-system,
 			system-ui,
 			sans-serif;
-		font-size: 0.68rem;
+		font-size: 0.75rem;
 		font-weight: 520;
 		letter-spacing: 0.01em;
 		color: var(--terminal-title-color);
@@ -289,7 +289,7 @@
 		gap: 0.3rem;
 		padding: 0.92rem 1.02rem;
 		font-family: var(--font-body);
-		font-size: clamp(0.58rem, 1.04vw, 0.9rem);
+		font-size: clamp(0.75rem, 1.04vw, 0.9rem);
 		line-height: 1.1;
 		letter-spacing: 0;
 		font-kerning: none;
@@ -502,7 +502,7 @@
 
 	.step-number {
 		font-family: var(--font-display);
-		font-size: 0.8rem;
+		font-size: 0.75rem;
 		font-weight: 700;
 		letter-spacing: 0.1em;
 		color: var(--color-accent-strong);
@@ -515,13 +515,13 @@
 	}
 
 	.step-body h2 {
-		font-size: 1.3rem;
+		font-size: 1.25rem;
 		font-weight: 700;
 	}
 
 	.step-body p {
 		max-width: 32ch;
-		font-size: 0.92rem;
+		font-size: 0.875rem;
 		line-height: 1.5;
 	}
 
@@ -532,7 +532,7 @@
 		}
 
 		.hero-terminal {
-			font-size: clamp(0.56rem, 1.5vw, 0.78rem);
+			font-size: clamp(0.75rem, 1.5vw, 0.78rem);
 			line-height: 1.04;
 		}
 
@@ -570,11 +570,11 @@
 
 		.terminal-title {
 			max-inline-size: calc(100% - 6rem);
-			font-size: 0.63rem;
+			font-size: 0.75rem;
 		}
 
 		.hero-terminal {
-			font-size: clamp(0.56rem, 1.95vw, 0.68rem);
+			font-size: clamp(0.75rem, 1.95vw, 0.78rem);
 			line-height: 1;
 		}
 
