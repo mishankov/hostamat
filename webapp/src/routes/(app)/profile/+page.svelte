@@ -51,7 +51,7 @@
 
 	<div class="profile-data">
 		<div class="data-row">
-			<span class="data-label">login:</span>
+			<span class="data-label">логин:</span>
 			<div class="profile-data-value">
 				<span>{data.username}</span>
 				<CopyButton textToCopy={data.username} label="Скопировать логин Яндекса" size={15} />

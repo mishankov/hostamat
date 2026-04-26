@@ -98,7 +98,7 @@
 								onclick={() => (menuOpen = !menuOpen)}
 								aria-controls="primary-navigation"
 								aria-expanded={menuOpen}
-								aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
+								aria-label={menuOpen ? 'Закрыть навигацию' : 'Открыть навигацию'}
 							>
 								<span class="burger" aria-hidden="true"></span>
 							</button>
@@ -107,7 +107,7 @@
 						<nav id="primary-navigation" class={[menuOpen && 'open']}>
 							<Link href={resolve('/dashboard/sites')} onclick={closeMenu}>Дашборд</Link>
 							<Link href={resolve('/about')} onclick={closeMenu}>О сервисе</Link>
-							<Link href={resolve('/faq')} onclick={closeMenu}>FAQ</Link>
+							<Link href={resolve('/faq')} onclick={closeMenu}>Вопросы</Link>
 						</nav>
 
 						<div class={['user-info', menuOpen && 'open']}>

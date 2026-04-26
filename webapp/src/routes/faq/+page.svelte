@@ -7,13 +7,13 @@
 </script>
 
 <svelte:head>
-		<title>FAQ | Хостамат</title>
+		<title>Вопросы | Хостамат</title>
 		<meta name="description" content="Часто задаваемые вопросы о статическом хостинге Хостамат: загрузка файлов, поддомены, ограничения." />
 	</svelte:head>
 
 <main class="page-shell">
 	<div class={['page-content', 'faq', theme.current === 'dark' && 'theme-dark']}>
-		<h1>FAQ</h1>
+		<h1>Вопросы и ответы</h1>
 
 		<section class="qa">
 			<h2>После загрузки сайта возвращается 404</h2>

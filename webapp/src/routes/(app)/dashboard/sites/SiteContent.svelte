@@ -43,11 +43,11 @@
 <div class={['site-content', theme.current === 'dark' && 'theme-dark']}>
 	<div class="site-data">
 		<div class="data-row">
-			<span class="data-label">name:</span>
+			<span class="data-label">название:</span>
 			<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
 		</div>
 		<div class="data-row">
-			<span class="data-label">domain:</span>
+			<span class="data-label">домен:</span>
 			<span class="subdomain-value" title="Поддомен">{subdomain}</span>
 		</div>
 	</div>
