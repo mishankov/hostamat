@@ -166,13 +166,13 @@
 	}
 
 	dialog[open] {
-		animation: fadein 180ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+		animation: modal-panel-in 220ms var(--ease-out-quart) forwards;
 	}
 
-	@keyframes fadein {
+	@keyframes modal-panel-in {
 		0% {
 			opacity: 0;
-			transform: translateX(-50%) translateY(-50%) scale(0.95);
+			transform: translateX(-50%) translateY(-50%) scale(0.96);
 		}
 		100% {
 			opacity: 1;
@@ -183,6 +183,7 @@
 	::backdrop {
 		background-color: hsl(210 28% 10% / 0.35);
 		backdrop-filter: blur(2px);
+		animation: backdrop-in 200ms var(--ease-out-quart) forwards;
 	}
 
 	div.modal-panel {

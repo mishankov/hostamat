@@ -151,11 +151,11 @@
 		cursor: pointer;
 		outline: none;
 		transition:
-			background-color 140ms ease,
-			border-color 140ms ease,
-			box-shadow 140ms ease,
-			color 140ms ease,
-			transform 140ms ease;
+			background-color 140ms var(--ease-out-quart),
+			border-color 140ms var(--ease-out-quart),
+			box-shadow 140ms var(--ease-out-quart),
+			color 140ms var(--ease-out-quart),
+			transform 120ms var(--ease-out-quart);
 	}
 
 	.button::before {
@@ -189,6 +189,7 @@
 		border-color: var(--button-hover-border);
 		box-shadow: var(--button-shadow);
 		color: var(--button-hover-text);
+		transform: translateY(-1px);
 	}
 
 	.button:active:not(:disabled):not([aria-disabled='true']) {
@@ -196,7 +197,8 @@
 		border-color: var(--button-active-border);
 		box-shadow: var(--button-active-shadow);
 		color: var(--button-active-text);
-		transform: translateY(1px);
+		transform: translateY(1px) scale(0.98);
+		transition-duration: 80ms;
 	}
 
 	.button:active:not(:disabled):not([aria-disabled='true'])::before {

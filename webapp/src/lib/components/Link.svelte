@@ -44,7 +44,7 @@
 		text-decoration: none;
 		text-decoration-thickness: 1px;
 		text-underline-offset: 3px;
-		transition: color 160ms ease-out;
+		transition: color 160ms var(--ease-out-quart);
 		font-weight: 500;
 	}
 
@@ -54,8 +54,25 @@
 
 	a:hover {
 		transition-duration: 90ms;
-		text-decoration: underline;
 		color: var(--color-accent-strong);
+	}
+
+	a.underline:hover {
+		text-decoration: underline;
+	}
+
+	a:not(.underline) {
+		background-image: linear-gradient(currentColor, currentColor);
+		background-position: 0% 100%;
+		background-repeat: no-repeat;
+		background-size: 0% 1px;
+		transition:
+			color 160ms var(--ease-out-quart),
+			background-size 220ms var(--ease-out-quart);
+	}
+
+	a:not(.underline):hover {
+		background-size: 100% 1px;
 	}
 
 	a:visited {
@@ -63,6 +80,8 @@
 	}
 
 	a:focus-visible {
-		text-decoration: underline;
+		outline: none;
+		box-shadow: var(--focus-ring);
+		border-radius: var(--radius-sm);
 	}
 </style>

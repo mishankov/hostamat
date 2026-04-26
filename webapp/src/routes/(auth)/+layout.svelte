@@ -22,6 +22,7 @@
 		border-radius: var(--radius-lg);
 		background: var(--color-background-object);
 		box-shadow: var(--shadow-lg);
+		animation: fade-in-scale 320ms var(--ease-out-quart) both;
 	}
 
 	.form {

@@ -348,14 +348,26 @@
 		padding: var(--space-xl);
 		text-align: center;
 		cursor: pointer;
-		transition: var(--transition);
+		transition:
+			background-color 180ms var(--ease-out-quart),
+			border-color 180ms var(--ease-out-quart),
+			transform 180ms var(--ease-out-quart),
+			box-shadow 180ms var(--ease-out-quart);
 		background: var(--color-accent-surface);
+	}
+
+	.drop-zone:hover {
+		border-color: var(--color-accent-strong);
+		background: color-mix(in hsl, var(--color-accent-surface) 80%, var(--color-background-object));
 	}
 
 	.drop-zone.drag-over {
 		border-color: var(--color-accent-strong);
 		background: var(--color-background-object);
 		border-style: solid;
+		transform: scale(1.01);
+		box-shadow: var(--shadow-md);
+		animation: pulse-subtle 1.4s var(--ease-out-quart) infinite;
 	}
 
 	.drop-zone:focus-visible {
@@ -422,7 +434,23 @@
 
 	.selected-files-shell {
 		width: 100%;
+		animation: fade-in-scale 220ms var(--ease-out-quart) both;
 	}
+
+	.file-item {
+		animation: file-item-in 200ms var(--ease-out-quart) both;
+	}
+
+	.file-item:nth-child(1) { animation-delay: 0ms; }
+	.file-item:nth-child(2) { animation-delay: 30ms; }
+	.file-item:nth-child(3) { animation-delay: 60ms; }
+	.file-item:nth-child(4) { animation-delay: 90ms; }
+	.file-item:nth-child(5) { animation-delay: 120ms; }
+	.file-item:nth-child(6) { animation-delay: 150ms; }
+	.file-item:nth-child(7) { animation-delay: 180ms; }
+	.file-item:nth-child(8) { animation-delay: 210ms; }
+	.file-item:nth-child(9) { animation-delay: 240ms; }
+	.file-item:nth-child(10) { animation-delay: 270ms; }
 
 	.actions {
 		display: flex;

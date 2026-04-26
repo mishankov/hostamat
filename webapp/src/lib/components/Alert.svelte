@@ -73,6 +73,7 @@
 <style>
 	.alert {
 		width: 100%;
+		animation: fade-in-scale 220ms var(--ease-out-quart) both;
 	}
 
 	.alert-card-body {

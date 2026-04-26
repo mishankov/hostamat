@@ -64,7 +64,7 @@
 	]}
 >
 	{#if cookieConsent !== 'notset' && cookieConsent !== 'true'}
-		<div class="cookie">
+		<div class="cookie" role="dialog" aria-label="Уведомление о cookie">
 			<div class="cookie-inner">
 				<p>
 					Мы используем cookie. Подробности в <Link href="/cookies" target="_blank" alwaysUnderline
@@ -189,7 +189,7 @@
 		width: var(--layout-width);
 		display: grid;
 		grid-template-columns: auto 1fr auto;
-		align-items: center;
+		align-items: baseline;
 		gap: var(--space-lg);
 		padding: var(--space-md) var(--space-lg);
 	}
@@ -198,6 +198,20 @@
 		display: flex;
 		align-items: center;
 		gap: var(--space-sm);
+	}
+
+	.brand-group :global(a) {
+		color: var(--color-text-regular) !important;
+		background-image: none !important;
+		transition: opacity 140ms ease-out !important;
+		text-decoration: none !important;
+	}
+
+	.brand-group :global(a:hover) {
+		color: var(--color-text-regular) !important;
+		opacity: 0.8;
+		text-decoration: none !important;
+		background-image: none !important;
 	}
 
 	.logo {
@@ -217,16 +231,17 @@
 		gap: var(--space-sm);
 	}
 
-	:global(nav a) {
+	:global(#primary-navigation a) {
 		padding: 0.4rem 0.7rem;
 		border-radius: var(--radius-sm);
 		font-weight: 500;
 		font-size: 0.88rem;
 		color: var(--color-text-secondary);
 		transition: background 140ms ease-out, color 140ms ease-out;
+		text-decoration: none;
 	}
 
-	:global(nav a:hover) {
+	:global(#primary-navigation a:hover) {
 		background: var(--color-neutral-surface);
 		color: var(--color-text-regular);
 		text-decoration: none;
@@ -296,6 +311,7 @@
 		border: var(--border-regular);
 		border-radius: var(--radius-lg);
 		box-shadow: var(--shadow-lg);
+		animation: cookie-in 300ms var(--ease-out-quart) both;
 	}
 
 	.cookie-inner {
@@ -381,6 +397,7 @@
 
 		nav.open {
 			display: flex;
+			animation: fade-in-up 200ms var(--ease-out-quart) both;
 		}
 
 		.user-info {
@@ -391,6 +408,7 @@
 
 		.user-info.open {
 			display: flex;
+			animation: fade-in-up 200ms var(--ease-out-quart) both;
 		}
 
 		.footer-inner {

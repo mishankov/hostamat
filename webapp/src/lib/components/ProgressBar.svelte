@@ -3,7 +3,7 @@
 	const isFilledBehindLabel = $derived(uploadProgress >= 50);
 </script>
 
-<div class="progress-bar">
+<div class="progress-bar" class:is-complete={uploadProgress >= 100}>
 	<p class={[!isFilledBehindLabel && 'on-surface', isFilledBehindLabel && 'on-fill']}>
 		{Math.round(uploadProgress)}%
 	</p>
@@ -27,7 +27,11 @@
 		height: 100%;
 		background: var(--color-accent-strong);
 		border-radius: 0;
-		transition: var(--transition);
+		transition: width 200ms var(--ease-out-quart);
+	}
+
+	.progress-bar.is-complete .progress-fill {
+		animation: progress-glow 600ms var(--ease-out-quart) both;
 	}
 
 	p {

@@ -60,10 +60,11 @@
 		color: var(--color-text-regular);
 
 		transition:
-			color 160ms ease-out,
-			background-color 160ms ease-out,
-			border-color 160ms ease-out,
-			box-shadow 160ms ease-out;
+			color 140ms var(--ease-out-quart),
+			background-color 140ms var(--ease-out-quart),
+			border-color 140ms var(--ease-out-quart),
+			box-shadow 140ms var(--ease-out-quart),
+			transform 120ms var(--ease-out-quart);
 	}
 
 	button.grouped {
@@ -77,6 +78,12 @@
 		border-color: var(--color-accent-border);
 		cursor: pointer;
 		box-shadow: var(--shadow-sm);
+		transform: translateY(-1px);
+	}
+
+	button:active:enabled {
+		transform: translateY(1px) scale(0.95);
+		transition-duration: 80ms;
 	}
 
 	button.danger:hover:enabled {
@@ -87,10 +94,16 @@
 		cursor: pointer;
 	}
 
+	button.danger:active:enabled {
+		transform: translateY(1px) scale(0.95);
+		transition-duration: 80ms;
+	}
+
 	button:disabled {
 		background-color: var(--color-disabled-surface);
 		border-color: var(--color-disabled-border);
 		color: var(--color-disabled-text);
 		cursor: not-allowed;
+		transform: none;
 	}
 </style>

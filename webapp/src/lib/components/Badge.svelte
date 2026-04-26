@@ -27,5 +27,7 @@
 		color: var(--color-accent-text);
 		background-color: var(--color-accent-surface);
 		border-color: var(--color-accent-border);
+
+		animation: fade-in-scale 200ms var(--ease-out-quart) both;
 	}
 </style>

@@ -139,10 +139,15 @@
 		font-size: 0.92rem;
 		font-weight: 500;
 		transition:
-			background-color 140ms ease-out,
-			border-color 140ms ease-out,
-			box-shadow 140ms ease-out,
-			color 140ms ease-out;
+			background-color 180ms var(--ease-out-quart),
+			border-color 180ms var(--ease-out-quart),
+			box-shadow 180ms var(--ease-out-quart),
+			color 180ms var(--ease-out-quart),
+			transform 120ms var(--ease-out-quart);
+	}
+
+	.nav-link:hover {
+		transform: translateX(2px);
 	}
 
 	.nav-link:hover {

@@ -234,6 +234,25 @@
 		border-radius: var(--radius-lg);
 		background: var(--color-background-object);
 		box-shadow: var(--shadow-lg);
+		animation: menu-panel-in 180ms var(--ease-out-quart) both;
+		transform-origin: top right;
+	}
+
+	.menu-panel > * {
+		opacity: 0;
+		animation: menu-row-in 160ms var(--ease-out-quart) forwards;
+	}
+
+	.menu-panel > *:nth-child(1) {
+		animation-delay: 30ms;
+	}
+
+	.menu-panel > *:nth-child(2) {
+		animation-delay: 60ms;
+	}
+
+	.menu-panel > *:nth-child(3) {
+		animation-delay: 90ms;
 	}
 
 	.sidebar .menu-panel {

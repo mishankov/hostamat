@@ -64,13 +64,16 @@
 		border-radius: var(--radius-md);
 		border-color: var(--color-border);
 
-		transition: var(--transition);
+		transition:
+			border-color 180ms var(--ease-out-quart),
+			box-shadow 180ms var(--ease-out-quart),
+			background-color 180ms var(--ease-out-quart);
 	}
 
 	input:focus {
 		outline: none;
 		border-color: var(--color-accent-border);
-		box-shadow: var(--focus-ring);
+		box-shadow: var(--focus-ring), 0 0 0 1px var(--color-accent-border);
 	}
 
 	input::placeholder {

@@ -54,6 +54,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-xl);
+		animation: fade-in-scale 320ms var(--ease-out-quart) both;
 	}
 
 	.error-content {

@@ -78,5 +78,6 @@
 		white-space: nowrap;
 		pointer-events: none;
 		z-index: 1;
+		animation: tooltip-in 180ms var(--ease-out-quart) both;
 	}
 </style>
