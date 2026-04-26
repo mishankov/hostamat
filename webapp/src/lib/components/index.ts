@@ -3,6 +3,7 @@ import Alert from './Alert.svelte';
 import Badge from './Badge.svelte';
 import Button from './Button.svelte';
 import Card from './Card.svelte';
+import CopyButton from './CopyButton.svelte';
 import Details from './Details.svelte';
 import Error from './Error.svelte';
 import IconButton from './IconButton.svelte';
@@ -14,6 +15,7 @@ import ProgressBar from './ProgressBar.svelte';
 import Separator from './Separator.svelte';
 import Success from './Success.svelte';
 import ThemeToggle from './ThemeToggle.svelte';
+import Toolbar from './Toolbar.svelte';
 
 export {
 	AccountMenu,
@@ -21,6 +23,7 @@ export {
 	Badge,
 	Button,
 	Card,
+	CopyButton,
 	Details,
 	Error,
 	IconButton,
@@ -31,5 +34,6 @@ export {
 	Link,
 	Separator,
 	Success,
-	ThemeToggle
+	ThemeToggle,
+	Toolbar
 };

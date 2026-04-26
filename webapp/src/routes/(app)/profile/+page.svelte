@@ -1,16 +1,12 @@
 <script lang="ts">
 	import { navigateAfterAuthChange } from '$lib/auth/navigation';
-	import { onDestroy } from 'svelte';
-	import { Alert, Button, Card, IconButton, Modal } from '$lib/components';
-	import { Copy } from '$lib/icons';
+	import { Alert, Button, Card, CopyButton, Modal, Toolbar } from '$lib/components';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
 	let errorMessage = $state('');
 	let deleteAccountModal = $state<Modal>();
-	let loginCopied = $state(false);
-	let copyTimer: ReturnType<typeof setTimeout> | null = null;
 
 	const deleteAccountAction = async () => {
 		errorMessage = '';
@@ -34,35 +30,12 @@
 			deleteAccountModal?.close();
 		}
 	};
-
-	const copyLogin = async () => {
-		try {
-			await navigator.clipboard.writeText(data.username);
-			loginCopied = true;
-
-			if (copyTimer) {
-				clearTimeout(copyTimer);
-			}
-
-			copyTimer = setTimeout(() => {
-				loginCopied = false;
-			}, 1400);
-		} catch {
-			loginCopied = false;
-		}
-	};
-
-	onDestroy(() => {
-		if (copyTimer) {
-			clearTimeout(copyTimer);
-		}
-	});
 </script>
 
 <svelte:head>
-		<title>Профиль | Хостамат</title>
-		<meta name="description" content="Управление учётной записью и настройками профиля." />
-	</svelte:head>
+	<title>Профиль | Хостамат</title>
+	<meta name="description" content="Управление учётной записью и настройками профиля." />
+</svelte:head>
 
 <div class="profile">
 	{#if errorMessage}
@@ -81,14 +54,9 @@
 			<span class="data-label">login:</span>
 			<div class="profile-data-value">
 				<span>{data.username}</span>
-				<IconButton label="Скопировать логин Яндекса" onclick={copyLogin}>
-					<Copy size={15} />
-				</IconButton>
+				<CopyButton textToCopy={data.username} label="Скопировать логин Яндекса" size={15} />
 			</div>
 		</div>
-		{#if loginCopied}
-			<span class="copy-feedback" aria-live="polite">[copied]</span>
-		{/if}
 	</div>
 
 	<Card tone="danger">
@@ -165,12 +133,6 @@
 		flex-direction: row;
 		gap: var(--space-xs);
 		align-items: center;
-	}
-
-	.copy-feedback {
-		font-size: 0.78rem;
-		font-weight: 600;
-		color: var(--color-success-strong);
 	}
 
 	.danger-zone {

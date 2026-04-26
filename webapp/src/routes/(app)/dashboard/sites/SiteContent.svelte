@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
-	import { Alert, Button, IconButton, Link, Modal } from '$lib/components';
+	import { Alert, Button, CopyButton, IconButton, Link, Modal, Toolbar } from '$lib/components';
 	import { useThemeController } from '$lib/theme/controller.svelte';
-	import { Copy, Trash, Upload } from '$lib/icons';
+	import { Trash, Upload } from '$lib/icons';
 
 	import FileUploader from './components/FileUploader.svelte';
 	import UpdateSite from './UpdateSite.svelte';
@@ -29,8 +28,6 @@
 	let uploadModal = $state<Modal>();
 	let deleteModal = $state<Modal>();
 	let fileUploader = $state<FileUploader>();
-	let urlCopied = $state(false);
-	let copyTimer: ReturnType<typeof setTimeout> | null = null;
 
 	const uploadTitleId = $derived(`upload-site-title-${site.id}`);
 	const uploadDescId = $derived(`upload-site-description-${site.id}`);
@@ -41,29 +38,6 @@
 	const resetState = () => {
 		loading = false;
 	};
-
-	const copySiteUrl = async () => {
-		try {
-			await navigator.clipboard.writeText(`https://${site.domain}`);
-			urlCopied = true;
-
-			if (copyTimer) {
-				clearTimeout(copyTimer);
-			}
-
-			copyTimer = setTimeout(() => {
-				urlCopied = false;
-			}, 1400);
-		} catch {
-			urlCopied = false;
-		}
-	};
-
-	onDestroy(() => {
-		if (copyTimer) {
-			clearTimeout(copyTimer);
-		}
-	});
 </script>
 
 <div class={['site-content', theme.current === 'dark' && 'theme-dark']}>
@@ -78,45 +52,43 @@
 		</div>
 	</div>
 
-	{#if urlCopied}
-		<span class="copy-feedback" aria-live="polite">[copied]</span>
-	{/if}
+	<Toolbar>
+		<UpdateSite
+			siteName={site.name}
+			siteId={site.id}
+			iconButtonGrouped={true}
+			onsuccess={async () => {
+				resetState();
+				await onsiteupdate();
+			}}
+		/>
 
-	<div class="site-toolbar-shell">
-		<div class="site-toolbar">
-			<UpdateSite
-				siteName={site.name}
-				siteId={site.id}
-				iconButtonGrouped={true}
-				onsuccess={async () => {
-					resetState();
-					await onsiteupdate();
-				}}
-			/>
+		<IconButton
+			grouped
+			label="Загрузить сайт"
+			onclick={() => uploadModal?.open()}
+			title="Загрузить сайт"
+		>
+			<Upload size={25} />
+		</IconButton>
+		<CopyButton
+			grouped
+			textToCopy={`https://${site.domain}`}
+			label="Скопировать URL"
+			title="Скопировать URL"
+			size={25}
+		/>
 
-			<IconButton
-				grouped
-				label="Загрузить сайт"
-				onclick={() => uploadModal?.open()}
-				title="Загрузить сайт"
-			>
-				<Upload size={25} />
-			</IconButton>
-			<IconButton grouped label="Скопировать URL" title="Скопировать URL" onclick={copySiteUrl}>
-				<Copy size={25} />
-			</IconButton>
-
-			<IconButton
-				grouped
-				label="Удалить сайт"
-				title="Удалить сайт"
-				tone="danger"
-				onclick={() => deleteModal?.open()}
-			>
-				<Trash size={25} />
-			</IconButton>
-		</div>
-	</div>
+		<IconButton
+			grouped
+			label="Удалить сайт"
+			title="Удалить сайт"
+			tone="danger"
+			onclick={() => deleteModal?.open()}
+		>
+			<Trash size={25} />
+		</IconButton>
+	</Toolbar>
 
 	<Modal
 		bind:this={uploadModal}
@@ -214,27 +186,6 @@
 		overflow-wrap: anywhere;
 	}
 
-	.copy-feedback {
-		font-size: 0.78rem;
-		font-weight: 600;
-		color: var(--color-success-strong);
-	}
-
-	.site-toolbar-shell {
-		width: fit-content;
-		min-width: 0;
-	}
-
-	.site-toolbar {
-		display: flex;
-		padding: var(--space-xs);
-		gap: var(--space-xs);
-		border: var(--border-width) var(--border-style) var(--color-border);
-		border-radius: var(--radius-md);
-		background: var(--color-background-object);
-		box-shadow: var(--shadow-sm);
-	}
-
 	.upload-modal {
 		display: flex;
 		flex-direction: column;
@@ -260,15 +211,6 @@
 		.site-content {
 			grid-template-columns: 1fr;
 			gap: var(--space-md);
-		}
-
-		.site-toolbar-shell {
-			width: 100%;
-		}
-
-		.site-toolbar {
-			justify-content: space-between;
-			gap: var(--space-xs);
 		}
 	}
 </style>
