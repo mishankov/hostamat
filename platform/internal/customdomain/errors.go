@@ -3,13 +3,14 @@ package customdomain
 import "errors"
 
 var (
-	errInvalidHostname = errors.New("Укажите корректный домен без схемы и пути")
-	errMissingHostname = errors.New("Домен обязателен")
-	errHostnameTaken   = errors.New("Этот домен уже подключен к другому сайту")
-	errAccessDenied    = errors.New("Доступ запрещен")
-	errNotFound        = errors.New("Домен не найден")
-	errMissingSiteID   = errors.New("Отсутствует ID сайта")
-	errMissingDomainID = errors.New("Отсутствует ID домена")
+	errInvalidHostname      = errors.New("Укажите корректный домен без схемы и пути")
+	errMissingHostname      = errors.New("Домен обязателен")
+	errApexHostnameRejected = errors.New("Подключите поддомен, например www.example.com или docs.example.com")
+	errHostnameTaken        = errors.New("Этот домен уже подключен к другому сайту")
+	errAccessDenied         = errors.New("Доступ запрещен")
+	errNotFound             = errors.New("Домен не найден")
+	errMissingSiteID        = errors.New("Отсутствует ID сайта")
+	errMissingDomainID      = errors.New("Отсутствует ID домена")
 )
 
 type errorCode = string

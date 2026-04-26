@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"net"
 	"testing"
 	"time"
 
@@ -58,6 +57,34 @@ func TestCreateNormalizesHostnameAndRejectsDuplicates(t *testing.T) {
 	_, err = service.Create(testContext("user-1"), "site-1", "www.example.com")
 	if err == nil || err.Error() != "Этот домен уже подключен к другому сайту" {
 		t.Fatalf("Create() duplicate error = %v", err)
+	}
+}
+
+func TestCreateRejectsApexHostname(t *testing.T) {
+	t.Parallel()
+
+	siteRepo := &siteRepositoryMock{
+		sites: map[string]*site.Site{
+			"site-1": {
+				Id:     "site-1",
+				User:   "user-1",
+				Name:   "Docs",
+				Domain: "docs.hostamat.test",
+			},
+		},
+	}
+
+	service := customdomain.NewService(
+		&repositoryMock{},
+		siteRepo,
+		&hostSyncMock{},
+		&dnsLookupMock{},
+		customdomain.DNSConfig{VerificationPrefix: "_hostamat"},
+	)
+
+	_, err := service.Create(testContext("user-1"), "site-1", "example.com")
+	if err == nil || err.Error() != "Подключите поддомен, например www.example.com или docs.example.com" {
+		t.Fatalf("Create() apex error = %v", err)
 	}
 }
 
@@ -132,7 +159,7 @@ func TestVerifyStoresActionableFailure(t *testing.T) {
 				Id:                "domain-1",
 				Site:              "site-1",
 				User:              "user-1",
-				Hostname:          "example.com",
+				Hostname:          "www.example.com",
 				Type:              customdomain.DomainTypeCustom,
 				Status:            customdomain.DomainStatusPending,
 				VerificationToken: "token",
@@ -156,11 +183,12 @@ func TestVerifyStoresActionableFailure(t *testing.T) {
 		repo,
 		siteRepo,
 		&hostSyncMock{},
-		&dnsLookupMock{},
-		customdomain.DNSConfig{
-			VerificationPrefix: "_hostamat",
-			ApexIPv4Targets:    []string{"192.0.2.10"},
+		&dnsLookupMock{
+			txt: map[string][]string{
+				"_hostamat.www.example.com": {"token"},
+			},
 		},
+		customdomain.DNSConfig{VerificationPrefix: "_hostamat"},
 	)
 
 	record, err := service.Verify(testContext("user-1"), "domain-1")
@@ -395,7 +423,6 @@ func (m *hostSyncMock) Remove(_ context.Context, host string) error {
 type dnsLookupMock struct {
 	txt   map[string][]string
 	cname map[string]string
-	ip    map[string][]net.IPAddr
 }
 
 func (m *dnsLookupMock) LookupTXT(_ context.Context, name string) ([]string, error) {
@@ -416,17 +443,6 @@ func (m *dnsLookupMock) LookupCNAME(_ context.Context, host string) (string, err
 	value, ok := m.cname[host]
 	if !ok {
 		return "", errors.New("not found")
-	}
-	return value, nil
-}
-
-func (m *dnsLookupMock) LookupIPAddr(_ context.Context, host string) ([]net.IPAddr, error) {
-	if m.ip == nil {
-		return nil, errors.New("not found")
-	}
-	value, ok := m.ip[host]
-	if !ok {
-		return nil, errors.New("not found")
 	}
 	return value, nil
 }

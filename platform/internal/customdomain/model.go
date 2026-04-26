@@ -55,7 +55,6 @@ type DomainRecord struct {
 	Hostname              string          `json:"hostname"`
 	Type                  DomainType      `json:"type"`
 	Status                DomainStatus    `json:"status"`
-	IsApex                bool            `json:"isApex"`
 	VerificationToken     string          `json:"verificationToken,omitempty"`
 	LastVerificationError string          `json:"lastVerificationError,omitempty"`
 	LastCheckedAt         *time.Time      `json:"lastCheckedAt,omitempty"`

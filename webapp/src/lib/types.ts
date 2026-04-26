@@ -11,7 +11,7 @@ export type DomainType = 'generated' | 'custom';
 export type DomainStatus = 'pending' | 'verification_failed' | 'verified' | 'active';
 
 export type DomainDNSRecord = {
-	type: 'TXT' | 'CNAME' | 'A' | 'AAAA';
+	type: 'TXT' | 'CNAME';
 	name: string;
 	value: string;
 };
@@ -29,7 +29,6 @@ export type DomainRecord = {
 	hostname: string;
 	type: DomainType;
 	status: DomainStatus;
-	isApex: boolean;
 	verificationToken?: string;
 	lastVerificationError?: string;
 	lastCheckedAt?: string;

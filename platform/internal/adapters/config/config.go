@@ -3,7 +3,6 @@ package config
 import (
 	"log/slog"
 	"os"
-	"strings"
 )
 
 type caddy struct {
@@ -44,8 +43,6 @@ type auth struct {
 
 type customDomains struct {
 	VerificationPrefix string
-	ApexIPv4Targets    []string
-	ApexIPv6Targets    []string
 }
 
 type Config struct {
@@ -94,8 +91,6 @@ func New() *Config {
 		},
 		CustomDomains: customDomains{
 			VerificationPrefix: fallbackEnv("HOSTAMAT_CUSTOM_DOMAIN_TXT_PREFIX", "_hostamat"),
-			ApexIPv4Targets:    splitCSV(os.Getenv("HOSTAMAT_CUSTOM_DOMAIN_A_RECORDS")),
-			ApexIPv6Targets:    splitCSV(os.Getenv("HOSTAMAT_CUSTOM_DOMAIN_AAAA_RECORDS")),
 		},
 		Logger: logger{
 			Level: func() slog.Level {
@@ -118,23 +113,4 @@ func fallbackEnv(name, fallback string) string {
 	}
 
 	return fallback
-}
-
-func splitCSV(value string) []string {
-	if value == "" {
-		return nil
-	}
-
-	items := strings.Split(value, ",")
-	result := make([]string, 0, len(items))
-	for _, item := range items {
-		item = strings.TrimSpace(item)
-		if item == "" {
-			continue
-		}
-
-		result = append(result, item)
-	}
-
-	return result
 }

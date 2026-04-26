@@ -50,7 +50,7 @@ func respondWithError(w http.ResponseWriter, err error) {
 			ErrorCode:    errorCodeMissingHostname,
 			ErrorMessage: err.Error(),
 		})
-	case errors.Is(err, errInvalidHostname):
+	case errors.Is(err, errInvalidHostname), errors.Is(err, errApexHostnameRejected):
 		w.WriteHeader(http.StatusBadRequest)
 		_ = json.NewEncoder(w).Encode(handlerError{
 			ErrorCode:    errorCodeInvalidHostname,

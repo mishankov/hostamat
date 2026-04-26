@@ -22,7 +22,8 @@ Durable decisions that apply across all phases:
 - **Verification**:
   Verification is DNS-based and requires both ownership proof and routing proof.
   Ownership proof comes from a per-domain TXT token.
-  Routing proof depends on hostname shape: subdomain-style hostnames use CNAME guidance to the site's generated Hostamat hostname; apex hostnames use environment-driven A and optional AAAA targets.
+  Custom domains are limited to subdomains such as `www.example.com` or `docs.example.com`; apex/root domains such as `example.com` are out of scope.
+  Routing proof uses CNAME guidance to the site's generated Hostamat hostname.
   Verification logic should sit behind a service boundary so it can be reused later by schedulers or async jobs.
 - **Proxy integration**:
   Caddy configuration is not the source of truth for domain state.
@@ -65,12 +66,12 @@ Create first-class custom-domain persistence and a service/API surface that lets
 
 ### What to build
 
-Add manual verification for pending domains. The slice should return DNS instructions tailored to apex versus subdomain hostnames, allow the user to trigger verification on demand, and persist actionable verification results. At the end of this phase the system knows whether a domain is ready for activation, but verified domains do not need to be publicly served yet.
+Add manual verification for pending domains. The slice should return DNS instructions for TXT ownership proof and CNAME routing, allow the user to trigger verification on demand, and persist actionable verification results. At the end of this phase the system knows whether a domain is ready for activation, but verified domains do not need to be publicly served yet.
 
 ### Acceptance criteria
 
-- [ ] The dashboard and API expose DNS setup instructions that differ for apex and non-apex hostnames.
-- [ ] Verification checks both ownership TXT data and correct routing toward Hostamat's ingress targets.
+- [ ] The dashboard and API expose DNS setup instructions for supported subdomain hostnames.
+- [ ] Verification checks both ownership TXT data and CNAME routing toward the site's generated Hostamat hostname.
 - [ ] A user can retry verification after changing DNS without recreating the domain.
 - [ ] Verification failures are stored and returned as readable, actionable errors instead of generic failure states.
 - [ ] Successful verification transitions the domain into a verified-ready state without breaking the generated Hostamat fallback domain.

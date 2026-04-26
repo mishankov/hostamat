@@ -17,6 +17,30 @@
 	let selectedSiteId = $state('');
 	let errorMessage = $state('');
 
+	const validateSubdomainHostname = (value: string): string | null => {
+		const normalized = value.trim().toLowerCase().replace(/\.$/, '');
+
+		if (!normalized) {
+			return 'Поддомен обязателен';
+		}
+
+		if (normalized.includes('://') || /[/:@]/.test(normalized)) {
+			return 'Укажите поддомен без схемы и пути';
+		}
+
+		const labels = normalized.split('.');
+		if (labels.length < 3) {
+			return 'Подключите поддомен, например www.example.com или docs.example.com';
+		}
+
+		const validLabel = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+		if (!labels.every((label) => validLabel.test(label))) {
+			return 'Укажите корректный поддомен';
+		}
+
+		return null;
+	};
+
 	const resetState = () => {
 		selectedSiteId = sites[0]?.id ?? '';
 		hostname = '';
@@ -29,8 +53,9 @@
 			return;
 		}
 
-		if (!hostname.trim()) {
-			errorMessage = 'Домен обязателен';
+		const validationError = validateSubdomainHostname(hostname);
+		if (validationError) {
+			errorMessage = validationError;
 			return;
 		}
 
@@ -89,14 +114,14 @@
 
 		<Input
 			id="new-domain-hostname"
-			label="Домен"
-			placeholder="example.com"
+			label="Поддомен"
+			placeholder="www.example.com"
 			{errorMessage}
 			bind:value={hostname}
 		/>
 
 		<p class="modal-note">
-			После добавления в карточке домена появятся точные записи `TXT`, `CNAME`, `A` или `AAAA`.
+			После добавления в карточке поддомена появятся точные записи `TXT` и `CNAME`.
 		</p>
 
 		<div class="modal-actions">

@@ -78,8 +78,6 @@ func main() {
 	uploadSessionDomain := uploadsession.New(conn)
 	customDomain := customdomain.New(conn, siteRepository, hostSyncService, customdomain.DNSConfig{
 		VerificationPrefix: conf.CustomDomains.VerificationPrefix,
-		ApexIPv4Targets:    conf.CustomDomains.ApexIPv4Targets,
-		ApexIPv6Targets:    conf.CustomDomains.ApexIPv6Targets,
 	})
 	siteDomain := site.New(conn, subdomainDomain.Service, customDomain.Service, fileDomain.Service, uploadSessionDomain.Service)
 	sessionDomain := session.New(conn)

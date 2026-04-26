@@ -46,13 +46,10 @@ type hostSync interface {
 type dnsLookup interface {
 	LookupTXT(ctx context.Context, name string) ([]string, error)
 	LookupCNAME(ctx context.Context, host string) (string, error)
-	LookupIPAddr(ctx context.Context, host string) ([]net.IPAddr, error)
 }
 
 type DNSConfig struct {
 	VerificationPrefix string
-	ApexIPv4Targets    []string
-	ApexIPv6Targets    []string
 }
 
 type Service struct {
@@ -144,6 +141,15 @@ func (s *Service) Create(ctx context.Context, siteID, hostname string) (*DomainR
 	normalizedHostname, err := normalizeHostname(hostname)
 	if err != nil {
 		return nil, err
+	}
+
+	isApex, err := isApexHostname(normalizedHostname)
+	if err != nil {
+		return nil, err
+	}
+
+	if isApex {
+		return nil, errApexHostnameRejected
 	}
 
 	siteRecord, err := s.siteRepo.Get(ctx, siteID)
@@ -394,50 +400,20 @@ func (s *Service) verifyRouting(ctx context.Context, domain *CustomDomain, siteR
 		return err
 	}
 
-	if !isApex {
-		cname, err := s.dns.LookupCNAME(ctx, domain.Hostname)
-		if err != nil {
-			return fmt.Errorf("Укажите CNAME запись %s -> %s", domain.Hostname, siteRecord.Domain)
-		}
-
-		if normalizePublicHost(cname) != siteRecord.Domain {
-			return fmt.Errorf("CNAME запись %s должна указывать на %s", domain.Hostname, siteRecord.Domain)
-		}
-
-		return nil
+	if isApex {
+		return errApexHostnameRejected
 	}
 
-	expectedIPv4 := append([]string(nil), s.dnsCfg.ApexIPv4Targets...)
-	expectedIPv6 := append([]string(nil), s.dnsCfg.ApexIPv6Targets...)
-	if len(expectedIPv4) == 0 && len(expectedIPv6) == 0 {
-		return errors.New("Hostamat не настроен для проверки apex-доменов")
-	}
-
-	addresses, err := s.dns.LookupIPAddr(ctx, domain.Hostname)
+	cname, err := s.dns.LookupCNAME(ctx, domain.Hostname)
 	if err != nil {
-		return fmt.Errorf("Укажите A/AAAA записи для %s в соответствии с инструкцией Hostamat", domain.Hostname)
+		return fmt.Errorf("Укажите CNAME запись %s -> %s", domain.Hostname, siteRecord.Domain)
 	}
 
-	for _, address := range addresses {
-		value := address.IP.String()
-		if address.IP.To4() != nil {
-			for _, expected := range expectedIPv4 {
-				if value == expected {
-					return nil
-				}
-			}
-			continue
-		}
-
-		for _, expected := range expectedIPv6 {
-			if value == expected {
-				return nil
-			}
-		}
+	if normalizePublicHost(cname) != siteRecord.Domain {
+		return fmt.Errorf("CNAME запись %s должна указывать на %s", domain.Hostname, siteRecord.Domain)
 	}
 
-	want := append(expectedIPv4, expectedIPv6...)
-	return fmt.Errorf("A/AAAA записи %s должны указывать на один из адресов: %s", domain.Hostname, strings.Join(want, ", "))
+	return nil
 }
 
 func (s *Service) recordFromJoinedDomain(domain *DomainWithSite) DomainRecord {
@@ -457,7 +433,6 @@ func (s *Service) recordFromDomain(domain *CustomDomain, siteRecord *site.Site) 
 		Hostname:              domain.Hostname,
 		Type:                  domain.Type,
 		Status:                domain.Status,
-		IsApex:                mustIsApex(domain.Hostname),
 		VerificationToken:     domain.VerificationToken,
 		LastVerificationError: domain.LastVerificationError,
 		CreatedAt:             domain.CreatedAt,
@@ -485,38 +460,13 @@ func (s *Service) instructionsForDomain(hostname, siteDomain, token string) DNSI
 		Value: token,
 	}
 
-	isApex := mustIsApex(hostname)
-	if !isApex {
-		return DNSInstructions{
-			Ownership: ownership,
-			Routing: []DNSRecord{{
-				Type:  "CNAME",
-				Name:  hostname,
-				Value: siteDomain,
-			}},
-		}
-	}
-
-	routing := make([]DNSRecord, 0, len(s.dnsCfg.ApexIPv4Targets)+len(s.dnsCfg.ApexIPv6Targets))
-	for _, target := range s.dnsCfg.ApexIPv4Targets {
-		routing = append(routing, DNSRecord{
-			Type:  "A",
-			Name:  hostname,
-			Value: target,
-		})
-	}
-
-	for _, target := range s.dnsCfg.ApexIPv6Targets {
-		routing = append(routing, DNSRecord{
-			Type:  "AAAA",
-			Name:  hostname,
-			Value: target,
-		})
-	}
-
 	return DNSInstructions{
 		Ownership: ownership,
-		Routing:   routing,
+		Routing: []DNSRecord{{
+			Type:  "CNAME",
+			Name:  hostname,
+			Value: siteDomain,
+		}},
 	}
 }
 
@@ -591,11 +541,6 @@ func isApexHostname(hostname string) (bool, error) {
 	return hostname == rootDomain, nil
 }
 
-func mustIsApex(hostname string) bool {
-	isApex, _ := isApexHostname(hostname)
-	return isApex
-}
-
 type netResolver struct{}
 
 func (netResolver) LookupTXT(ctx context.Context, name string) ([]string, error) {
@@ -604,8 +549,4 @@ func (netResolver) LookupTXT(ctx context.Context, name string) ([]string, error)
 
 func (netResolver) LookupCNAME(ctx context.Context, host string) (string, error) {
 	return net.DefaultResolver.LookupCNAME(ctx, host)
-}
-
-func (netResolver) LookupIPAddr(ctx context.Context, host string) ([]net.IPAddr, error) {
-	return net.DefaultResolver.LookupIPAddr(ctx, host)
 }
