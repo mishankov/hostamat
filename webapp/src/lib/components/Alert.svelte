@@ -29,14 +29,14 @@
 
 	const iconColor = $derived.by(() => {
 		if (variant === 'error') {
-			return 'var(--color-danger-50)';
+			return 'var(--color-danger-text)';
 		}
 
 		if (variant === 'success') {
-			return 'var(--color-success-border)';
+			return 'var(--color-success-text)';
 		}
 
-		return 'var(--color-accent-border)';
+		return 'var(--color-accent-text)';
 	});
 
 	const role = $derived(variant === 'error' ? 'alert' : 'status');
