@@ -81,15 +81,15 @@
 	}
 
 	input.invalid {
-		border-color: color-mix(in hsl, var(--color-danger-strong) 74%, var(--color-border));
-		background: var(--color-background-object);
-		box-shadow: 0 0 0 1px color-mix(in hsl, var(--color-danger-strong) 18%, transparent);
+		border-color: var(--color-danger-strong);
+		background: var(--color-danger-surface);
+		box-shadow: 0 0 0 1px color-mix(in hsl, var(--color-danger-strong) 24%, transparent);
 	}
 
 	input.invalid:focus {
 		border-color: var(--color-danger-strong);
 		box-shadow:
-			0 0 0 3px color-mix(in hsl, var(--color-danger-strong) 16%, transparent),
+			0 0 0 3px color-mix(in hsl, var(--color-danger-strong) 20%, transparent),
 			0 0 0 1px var(--color-danger-strong);
 	}
 
