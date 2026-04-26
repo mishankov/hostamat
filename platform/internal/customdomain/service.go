@@ -50,6 +50,7 @@ type dnsLookup interface {
 
 type DNSConfig struct {
 	VerificationPrefix string
+	CNAMETarget        string
 }
 
 type Service struct {
@@ -405,12 +406,13 @@ func (s *Service) verifyRouting(ctx context.Context, domain *CustomDomain, siteR
 	}
 
 	cname, err := s.dns.LookupCNAME(ctx, domain.Hostname)
+	cnameTarget := s.cnameTarget()
 	if err != nil {
-		return fmt.Errorf("Укажите CNAME запись %s -> %s", domain.Hostname, siteRecord.Domain)
+		return fmt.Errorf("Укажите CNAME запись %s -> %s", domain.Hostname, cnameTarget)
 	}
 
-	if normalizePublicHost(cname) != siteRecord.Domain {
-		return fmt.Errorf("CNAME запись %s должна указывать на %s", domain.Hostname, siteRecord.Domain)
+	if normalizePublicHost(cname) != cnameTarget {
+		return fmt.Errorf("CNAME запись %s должна указывать на %s", domain.Hostname, cnameTarget)
 	}
 
 	return nil
@@ -437,7 +439,7 @@ func (s *Service) recordFromDomain(domain *CustomDomain, siteRecord *site.Site) 
 		LastVerificationError: domain.LastVerificationError,
 		CreatedAt:             domain.CreatedAt,
 		UpdatedAt:             domain.UpdatedAt,
-		Instructions:          s.instructionsForDomain(domain.Hostname, siteRecord.Domain, domain.VerificationToken),
+		Instructions:          s.instructionsForDomain(domain.Hostname, domain.VerificationToken),
 	}
 
 	if domain.LastCheckedAt.Valid {
@@ -453,7 +455,7 @@ func (s *Service) recordFromDomain(domain *CustomDomain, siteRecord *site.Site) 
 	return record
 }
 
-func (s *Service) instructionsForDomain(hostname, siteDomain, token string) DNSInstructions {
+func (s *Service) instructionsForDomain(hostname, token string) DNSInstructions {
 	ownership := DNSRecord{
 		Type:  "TXT",
 		Name:  verificationTXTName(s.dnsCfg.VerificationPrefix, hostname),
@@ -465,9 +467,18 @@ func (s *Service) instructionsForDomain(hostname, siteDomain, token string) DNSI
 		Routing: []DNSRecord{{
 			Type:  "CNAME",
 			Name:  hostname,
-			Value: siteDomain,
+			Value: s.cnameTarget(),
 		}},
 	}
+}
+
+func (s *Service) cnameTarget() string {
+	target := normalizePublicHost(s.dnsCfg.CNAMETarget)
+	if target == "" {
+		return "dns.hostamat.ru"
+	}
+
+	return target
 }
 
 func normalizeHostname(hostname string) (string, error) {

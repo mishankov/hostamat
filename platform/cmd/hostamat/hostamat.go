@@ -78,6 +78,7 @@ func main() {
 	uploadSessionDomain := uploadsession.New(conn)
 	customDomain := customdomain.New(conn, siteRepository, hostSyncService, customdomain.DNSConfig{
 		VerificationPrefix: conf.CustomDomains.VerificationPrefix,
+		CNAMETarget:        conf.CustomDomains.CNAMETarget,
 	})
 	siteDomain := site.New(conn, subdomainDomain.Service, customDomain.Service, fileDomain.Service, uploadSessionDomain.Service)
 	sessionDomain := session.New(conn)

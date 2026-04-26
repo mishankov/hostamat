@@ -43,6 +43,7 @@ type auth struct {
 
 type customDomains struct {
 	VerificationPrefix string
+	CNAMETarget        string
 }
 
 type Config struct {
@@ -91,6 +92,7 @@ func New() *Config {
 		},
 		CustomDomains: customDomains{
 			VerificationPrefix: fallbackEnv("HOSTAMAT_CUSTOM_DOMAIN_TXT_PREFIX", "_hostamat"),
+			CNAMETarget:        fallbackEnv("HOSTAMAT_CUSTOM_DOMAIN_CNAME_TARGET", "dns.hostamat.ru"),
 		},
 		Logger: logger{
 			Level: func() slog.Level {

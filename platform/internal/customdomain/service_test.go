@@ -46,6 +46,10 @@ func TestCreateNormalizesHostnameAndRejectsDuplicates(t *testing.T) {
 		t.Fatalf("Create() hostname = %q, want %q", record.Hostname, "www.example.com")
 	}
 
+	if len(record.Instructions.Routing) != 1 || record.Instructions.Routing[0].Value != "dns.hostamat.ru" {
+		t.Fatalf("Create() routing instructions = %+v, want CNAME dns.hostamat.ru", record.Instructions.Routing)
+	}
+
 	siteRepo.siteByDomain = map[string]*site.Site{
 		"www.example.com": {
 			Id:     "site-2",
@@ -123,7 +127,7 @@ func TestVerifyActivatesDomainAfterSuccessfulChecks(t *testing.T) {
 			"_hostamat.www.example.com": {"token"},
 		},
 		cname: map[string]string{
-			"www.example.com": "docs.hostamat.test.",
+			"www.example.com": "dns.hostamat.ru.",
 		},
 	}
 
