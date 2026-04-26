@@ -105,6 +105,7 @@ func main() {
 	apiGroup.Handle("/files", siteDomain.FileHandlerGroup)
 	apiGroup.Handle("/sites", siteDomain.SiteHandlerGroup)
 	apiGroup.Handle("/domains", customDomain.HandlerGroup)
+	apiGroup.HandleGroup("/domains", customDomain.HandlerGroup) // TODO: need to be fixed on platforma
 	apiGroup.Handle("/uploadsessions", siteDomain.UploadSessionHandlerGroup)
 
 	// HTTP server
