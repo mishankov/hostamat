@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Card, Modal, Input, Button } from '$lib/components';
+	import { Button, Modal, Input } from '$lib/components';
 	import { Spinner } from '$lib/icons';
 	import { createSite } from '$lib/api-client';
 
@@ -17,31 +17,21 @@
 	resetState();
 </script>
 
-<div class="add-site-card-shell">
-	<Card class="add-site-card" style="height: 100%;">
-		<button
-			type="button"
-			class="add-site"
-			onclick={() => {
-				resetState();
-				modal?.open();
-			}}
-		>
-			{#if loading}
-				<div class="prompt-line">
-					<span class="prompt-symbol">+</span>
-					<span class="prompt-text">добавляем сайт</span>
-					<Spinner size={16} />
-				</div>
-			{:else}
-				<div class="prompt-line">
-					<span class="prompt-symbol">+</span>
-					<span class="prompt-text">добавить сайт</span>
-				</div>
-			{/if}
-		</button>
-	</Card>
-</div>
+<Button
+	emphasis="solid"
+	disabled={loading}
+	onclick={() => {
+		resetState();
+		modal?.open();
+	}}
+>
+	{#if loading}
+		<Spinner size={16} />
+		<span>Добавляем сайт</span>
+	{:else}
+		<span>Добавить сайт</span>
+	{/if}
+</Button>
 
 <Modal
 	bind:this={modal}
@@ -96,68 +86,6 @@
 </Modal>
 
 <style>
-	.add-site-card-shell {
-		display: flex;
-		min-height: 10.625rem;
-	}
-
-	.add-site {
-		all: unset;
-
-		width: 100%;
-		height: 100%;
-		min-height: 10.625rem;
-		box-sizing: border-box;
-
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: var(--space-md);
-
-		padding: var(--space-lg) 1.3rem;
-		cursor: pointer;
-		border-radius: var(--radius-lg);
-	}
-
-	.prompt-line {
-		display: flex;
-		align-items: center;
-		gap: var(--space-sm);
-		font-family: var(--font-body);
-		font-size: 0.9rem;
-		font-weight: 500;
-	}
-
-	.prompt-symbol {
-		color: var(--color-accent-strong);
-		font-weight: 700;
-		font-size: 1.1rem;
-	}
-
-	.prompt-text {
-		color: var(--color-text-secondary);
-	}
-
-	:global(.add-site-card) {
-		border-style: dashed;
-		border-color: var(--color-border);
-		border-radius: var(--radius-lg);
-		background: transparent;
-		transition:
-			border-color 180ms ease-out,
-			background 180ms ease-out,
-			box-shadow 180ms ease-out,
-			transform 180ms ease-out;
-	}
-
-	:global(.add-site-card:hover) {
-		border-color: var(--color-accent-border);
-		background: var(--color-accent-surface);
-		box-shadow: var(--shadow-sm);
-		transform: translateY(-2px);
-	}
-
 	.modal-body {
 		display: flex;
 		flex-direction: column;

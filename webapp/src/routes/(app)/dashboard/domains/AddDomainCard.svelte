@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Card, Input, Modal } from '$lib/components';
+	import { Button, Input, Modal } from '$lib/components';
 	import { Spinner } from '$lib/icons';
 	import { createDomain } from '$lib/api-client';
 	import type { Site } from '$lib/types';
@@ -54,35 +54,21 @@
 	resetState();
 </script>
 
-<div class="add-domain-card-shell">
-	<Card class="add-domain-card" style="height: 100%;">
-		<button
-			type="button"
-			class="add-domain"
-			onclick={() => {
-				resetState();
-				modal?.open();
-			}}
-		>
-			{#if loading}
-				<div class="prompt-line">
-					<span class="prompt-symbol">+</span>
-					<span class="prompt-text">подключаем домен</span>
-					<Spinner size={16} />
-				</div>
-			{:else}
-				<div class="prompt-line">
-					<span class="prompt-symbol">+</span>
-					<span class="prompt-text">подключить домен</span>
-				</div>
-			{/if}
-
-			<p class="prompt-description">
-				Привяжите адрес к сайту, а DNS-инструкции появятся прямо в карточке домена.
-			</p>
-		</button>
-	</Card>
-</div>
+<Button
+	emphasis="solid"
+	disabled={loading}
+	onclick={() => {
+		resetState();
+		modal?.open();
+	}}
+>
+	{#if loading}
+		<Spinner size={16} />
+		<span>подключаем домен</span>
+	{:else}
+		<span>подключить домен</span>
+	{/if}
+</Button>
 
 <Modal
 	bind:this={modal}
@@ -129,75 +115,6 @@
 </Modal>
 
 <style>
-	.add-domain-card-shell {
-		display: flex;
-		min-height: 10.625rem;
-		width: 25rem;
-		flex: 0 0 25rem;
-	}
-
-	.add-domain {
-		all: unset;
-		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
-		min-height: 10.625rem;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: var(--space-md);
-		padding: var(--space-lg) 1.3rem;
-		cursor: pointer;
-		text-align: center;
-		border-radius: var(--radius-lg);
-	}
-
-	.prompt-line {
-		display: flex;
-		align-items: center;
-		gap: var(--space-sm);
-		font-family: var(--font-body);
-		font-size: 0.9rem;
-		font-weight: 500;
-	}
-
-	.prompt-symbol {
-		color: var(--color-accent-strong);
-		font-weight: 700;
-		font-size: 1.1rem;
-	}
-
-	.prompt-text {
-		color: var(--color-text-secondary);
-	}
-
-	.prompt-description {
-		max-width: 28ch;
-		color: var(--color-text-secondary);
-		font-size: 0.88rem;
-		line-height: 1.5;
-	}
-
-	:global(.add-domain-card) {
-		border-style: dashed;
-		border-color: var(--color-border);
-		border-radius: var(--radius-lg);
-		background: transparent;
-		transition:
-			border-color 180ms ease-out,
-			background 180ms ease-out,
-			box-shadow 180ms ease-out,
-			transform 180ms ease-out;
-	}
-
-	:global(.add-domain-card:hover) {
-		border-color: var(--color-accent-border);
-		background: var(--color-accent-surface);
-		box-shadow: var(--shadow-sm);
-		transform: translateY(-2px);
-	}
-
 	.modal-body {
 		display: flex;
 		flex-direction: column;
@@ -251,12 +168,5 @@
 	.action-spinner {
 		display: inline-flex;
 		align-items: center;
-	}
-
-	@media (max-width: 820px) {
-		.add-domain-card-shell {
-			width: 100%;
-			flex-basis: 100%;
-		}
 	}
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Card, Details, Link } from '$lib/components';
+	import { Button, Details, Link } from '$lib/components';
 	import { deleteDomain, verifyDomain } from '$lib/api-client';
 	import type { DomainRecord } from '$lib/types';
 
@@ -160,138 +160,133 @@
 	};
 </script>
 
-<Card border cornerBorder style="height: 100%;">
-	<div class="domain-card-content">
-		<div class="domain-card-header">
-			<div class="domain-card-title-block">
-				<span class="card-kicker"
-					>{domain.type === 'generated' ? 'платформенный адрес' : 'пользовательский домен'}</span
-				>
-				<div class="domain-card-title">
-					{#if canOpen}
-						<Link href={`https://${domain.hostname}`} target="_blank" alwaysUnderline
-							>{domain.hostname}</Link
-						>
-					{:else}
-						<span class="hostname">{domain.hostname}</span>
-					{/if}
-				</div>
-			</div>
-			<div class="status-stack">
-				<span class={['status-chip', statusTone]}>{statusLabel}</span>
-				<span class="timestamp-label">{timestampLabel}</span>
+<div class="domain-card-content">
+	<div class="domain-card-header">
+		<div class="domain-card-title-block">
+			<span class="card-kicker"
+				>{domain.type === 'generated' ? 'платформенный адрес' : 'пользовательский домен'}</span
+			>
+			<div class="domain-card-title">
+				{#if canOpen}
+					<Link href={`https://${domain.hostname}`} target="_blank" alwaysUnderline
+						>{domain.hostname}</Link
+					>
+				{:else}
+					<span class="hostname">{domain.hostname}</span>
+				{/if}
 			</div>
 		</div>
-
-		<p class="status-description">{statusDescription}</p>
-
-		<div class="signal-grid">
-			<div class="signal-cell">
-				<span class="signal-label">тип</span>
-				<strong>{domain.isApex ? 'корневой домен' : 'поддомен'}</strong>
-			</div>
-			<div class="signal-cell">
-				<span class="signal-label">резервный адрес</span>
-				<Link href={`https://${domain.siteDomain}`} target="_blank" alwaysUnderline
-					>{domain.siteDomain}</Link
-				>
-			</div>
-			<div class="signal-cell signal-cell-wide">
-				<span class="signal-label">сайт</span>
-				<strong>{domain.siteName}</strong>
-			</div>
+		<div class="status-stack">
+			<span class={['status-chip', statusTone]}>{statusLabel}</span>
+			<span class="timestamp-label">{timestampLabel}</span>
 		</div>
-
-		{#if logMessage}
-			<div class="incident-log">
-				<span class="incident-label">результат проверки</span>
-				<p>{logMessage}</p>
-			</div>
-		{/if}
-
-		{#if isCustom && domain.instructions}
-			<Details summary="Инструкции по DNS">
-				<div class="records-list">
-					{#if setupGuide}
-						<div class="guide-block">
-							<h3>{setupGuide.heading}</h3>
-							<p>{setupGuide.intro}</p>
-
-							<ol class="guide-steps">
-								{#each setupGuide.steps as step (`step-${step}`)}
-									<li>{step}</li>
-								{/each}
-							</ol>
-
-							<div class="guide-notes">
-								{#each setupGuide.notes as note (`note-${note}`)}
-									<p>{note}</p>
-								{/each}
-							</div>
-						</div>
-					{/if}
-
-					<div class="record-block">
-						<span class="record-label">подтверждение владения</span>
-						<div class="record-meta">{domain.instructions.ownership.type}</div>
-						<div class="record-value">{domain.instructions.ownership.name}</div>
-						<div class="record-value">{domain.instructions.ownership.value}</div>
-					</div>
-
-					{#each domain.instructions.routing as record (`${record.type}-${record.name}-${record.value}`)}
-						<div class="record-block">
-							<span class="record-label">маршрутизация</span>
-							<div class="record-meta">{record.type}</div>
-							<div class="record-value">{record.name}</div>
-							<div class="record-value">{record.value}</div>
-						</div>
-					{/each}
-				</div>
-			</Details>
-		{/if}
-
-		{#if isCustom}
-			<div class="domain-toolbar">
-				<Button disabled={loading} emphasis="solid" onclick={handleVerify}>
-					{domain.status === 'active' ? 'Проверить повторно' : 'Запустить проверку'}
-				</Button>
-				<Button
-					tone="danger"
-					disabled={loading}
-					onclick={() => {
-						confirmingDelete = !confirmingDelete;
-						actionError = '';
-					}}
-				>
-					{confirmingDelete ? 'Отменить удаление' : 'Удалить'}
-				</Button>
-			</div>
-
-			{#if confirmingDelete}
-				<div class="delete-guard">
-					<div class="delete-copy">
-						<span class="incident-label">отключение домена</span>
-						<p>Удаление снимет домен с маршрутизации, но не затронет сайт и его резервный адрес.</p>
-					</div>
-					<Button tone="danger" emphasis="solid" disabled={loading} onclick={handleDelete}>
-						Подтвердить удаление
-					</Button>
-				</div>
-			{/if}
-		{/if}
 	</div>
-</Card>
+
+	<p class="status-description">{statusDescription}</p>
+
+	<div class="signal-grid">
+		<div class="signal-cell">
+			<span class="signal-label">тип</span>
+			<strong>{domain.isApex ? 'корневой домен' : 'поддомен'}</strong>
+		</div>
+		<div class="signal-cell">
+			<span class="signal-label">резервный адрес</span>
+			<Link href={`https://${domain.siteDomain}`} target="_blank" alwaysUnderline
+				>{domain.siteDomain}</Link
+			>
+		</div>
+		<div class="signal-cell signal-cell-wide">
+			<span class="signal-label">сайт</span>
+			<strong>{domain.siteName}</strong>
+		</div>
+	</div>
+
+	{#if logMessage}
+		<div class="incident-log">
+			<span class="incident-label">результат проверки</span>
+			<p>{logMessage}</p>
+		</div>
+	{/if}
+
+	{#if isCustom && domain.instructions}
+		<Details summary="Инструкции по DNS">
+			<div class="records-list">
+				{#if setupGuide}
+					<div class="guide-block">
+						<h3>{setupGuide.heading}</h3>
+						<p>{setupGuide.intro}</p>
+
+						<ol class="guide-steps">
+							{#each setupGuide.steps as step (`step-${step}`)}
+								<li>{step}</li>
+							{/each}
+						</ol>
+
+						<div class="guide-notes">
+							{#each setupGuide.notes as note (`note-${note}`)}
+								<p>{note}</p>
+							{/each}
+						</div>
+					</div>
+				{/if}
+
+				<div class="record-block">
+					<span class="record-label">подтверждение владения</span>
+					<div class="record-meta">{domain.instructions.ownership.type}</div>
+					<div class="record-value">{domain.instructions.ownership.name}</div>
+					<div class="record-value">{domain.instructions.ownership.value}</div>
+				</div>
+
+				{#each domain.instructions.routing as record (`${record.type}-${record.name}-${record.value}`)}
+					<div class="record-block">
+						<span class="record-label">маршрутизация</span>
+						<div class="record-meta">{record.type}</div>
+						<div class="record-value">{record.name}</div>
+						<div class="record-value">{record.value}</div>
+					</div>
+				{/each}
+			</div>
+		</Details>
+	{/if}
+
+	{#if isCustom}
+		<div class="domain-toolbar">
+			<Button disabled={loading} emphasis="solid" onclick={handleVerify}>
+				{domain.status === 'active' ? 'Проверить повторно' : 'Запустить проверку'}
+			</Button>
+			<Button
+				tone="danger"
+				disabled={loading}
+				onclick={() => {
+					confirmingDelete = !confirmingDelete;
+					actionError = '';
+				}}
+			>
+				{confirmingDelete ? 'Отменить удаление' : 'Удалить'}
+			</Button>
+		</div>
+
+		{#if confirmingDelete}
+			<div class="delete-guard">
+				<div class="delete-copy">
+					<span class="incident-label">отключение домена</span>
+					<p>Удаление снимет домен с маршрутизации, но не затронет сайт и его резервный адрес.</p>
+				</div>
+				<Button tone="danger" emphasis="solid" disabled={loading} onclick={handleDelete}>
+					Подтвердить удаление
+				</Button>
+			</div>
+		{/if}
+	{/if}
+</div>
 
 <style>
 	.domain-card-content {
 		display: flex;
 		flex-direction: column;
 		gap: 0.9rem;
-		height: 100%;
-		padding: 1.1rem;
 		min-width: 0;
-		background: var(--color-background-object);
-		border-radius: var(--radius-lg);
+		padding: var(--space-lg) 0;
 	}
 
 	.domain-card-header {
@@ -354,7 +349,7 @@
 		padding: 0.72rem;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
-		background: var(--color-background);
+		background: var(--color-background-object);
 		min-width: 0;
 	}
 
@@ -438,7 +433,7 @@
 		padding: 0.9rem;
 		border-radius: var(--radius-md);
 		border: 1px solid var(--color-border);
-		background: var(--color-background);
+		background: var(--color-background-object);
 	}
 
 	.guide-block h3 {
@@ -474,7 +469,7 @@
 		padding: 0.75rem;
 		border-radius: var(--radius-md);
 		border: 1px solid var(--color-border);
-		background: var(--color-background);
+		background: var(--color-background-object);
 	}
 
 	.record-label {

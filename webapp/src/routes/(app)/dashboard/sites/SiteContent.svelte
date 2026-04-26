@@ -82,8 +82,6 @@
 		<span class="copy-feedback" aria-live="polite">[copied]</span>
 	{/if}
 
-	<div class="site-separator" aria-hidden="true"></div>
-
 	<div class="site-toolbar-shell">
 		<div class="site-toolbar">
 			<UpdateSite
@@ -105,7 +103,7 @@
 				<Upload size={25} />
 			</IconButton>
 			<IconButton grouped label="Скопировать URL" title="Скопировать URL" onclick={copySiteUrl}>
-				<Copy size={25} background="var(--color-primary-10)" />
+				<Copy size={25} />
 			</IconButton>
 
 			<IconButton
@@ -195,31 +193,25 @@
 
 <style>
 	.site-content {
-		display: flex;
-		flex-direction: column;
-		gap: 0;
-		min-width: 9.375rem;
-		height: 100%;
-		padding: var(--space-lg);
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		gap: var(--space-lg);
+		min-width: 0;
+		padding: var(--space-lg) 0;
 	}
 
 	.site-data {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-xs);
-		flex: 1;
+		min-width: 0;
 	}
 
 	.subdomain-value {
 		font-size: 0.88rem;
 		color: var(--color-text-secondary);
 		overflow-wrap: anywhere;
-	}
-
-	.site-separator {
-		border-top: 1px solid var(--color-border);
-		margin: var(--space-sm) 0;
-		opacity: 0.5;
 	}
 
 	.copy-feedback {
@@ -230,8 +222,7 @@
 
 	.site-toolbar-shell {
 		width: fit-content;
-		margin-top: auto;
-		align-self: flex-start;
+		min-width: 0;
 	}
 
 	.site-toolbar {
@@ -265,7 +256,12 @@
 		gap: var(--space-sm);
 	}
 
-	@media (max-width: 620px) {
+	@media (max-width: 820px) {
+		.site-content {
+			grid-template-columns: 1fr;
+			gap: var(--space-md);
+		}
+
 		.site-toolbar-shell {
 			width: 100%;
 		}

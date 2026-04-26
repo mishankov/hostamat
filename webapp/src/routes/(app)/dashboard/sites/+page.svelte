@@ -2,7 +2,7 @@
 	import type { PageProps } from './$types';
 	import { invalidateAll } from '$app/navigation';
 
-	import { Alert, Card } from '$lib/components';
+	import { Alert } from '$lib/components';
 	import { Spinner } from '$lib/icons';
 
 	import { type Site } from '$lib/types';
@@ -34,9 +34,12 @@
 </script>
 
 <svelte:head>
-		<title>Статические сайты | Хостамат</title>
-		<meta name="description" content="Управляйте статическими сайтами: создание, загрузка файлов и удаление." />
-	</svelte:head>
+	<title>Статические сайты | Хостамат</title>
+	<meta
+		name="description"
+		content="Управляйте статическими сайтами: создание, загрузка файлов и удаление."
+	/>
+</svelte:head>
 
 <div class="dashboard-page">
 	<div class="headline">
@@ -44,7 +47,7 @@
 		<div class="headline-meta">
 			<p>Добавляйте и загружайте статические сайты</p>
 			{#if !loading && maxAmount > 0}
-				<span class="site-counter">sites: {sites.length}/{maxAmount}</span>
+				<span class="site-counter">Количество сайтов: {sites.length}/{maxAmount}</span>
 			{/if}
 		</div>
 	</div>
@@ -61,30 +64,20 @@
 		{:then sitesResult}
 			{#if sitesResult.data}
 				{#each sites ?? [] as site (site.id)}
-					<div class="site-card-shell">
-						<Card border style="height: 100%;">
-							<SiteContent
-								{site}
-								bind:loading
-								bind:errorMessage
-								onsiteupdate={async () => {
-									await invalidateAll();
-									updateState();
-								}}
-							/>
-						</Card>
+					<div class="site-row">
+						<SiteContent
+							{site}
+							bind:loading
+							bind:errorMessage
+							onsiteupdate={async () => {
+								await invalidateAll();
+								updateState();
+							}}
+						/>
 					</div>
 				{/each}
 
-				{#if !sites || sites.length < maxAmount}
-					<AddNewSite
-						bind:loading
-						onsuccess={async () => {
-							await invalidateAll();
-							updateState();
-						}}
-					/>
-				{:else if loading === false}
+				{#if loading === false && sites && sites.length >= maxAmount}
 					<div class="limit-info-wrap">
 						<Alert variant="info" title="Максимальное количество сайтов в альфа версии">
 							Для добавления нового сайта, удалите один из существующих
@@ -98,6 +91,18 @@
 			<Alert variant="error" message="Ошибка при загрузке сайтов: {error.message}" />
 		{/await}
 	</div>
+
+	{#if !sites || sites.length < maxAmount}
+		<div class="add-action">
+			<AddNewSite
+				bind:loading
+				onsuccess={async () => {
+					await invalidateAll();
+					updateState();
+				}}
+			/>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -112,8 +117,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-sm);
-		padding-bottom: var(--space-lg);
-		border-bottom: 1px solid var(--color-border);
 	}
 
 	.headline h1 {
@@ -141,12 +144,15 @@
 	}
 
 	.site-list {
-		--site-tile-width: 20rem;
-
 		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-lg);
-		align-items: stretch;
+		flex-direction: column;
+		min-width: 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.site-row {
+		border-bottom: 1px solid var(--color-border);
+		min-width: 0;
 	}
 
 	.loading-state {
@@ -154,30 +160,20 @@
 		align-items: center;
 		justify-content: center;
 		min-height: 10.625rem;
-		width: var(--site-tile-width);
 	}
 
 	.limit-info-wrap {
 		min-height: 6.875rem;
 		display: flex;
 		align-items: center;
+		padding: var(--space-lg) 0;
 	}
 
-	.site-card-shell {
-		display: flex;
-		min-height: 10.625rem;
-		min-width: 0;
-	}
-
-	.site-card-shell :global(.card) {
-		border-radius: var(--radius-lg);
+	.add-action {
+		padding-top: var(--space-lg);
 	}
 
 	@media (max-width: 820px) {
-		.site-list {
-			--site-tile-width: 100%;
-		}
-
 		.limit-info-wrap {
 			min-height: auto;
 		}

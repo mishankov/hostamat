@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Badge, Button, Card } from '$lib/components';
+	import { Badge, Button } from '$lib/components';
 	import { useThemeController } from '$lib/theme/controller.svelte';
 	import type { PageProps } from './$types';
 
@@ -8,118 +8,116 @@
 </script>
 
 <svelte:head>
-		<title>Хостамат</title>
-		<meta name="description" content="Хостинг статических сайтов с автоматическими HTTPS-поддоменами. Загрузите файлы — получите готовый сайт." />
-	</svelte:head>
+	<title>Хостамат</title>
+	<meta name="description" content="Хостинг статических сайтов с автоматическими HTTPS-поддоменами. Загрузите файлы — получите готовый сайт." />
+</svelte:head>
 
 <main class="page-shell">
 	<section class={['page-content', 'landing', theme.current === 'dark' && 'theme-dark']}>
-		<Card surface="chrome" class="hero-shell">
-			<div class="hero-card">
-				<div class="hero-main">
-					<div class="hero-copy">
-						<Badge text="Альфа-тестирование" />
-						<h1>Хостинг статических сайтов без лишней настройки</h1>
-						<p class="hero-description">
-							Загрузите файлы или ZIP-архив, получите HTTPS-поддомен и управляйте проектом в удобной
-							панели.
-						</p>
-						<div class="hero-actions">
-							{#if data.isAuthenticated}
-								<Button href="/dashboard/sites" emphasis="solid">Открыть дашборд</Button>
-							{:else}
-								<Button href="/dashboard/sites" emphasis="solid">Запустить свой сайт</Button>
-							{/if}
-							<Button href="/about">Узнать о платформе</Button>
-						</div>
+		<div class="hero">
+			<div class="hero-main">
+				<div class="hero-copy">
+					<Badge text="Альфа-тестирование" />
+					<h1>Хостинг статических сайтов без лишней настройки</h1>
+					<p class="hero-description">
+						Загрузите файлы или ZIP-архив, получите HTTPS-поддомен и управляйте проектом в удобной
+						панели.
+					</p>
+					<div class="hero-actions">
+						{#if data.isAuthenticated}
+							<Button href="/dashboard/sites" emphasis="solid">Открыть дашборд</Button>
+						{:else}
+							<Button href="/dashboard/sites" emphasis="solid">Запустить свой сайт</Button>
+						{/if}
+						<Button href="/about">Узнать о платформе</Button>
 					</div>
-					<div class="hero-ascii">
-						<div class="terminal-window" aria-hidden="true">
-							<div class="terminal-titlebar">
-								<div class="terminal-controls">
-									<span class="terminal-control is-close"></span>
-									<span class="terminal-control is-minimize"></span>
-									<span class="terminal-control is-zoom"></span>
-								</div>
-								<p class="terminal-title">Terminal — deploy@hostamat</p>
+				</div>
+				<div class="hero-ascii">
+					<div class="terminal-window" aria-hidden="true">
+						<div class="terminal-titlebar">
+							<div class="terminal-controls">
+								<span class="terminal-control is-close"></span>
+								<span class="terminal-control is-minimize"></span>
+								<span class="terminal-control is-zoom"></span>
 							</div>
-							<div class="terminal-body">
-								<div class="hero-terminal">
-									<div class="terminal-head terminal-line" style="--line-index: 0;">
-										<span class="terminal-head-label">deploy@hostamat</span>
-										<span class="terminal-head-rule"></span>
-									</div>
-									<p class="terminal-brand terminal-line" style="--line-index: 1;">HOSTAMAT</p>
-									<div class="terminal-divider terminal-line" style="--line-index: 2;"></div>
-									<p class="terminal-command terminal-line" style="--line-index: 3;">
-										$ hostamat publish ./portfolio.zip
-									</p>
-									<ul class="terminal-steps">
-										<li class="terminal-step terminal-line" style="--line-index: 4;">
-											<span class="terminal-step-index">[01]</span>
-											<span class="terminal-step-text">unpack assets</span>
-											<span class="terminal-step-fill"></span>
-											<span class="terminal-step-status">[ok]</span>
-										</li>
-										<li class="terminal-step terminal-line" style="--line-index: 5;">
-											<span class="terminal-step-index">[02]</span>
-											<span class="terminal-step-text">reserve subdomain</span>
-											<span class="terminal-step-fill"></span>
-											<span class="terminal-step-status">[ok]</span>
-										</li>
-										<li class="terminal-step terminal-line" style="--line-index: 6;">
-											<span class="terminal-step-index">[03]</span>
-											<span class="terminal-step-text">issue tls certificate</span>
-											<span class="terminal-step-fill"></span>
-											<span class="terminal-step-status">[ok]</span>
-										</li>
-									</ul>
-									<div class="terminal-divider terminal-line" style="--line-index: 8;"></div>
-									<p class="terminal-meta-row terminal-line" style="--line-index: 9;">
-										<span class="terminal-meta-key">domain:</span>
-										<span class="terminal-meta-value">happy-cappy-12345.hostamat.ru</span>
-									</p>
-									<p class="terminal-meta-row terminal-line" style="--line-index: 10;">
-										<span class="terminal-meta-key">status:</span>
-										<span class="terminal-meta-value">live | https</span>
-									</p>
+							<p class="terminal-title">Terminal — deploy@hostamat</p>
+						</div>
+						<div class="terminal-body">
+							<div class="hero-terminal">
+								<div class="terminal-head terminal-line" style="--line-index: 0;">
+									<span class="terminal-head-label">deploy@hostamat</span>
+									<span class="terminal-head-rule"></span>
 								</div>
+								<p class="terminal-brand terminal-line" style="--line-index: 1;">HOSTAMAT</p>
+								<div class="terminal-divider terminal-line" style="--line-index: 2;"></div>
+								<p class="terminal-command terminal-line" style="--line-index: 3;">
+									$ hostamat publish ./portfolio.zip
+								</p>
+								<ul class="terminal-steps">
+									<li class="terminal-step terminal-line" style="--line-index: 4;">
+										<span class="terminal-step-index">[01]</span>
+										<span class="terminal-step-text">unpack assets</span>
+										<span class="terminal-step-fill"></span>
+										<span class="terminal-step-status">[ok]</span>
+									</li>
+									<li class="terminal-step terminal-line" style="--line-index: 5;">
+										<span class="terminal-step-index">[02]</span>
+										<span class="terminal-step-text">reserve subdomain</span>
+										<span class="terminal-step-fill"></span>
+										<span class="terminal-step-status">[ok]</span>
+									</li>
+									<li class="terminal-step terminal-line" style="--line-index: 6;">
+										<span class="terminal-step-index">[03]</span>
+										<span class="terminal-step-text">issue tls certificate</span>
+										<span class="terminal-step-fill"></span>
+										<span class="terminal-step-status">[ok]</span>
+									</li>
+								</ul>
+								<div class="terminal-divider terminal-line" style="--line-index: 8;"></div>
+								<p class="terminal-meta-row terminal-line" style="--line-index: 9;">
+									<span class="terminal-meta-key">domain:</span>
+									<span class="terminal-meta-value">happy-cappy-12345.hostamat.ru</span>
+								</p>
+								<p class="terminal-meta-row terminal-line" style="--line-index: 10;">
+									<span class="terminal-meta-key">status:</span>
+									<span class="terminal-meta-value">live | https</span>
+								</p>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</Card>
+		</div>
 
 		<div class="steps">
-			<Card class="step-card">
-				<div class="step">
-					<span>01</span>
+			<div class="step">
+				<span class="step-number">01</span>
+				<div class="step-body">
 					<h2>Войдите через Яндекс</h2>
 					<p>Авторизация занимает пару кликов.</p>
 				</div>
-			</Card>
-			<Card class="step-card">
-				<div class="step">
-					<span>02</span>
+			</div>
+			<div class="step">
+				<span class="step-number">02</span>
+				<div class="step-body">
 					<h2>Загрузите файлы</h2>
 					<p>Можно загрузить отдельные файлы или ZIP-архив.</p>
 				</div>
-			</Card>
-			<Card class="step-card">
-				<div class="step">
-					<span>03</span>
+			</div>
+			<div class="step">
+				<span class="step-number">03</span>
+				<div class="step-body">
 					<h2>Поделитесь ссылкой</h2>
 					<p>Сайт сразу доступен по HTTPS-поддомену.</p>
 				</div>
-			</Card>
-			<Card class="step-card step-card-featured">
-				<div class="step">
-					<span>04</span>
+			</div>
+			<div class="step step-featured">
+				<span class="step-number">04</span>
+				<div class="step-body">
 					<h2>До 5 сайтов бесплатно</h2>
 					<p>Во время альфа-тестирования до 5 сайтов доступны каждому пользователю.</p>
 				</div>
-			</Card>
+			</div>
 		</div>
 	</section>
 </main>
@@ -132,12 +130,9 @@
 		padding-bottom: var(--space-2xl);
 	}
 
-	.hero-card {
-		padding: clamp(var(--space-xl), 3vw, var(--space-2xl));
-	}
-
-	:global(.hero-shell) {
-		box-shadow: var(--shadow-md);
+	.hero {
+		border: var(--border-regular);
+		background: var(--color-background-object);
 	}
 
 	.hero-main {
@@ -145,6 +140,7 @@
 		grid-template-columns: minmax(31.25rem, 1.2fr) minmax(20rem, 0.95fr);
 		align-items: center;
 		gap: clamp(1.5rem, 3vw, 3rem);
+		padding: clamp(var(--space-xl), 3vw, var(--space-2xl));
 	}
 
 	.hero-copy {
@@ -484,37 +480,27 @@
 
 	.steps {
 		display: grid;
-		grid-template-columns: repeat(2, minmax(13.75rem, 1fr));
-		gap: var(--space-lg);
-	}
-
-	:global(.step-card) {
-		box-shadow: var(--shadow-sm);
-		border-radius: var(--radius-lg);
-		transition:
-			transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
-			box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1);
-	}
-
-	:global(.step-card:hover) {
-		box-shadow: var(--shadow-lg);
-		transform: translateY(-3px);
-	}
-
-	:global(.step-card-featured) {
-		background: var(--color-accent-surface);
-		border-color: var(--color-accent-border);
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		border-top: var(--border-regular);
 	}
 
 	.step {
-		min-height: 10.625rem;
 		padding: var(--space-xl);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-md);
+		border-left: var(--border-regular);
 	}
 
-	.step span {
+	.step:first-child {
+		border-left: none;
+	}
+
+	.step-featured {
+		background: var(--color-accent-surface);
+	}
+
+	.step-number {
 		font-family: var(--font-display);
 		font-size: 0.8rem;
 		font-weight: 700;
@@ -522,9 +508,21 @@
 		color: var(--color-accent-strong);
 	}
 
-	.step h2 {
+	.step-body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-sm);
+	}
+
+	.step-body h2 {
 		font-size: 1.3rem;
 		font-weight: 700;
+	}
+
+	.step-body p {
+		max-width: 32ch;
+		font-size: 0.92rem;
+		line-height: 1.5;
 	}
 
 	@media (max-width: 920px) {
@@ -540,6 +538,22 @@
 
 		.terminal-brand {
 			font-size: clamp(1.64rem, 8vw, 3rem);
+		}
+	}
+
+	@media (max-width: 800px) {
+		.steps {
+			grid-template-columns: 1fr;
+		}
+
+		.step {
+			border-left: none;
+			border-top: var(--border-regular);
+			padding: var(--space-lg);
+		}
+
+		.step:first-child {
+			border-top: none;
 		}
 	}
 
@@ -583,12 +597,6 @@
 		.terminal-step-status {
 			grid-column: 3;
 			justify-self: end;
-		}
-	}
-
-	@media (max-width: 800px) {
-		.steps {
-			grid-template-columns: 1fr;
 		}
 	}
 

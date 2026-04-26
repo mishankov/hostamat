@@ -101,11 +101,13 @@
 
 			<div class="domains-list">
 				{#each customDomains as domain (domain.id)}
-					<div class="domain-card-shell">
+					<div class="domain-row">
 						<DomainCard {domain} onrefresh={refresh} />
 					</div>
 				{/each}
+			</div>
 
+			<div class="add-action">
 				<AddDomainCard {sites} onrefresh={refresh} />
 			</div>
 		</section>
@@ -121,7 +123,7 @@
 
 			<div class="domains-list">
 				{#each generatedDomains as domain (domain.id)}
-					<div class="domain-card-shell">
+					<div class="domain-row">
 						<DomainCard {domain} onrefresh={refresh} />
 					</div>
 				{/each}
@@ -142,8 +144,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-sm);
-		padding-bottom: var(--space-lg);
-		border-bottom: 1px solid var(--color-border);
 	}
 
 	.headline h1 {
@@ -210,12 +210,15 @@
 	}
 
 	.domains-list {
-		--domain-tile-width: 25rem;
-
 		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-lg);
-		align-items: stretch;
+		flex-direction: column;
+		min-width: 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.domain-row {
+		border-bottom: 1px solid var(--color-border);
+		min-width: 0;
 	}
 
 	.loading-state {
@@ -223,31 +226,18 @@
 		align-items: center;
 		justify-content: center;
 		min-height: 10.625rem;
-		width: var(--domain-tile-width);
 	}
 
 	.empty-state {
 		width: min(34rem, 100%);
+		padding: var(--space-lg) 0;
 	}
 
-	.domain-card-shell {
-		display: flex;
-		min-height: 10.625rem;
-		width: var(--domain-tile-width);
-		flex: 0 0 var(--domain-tile-width);
-		min-width: 0;
-	}
-
-	.domain-card-shell :global(.card) {
-		height: 100%;
-		border-radius: var(--radius-lg);
+	.add-action {
+		padding-top: var(--space-lg);
 	}
 
 	@media (max-width: 820px) {
-		.domains-list {
-			--domain-tile-width: 100%;
-		}
-
 		.empty-state {
 			width: 100%;
 		}
