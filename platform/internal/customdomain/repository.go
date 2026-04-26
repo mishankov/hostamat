@@ -76,9 +76,9 @@ func (r *Repository) Get(ctx context.Context, id string) (*CustomDomain, error) 
 	return &domain, nil
 }
 
-func (r *Repository) GetByHostname(ctx context.Context, hostname string) (*CustomDomain, error) {
+func (r *Repository) GetActiveByHostname(ctx context.Context, hostname string) (*CustomDomain, error) {
 	var domain CustomDomain
-	err := r.db.GetContext(ctx, &domain, "SELECT * FROM "+tableName+" WHERE hostname = $1", hostname)
+	err := r.db.GetContext(ctx, &domain, "SELECT * FROM "+tableName+" WHERE hostname = $1 AND status = $2", hostname, DomainStatusActive)
 	if err != nil {
 		return nil, err
 	}

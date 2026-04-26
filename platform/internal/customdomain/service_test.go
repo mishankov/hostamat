@@ -10,6 +10,7 @@ import (
 	"hostamat/internal/customdomain"
 	"hostamat/internal/site"
 
+	"github.com/lib/pq"
 	"github.com/platforma-dev/platforma/auth"
 	"github.com/platforma-dev/platforma/log"
 )
@@ -92,6 +93,93 @@ func TestCreateRejectsApexHostname(t *testing.T) {
 	}
 }
 
+func TestCreateAllowsPendingDuplicateHostname(t *testing.T) {
+	t.Parallel()
+
+	now := time.Now()
+	siteRepo := &siteRepositoryMock{
+		sites: map[string]*site.Site{
+			"site-1": {
+				Id:     "site-1",
+				User:   "user-1",
+				Name:   "Docs",
+				Domain: "docs.hostamat.test",
+			},
+		},
+	}
+	repo := &repositoryMock{
+		domains: map[string]*customdomain.CustomDomain{
+			"domain-1": {
+				Id:                "domain-1",
+				Site:              "site-2",
+				User:              "user-2",
+				Hostname:          "www.example.com",
+				Type:              customdomain.DomainTypeCustom,
+				Status:            customdomain.DomainStatusPending,
+				VerificationToken: "token",
+				CreatedAt:         now,
+				UpdatedAt:         now,
+			},
+		},
+	}
+
+	service := customdomain.NewService(
+		repo,
+		siteRepo,
+		&hostSyncMock{},
+		&dnsLookupMock{},
+		customdomain.DNSConfig{VerificationPrefix: "_hostamat"},
+	)
+
+	if _, err := service.Create(testContext("user-1"), "site-1", "www.example.com"); err != nil {
+		t.Fatalf("Create() pending duplicate error = %v, want nil", err)
+	}
+}
+
+func TestCreateRejectsActiveDuplicateHostname(t *testing.T) {
+	t.Parallel()
+
+	now := time.Now()
+	siteRepo := &siteRepositoryMock{
+		sites: map[string]*site.Site{
+			"site-1": {
+				Id:     "site-1",
+				User:   "user-1",
+				Name:   "Docs",
+				Domain: "docs.hostamat.test",
+			},
+		},
+	}
+	repo := &repositoryMock{
+		domains: map[string]*customdomain.CustomDomain{
+			"domain-1": {
+				Id:                "domain-1",
+				Site:              "site-2",
+				User:              "user-2",
+				Hostname:          "www.example.com",
+				Type:              customdomain.DomainTypeCustom,
+				Status:            customdomain.DomainStatusActive,
+				VerificationToken: "token",
+				CreatedAt:         now,
+				UpdatedAt:         now,
+			},
+		},
+	}
+
+	service := customdomain.NewService(
+		repo,
+		siteRepo,
+		&hostSyncMock{},
+		&dnsLookupMock{},
+		customdomain.DNSConfig{VerificationPrefix: "_hostamat"},
+	)
+
+	_, err := service.Create(testContext("user-1"), "site-1", "www.example.com")
+	if err == nil || err.Error() != "Этот домен уже подключен к другому сайту" {
+		t.Fatalf("Create() active duplicate error = %v", err)
+	}
+}
+
 func TestVerifyActivatesDomainAfterSuccessfulChecks(t *testing.T) {
 	t.Parallel()
 
@@ -150,6 +238,69 @@ func TestVerifyActivatesDomainAfterSuccessfulChecks(t *testing.T) {
 
 	if len(hostSync.added) != 1 || hostSync.added[0] != "www.example.com" {
 		t.Fatalf("host sync added = %v, want [www.example.com]", hostSync.added)
+	}
+}
+
+func TestVerifyRejectsActiveHostnameConflict(t *testing.T) {
+	t.Parallel()
+
+	now := time.Now()
+	repo := &repositoryMock{
+		domains: map[string]*customdomain.CustomDomain{
+			"domain-1": {
+				Id:                "domain-1",
+				Site:              "site-1",
+				User:              "user-1",
+				Hostname:          "www.example.com",
+				Type:              customdomain.DomainTypeCustom,
+				Status:            customdomain.DomainStatusPending,
+				VerificationToken: "token",
+				CreatedAt:         now,
+				UpdatedAt:         now,
+			},
+			"domain-2": {
+				Id:                "domain-2",
+				Site:              "site-2",
+				User:              "user-2",
+				Hostname:          "www.example.com",
+				Type:              customdomain.DomainTypeCustom,
+				Status:            customdomain.DomainStatusActive,
+				VerificationToken: "token-2",
+				CreatedAt:         now,
+				UpdatedAt:         now,
+			},
+		},
+	}
+	siteRepo := &siteRepositoryMock{
+		sites: map[string]*site.Site{
+			"site-1": {
+				Id:     "site-1",
+				User:   "user-1",
+				Name:   "Docs",
+				Domain: "docs.hostamat.test",
+			},
+		},
+	}
+	dns := &dnsLookupMock{
+		txt: map[string][]string{
+			"_hostamat.www.example.com": {"token"},
+		},
+		cname: map[string]string{
+			"www.example.com": "dns.hostamat.ru.",
+		},
+	}
+
+	service := customdomain.NewService(
+		repo,
+		siteRepo,
+		&hostSyncMock{},
+		dns,
+		customdomain.DNSConfig{VerificationPrefix: "_hostamat"},
+	)
+
+	_, err := service.Verify(testContext("user-1"), "domain-1")
+	if err == nil || err.Error() != "Этот домен уже подключен к другому сайту" {
+		t.Fatalf("Verify() active conflict error = %v", err)
 	}
 }
 
@@ -320,9 +471,9 @@ func (m *repositoryMock) Get(_ context.Context, id string) (*customdomain.Custom
 	return &copyDomain, nil
 }
 
-func (m *repositoryMock) GetByHostname(_ context.Context, hostname string) (*customdomain.CustomDomain, error) {
+func (m *repositoryMock) GetActiveByHostname(_ context.Context, hostname string) (*customdomain.CustomDomain, error) {
 	for _, domain := range m.domains {
-		if domain.Hostname == hostname {
+		if domain.Hostname == hostname && domain.Status == customdomain.DomainStatusActive {
 			copyDomain := *domain
 			return &copyDomain, nil
 		}
@@ -345,6 +496,14 @@ func (m *repositoryMock) GetListByUser(_ context.Context, _ string) ([]*customdo
 }
 
 func (m *repositoryMock) Update(_ context.Context, domain *customdomain.CustomDomain) error {
+	if domain.Status == customdomain.DomainStatusActive {
+		for _, current := range m.domains {
+			if current.Id != domain.Id && current.Hostname == domain.Hostname && current.Status == customdomain.DomainStatusActive {
+				return &pq.Error{Code: "23505"}
+			}
+		}
+	}
+
 	if m.domains == nil {
 		m.domains = make(map[string]*customdomain.CustomDomain)
 	}

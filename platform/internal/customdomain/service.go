@@ -23,7 +23,7 @@ import (
 type repository interface {
 	Create(ctx context.Context, domain *CustomDomain) error
 	Get(ctx context.Context, id string) (*CustomDomain, error)
-	GetByHostname(ctx context.Context, hostname string) (*CustomDomain, error)
+	GetActiveByHostname(ctx context.Context, hostname string) (*CustomDomain, error)
 	GetBySite(ctx context.Context, siteID string) ([]*CustomDomain, error)
 	GetListByUser(ctx context.Context, userID string) ([]*DomainWithSite, error)
 	Update(ctx context.Context, domain *CustomDomain) error
@@ -178,7 +178,7 @@ func (s *Service) Create(ctx context.Context, siteID, hostname string) (*DomainR
 		return nil, err
 	}
 
-	if _, err := s.repo.GetByHostname(ctx, normalizedHostname); err == nil {
+	if _, err := s.repo.GetActiveByHostname(ctx, normalizedHostname); err == nil {
 		return nil, errHostnameTaken
 	} else if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		ev.AddError(err)
@@ -261,8 +261,25 @@ func (s *Service) Verify(ctx context.Context, domainID string) (*DomainRecord, e
 		return nil, err
 	}
 
+	activatedAt := time.Now()
+	domain.Status = DomainStatusActive
+	domain.LastVerificationError = ""
+	domain.ActivatedAt = sql.NullTime{Time: activatedAt, Valid: true}
+	domain.UpdatedAt = activatedAt
+	if err := s.repo.Update(ctx, domain); err != nil {
+		var pqErr *pq.Error
+		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+			return nil, errHostnameTaken
+		}
+
+		ev.AddError(err)
+		return nil, err
+	}
+
 	if err := s.hostSync.Add(ctx, domain.Hostname); err != nil {
+		domain.Status = DomainStatusVerified
 		domain.LastVerificationError = "Домен подтвержден, но Hostamat не смог активировать его в прокси. Повторите проверку позже."
+		domain.ActivatedAt = sql.NullTime{}
 		domain.UpdatedAt = time.Now()
 		if updateErr := s.repo.Update(ctx, domain); updateErr != nil {
 			ev.AddError(updateErr)
@@ -271,16 +288,6 @@ func (s *Service) Verify(ctx context.Context, domainID string) (*DomainRecord, e
 
 		record := s.recordFromDomain(domain, siteRecord)
 		return &record, nil
-	}
-
-	activatedAt := time.Now()
-	domain.Status = DomainStatusActive
-	domain.LastVerificationError = ""
-	domain.ActivatedAt = sql.NullTime{Time: activatedAt, Valid: true}
-	domain.UpdatedAt = activatedAt
-	if err := s.repo.Update(ctx, domain); err != nil {
-		ev.AddError(err)
-		return nil, err
 	}
 
 	record := s.recordFromDomain(domain, siteRecord)
