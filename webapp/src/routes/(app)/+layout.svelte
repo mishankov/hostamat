@@ -79,7 +79,8 @@
 	.app-layout {
 		display: grid;
 		grid-template-columns: 17rem minmax(0, 1fr);
-		min-height: 100vh;
+		height: 100vh;
+		overflow: hidden;
 		align-items: stretch;
 	}
 
@@ -181,11 +182,15 @@
 		min-width: 0;
 		padding: var(--space-2xl) 2rem var(--space-2xl);
 		background: var(--color-background);
+		overflow-y: auto;
 	}
 
 	@media (max-width: 980px) {
 		.app-layout {
 			grid-template-columns: minmax(0, 1fr);
+			height: auto;
+			min-height: 100vh;
+			overflow: visible;
 		}
 
 		.app-sidebar {
@@ -197,6 +202,7 @@
 
 		.app-panel {
 			padding: var(--space-lg) var(--space-lg) var(--space-xl);
+			overflow-y: visible;
 		}
 
 		.sidebar-footer {
