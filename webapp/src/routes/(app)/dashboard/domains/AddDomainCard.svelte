@@ -138,10 +138,11 @@
 		width: 100%;
 		padding: 0.65rem 0.9rem;
 		font-size: 0.95rem;
+		font-family: var(--font-body);
 		background-color: var(--color-background-object);
 		color: var(--color-text-regular);
 		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
+		border-radius: var(--radius-sm);
 		transition: var(--transition);
 	}
 
@@ -152,15 +153,15 @@
 	}
 
 	.modal-note {
-		max-width: 42ch;
+		max-width: 48ch;
 		color: var(--color-text-secondary);
-		font-size: 0.88rem;
+		font-size: 0.87rem;
 		line-height: 1.5;
 	}
 
 	.modal-actions {
 		display: flex;
-		gap: var(--space-lg);
+		gap: var(--space-md);
 		align-items: center;
 		flex-wrap: wrap;
 	}

@@ -74,7 +74,7 @@
 		}
 
 		if (domain.status === 'verification_failed') {
-			return 'исправить DNS';
+			return 'ошибка DNS';
 		}
 
 		return 'ожидает';
@@ -90,28 +90,9 @@
 
 		return 'pending';
 	});
-	const statusDescription = $derived.by(() => {
-		if (domain.type === 'generated') {
-			return 'Резервный платформенный адрес остаётся доступным даже после подключения собственного домена.';
-		}
-
-		if (domain.status === 'active') {
-			return 'Домен подтверждён и уже включён в активную схему маршрутизации Hostamat.';
-		}
-
-		if (domain.status === 'verified') {
-			return 'DNS уже сошёлся. Повторная проверка нужна только если активация в прокси не завершилась.';
-		}
-
-		if (domain.status === 'verification_failed') {
-			return 'Проверка увидела несоответствие. Исправьте записи ниже и запустите проверку снова.';
-		}
-
-		return 'Запись добавлена. Сначала внесите TXT и записи маршрутизации, затем подтвердите домен вручную.';
-	});
 	const timestampLabel = $derived.by(() => {
 		if (domain.activatedAt) {
-			return `активен с ${new Date(domain.activatedAt).toLocaleDateString('ru-RU')}`;
+			return `с ${new Date(domain.activatedAt).toLocaleDateString('ru-RU')}`;
 		}
 
 		if (domain.lastCheckedAt) {
@@ -160,59 +141,60 @@
 	};
 </script>
 
-<div class="domain-card-content">
-	<div class="domain-card-header">
-		<div class="domain-card-title-block">
-			<span class="card-kicker"
-				>{domain.type === 'generated' ? 'платформенный адрес' : 'пользовательский домен'}</span
-			>
-			<div class="domain-card-title">
+<div class="domain-card">
+	<div class="domain-main">
+		<div class="domain-data">
+			<div class="data-row">
+				<span class="data-label">{domain.type === 'generated' ? 'резерв' : 'домен'}:</span>
 				{#if canOpen}
-					<Link href={`https://${domain.hostname}`} target="_blank" alwaysUnderline
-						>{domain.hostname}</Link
-					>
+					<Link href={`https://${domain.hostname}`} target="_blank" alwaysUnderline>
+						{domain.hostname}
+					</Link>
 				{:else}
 					<span class="hostname">{domain.hostname}</span>
 				{/if}
 			</div>
+			<div class="domain-meta">
+				<span class="status-chip {statusTone}">
+					<span class="status-pip" aria-hidden="true"></span>
+					{statusLabel}
+				</span>
+				<span class="meta-text">{timestampLabel}</span>
+				<span class="meta-text">{domain.siteName}</span>
+			</div>
 		</div>
-		<div class="status-stack">
-			<span class={['status-chip', statusTone]}>{statusLabel}</span>
-			<span class="timestamp-label">{timestampLabel}</span>
-		</div>
-	</div>
 
-	<p class="status-description">{statusDescription}</p>
-
-	<div class="signal-grid">
-		<div class="signal-cell">
-			<span class="signal-label">тип</span>
-			<strong>{domain.isApex ? 'корневой домен' : 'поддомен'}</strong>
-		</div>
-		<div class="signal-cell">
-			<span class="signal-label">резервный адрес</span>
-			<Link href={`https://${domain.siteDomain}`} target="_blank" alwaysUnderline
-				>{domain.siteDomain}</Link
-			>
-		</div>
-		<div class="signal-cell signal-cell-wide">
-			<span class="signal-label">сайт</span>
-			<strong>{domain.siteName}</strong>
-		</div>
+		{#if isCustom}
+			<div class="domain-toolbar">
+				<Button disabled={loading} emphasis="solid" onclick={handleVerify}>
+					{domain.status === 'active' ? 'Проверить' : 'Проверить'}
+				</Button>
+				<Button
+					tone="danger"
+					disabled={loading}
+					onclick={() => {
+						confirmingDelete = !confirmingDelete;
+						actionError = '';
+					}}
+				>
+					{confirmingDelete ? 'Отменить' : 'Удалить'}
+				</Button>
+			</div>
+		{/if}
 	</div>
 
 	{#if logMessage}
-		<div class="incident-log">
-			<span class="incident-label">результат проверки</span>
-			<p>{logMessage}</p>
+		<div class="domain-log">
+			<span class="data-label">ошибка:</span>
+			<span class="log-text">{logMessage}</span>
 		</div>
 	{/if}
 
 	{#if isCustom && domain.instructions}
-		<Details summary="Инструкции по DNS">
-			<div class="records-list">
+		<Details summary="DNS">
+			<div class="dns-zone">
 				{#if setupGuide}
-					<div class="guide-block">
+					<div class="dns-guide">
 						<h3>{setupGuide.heading}</h3>
 						<p>{setupGuide.intro}</p>
 
@@ -230,263 +212,277 @@
 					</div>
 				{/if}
 
-				<div class="record-block">
-					<span class="record-label">подтверждение владения</span>
-					<div class="record-meta">{domain.instructions.ownership.type}</div>
-					<div class="record-value">{domain.instructions.ownership.name}</div>
-					<div class="record-value">{domain.instructions.ownership.value}</div>
-				</div>
-
-				{#each domain.instructions.routing as record (`${record.type}-${record.name}-${record.value}`)}
-					<div class="record-block">
-						<span class="record-label">маршрутизация</span>
-						<div class="record-meta">{record.type}</div>
-						<div class="record-value">{record.name}</div>
-						<div class="record-value">{record.value}</div>
+				<div class="zone-table">
+					<div class="zone-header">
+						<span>ТИП</span>
+						<span>ИМЯ</span>
+						<span>ЗНАЧЕНИЕ</span>
 					</div>
-				{/each}
+					<div class="zone-body">
+						<div class="zone-row zone-row-ownership">
+							<span class="zone-type">{domain.instructions.ownership.type}</span>
+							<span class="zone-name">{domain.instructions.ownership.name}</span>
+							<span class="zone-value">{domain.instructions.ownership.value}</span>
+						</div>
+						{#each domain.instructions.routing as record (`${record.type}-${record.name}-${record.value}`)}
+							<div class="zone-row">
+								<span class="zone-type">{record.type}</span>
+								<span class="zone-name">{record.name}</span>
+								<span class="zone-value">{record.value}</span>
+							</div>
+						{/each}
+					</div>
+				</div>
 			</div>
 		</Details>
 	{/if}
 
-	{#if isCustom}
-		<div class="domain-toolbar">
-			<Button disabled={loading} emphasis="solid" onclick={handleVerify}>
-				{domain.status === 'active' ? 'Проверить повторно' : 'Запустить проверку'}
-			</Button>
-			<Button
-				tone="danger"
-				disabled={loading}
-				onclick={() => {
-					confirmingDelete = !confirmingDelete;
-					actionError = '';
-				}}
-			>
-				{confirmingDelete ? 'Отменить удаление' : 'Удалить'}
+	{#if isCustom && confirmingDelete}
+		<div class="delete-guard">
+			<div class="delete-guard-text">
+				<span class="data-label">отключение домена</span>
+				<p>Удаление снимет домен с маршрутизации, но не затронет сайт и его резервный адрес.</p>
+			</div>
+			<Button tone="danger" emphasis="solid" disabled={loading} onclick={handleDelete}>
+				Подтвердить удаление
 			</Button>
 		</div>
-
-		{#if confirmingDelete}
-			<div class="delete-guard">
-				<div class="delete-copy">
-					<span class="incident-label">отключение домена</span>
-					<p>Удаление снимет домен с маршрутизации, но не затронет сайт и его резервный адрес.</p>
-				</div>
-				<Button tone="danger" emphasis="solid" disabled={loading} onclick={handleDelete}>
-					Подтвердить удаление
-				</Button>
-			</div>
-		{/if}
 	{/if}
 </div>
 
 <style>
-	.domain-card-content {
+	.domain-card {
 		display: flex;
 		flex-direction: column;
-		gap: 0.9rem;
+		gap: var(--space-sm);
 		min-width: 0;
 		padding: var(--space-lg) 0;
 	}
 
-	.domain-card-header {
-		display: flex;
-		align-items: start;
-		justify-content: space-between;
-		gap: 0.9rem;
+	.domain-main {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		gap: var(--space-lg);
+		min-width: 0;
 	}
 
-	.domain-card-title-block {
+	.domain-data {
 		display: flex;
 		flex-direction: column;
-		gap: 0.4rem;
+		gap: var(--space-xs);
 		min-width: 0;
 	}
 
-	.card-kicker,
-	.signal-label,
-	.timestamp-label,
-	.incident-label,
-	.record-label,
-	.record-meta {
-		font-size: 0.75rem;
-		font-weight: 700;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		color: var(--color-text-tertiary);
-	}
-
-	.domain-card-title {
-		min-width: 0;
+	.domain-data :global(a) {
+		font-family: var(--font-mono);
+		font-size: 0.9rem;
+		font-weight: 500;
 	}
 
 	.hostname {
-		font-family: var(--font-display);
-		font-size: 1.25rem;
-		font-weight: 700;
-		line-height: 1.15;
+		font-family: var(--font-mono);
+		font-size: 0.9rem;
+		font-weight: 500;
 		color: var(--color-text-regular);
 		overflow-wrap: anywhere;
 	}
 
-	.status-stack {
+	.domain-meta {
 		display: flex;
-		flex-direction: column;
-		align-items: end;
-		gap: 0.35rem;
-	}
-
-	.signal-grid {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 0.65rem;
-	}
-
-	.signal-cell {
-		display: flex;
-		flex-direction: column;
-		gap: 0.26rem;
-		padding: 0.72rem;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-		background: var(--color-background-object);
-		min-width: 0;
-	}
-
-	.signal-cell strong,
-	.signal-cell :global(a) {
-		font-size: 0.88rem;
-		line-height: 1.35;
-		overflow-wrap: anywhere;
-	}
-
-	.signal-cell-wide {
-		grid-column: 1 / -1;
+		align-items: center;
+		gap: var(--space-sm);
+		flex-wrap: wrap;
 	}
 
 	.status-chip {
 		display: inline-flex;
 		align-items: center;
-		justify-content: center;
-		padding: 0.22rem 0.65rem;
-		border-radius: 999px;
+		gap: 0.3rem;
+		padding: 0.12rem 0.45rem;
 		border: 1px solid var(--chip-border);
+		background: var(--chip-bg);
 		color: var(--chip-text);
-		background: var(--chip-background);
-		font-size: 0.75rem;
+		border-radius: var(--radius-sm);
+		font-size: 0.68rem;
 		font-weight: 700;
-		letter-spacing: 0.03em;
-		white-space: nowrap;
+		letter-spacing: 0.05em;
 		text-transform: uppercase;
+		white-space: nowrap;
 	}
 
 	.status-chip.success {
 		--chip-border: var(--color-success-border);
+		--chip-bg: var(--color-success-surface);
 		--chip-text: var(--color-success-text);
-		--chip-background: var(--color-success-surface);
 	}
 
 	.status-chip.pending {
 		--chip-border: var(--color-accent-border);
+		--chip-bg: var(--color-accent-surface);
 		--chip-text: var(--color-accent-text);
-		--chip-background: var(--color-accent-surface);
 	}
 
 	.status-chip.danger {
 		--chip-border: var(--color-danger-border);
+		--chip-bg: var(--color-danger-surface);
 		--chip-text: var(--color-danger-text);
-		--chip-background: var(--color-danger-surface);
 	}
 
-	.status-description {
+	.status-pip {
+		display: block;
+		width: 5px;
+		height: 5px;
+		border-radius: 1px;
+		background: currentColor;
+	}
+
+	.meta-text {
+		font-size: 0.82rem;
 		color: var(--color-text-secondary);
-		max-width: 52ch;
-		font-size: 0.92rem;
+		white-space: nowrap;
 	}
 
-	.incident-log {
+	.domain-toolbar {
 		display: flex;
-		flex-direction: column;
-		gap: 0.35rem;
-		padding: 0.8rem;
-		border-radius: var(--radius-md);
-		border: 1px solid color-mix(in hsl, var(--color-danger-border) 50%, transparent);
-		background: color-mix(in hsl, var(--color-danger-surface) 92%, transparent);
+		gap: var(--space-sm);
+		flex-wrap: wrap;
+		flex-shrink: 0;
 	}
 
-	.incident-log p {
+	.domain-log {
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-sm);
+		flex-wrap: wrap;
+		padding: 0.45rem 0.6rem;
+		border-radius: var(--radius-sm);
+		border: 1px solid color-mix(in oklch, var(--color-danger-border) 40%, transparent);
+		background: color-mix(in oklch, var(--color-danger-surface) 94%, transparent);
+	}
+
+	.log-text {
+		font-size: 0.84rem;
 		color: var(--color-danger-text);
-		font-size: 0.88rem;
+		overflow-wrap: anywhere;
 	}
 
-	.records-list {
+	.dns-zone {
 		display: flex;
 		flex-direction: column;
-		gap: 0.65rem;
-		padding-top: 0.25rem;
+		gap: var(--space-md);
+		padding-top: var(--space-xs);
 	}
 
-	.guide-block {
+	.dns-guide {
 		display: flex;
 		flex-direction: column;
-		gap: 0.6rem;
-		padding: 0.9rem;
-		border-radius: var(--radius-md);
+		gap: 0.5rem;
+		padding: var(--space-md);
+		border-radius: var(--radius-sm);
 		border: 1px solid var(--color-border);
 		background: var(--color-background-object);
 	}
 
-	.guide-block h3 {
-		font-size: 0.95rem;
+	.dns-guide h3 {
+		font-size: 0.9rem;
 		font-weight: 700;
+		letter-spacing: -0.01em;
+	}
+
+	.dns-guide p {
+		font-size: 0.85rem;
+		line-height: 1.45;
 	}
 
 	.guide-steps {
 		display: flex;
 		flex-direction: column;
-		gap: 0.45rem;
-		padding-left: 1.15rem;
+		gap: 0.35rem;
+		padding-left: 1.05rem;
 		color: var(--color-text-secondary);
+		font-size: 0.85rem;
+		line-height: 1.45;
 	}
 
 	.guide-notes {
 		display: flex;
 		flex-direction: column;
-		gap: 0.35rem;
-		padding-top: 0.3rem;
+		gap: 0.25rem;
+		padding-top: 0.35rem;
 		border-top: 1px solid var(--color-border);
 	}
 
 	.guide-notes p {
-		font-size: 0.84rem;
+		font-size: 0.8rem;
 		color: var(--color-text-tertiary);
+		line-height: 1.4;
 	}
 
-	.record-block {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		gap: 0.18rem;
-		padding: 0.75rem;
-		border-radius: var(--radius-md);
+	.zone-table {
+		display: flex;
+		flex-direction: column;
 		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		overflow: hidden;
 		background: var(--color-background-object);
 	}
 
-	.record-label {
-		margin-bottom: 0.08rem;
+	.zone-header {
+		display: grid;
+		grid-template-columns: 4rem 1fr 2fr;
+		gap: var(--space-sm);
+		padding: 0.45rem 0.75rem;
+		background: var(--color-neutral-surface);
+		border-bottom: 1px solid var(--color-border);
 	}
 
-	.record-value {
-		overflow-wrap: anywhere;
-		font-family: var(--font-mono, monospace);
-		font-size: 0.84rem;
+	.zone-header span {
+		font-size: 0.65rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-text-tertiary);
 	}
 
-	.domain-toolbar {
+	.zone-body {
 		display: flex;
-		gap: 0.6rem;
-		flex-wrap: wrap;
-		margin-top: auto;
+		flex-direction: column;
+	}
+
+	.zone-row {
+		display: grid;
+		grid-template-columns: 4rem 1fr 2fr;
+		gap: var(--space-sm);
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid var(--color-border);
+		font-family: var(--font-mono);
+		font-size: 0.78rem;
+		line-height: 1.35;
+		align-items: center;
+	}
+
+	.zone-row:last-child {
+		border-bottom: none;
+	}
+
+	.zone-row-ownership {
+		background: color-mix(in oklch, var(--color-accent-surface) 55%, transparent);
+	}
+
+	.zone-type {
+		font-weight: 600;
+		color: var(--color-text-regular);
+	}
+
+	.zone-name {
+		color: var(--color-text-secondary);
+		overflow-wrap: anywhere;
+	}
+
+	.zone-value {
+		color: var(--color-text-regular);
+		overflow-wrap: anywhere;
 	}
 
 	.delete-guard {
@@ -494,38 +490,45 @@
 		flex-wrap: wrap;
 		align-items: end;
 		justify-content: space-between;
-		gap: 0.8rem;
-		padding: 0.9rem;
-		border-radius: var(--radius-md);
-		border: 1px solid color-mix(in hsl, var(--color-danger-border) 45%, transparent);
-		background: color-mix(in hsl, var(--color-danger-surface) 90%, transparent);
+		gap: var(--space-md);
+		padding: var(--space-md);
+		border-radius: var(--radius-sm);
+		border: 1px solid color-mix(in oklch, var(--color-danger-border) 40%, transparent);
+		background: color-mix(in oklch, var(--color-danger-surface) 92%, transparent);
 	}
 
-	.delete-copy {
+	.delete-guard-text {
 		display: flex;
 		flex-direction: column;
-		gap: 0.24rem;
-		max-width: 34ch;
+		gap: 0.15rem;
+		max-width: 36ch;
 	}
 
-	.delete-copy p {
+	.delete-guard-text p {
 		color: var(--color-danger-text);
-		font-size: 0.88rem;
+		font-size: 0.84rem;
+		line-height: 1.4;
 	}
 
 	@media (max-width: 640px) {
-		.domain-card-header,
-		.delete-guard {
-			flex-direction: column;
-			align-items: start;
+		.domain-main {
+			grid-template-columns: 1fr;
+			gap: var(--space-md);
 		}
 
-		.status-stack {
-			align-items: start;
+		.domain-toolbar {
+			justify-content: flex-start;
 		}
 
-		.signal-grid {
-			grid-template-columns: minmax(0, 1fr);
+		.zone-header,
+		.zone-row {
+			grid-template-columns: 3rem 1fr;
+			gap: var(--space-xs);
+		}
+
+		.zone-value {
+			grid-column: 1 / -1;
+			padding-top: 0.05rem;
 		}
 	}
 </style>

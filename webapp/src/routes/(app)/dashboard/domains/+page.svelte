@@ -59,11 +59,11 @@
 	/>
 </svelte:head>
 
-<div class="domains-page">
+<div class="dashboard-page">
 	<div class="headline">
 		<h1>Домены</h1>
 		<div class="headline-meta">
-			<p>Подключайте пользовательские домены и управляйте адресами сайтов в одном списке.</p>
+			<p>Подключайте пользовательские домены и управляйте адресами сайтов</p>
 			{#if !loading}
 				<span class="domain-counter">доменов: {domains.length}</span>
 			{/if}
@@ -75,14 +75,14 @@
 	{/if}
 
 	{#if loading}
-		<div class="domains-list">
+		<div class="domain-list">
 			<div class="loading-state" aria-live="polite">
 				<Spinner size={50} />
 			</div>
 		</div>
 	{:else if sites.length === 0}
-		<div class="domains-list">
-			<div class="empty-state">
+		<div class="domain-list">
+			<div class="limit-info-wrap">
 				<Alert variant="info" title="Сначала создайте сайт">
 					Пользовательский домен можно подключить только после создания сайта. Резервный адрес
 					появится автоматически.
@@ -90,50 +90,41 @@
 			</div>
 		</div>
 	{:else}
-		<section class="domain-section">
+		{#if customDomains.length > 0 || true}
 			<div class="section-head">
-				<div>
-					<h2>Пользовательские домены</h2>
-					<p>Ваши собственные адреса с проверкой DNS, подтверждением владения и управлением.</p>
-				</div>
-				<span class="section-counter">{customDomains.length}</span>
+				<h2>Пользовательские домены</h2>
+				<span class="section-count">{customDomains.length}</span>
 			</div>
-
-			<div class="domains-list">
+			<div class="domain-list">
 				{#each customDomains as domain (domain.id)}
 					<div class="domain-row">
 						<DomainCard {domain} onrefresh={refresh} />
 					</div>
 				{/each}
 			</div>
-
 			<div class="add-action">
 				<AddDomainCard {sites} onrefresh={refresh} />
 			</div>
-		</section>
+		{/if}
 
-		<section class="domain-section">
+		{#if generatedDomains.length > 0}
 			<div class="section-head">
-				<div>
-					<h2>Платформенные адреса</h2>
-					<p>Резервные домены Hostamat для каждого сайта. Они остаются доступны всегда.</p>
-				</div>
-				<span class="section-counter">{generatedDomains.length}</span>
+				<h2>Платформенные адреса</h2>
+				<span class="section-count">{generatedDomains.length}</span>
 			</div>
-
-			<div class="domains-list">
+			<div class="domain-list">
 				{#each generatedDomains as domain (domain.id)}
 					<div class="domain-row">
 						<DomainCard {domain} onrefresh={refresh} />
 					</div>
 				{/each}
 			</div>
-		</section>
+		{/if}
 	{/if}
 </div>
 
 <style>
-	.domains-page {
+	.dashboard-page {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-lg);
@@ -170,46 +161,28 @@
 		white-space: nowrap;
 	}
 
-	.domain-section {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-lg);
-	}
-
 	.section-head {
 		display: flex;
-		align-items: end;
-		justify-content: space-between;
-		gap: var(--space-md);
-		flex-wrap: wrap;
+		align-items: baseline;
+		gap: var(--space-sm);
+		padding-top: var(--space-sm);
 	}
 
 	.section-head h2 {
-		font-size: 1.15rem;
+		font-size: 1rem;
 		font-weight: 700;
-	}
-
-	.section-head p {
-		max-width: 60ch;
+		letter-spacing: -0.01em;
 		color: var(--color-text-secondary);
-		font-size: 0.92rem;
 	}
 
-	.section-counter {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		min-width: 2.5rem;
-		padding: 0.3rem 0.7rem;
-		border-radius: var(--radius-md);
-		border: 1px solid var(--color-border);
-		background: var(--color-background-object);
+	.section-count {
+		font-family: var(--font-mono);
+		font-size: 0.78rem;
+		font-weight: 500;
 		color: var(--color-text-tertiary);
-		font-size: 0.82rem;
-		font-weight: 600;
 	}
 
-	.domains-list {
+	.domain-list {
 		display: flex;
 		flex-direction: column;
 		min-width: 0;
@@ -240,18 +213,20 @@
 		min-height: 10.625rem;
 	}
 
-	.empty-state {
-		width: min(34rem, 100%);
+	.limit-info-wrap {
+		min-height: 6.875rem;
+		display: flex;
+		align-items: center;
 		padding: var(--space-lg) 0;
 	}
 
 	.add-action {
-		padding-top: var(--space-lg);
+		padding-top: var(--space-sm);
 	}
 
 	@media (max-width: 820px) {
-		.empty-state {
-			width: 100%;
+		.limit-info-wrap {
+			min-height: auto;
 		}
 	}
 </style>
