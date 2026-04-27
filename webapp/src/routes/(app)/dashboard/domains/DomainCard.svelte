@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Details, IconButton, Link, Modal, Select, Toolbar } from '$lib/components';
+	import { Button, IconButton, Link, Modal, Select, Toolbar } from '$lib/components';
 	import { Check, Edit, Trash } from '$lib/icons';
 	import { deleteDomain, updateDomain, verifyDomain } from '$lib/api-client';
 	import type { DomainRecord, Site } from '$lib/types';
@@ -18,6 +18,7 @@
 	let editModal = $state<Modal>();
 	let selectedSiteId = $state('');
 	let editError = $state('');
+	let dnsOpen = $state(false);
 
 	const deleteTitleId = $derived(`delete-domain-title-${domain.id}`);
 	const deleteDescId = $derived(`delete-domain-description-${domain.id}`);
@@ -27,7 +28,7 @@
 
 	const isCustom = $derived(domain.type === 'custom');
 	const canOpen = $derived(domain.status === 'active');
-	const logMessage = $derived(actionError || domain.lastVerificationError || '');
+	const errorText = $derived(actionError || domain.lastVerificationError || '');
 	const setupGuide = $derived.by(() => {
 		if (!isCustom || !domain.instructions) {
 			return null;
@@ -81,17 +82,30 @@
 
 		return 'pending';
 	});
-	const timestampLabel = $derived.by(() => {
-		if (domain.activatedAt) {
+	const statusDetail = $derived.by(() => {
+		if (errorText) {
+			return errorText;
+		}
+
+		if (domain.type === 'generated') {
+			return 'резервный адрес';
+		}
+
+		if (domain.status === 'active' && domain.activatedAt) {
 			return `с ${new Date(domain.activatedAt).toLocaleDateString('ru-RU')}`;
 		}
 
-		if (domain.lastCheckedAt) {
-			return `проверен ${new Date(domain.lastCheckedAt).toLocaleDateString('ru-RU')}`;
+		if (domain.status === 'verified') {
+			return 'ожидает активации';
 		}
 
-		return 'ещё не проверен';
+		if (domain.lastCheckedAt) {
+			return 'проверка не пройдена';
+		}
+
+		return 'добавьте DNS-записи';
 	});
+	const detailHasError = $derived(Boolean(errorText));
 
 	const handleVerify = async () => {
 		loading = true;
@@ -152,10 +166,9 @@
 </script>
 
 <div class="domain-card">
-	<div class="domain-main">
+	<div class="domain-header">
 		<div class="domain-data">
 			<div class="data-row">
-				<span class="data-label">{domain.type === 'generated' ? 'резерв' : 'домен'}:</span>
 				{#if canOpen}
 					<Link href={`https://${domain.hostname}`} target="_blank" alwaysUnderline>
 						{domain.hostname}
@@ -163,18 +176,28 @@
 				{:else}
 					<span class="hostname">{domain.hostname}</span>
 				{/if}
+				<span class="site-name">{domain.siteName}</span>
 			</div>
 			<div class="domain-meta">
-				<span class="status-chip {statusTone}">
-					<span class="status-pip" aria-hidden="true"></span>
-					{statusLabel}
-				</span>
-				<span class="meta-text">{timestampLabel}</span>
-				<span class="meta-text">{domain.siteName}</span>
+				<span class="status-chip {statusTone}">{statusLabel}</span>
+				<span class="meta-detail" class:error={detailHasError}>{statusDetail}</span>
 			</div>
 		</div>
 
-		{#if isCustom}
+		{#if isCustom && domain.instructions}
+			<button
+				type="button"
+				class="dns-toggle"
+				aria-expanded={dnsOpen}
+				onclick={() => {
+					dnsOpen = !dnsOpen;
+				}}>DNS-записи</button
+			>
+		{/if}
+	</div>
+
+	{#if isCustom}
+		<div class="domain-toolbar">
 			<Toolbar>
 				<IconButton
 					grouped
@@ -209,18 +232,11 @@
 					<Trash size={25} />
 				</IconButton>
 			</Toolbar>
-		{/if}
-	</div>
-
-	{#if logMessage}
-		<div class="domain-log">
-			<span class="data-label">ошибка:</span>
-			<span class="log-text">{logMessage}</span>
 		</div>
 	{/if}
 
-	{#if isCustom && domain.instructions}
-		<Details summary="Как настроить DNS">
+	{#if isCustom && domain.instructions && dnsOpen}
+		<div class="domain-details">
 			<div class="dns-zone">
 				{#if setupGuide}
 					<div class="dns-guide">
@@ -263,7 +279,7 @@
 					</div>
 				</div>
 			</div>
-		</Details>
+		</div>
 	{/if}
 
 	<Modal
@@ -298,7 +314,8 @@
 	>
 		<div class="delete-modal">
 			<p id={deleteDescId} class="delete-modal-text">
-				Вы уверены, что хотите удалить домен "{domain.hostname}"? Домен будет снят с маршрутизации, но сайт и его резервный адрес останутся без изменений.
+				Вы уверены, что хотите удалить домен "{domain.hostname}"? Домен будет снят с маршрутизации,
+				но сайт и его резервный адрес останутся без изменений.
 			</p>
 			<div class="delete-actions">
 				<Button
@@ -316,19 +333,23 @@
 
 <style>
 	.domain-card {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-sm);
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		column-gap: var(--space-lg);
 		min-width: 0;
 		padding: var(--space-lg) 0;
 	}
 
-	.domain-main {
-		display: grid;
-		grid-template-columns: 1fr auto;
-		align-items: center;
-		gap: var(--space-lg);
+	.domain-header {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-sm);
 		min-width: 0;
+	}
+
+	.domain-toolbar {
+		align-self: center;
 	}
 
 	.domain-data {
@@ -344,11 +365,25 @@
 		font-weight: 500;
 	}
 
+	.data-row {
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-sm);
+		flex-wrap: wrap;
+		min-width: 0;
+	}
+
 	.hostname {
 		font-family: var(--font-mono);
 		font-size: 0.9rem;
 		font-weight: 500;
 		color: var(--color-text-regular);
+		overflow-wrap: anywhere;
+	}
+
+	.site-name {
+		font-size: 0.82rem;
+		color: var(--color-text-secondary);
 		overflow-wrap: anywhere;
 	}
 
@@ -362,7 +397,6 @@
 	.status-chip {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.3rem;
 		padding: 0.12rem 0.45rem;
 		border: 1px solid var(--chip-border);
 		background: var(--chip-bg);
@@ -393,35 +427,33 @@
 		--chip-text: var(--color-danger-text);
 	}
 
-	.status-pip {
-		display: block;
-		width: 5px;
-		height: 5px;
-		border-radius: 1px;
-		background: currentColor;
-	}
-
-	.meta-text {
+	.meta-detail {
 		font-size: 0.82rem;
 		color: var(--color-text-secondary);
-		white-space: nowrap;
-	}
-
-	.domain-log {
-		display: flex;
-		align-items: baseline;
-		gap: var(--space-sm);
-		flex-wrap: wrap;
-		padding: 0.45rem 0.6rem;
-		border-radius: var(--radius-sm);
-		border: 1px solid color-mix(in oklch, var(--color-danger-border) 40%, transparent);
-		background: color-mix(in oklch, var(--color-danger-surface) 94%, transparent);
-	}
-
-	.log-text {
-		font-size: 0.84rem;
-		color: var(--color-danger-text);
 		overflow-wrap: anywhere;
+	}
+
+	.meta-detail.error {
+		color: var(--color-danger-text);
+	}
+
+	.dns-toggle {
+		all: unset;
+		width: fit-content;
+		font-weight: 650;
+		color: var(--color-accent-text);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		cursor: pointer;
+	}
+
+	.dns-toggle:hover {
+		color: var(--color-accent-strong);
+	}
+
+	.domain-details {
+		grid-column: 1;
+		min-width: 0;
 	}
 
 	.dns-zone {
@@ -569,9 +601,13 @@
 	}
 
 	@media (max-width: 640px) {
-		.domain-main {
+		.domain-card {
 			grid-template-columns: 1fr;
 			gap: var(--space-md);
+		}
+
+		.domain-toolbar {
+			width: 100%;
 		}
 
 		.zone-header,
