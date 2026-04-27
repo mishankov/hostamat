@@ -306,22 +306,8 @@ func (s *Service) Verify(ctx context.Context, domainID string) (*DomainRecord, e
 	domain.Status = DomainStatusVerified
 	domain.LastVerificationError = ""
 	domain.ActivatedAt = sql.NullTime{}
+	domain.UpdatedAt = time.Now()
 	if err := s.repo.Update(ctx, domain); err != nil {
-		ev.AddError(err)
-		return nil, err
-	}
-
-	activatedAt := time.Now()
-	domain.Status = DomainStatusActive
-	domain.LastVerificationError = ""
-	domain.ActivatedAt = sql.NullTime{Time: activatedAt, Valid: true}
-	domain.UpdatedAt = activatedAt
-	if err := s.repo.Update(ctx, domain); err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
-			return nil, errHostnameTaken
-		}
-
 		ev.AddError(err)
 		return nil, err
 	}
@@ -338,6 +324,21 @@ func (s *Service) Verify(ctx context.Context, domainID string) (*DomainRecord, e
 
 		record := s.recordFromDomain(domain, siteRecord)
 		return &record, nil
+	}
+
+	activatedAt := time.Now()
+	domain.Status = DomainStatusActive
+	domain.LastVerificationError = ""
+	domain.ActivatedAt = sql.NullTime{Time: activatedAt, Valid: true}
+	domain.UpdatedAt = activatedAt
+	if err := s.repo.Update(ctx, domain); err != nil {
+		var pqErr *pq.Error
+		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+			return nil, errHostnameTaken
+		}
+
+		ev.AddError(err)
+		return nil, err
 	}
 
 	record := s.recordFromDomain(domain, siteRecord)

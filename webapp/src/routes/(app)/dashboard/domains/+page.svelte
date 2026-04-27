@@ -143,27 +143,6 @@
 		white-space: nowrap;
 	}
 
-	.section-head {
-		display: flex;
-		align-items: baseline;
-		gap: var(--space-sm);
-		padding-top: var(--space-sm);
-	}
-
-	.section-head h2 {
-		font-size: 1rem;
-		font-weight: 700;
-		letter-spacing: -0.01em;
-		color: var(--color-text-secondary);
-	}
-
-	.section-count {
-		font-family: var(--font-mono);
-		font-size: 0.78rem;
-		font-weight: 500;
-		color: var(--color-text-tertiary);
-	}
-
 	.domain-list {
 		display: flex;
 		flex-direction: column;

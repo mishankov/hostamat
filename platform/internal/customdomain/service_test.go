@@ -241,6 +241,76 @@ func TestVerifyActivatesDomainAfterSuccessfulChecks(t *testing.T) {
 	}
 }
 
+func TestVerifyKeepsDomainVerifiedWhenProxyActivationFails(t *testing.T) {
+	t.Parallel()
+
+	now := time.Now()
+	repo := &repositoryMock{
+		domains: map[string]*customdomain.CustomDomain{
+			"domain-1": {
+				Id:                "domain-1",
+				Site:              "site-1",
+				User:              "user-1",
+				Hostname:          "www.example.com",
+				Type:              customdomain.DomainTypeCustom,
+				Status:            customdomain.DomainStatusPending,
+				VerificationToken: "token",
+				CreatedAt:         now,
+				UpdatedAt:         now,
+			},
+		},
+	}
+	siteRepo := &siteRepositoryMock{
+		sites: map[string]*site.Site{
+			"site-1": {
+				Id:     "site-1",
+				User:   "user-1",
+				Name:   "Docs",
+				Domain: "docs.hostamat.test",
+			},
+		},
+	}
+	hostSync := &hostSyncMock{addErr: errors.New("proxy unavailable")}
+	dns := &dnsLookupMock{
+		txt: map[string][]string{
+			"_hostamat.www.example.com": {"token"},
+		},
+		cname: map[string]string{
+			"www.example.com": "dns.hostamat.ru.",
+		},
+	}
+
+	service := customdomain.NewService(
+		repo,
+		siteRepo,
+		hostSync,
+		dns,
+		customdomain.DNSConfig{VerificationPrefix: "_hostamat"},
+	)
+
+	record, err := service.Verify(testContext("user-1"), "domain-1")
+	if err != nil {
+		t.Fatalf("Verify() error = %v", err)
+	}
+
+	if record.Status != customdomain.DomainStatusVerified {
+		t.Fatalf("Verify() status = %q, want %q", record.Status, customdomain.DomainStatusVerified)
+	}
+
+	if record.LastVerificationError == "" {
+		t.Fatal("Verify() last verification error is empty")
+	}
+
+	stored := repo.domains["domain-1"]
+	if stored.Status != customdomain.DomainStatusVerified {
+		t.Fatalf("stored status = %q, want %q", stored.Status, customdomain.DomainStatusVerified)
+	}
+
+	if stored.ActivatedAt.Valid {
+		t.Fatal("stored ActivatedAt is valid, want empty")
+	}
+}
+
 func TestVerifyRejectsActiveHostnameConflict(t *testing.T) {
 	t.Parallel()
 
@@ -571,9 +641,14 @@ func (m *siteRepositoryMock) GetList(_ context.Context, _ string) ([]*site.Site,
 type hostSyncMock struct {
 	added   []string
 	removed []string
+	addErr  error
 }
 
 func (m *hostSyncMock) Add(_ context.Context, host string) error {
+	if m.addErr != nil {
+		return m.addErr
+	}
+
 	m.added = append(m.added, host)
 	return nil
 }
