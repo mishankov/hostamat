@@ -102,19 +102,18 @@ func main() {
 	apiGroup := httpserver.NewHandlerGroup()
 	apiGroup.Use(authDomain.Middleware)
 
-	apiGroup.Handle("/files", siteDomain.FileHandlerGroup)
-	apiGroup.Handle("/sites", siteDomain.SiteHandlerGroup)
-	apiGroup.Handle("/domains", customDomain.HandlerGroup)
-	apiGroup.HandleGroup("/domains", customDomain.HandlerGroup) // TODO: need to be fixed on platforma
-	apiGroup.Handle("/uploadsessions", siteDomain.UploadSessionHandlerGroup)
+	apiGroup.Mount("/files", siteDomain.FileHandlerGroup)
+	apiGroup.Mount("/sites", siteDomain.SiteHandlerGroup)
+	apiGroup.Mount("/domains", customDomain.HandlerGroup)
+	apiGroup.Mount("/uploadsessions", siteDomain.UploadSessionHandlerGroup)
 
 	// HTTP server
 	httpServer := httpserver.New(conf.Port, 10*time.Second)
 
-	httpServer.HandleGroup("/api", apiGroup)
-	httpServer.HandleGroup("/auth", authDomain.HandleGroup)
-	// HandleGroup used here because client would request files by additional path
-	httpServer.HandleGroup(conf.FileServerPath, siteDomain.FileServeHandler)
+	httpServer.Mount("/api", apiGroup)
+	httpServer.Mount("/auth", authDomain.HandleGroup)
+	// Mount used here because client would request files by additional path
+	httpServer.Mount(conf.FileServerPath, siteDomain.FileServeHandler)
 
 	httpServer.Handle("/metrics", promhttp.Handler())
 
