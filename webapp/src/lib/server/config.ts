@@ -27,6 +27,10 @@ export const ProxyConfig = {
 		method: 'POST',
 		url: `${API_BASE}/api/domains`
 	},
+	updateDomain: {
+		method: 'PUT',
+		url: `${API_BASE}/api/domains`
+	},
 	verifyDomain: {
 		method: 'POST',
 		url: `${API_BASE}/api/domains/verify`
