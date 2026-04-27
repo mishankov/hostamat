@@ -15,11 +15,11 @@
 		{
 			route: '/dashboard/sites',
 			label: 'Статические сайты'
+		},
+		{
+			route: '/dashboard/domains',
+			label: 'Домены'
 		}
-		// {
-		// 	route: '/dashboard/domains',
-		// 	label: 'Домены'
-		// }
 	];
 
 	let { children, data }: LayoutProps = $props();

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { Button, CopyButton, IconButton, Link, Modal, Select, Toolbar } from '$lib/components';
-	import { Check, Edit, I, Trash } from '$lib/icons';
+	import { Edit, Trash } from '$lib/icons';
 	import { deleteDomain, updateDomain, verifyDomain } from '$lib/api-client';
 	import type { DomainRecord, Site } from '$lib/types';
 
 	interface Props {
 		domain: DomainRecord;
 		sites: Site[];
-		onrefresh: () => Promise<void>;
+		onrefresh: (showLoading?: boolean) => Promise<void>;
 	}
 
 	let { domain, sites, onrefresh = async () => {} }: Props = $props();
@@ -121,7 +121,7 @@
 		}
 
 		if (data) {
-			await onrefresh();
+			await onrefresh(false);
 		}
 
 		loading = false;
@@ -238,6 +238,11 @@
 	>
 		{#if isCustom && dnsInstructions}
 			<div class="dns-zone">
+				<div class="dns-status">
+					<span class="status-chip {statusTone}">{statusLabel}</span>
+					<span class="meta-detail" class:error={detailHasError}>{statusDetail}</span>
+				</div>
+
 				<div class="zone-table">
 					<div class="zone-header">
 						<span>ТИП</span>
@@ -353,8 +358,7 @@
 	>
 		<div class="delete-modal">
 			<p id={deleteDescId} class="delete-modal-text">
-				Вы уверены, что хотите удалить домен "{domain.hostname}"? Домен будет снят с маршрутизации,
-				но сайт и его резервный адрес останутся без изменений.
+				Вы уверены, что хотите удалить домен "{domain.hostname}"?
 			</p>
 			<div class="delete-actions">
 				<Button
@@ -480,6 +484,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-md);
+	}
+
+	.dns-status {
+		display: flex;
+		align-items: center;
+		gap: var(--space-sm);
+		flex-wrap: wrap;
 	}
 
 	.dns-guide {

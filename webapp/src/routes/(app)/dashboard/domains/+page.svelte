@@ -41,8 +41,11 @@
 		loading = false;
 	};
 
-	const refresh = async () => {
-		loading = true;
+	const refresh = async (showLoading = true) => {
+		if (showLoading) {
+			loading = true;
+		}
+
 		await invalidateAll();
 		await updateState();
 	};
