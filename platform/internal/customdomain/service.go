@@ -214,6 +214,56 @@ func (s *Service) Create(ctx context.Context, siteID, hostname string) (*DomainR
 	return &record, nil
 }
 
+func (s *Service) UpdateSite(ctx context.Context, domainID, siteID string) (*DomainRecord, error) {
+	ev := log.EventFromContext(ctx)
+	ev.AddStep(slog.LevelInfo, "customdomain.UpdateSite")
+
+	if siteID == "" {
+		return nil, errMissingSiteID
+	}
+
+	domain, currentSiteRecord, err := s.getOwnedDomain(ctx, domainID)
+	if err != nil {
+		return nil, err
+	}
+
+	newSiteRecord, err := s.siteRepo.Get(ctx, siteID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errNotFound
+		}
+
+		ev.AddError(err)
+		return nil, err
+	}
+
+	user := auth.UserFromContext(ctx)
+	if user == nil {
+		return nil, errAccessDenied
+	}
+
+	if newSiteRecord.User != user.ID {
+		return nil, errAccessDenied
+	}
+
+	if domain.Site == siteID {
+		record := s.recordFromDomain(domain, currentSiteRecord)
+		return &record, nil
+	}
+
+	now := time.Now()
+	domain.Site = siteID
+	domain.UpdatedAt = now
+
+	if err := s.repo.Update(ctx, domain); err != nil {
+		ev.AddError(err)
+		return nil, err
+	}
+
+	record := s.recordFromDomain(domain, newSiteRecord)
+	return &record, nil
+}
+
 func (s *Service) Verify(ctx context.Context, domainID string) (*DomainRecord, error) {
 	ev := log.EventFromContext(ctx)
 	ev.AddStep(slog.LevelInfo, "customdomain.Verify")

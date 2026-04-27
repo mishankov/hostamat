@@ -19,6 +19,7 @@ func New(db db, siteRepo siteRepository, hostSync hostSync, dnsCfg DNSConfig) *D
 	handlerGroup := httpserver.NewHandlerGroup()
 	handlerGroup.Handle("GET /", NewListHandler(service))
 	handlerGroup.Handle("POST /", NewCreateHandler(service))
+	handlerGroup.Handle("PUT /", NewUpdateHandler(service))
 	handlerGroup.Handle("POST /verify", NewVerifyHandler(service))
 	handlerGroup.Handle("DELETE /", NewDeleteHandler(service))
 

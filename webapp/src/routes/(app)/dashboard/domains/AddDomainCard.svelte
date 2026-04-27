@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Input, Modal } from '$lib/components';
+	import { Button, Input, Modal, Select } from '$lib/components';
 	import { Spinner } from '$lib/icons';
 	import { createDomain } from '$lib/api-client';
 	import type { Site } from '$lib/types';
@@ -103,14 +103,12 @@
 	closeLabel="Закрыть форму подключения домена"
 >
 	<div class="modal-body">
-		<div class="field-group">
-			<label for="new-domain-site">Сайт</label>
-			<select id="new-domain-site" bind:value={selectedSiteId}>
-				{#each sites as site (site.id)}
-					<option value={site.id}>{site.name} ({site.domain})</option>
-				{/each}
-			</select>
-		</div>
+		<Select
+			id="new-domain-site"
+			label="Сайт"
+			options={sites.map((site) => ({ value: site.id, label: `${site.name} (${site.domain})` }))}
+			bind:value={selectedSiteId}
+		/>
 
 		<Input
 			id="new-domain-hostname"
@@ -145,36 +143,6 @@
 		flex-direction: column;
 		gap: var(--space-lg);
 		min-width: min(100%, 24rem);
-	}
-
-	.field-group {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-xs);
-	}
-
-	.field-group label {
-		font-size: 0.8125rem;
-		font-weight: 600;
-		color: var(--color-text-secondary);
-	}
-
-	.field-group select {
-		width: 100%;
-		padding: 0.65rem 0.9rem;
-		font-size: 0.95rem;
-		font-family: var(--font-body);
-		background-color: var(--color-background-object);
-		color: var(--color-text-regular);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-sm);
-		transition: var(--transition);
-	}
-
-	.field-group select:focus {
-		outline: none;
-		border-color: var(--color-accent-border);
-		box-shadow: var(--focus-ring);
 	}
 
 	.modal-note {

@@ -92,7 +92,7 @@
 		<div class="domain-list">
 			{#each customDomains as domain (domain.id)}
 				<div class="domain-row">
-					<DomainCard {domain} onrefresh={refresh} />
+					<DomainCard {domain} {sites} onrefresh={refresh} />
 				</div>
 			{/each}
 		</div>

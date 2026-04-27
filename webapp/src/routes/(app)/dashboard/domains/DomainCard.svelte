@@ -1,18 +1,29 @@
 <script lang="ts">
-	import { Button, Details, Link } from '$lib/components';
-	import { deleteDomain, verifyDomain } from '$lib/api-client';
-	import type { DomainRecord } from '$lib/types';
+	import { Button, Details, IconButton, Link, Modal, Select, Toolbar } from '$lib/components';
+	import { Check, Edit, Trash } from '$lib/icons';
+	import { deleteDomain, updateDomain, verifyDomain } from '$lib/api-client';
+	import type { DomainRecord, Site } from '$lib/types';
 
 	interface Props {
 		domain: DomainRecord;
+		sites: Site[];
 		onrefresh: () => Promise<void>;
 	}
 
-	let { domain, onrefresh = async () => {} }: Props = $props();
+	let { domain, sites, onrefresh = async () => {} }: Props = $props();
 
 	let loading = $state(false);
 	let actionError = $state('');
-	let confirmingDelete = $state(false);
+	let deleteModal = $state<Modal>();
+	let editModal = $state<Modal>();
+	let selectedSiteId = $state('');
+	let editError = $state('');
+
+	const deleteTitleId = $derived(`delete-domain-title-${domain.id}`);
+	const deleteDescId = $derived(`delete-domain-description-${domain.id}`);
+	const deleteButtonId = $derived(`delete-domain-confirm-${domain.id}`);
+	const editTitleId = $derived(`edit-domain-title-${domain.id}`);
+	const editSelectId = $derived(`edit-domain-select-${domain.id}`);
 
 	const isCustom = $derived(domain.type === 'custom');
 	const canOpen = $derived(domain.status === 'active');
@@ -108,12 +119,31 @@
 		if (error) {
 			actionError = error;
 			loading = false;
-			confirmingDelete = false;
+			deleteModal?.close();
 			return;
 		}
 
 		if (data) {
-			confirmingDelete = false;
+			deleteModal?.close();
+			await onrefresh();
+		}
+
+		loading = false;
+	};
+
+	const handleEdit = async () => {
+		loading = true;
+		editError = '';
+
+		const { data, error } = await updateDomain(domain.id, selectedSiteId);
+		if (error) {
+			editError = error;
+			loading = false;
+			return;
+		}
+
+		if (data) {
+			editModal?.close();
 			await onrefresh();
 		}
 
@@ -145,21 +175,40 @@
 		</div>
 
 		{#if isCustom}
-			<div class="domain-toolbar">
-				<Button disabled={loading} emphasis="solid" onclick={handleVerify}>
-					{domain.status === 'active' ? 'Проверить' : 'Проверить'}
-				</Button>
-				<Button
-					tone="danger"
+			<Toolbar>
+				<IconButton
+					grouped
+					label="Проверить домен"
+					title="Проверить домен"
+					disabled={loading}
+					onclick={handleVerify}
+				>
+					<Check size={25} />
+				</IconButton>
+				<IconButton
+					grouped
+					label="Изменить сайт"
+					title="Изменить сайт"
 					disabled={loading}
 					onclick={() => {
-						confirmingDelete = !confirmingDelete;
-						actionError = '';
+						selectedSiteId = domain.siteId;
+						editError = '';
+						editModal?.open();
 					}}
 				>
-					{confirmingDelete ? 'Отменить' : 'Удалить'}
-				</Button>
-			</div>
+					<Edit size={25} />
+				</IconButton>
+				<IconButton
+					grouped
+					label="Удалить домен"
+					title="Удалить домен"
+					tone="danger"
+					disabled={loading}
+					onclick={() => deleteModal?.open()}
+				>
+					<Trash size={25} />
+				</IconButton>
+			</Toolbar>
 		{/if}
 	</div>
 
@@ -217,17 +266,52 @@
 		</Details>
 	{/if}
 
-	{#if isCustom && confirmingDelete}
-		<div class="delete-guard">
-			<div class="delete-guard-text">
-				<span class="data-label">отключение домена</span>
-				<p>Удаление снимет домен с маршрутизации, но не затронет сайт и его резервный адрес.</p>
+	<Modal
+		bind:this={editModal}
+		tone="neutral"
+		title={`Изменить сайт для "${domain.hostname}"`}
+		titleId={editTitleId}
+		initialFocusSelector={'#' + editSelectId}
+	>
+		<div class="edit-modal">
+			<Select
+				id={editSelectId}
+				label="Сайт"
+				options={sites.map((site) => ({ value: site.id, label: `${site.name} (${site.domain})` }))}
+				errorMessage={editError}
+				bind:value={selectedSiteId}
+			/>
+			<div class="edit-actions">
+				<Button emphasis="solid" disabled={loading} onclick={handleEdit}>Изменить</Button>
+				<Button disabled={loading} onclick={() => editModal?.close()}>Отмена</Button>
 			</div>
-			<Button tone="danger" emphasis="solid" disabled={loading} onclick={handleDelete}>
-				Подтвердить удаление
-			</Button>
 		</div>
-	{/if}
+	</Modal>
+
+	<Modal
+		bind:this={deleteModal}
+		tone="danger"
+		title="Подтверждение удаления"
+		titleId={deleteTitleId}
+		descriptionId={deleteDescId}
+		initialFocusSelector={'#' + deleteButtonId}
+	>
+		<div class="delete-modal">
+			<p id={deleteDescId} class="delete-modal-text">
+				Вы уверены, что хотите удалить домен "{domain.hostname}"? Домен будет снят с маршрутизации, но сайт и его резервный адрес останутся без изменений.
+			</p>
+			<div class="delete-actions">
+				<Button
+					id={deleteButtonId}
+					tone="danger"
+					emphasis="solid"
+					disabled={loading}
+					onclick={handleDelete}>Удалить</Button
+				>
+				<Button tone="danger" onclick={() => deleteModal?.close()}>Отмена</Button>
+			</div>
+		</div>
+	</Modal>
 </div>
 
 <style>
@@ -321,13 +405,6 @@
 		font-size: 0.82rem;
 		color: var(--color-text-secondary);
 		white-space: nowrap;
-	}
-
-	.domain-toolbar {
-		display: flex;
-		gap: var(--space-sm);
-		flex-wrap: wrap;
-		flex-shrink: 0;
 	}
 
 	.domain-log {
@@ -465,39 +542,36 @@
 		overflow-wrap: anywhere;
 	}
 
-	.delete-guard {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: end;
-		justify-content: space-between;
-		gap: var(--space-md);
-		padding: var(--space-md);
-		border-radius: var(--radius-sm);
-		border: 1px solid color-mix(in oklch, var(--color-danger-border) 40%, transparent);
-		background: color-mix(in oklch, var(--color-danger-surface) 92%, transparent);
-	}
-
-	.delete-guard-text {
+	.edit-modal {
 		display: flex;
 		flex-direction: column;
-		gap: 0.15rem;
-		max-width: 36ch;
+		gap: var(--space-lg);
 	}
 
-	.delete-guard-text p {
+	.edit-actions {
+		display: flex;
+		gap: var(--space-sm);
+	}
+
+	.delete-modal {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-lg);
+	}
+
+	.delete-modal-text {
 		color: var(--color-danger-text);
-		font-size: 0.84rem;
-		line-height: 1.4;
+	}
+
+	.delete-actions {
+		display: flex;
+		gap: var(--space-sm);
 	}
 
 	@media (max-width: 640px) {
 		.domain-main {
 			grid-template-columns: 1fr;
 			gap: var(--space-md);
-		}
-
-		.domain-toolbar {
-			justify-content: flex-start;
 		}
 
 		.zone-header,

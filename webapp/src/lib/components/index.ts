@@ -12,6 +12,7 @@ import Input from './Input.svelte';
 import Link from './Link.svelte';
 import Modal from './Modal.svelte';
 import ProgressBar from './ProgressBar.svelte';
+import Select from './Select.svelte';
 import Separator from './Separator.svelte';
 import Success from './Success.svelte';
 import ThemeToggle from './ThemeToggle.svelte';
@@ -31,6 +32,7 @@ export {
 	Input,
 	Modal,
 	ProgressBar,
+	Select,
 	Link,
 	Separator,
 	Success,

@@ -80,6 +80,30 @@ export const verifyDomain = async (domainId: string): AsyncResult<boolean, strin
 	return { data: true, error: null };
 };
 
+export const updateDomain = async (
+	domainId: string,
+	siteId: string
+): AsyncResult<boolean, string> => {
+	const { data: resp, error } = await safeFetch('/api/proxy', {
+		method: 'PUT',
+		headers: {
+			'X-Method': 'updateDomain',
+			'H-Domain-Id': domainId
+		},
+		body: JSON.stringify({ siteId })
+	});
+
+	if (error) {
+		return { data: null, error: error.message };
+	}
+
+	if (!resp.ok) {
+		return { data: null, error: await readErrorMessage(resp) };
+	}
+
+	return { data: true, error: null };
+};
+
 export const deleteDomain = async (domainId: string): AsyncResult<boolean, string> => {
 	const { data: resp, error } = await safeFetch('/api/proxy', {
 		method: 'DELETE',

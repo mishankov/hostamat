@@ -132,6 +132,7 @@ func (r *Repository) Update(ctx context.Context, domain *CustomDomain) error {
 	const query = `
 		UPDATE ` + tableName + `
 		SET
+			site = :site,
 			status = :status,
 			last_verification_error = :last_verification_error,
 			last_checked_at = :last_checked_at,
