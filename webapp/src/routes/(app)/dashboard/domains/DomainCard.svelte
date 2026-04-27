@@ -171,14 +171,18 @@
 	<div class="domain-header">
 		<div class="domain-data">
 			<div class="data-row">
+				<span class="data-label">название:</span>
 				{#if canOpen}
 					<Link href={`https://${domain.hostname}`} target="_blank" alwaysUnderline>
-						{domain.hostname}
+						{domain.siteName}
 					</Link>
 				{:else}
-					<span class="hostname">{domain.hostname}</span>
+					<span class="site-name">{domain.siteName}</span>
 				{/if}
-				<span class="site-name">{domain.siteName}</span>
+			</div>
+			<div class="data-row">
+				<span class="data-label">домен:</span>
+				<span class="domain-value" title="Домен">{domain.hostname}</span>
 			</div>
 			<div class="domain-meta">
 				<span class="status-chip {statusTone}">{statusLabel}</span>
@@ -402,30 +406,13 @@
 		min-width: 0;
 	}
 
-	.domain-data :global(a) {
-		font-family: var(--font-mono);
-		font-size: 0.9rem;
-		font-weight: 500;
-	}
-
-	.data-row {
-		display: flex;
-		align-items: baseline;
-		gap: var(--space-sm);
-		flex-wrap: wrap;
-		min-width: 0;
-	}
-
-	.hostname {
-		font-family: var(--font-mono);
-		font-size: 0.9rem;
-		font-weight: 500;
+	.site-name {
 		color: var(--color-text-regular);
 		overflow-wrap: anywhere;
 	}
 
-	.site-name {
-		font-size: 0.82rem;
+	.domain-value {
+		font-size: 0.88rem;
 		color: var(--color-text-secondary);
 		overflow-wrap: anywhere;
 	}
