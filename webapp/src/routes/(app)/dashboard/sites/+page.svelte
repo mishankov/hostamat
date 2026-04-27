@@ -153,19 +153,7 @@
 	.site-row {
 		border-bottom: 1px solid var(--color-border);
 		min-width: 0;
-		animation: fade-in-up 220ms var(--ease-out-quart) both;
 	}
-
-	.site-row:nth-child(1) { animation-delay: 0ms; }
-	.site-row:nth-child(2) { animation-delay: 40ms; }
-	.site-row:nth-child(3) { animation-delay: 80ms; }
-	.site-row:nth-child(4) { animation-delay: 120ms; }
-	.site-row:nth-child(5) { animation-delay: 160ms; }
-	.site-row:nth-child(6) { animation-delay: 200ms; }
-	.site-row:nth-child(7) { animation-delay: 240ms; }
-	.site-row:nth-child(8) { animation-delay: 280ms; }
-	.site-row:nth-child(9) { animation-delay: 320ms; }
-	.site-row:nth-child(10) { animation-delay: 360ms; }
 
 	.loading-state {
 		display: flex;
