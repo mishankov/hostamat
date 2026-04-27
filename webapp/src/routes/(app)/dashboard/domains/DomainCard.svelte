@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Button, IconButton, Link, Modal, Select, Toolbar } from '$lib/components';
-	import { Check, Edit, Trash } from '$lib/icons';
+	import { Button, CopyButton, IconButton, Link, Modal, Select, Toolbar } from '$lib/components';
+	import { Check, Edit, I, Trash } from '$lib/icons';
 	import { deleteDomain, updateDomain, verifyDomain } from '$lib/api-client';
 	import type { DomainRecord, Site } from '$lib/types';
 
@@ -15,27 +15,29 @@
 	let loading = $state(false);
 	let actionError = $state('');
 	let deleteModal = $state<Modal>();
+	let dnsModal = $state<Modal>();
 	let editModal = $state<Modal>();
 	let selectedSiteId = $state('');
 	let editError = $state('');
-	let dnsOpen = $state(false);
 
 	const deleteTitleId = $derived(`delete-domain-title-${domain.id}`);
 	const deleteDescId = $derived(`delete-domain-description-${domain.id}`);
 	const deleteButtonId = $derived(`delete-domain-confirm-${domain.id}`);
+	const dnsTitleId = $derived(`dns-domain-title-${domain.id}`);
+	const dnsDescId = $derived(`dns-domain-description-${domain.id}`);
 	const editTitleId = $derived(`edit-domain-title-${domain.id}`);
 	const editSelectId = $derived(`edit-domain-select-${domain.id}`);
 
 	const isCustom = $derived(domain.type === 'custom');
+	const dnsInstructions = $derived(domain.instructions);
 	const canOpen = $derived(domain.status === 'active');
 	const errorText = $derived(actionError || domain.lastVerificationError || '');
 	const setupGuide = $derived.by(() => {
-		if (!isCustom || !domain.instructions) {
+		if (!isCustom || !dnsInstructions) {
 			return null;
 		}
 
 		return {
-			heading: 'Настройка DNS',
 			intro:
 				'Добавьте две DNS-записи: TXT подтверждает владение, CNAME направляет поддомен на сайт в Хостамате.',
 			steps: [
@@ -183,31 +185,21 @@
 				<span class="meta-detail" class:error={detailHasError}>{statusDetail}</span>
 			</div>
 		</div>
-
-		{#if isCustom && domain.instructions}
-			<button
-				type="button"
-				class="dns-toggle"
-				aria-expanded={dnsOpen}
-				onclick={() => {
-					dnsOpen = !dnsOpen;
-				}}>DNS-записи</button
-			>
-		{/if}
 	</div>
 
 	{#if isCustom}
 		<div class="domain-toolbar">
 			<Toolbar>
-				<IconButton
-					grouped
-					label="Проверить домен"
-					title="Проверить домен"
-					disabled={loading}
-					onclick={handleVerify}
-				>
-					<Check size={25} />
-				</IconButton>
+				{#if dnsInstructions}
+					<IconButton
+						grouped
+						label="Как настроить DNS"
+						title="Как настроить DNS"
+						onclick={() => dnsModal?.open()}
+					>
+						DNS
+					</IconButton>
+				{/if}
 				<IconButton
 					grouped
 					label="Изменить сайт"
@@ -235,13 +227,78 @@
 		</div>
 	{/if}
 
-	{#if isCustom && domain.instructions && dnsOpen}
-		<div class="domain-details">
+	<Modal
+		bind:this={dnsModal}
+		tone="neutral"
+		title={`DNS для "${domain.hostname}"`}
+		titleId={dnsTitleId}
+		descriptionId={dnsDescId}
+		panelWidth="min(42rem, calc(100vw - 2rem))"
+		closeLabel="Закрыть инструкции DNS"
+	>
+		{#if isCustom && dnsInstructions}
 			<div class="dns-zone">
+				<div class="zone-table">
+					<div class="zone-header">
+						<span>ТИП</span>
+						<span>ИМЯ</span>
+						<span>ЗНАЧЕНИЕ</span>
+					</div>
+					<div class="zone-body">
+						<div class="zone-row zone-row-ownership">
+							<span class="zone-type">{dnsInstructions.ownership.type}</span>
+							<span class="zone-name zone-copy-cell">
+								<span>{dnsInstructions.ownership.name}</span>
+								<CopyButton
+									grouped
+									size={16}
+									textToCopy={dnsInstructions.ownership.name}
+									label="Скопировать имя TXT-записи"
+									title="Скопировать имя"
+								/>
+							</span>
+							<span class="zone-value zone-copy-cell">
+								<span>{dnsInstructions.ownership.value}</span>
+								<CopyButton
+									grouped
+									size={16}
+									textToCopy={dnsInstructions.ownership.value}
+									label="Скопировать значение TXT-записи"
+									title="Скопировать значение"
+								/>
+							</span>
+						</div>
+						{#each dnsInstructions.routing as record (`${record.type}-${record.name}-${record.value}`)}
+							<div class="zone-row">
+								<span class="zone-type">{record.type}</span>
+								<span class="zone-name zone-copy-cell">
+									<span>{record.name}</span>
+									<CopyButton
+										grouped
+										size={16}
+										textToCopy={record.name}
+										label={`Скопировать имя ${record.type}-записи`}
+										title="Скопировать имя"
+									/>
+								</span>
+								<span class="zone-value zone-copy-cell">
+									<span>{record.value}</span>
+									<CopyButton
+										grouped
+										size={16}
+										textToCopy={record.value}
+										label={`Скопировать значение ${record.type}-записи`}
+										title="Скопировать значение"
+									/>
+								</span>
+							</div>
+						{/each}
+					</div>
+				</div>
+
 				{#if setupGuide}
 					<div class="dns-guide">
-						<h3>{setupGuide.heading}</h3>
-						<p>{setupGuide.intro}</p>
+						<p id={dnsDescId}>{setupGuide.intro}</p>
 
 						<ol class="guide-steps">
 							{#each setupGuide.steps as step (`step-${step}`)}
@@ -257,30 +314,12 @@
 					</div>
 				{/if}
 
-				<div class="zone-table">
-					<div class="zone-header">
-						<span>ТИП</span>
-						<span>ИМЯ</span>
-						<span>ЗНАЧЕНИЕ</span>
-					</div>
-					<div class="zone-body">
-						<div class="zone-row zone-row-ownership">
-							<span class="zone-type">{domain.instructions.ownership.type}</span>
-							<span class="zone-name">{domain.instructions.ownership.name}</span>
-							<span class="zone-value">{domain.instructions.ownership.value}</span>
-						</div>
-						{#each domain.instructions.routing as record (`${record.type}-${record.name}-${record.value}`)}
-							<div class="zone-row">
-								<span class="zone-type">{record.type}</span>
-								<span class="zone-name">{record.name}</span>
-								<span class="zone-value">{record.value}</span>
-							</div>
-						{/each}
-					</div>
+				<div class="dns-actions">
+					<Button emphasis="solid" disabled={loading} onclick={handleVerify}>Проверить DNS</Button>
 				</div>
 			</div>
-		</div>
-	{/if}
+		{/if}
+	</Modal>
 
 	<Modal
 		bind:this={editModal}
@@ -437,30 +476,10 @@
 		color: var(--color-danger-text);
 	}
 
-	.dns-toggle {
-		all: unset;
-		width: fit-content;
-		font-weight: 650;
-		color: var(--color-accent-text);
-		text-decoration: underline;
-		text-underline-offset: 3px;
-		cursor: pointer;
-	}
-
-	.dns-toggle:hover {
-		color: var(--color-accent-strong);
-	}
-
-	.domain-details {
-		grid-column: 1;
-		min-width: 0;
-	}
-
 	.dns-zone {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-md);
-		padding-top: var(--space-xs);
 	}
 
 	.dns-guide {
@@ -471,12 +490,6 @@
 		border-radius: var(--radius-sm);
 		border: 1px solid var(--color-border);
 		background: var(--color-background-object);
-	}
-
-	.dns-guide h3 {
-		font-size: 0.9rem;
-		font-weight: 700;
-		letter-spacing: -0.01em;
 	}
 
 	.dns-guide p {
@@ -508,12 +521,16 @@
 		line-height: 1.4;
 	}
 
+	.dns-actions {
+		display: flex;
+	}
+
 	.zone-table {
 		display: flex;
 		flex-direction: column;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-sm);
-		overflow: hidden;
+		overflow: visible;
 		background: var(--color-background-object);
 	}
 
@@ -524,6 +541,7 @@
 		padding: 0.45rem 0.75rem;
 		background: var(--color-neutral-surface);
 		border-bottom: 1px solid var(--color-border);
+		border-radius: calc(var(--radius-sm) - 1px) calc(var(--radius-sm) - 1px) 0 0;
 	}
 
 	.zone-header span {
@@ -555,10 +573,6 @@
 		border-bottom: none;
 	}
 
-	.zone-row-ownership {
-		background: color-mix(in oklch, var(--color-accent-surface) 55%, transparent);
-	}
-
 	.zone-type {
 		font-weight: 600;
 		color: var(--color-text-regular);
@@ -571,6 +585,19 @@
 
 	.zone-value {
 		color: var(--color-text-regular);
+		overflow-wrap: anywhere;
+	}
+
+	.zone-copy-cell {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-xs);
+		min-width: 0;
+	}
+
+	.zone-copy-cell > span {
+		min-width: 0;
 		overflow-wrap: anywhere;
 	}
 
