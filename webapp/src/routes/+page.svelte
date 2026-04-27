@@ -9,7 +9,10 @@
 
 <svelte:head>
 	<title>Хостамат</title>
-	<meta name="description" content="Хостинг статических сайтов с автоматическими HTTPS-поддоменами. Загрузите файлы — получите готовый сайт." />
+	<meta
+		name="description"
+		content="Хостинг статических сайтов с автоматическими HTTPS-поддоменами. Загрузите файлы — получите готовый сайт."
+	/>
 </svelte:head>
 
 <main class="page-shell">
@@ -20,8 +23,8 @@
 					<Badge text="Альфа-тестирование" />
 					<h1>Хостинг статических сайтов без лишней настройки</h1>
 					<p class="hero-description">
-						Загрузите файлы или ZIP-архив, получите HTTPS-поддомен и управляйте проектом в удобной
-						панели.
+						Загрузите файлы или ZIP-архив, получите поддомен или подключите свой домен и управляйте
+						проектом в удобной панели.
 					</p>
 					<div class="hero-actions">
 						{#if data.isAuthenticated}
@@ -72,13 +75,23 @@
 										<span class="terminal-step-fill"></span>
 										<span class="terminal-step-status">[ok]</span>
 									</li>
+									<li class="terminal-step terminal-line" style="--line-index: 7;">
+										<span class="terminal-step-index">[04]</span>
+										<span class="terminal-step-text">attach custom domain</span>
+										<span class="terminal-step-fill"></span>
+										<span class="terminal-step-status">[ok]</span>
+									</li>
 								</ul>
-								<div class="terminal-divider terminal-line" style="--line-index: 8;"></div>
-								<p class="terminal-meta-row terminal-line" style="--line-index: 9;">
+								<div class="terminal-divider terminal-line" style="--line-index: 9;"></div>
+								<p class="terminal-meta-row terminal-line" style="--line-index: 10;">
 									<span class="terminal-meta-key">domain:</span>
 									<span class="terminal-meta-value">happy-cappy-12345.hostamat.ru</span>
 								</p>
-								<p class="terminal-meta-row terminal-line" style="--line-index: 10;">
+								<p class="terminal-meta-row terminal-line" style="--line-index: 11;">
+									<span class="terminal-meta-key">custom:</span>
+									<span class="terminal-meta-value">portfolio.example.com</span>
+								</p>
+								<p class="terminal-meta-row terminal-line" style="--line-index: 12;">
 									<span class="terminal-meta-key">status:</span>
 									<span class="terminal-meta-value">live | https</span>
 								</p>
@@ -107,8 +120,8 @@
 			<div class="step">
 				<span class="step-number">03</span>
 				<div class="step-body">
-					<h2>Поделитесь ссылкой</h2>
-					<p>Сайт сразу доступен по HTTPS-поддомену.</p>
+					<h2>Подключите домен</h2>
+					<p>Сайт доступен по HTTPS-поддомену, а для рабочих проектов можно добавить свой домен.</p>
 				</div>
 			</div>
 			<div class="step step-featured">
@@ -137,7 +150,7 @@
 
 	.hero-main {
 		display: grid;
-		grid-template-columns: minmax(31.25rem, 1.2fr) minmax(20rem, 0.95fr);
+		grid-template-columns: minmax(0, 1.16fr) minmax(18rem, 0.95fr);
 		align-items: center;
 		gap: clamp(1.5rem, 3vw, 3rem);
 		padding: clamp(var(--space-xl), 3vw, var(--space-2xl));
@@ -167,28 +180,21 @@
 		margin-top: 0.1rem;
 		position: relative;
 		inline-size: 100%;
+		min-width: 0;
 	}
 
 	.terminal-window {
 		--terminal-window-border: color-mix(in hsl, var(--color-border) 82%, #8a8177 18%);
 		--terminal-window-bg: color-mix(in hsl, var(--color-background-object) 98%, #f1eee8);
 		--terminal-window-shadow: var(--shadow-lg);
-		--terminal-titlebar-bg-top: color-mix(
-			in hsl,
-			var(--color-background-object) 96%,
-			#ede8df 4%
-		);
+		--terminal-titlebar-bg-top: color-mix(in hsl, var(--color-background-object) 96%, #ede8df 4%);
 		--terminal-titlebar-bg-bottom: color-mix(
 			in hsl,
 			var(--color-background-object) 98%,
 			var(--color-background)
 		);
 		--terminal-title-color: var(--color-text-secondary);
-		--terminal-body-bg: color-mix(
-			in hsl,
-			var(--color-background-object) 97%,
-			#f4f0e8 3%
-		);
+		--terminal-body-bg: color-mix(in hsl, var(--color-background-object) 97%, #f4f0e8 3%);
 		--terminal-text: #2d2924;
 		--terminal-text-dim: #6b6258;
 		--terminal-line-color: color-mix(in hsl, #8a8177 48%, transparent);
@@ -199,6 +205,7 @@
 		--terminal-control-close: #ff5f57;
 		--terminal-control-minimize: #febc2e;
 		--terminal-control-zoom: #28c840;
+		container-type: inline-size;
 		position: relative;
 		overflow: hidden;
 		border-radius: var(--radius-lg);
@@ -328,10 +335,10 @@
 		margin: 0;
 		padding-top: 0.04em;
 		font-family: var(--font-body);
-		font-size: clamp(1.82rem, 4.3vw, 4.3rem);
+		font-size: clamp(1.82rem, 13cqi, 3.7rem);
 		font-weight: 700;
 		line-height: 0.88;
-		letter-spacing: 0.05em;
+		letter-spacing: 0.035em;
 		color: var(--terminal-brand-color);
 		text-shadow: none;
 		-webkit-text-stroke: 1px var(--terminal-brand-stroke);
@@ -395,11 +402,7 @@
 		--terminal-window-border: color-mix(in hsl, var(--color-border) 76%, #80776d 24%);
 		--terminal-window-bg: color-mix(in hsl, var(--color-background-object) 92%, #141312);
 		--terminal-window-shadow: var(--shadow-xl);
-		--terminal-titlebar-bg-top: color-mix(
-			in hsl,
-			var(--color-background-object) 85%,
-			#2b2925 15%
-		);
+		--terminal-titlebar-bg-top: color-mix(in hsl, var(--color-background-object) 85%, #2b2925 15%);
 		--terminal-titlebar-bg-bottom: color-mix(
 			in hsl,
 			var(--color-background-object) 90%,
@@ -521,7 +524,7 @@
 		}
 
 		.terminal-brand {
-			font-size: clamp(1.64rem, 8vw, 3rem);
+			font-size: clamp(1.64rem, 13cqi, 3rem);
 		}
 	}
 
