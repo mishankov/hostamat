@@ -89,9 +89,9 @@
 >
 	{#if loading}
 		<Spinner size={16} />
-		<span>подключаем домен</span>
+		<span>Добавляем домен</span>
 	{:else}
-		<span>подключить домен</span>
+		<span>Добавить домен</span>
 	{/if}
 </Button>
 

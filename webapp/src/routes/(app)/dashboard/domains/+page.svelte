@@ -15,7 +15,6 @@
 	let domains = $state.raw<DomainRecord[]>([]);
 	let loading = $state(true);
 	let errorMessage = $state('');
-	let generatedDomains = $derived(domains.filter((domain) => domain.type === 'generated'));
 	let customDomains = $derived(domains.filter((domain) => domain.type === 'custom'));
 
 	const updateState = async () => {
@@ -63,9 +62,9 @@
 	<div class="headline">
 		<h1>Домены</h1>
 		<div class="headline-meta">
-			<p>Подключайте пользовательские домены и управляйте адресами сайтов</p>
+			<p>Подключайте свои домены</p>
 			{#if !loading}
-				<span class="domain-counter">доменов: {domains.length}</span>
+				<span class="domain-counter">доменов: {customDomains.length}</span>
 			{/if}
 		</div>
 	</div>
@@ -89,37 +88,17 @@
 				</Alert>
 			</div>
 		</div>
-	{:else}
-		{#if customDomains.length > 0 || true}
-			<div class="section-head">
-				<h2>Пользовательские домены</h2>
-				<span class="section-count">{customDomains.length}</span>
-			</div>
-			<div class="domain-list">
-				{#each customDomains as domain (domain.id)}
-					<div class="domain-row">
-						<DomainCard {domain} onrefresh={refresh} />
-					</div>
-				{/each}
-			</div>
-			<div class="add-action">
-				<AddDomainCard {sites} onrefresh={refresh} />
-			</div>
-		{/if}
-
-		{#if generatedDomains.length > 0}
-			<div class="section-head">
-				<h2>Платформенные адреса</h2>
-				<span class="section-count">{generatedDomains.length}</span>
-			</div>
-			<div class="domain-list">
-				{#each generatedDomains as domain (domain.id)}
-					<div class="domain-row">
-						<DomainCard {domain} onrefresh={refresh} />
-					</div>
-				{/each}
-			</div>
-		{/if}
+	{:else if customDomains.length > 0 || true}
+		<div class="domain-list">
+			{#each customDomains as domain (domain.id)}
+				<div class="domain-row">
+					<DomainCard {domain} onrefresh={refresh} />
+				</div>
+			{/each}
+		</div>
+		<div class="add-action">
+			<AddDomainCard {sites} onrefresh={refresh} />
+		</div>
 	{/if}
 </div>
 
@@ -195,16 +174,36 @@
 		animation: fade-in-up 220ms var(--ease-out-quart) both;
 	}
 
-	.domain-row:nth-child(1) { animation-delay: 0ms; }
-	.domain-row:nth-child(2) { animation-delay: 40ms; }
-	.domain-row:nth-child(3) { animation-delay: 80ms; }
-	.domain-row:nth-child(4) { animation-delay: 120ms; }
-	.domain-row:nth-child(5) { animation-delay: 160ms; }
-	.domain-row:nth-child(6) { animation-delay: 200ms; }
-	.domain-row:nth-child(7) { animation-delay: 240ms; }
-	.domain-row:nth-child(8) { animation-delay: 280ms; }
-	.domain-row:nth-child(9) { animation-delay: 320ms; }
-	.domain-row:nth-child(10) { animation-delay: 360ms; }
+	.domain-row:nth-child(1) {
+		animation-delay: 0ms;
+	}
+	.domain-row:nth-child(2) {
+		animation-delay: 40ms;
+	}
+	.domain-row:nth-child(3) {
+		animation-delay: 80ms;
+	}
+	.domain-row:nth-child(4) {
+		animation-delay: 120ms;
+	}
+	.domain-row:nth-child(5) {
+		animation-delay: 160ms;
+	}
+	.domain-row:nth-child(6) {
+		animation-delay: 200ms;
+	}
+	.domain-row:nth-child(7) {
+		animation-delay: 240ms;
+	}
+	.domain-row:nth-child(8) {
+		animation-delay: 280ms;
+	}
+	.domain-row:nth-child(9) {
+		animation-delay: 320ms;
+	}
+	.domain-row:nth-child(10) {
+		animation-delay: 360ms;
+	}
 
 	.loading-state {
 		display: flex;
