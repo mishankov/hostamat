@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="corporate">
     <head>
         <meta charset="UTF-8" />
-        <title>Dashboard</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Hostamat Dashboard</title>
 
         <link
             href="https://cdn.jsdelivr.net/npm/daisyui@5"
@@ -10,53 +11,272 @@
             type="text/css"
         />
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+        <style>
+            :root {
+                color-scheme: light;
+                --space-xs: 0.25rem;
+                --space-sm: 0.5rem;
+                --space-md: 0.75rem;
+                --space-lg: 1rem;
+                --space-xl: 1.5rem;
+                --space-2xl: 2rem;
+                --space-3xl: 3rem;
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                background:
+                    radial-gradient(circle at 10% 6%, rgba(20, 184, 166, 0.04), transparent 26rem),
+                    radial-gradient(circle at 94% 2%, rgba(37, 99, 235, 0.035), transparent 22rem),
+                    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            }
+
+            .shell {
+                width: min(1480px, calc(100vw - 2rem));
+            }
+
+            .page-grid {
+                display: grid;
+                gap: clamp(var(--space-lg), 1.8vw, var(--space-2xl));
+                grid-template-columns: repeat(12, minmax(0, 1fr));
+            }
+
+            .overview-panel,
+            .overview-metrics,
+            .full-span,
+            .users-panel,
+            .sites-panel {
+                min-width: 0;
+            }
+
+            .overview-panel {
+                grid-column: span 7;
+            }
+
+            .overview-metrics {
+                display: grid;
+                grid-column: span 5;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: var(--space-md);
+            }
+
+            .full-span {
+                grid-column: 1 / -1;
+            }
+
+            .users-panel {
+                grid-column: span 4;
+            }
+
+            .sites-panel {
+                grid-column: span 8;
+            }
+
+            .surface {
+                border: 1px solid rgba(15, 23, 42, 0.1);
+                background: rgba(255, 255, 255, 0.94);
+                box-shadow: 0 10px 28px rgba(15, 23, 42, 0.045);
+            }
+
+            .section-title {
+                letter-spacing: 0;
+            }
+
+            .metric-card {
+                min-height: 10.25rem;
+                border: 1px solid rgba(15, 23, 42, 0.1);
+                background: rgba(255, 255, 255, 0.94);
+                transition:
+                    background-color 160ms ease,
+                    border-color 160ms ease;
+            }
+
+            .metric-card:hover {
+                background: rgba(248, 250, 252, 0.98);
+                border-color: rgba(37, 99, 235, 0.18);
+            }
+
+            .table-frame {
+                max-height: min(36rem, 72vh);
+            }
+
+            .table :where(th, td) {
+                vertical-align: middle;
+            }
+
+            .table :where(thead th) {
+                color: rgba(15, 23, 42, 0.58);
+                font-size: 0.72rem;
+                font-weight: 700;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+            }
+
+            .table :where(tbody tr) {
+                border-color: rgba(15, 23, 42, 0.06);
+            }
+
+            .table :where(tbody tr:hover) {
+                background: rgba(37, 99, 235, 0.035);
+            }
+
+            .sticky-tools {
+                position: sticky;
+                top: 0;
+                z-index: 20;
+                box-shadow: 0 1px 0 rgba(15, 23, 42, 0.08);
+            }
+
+            .mono-link {
+                font-family:
+                    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+                    "Liberation Mono", "Courier New", monospace;
+            }
+
+            @media (max-width: 1180px) {
+                .overview-panel,
+                .overview-metrics,
+                .users-panel,
+                .sites-panel {
+                    grid-column: 1 / -1;
+                }
+
+                .overview-metrics {
+                    grid-template-columns: repeat(4, minmax(0, 1fr));
+                }
+            }
+
+            @media (max-width: 768px) {
+                .shell {
+                    width: min(100vw - 1rem, 100%);
+                }
+
+                .page-grid {
+                    gap: var(--space-lg);
+                }
+
+                .overview-metrics {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+
+                .surface {
+                    border-radius: 0.75rem;
+                }
+
+                .table-frame {
+                    max-height: none;
+                }
+            }
+
+            @media (max-width: 460px) {
+                .overview-metrics {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
     </head>
-    <body class="min-h-screen bg-base-200 p-4">
-        <div class="max-w-7xl mx-auto flex flex-col gap-4">
-            <h1 class="text-3xl font-bold mb-6">Dashboard</h1>
-
-            <!-- Stats Section -->
-            <h2 class="text-xl font-bold">Stats</h2>
-            <div
-                class="stats stats-vertical lg:stats-horizontal bg-base-100 shadow"
-            >
-                {{range .Stats}}
-                <div class="stat">
-                    <div class="stat-title">{{.Name}}</div>
-                    <div class="stat-value">{{index .Values 0}}</div>
-                    {{if .Error}}
-                    <div role="alert" class="alert alert-error alert-soft">
-                        <span>{{.Error}}</span>
+    <body class="min-h-screen text-base-content">
+        <header class="sticky-tools border-b border-base-300 bg-base-100">
+            <div class="shell mx-auto flex flex-col gap-3 py-4 lg:flex-row lg:items-center lg:justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="grid size-10 place-items-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
+                        <span class="text-base font-bold">H</span>
                     </div>
-                    {{end}}
-                </div>
-                {{end}}
-            </div>
-
-            <div class="bg-base-100 shadow rounded-lg p-4">
-                <div class="flex flex-col gap-1 mb-4 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <h2 class="text-xl font-bold">Caddy Served Domains</h2>
-                        <p class="text-sm text-base-content/60">
-                            Hosts from route matcher <span class="font-mono">{{.CaddyShorthandId}}</span>
+                        <p class="text-xs font-semibold uppercase text-base-content/50">Hostamat Ops</p>
+                        <h1 class="text-2xl font-bold tracking-tight">Dashboard</h1>
+                    </div>
+                </div>
+
+                <nav class="flex flex-wrap items-center gap-2">
+                    <a class="btn btn-sm btn-ghost" href="#stats">Stats</a>
+                    <a class="btn btn-sm btn-ghost" href="#caddy">Caddy</a>
+                    <a class="btn btn-sm btn-ghost" href="#activity">Activity</a>
+                    <a class="btn btn-sm btn-ghost" href="#domains">Domains</a>
+                    <button onclick="window.location.reload()" class="btn btn-sm btn-outline">
+                        Refresh
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <main class="shell page-grid mx-auto py-6 lg:py-8">
+            <section class="overview-panel surface rounded-xl p-5 lg:p-7">
+                <div class="flex h-full flex-col justify-between gap-8">
+                    <div>
+                        <p class="text-sm font-semibold uppercase text-primary/80">Production control plane</p>
+                        <h2 class="mt-2 max-w-4xl text-3xl font-bold tracking-tight lg:text-4xl">
+                            Sites, domains, and uploads at a glance
+                        </h2>
+                        <p class="mt-4 max-w-2xl text-sm leading-6 text-base-content/65">
+                            A compact view of the records that matter when checking hosting health,
+                            Caddy routing, and recent customer activity.
                         </p>
                     </div>
-                    <div class="stat p-0 min-w-24">
-                        <div class="stat-title text-right">Served now</div>
-                        <div class="stat-value text-right text-2xl">{{.WipeCounts.CaddyHosts}}</div>
+
+                    <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+                        <div class="rounded-lg border border-base-300 bg-base-100 px-4 py-3">
+                            <p class="text-xs font-semibold uppercase text-base-content/45">Caddy route</p>
+                            <p class="mono-link mt-1 truncate text-sm font-semibold">{{.CaddyShorthandId}}</p>
+                        </div>
+                        <a class="btn btn-outline" href="#caddy">Inspect routing</a>
                     </div>
                 </div>
+            </section>
+
+            <section id="stats" class="overview-metrics">
+                {{range .Stats}}
+                <article class="metric-card rounded-xl p-4 lg:p-5">
+                    <div class="flex h-full flex-col justify-between gap-4">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <p class="text-sm font-semibold text-base-content/55">{{.Name}}</p>
+                                <p class="mt-2 text-3xl font-bold tracking-tight">{{index .Values 0}}</p>
+                            </div>
+                            <div class="badge badge-outline badge-sm">{{.Id}}</div>
+                        </div>
+                        {{if .Error}}
+                        <div role="alert" class="alert alert-error alert-soft py-2 text-xs">
+                            <span>{{.Error}}</span>
+                        </div>
+                        {{else}}
+                        <p class="text-xs font-medium text-base-content/45">Live database count</p>
+                        {{end}}
+                    </div>
+                </article>
+                {{end}}
+            </section>
+
+            <section id="caddy" class="full-span surface rounded-xl p-4 lg:p-6">
+                <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-base-content/45">Routing</p>
+                        <h2 class="section-title text-xl font-bold">Caddy Served Domains</h2>
+                    </div>
+                    <div class="stats bg-transparent p-0">
+                        <div class="stat p-0 text-right">
+                            <div class="stat-title">Served now</div>
+                            <div class="stat-value text-3xl">{{.WipeCounts.CaddyHosts}}</div>
+                        </div>
+                    </div>
+                </div>
+
                 {{if .CaddyHostsError}}
                 <div role="alert" class="alert alert-error">
                     <span>{{.CaddyHostsError}}</span>
                 </div>
                 {{else if not .CaddyHosts}}
-                <div class="alert">
-                    <span>No domains are configured in Caddy for this route.</span>
+                <div class="rounded-lg border border-dashed border-base-300 bg-base-200/60 p-8 text-center">
+                    <p class="font-semibold">No domains are configured in Caddy for this route.</p>
+                    <p class="mt-1 text-sm text-base-content/55">New site subdomains and active custom domains will appear here.</p>
                 </div>
                 {{else}}
-                <div class="overflow-x-auto">
-                    <table class="table table-zebra">
+                <div class="table-frame overflow-auto rounded-lg border border-base-300 bg-base-100">
+                    <table class="table table-zebra table-sm">
                         <thead>
                             <tr>
                                 <th>Domain</th>
@@ -70,78 +290,67 @@
                             {{range .CaddyHosts}}
                             <tr>
                                 <td>
-                                    <a
-                                        href="https://{{.Host}}"
-                                        target="_blank"
-                                        class="link link-primary font-mono text-sm"
-                                    >
+                                    <a href="https://{{.Host}}" target="_blank" class="link link-primary mono-link text-sm font-semibold">
                                         {{.Host}}
                                     </a>
                                 </td>
                                 <td>
                                     {{if eq .Kind "custom domain"}}
-                                    <span class="badge badge-info">{{.Kind}}</span>
+                                    <span class="badge badge-info badge-sm">{{.Kind}}</span>
                                     {{else if eq .Kind "site subdomain"}}
-                                    <span class="badge badge-success">{{.Kind}}</span>
+                                    <span class="badge badge-success badge-sm">{{.Kind}}</span>
                                     {{else}}
-                                    <span class="badge badge-warning">{{.Kind}}</span>
+                                    <span class="badge badge-warning badge-sm">{{.Kind}}</span>
                                     {{end}}
                                 </td>
                                 <td>
                                     {{if .Status}}
                                     {{if eq .Status "active"}}
-                                    <span class="badge badge-success">{{.Status}}</span>
+                                    <span class="badge badge-success badge-sm">{{.Status}}</span>
                                     {{else if eq .Status "verification_failed"}}
-                                    <span class="badge badge-error">{{.Status}}</span>
+                                    <span class="badge badge-error badge-sm">{{.Status}}</span>
                                     {{else if eq .Status "verified"}}
-                                    <span class="badge badge-info">{{.Status}}</span>
+                                    <span class="badge badge-info badge-sm">{{.Status}}</span>
                                     {{else}}
-                                    <span class="badge badge-warning">{{.Status}}</span>
+                                    <span class="badge badge-warning badge-sm">{{.Status}}</span>
                                     {{end}}
                                     {{else}}
-                                    <span class="text-base-content/40">-</span>
+                                    <span class="text-base-content/35">not tracked</span>
                                     {{end}}
                                 </td>
                                 <td>
                                     {{if .SiteName}}
-                                    <div>{{.SiteName}}</div>
+                                    <div class="font-semibold">{{.SiteName}}</div>
                                     {{end}}
                                     {{if .SiteDomain}}
-                                    <a
-                                        href="https://{{.SiteDomain}}"
-                                        target="_blank"
-                                        class="link link-secondary text-xs"
-                                    >
+                                    <a href="https://{{.SiteDomain}}" target="_blank" class="link link-secondary mono-link text-xs">
                                         {{.SiteDomain}}
                                     </a>
                                     {{else}}
-                                    <span class="text-base-content/40">not found in DB</span>
+                                    <span class="text-base-content/35">not found in DB</span>
                                     {{end}}
                                 </td>
-                                <td>{{.Username}}</td>
+                                <td>{{if .Username}}{{.Username}}{{else}}<span class="text-base-content/35">unknown</span>{{end}}</td>
                             </tr>
                             {{end}}
                         </tbody>
                     </table>
                 </div>
                 {{end}}
-            </div>
+            </section>
 
-            <!-- Tables Section -->
-            <h2 class="text-xl font-bold">Last entries</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <!-- Last 10 Registered Users -->
-                <div class="bg-base-100 shadow rounded-lg p-4">
-                    <h2 class="text-xl font-bold mb-4">
-                        Last 10 Registered Users
-                    </h2>
+            <section id="activity" class="users-panel surface rounded-xl p-4 lg:p-5">
+                    <div class="mb-5">
+                        <p class="text-xs font-semibold uppercase text-base-content/45">People</p>
+                        <h2 class="section-title text-xl font-bold">Latest Users</h2>
+                    </div>
                     {{if .UsersError}}
                     <div role="alert" class="alert alert-error">
                         <span>{{.UsersError}}</span>
                     </div>
                     {{else}}
-                    <div class="overflow-x-auto">
-                        <table class="table table-zebra">
+                    <div class="table-frame overflow-auto rounded-lg border border-base-300 bg-base-100">
+                        <table class="table table-zebra table-sm">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -152,29 +361,33 @@
                             <tbody>
                                 {{range .Users}}
                                 <tr>
-                                    <td class="font-mono text-xs">{{.ID}}</td>
-                                    <td>{{.Username}}</td>
-                                    <td>{{.Created}}</td>
+                                    <td class="mono-link text-xs">{{.ID}}</td>
+                                    <td class="font-semibold">{{.Username}}</td>
+                                    <td class="whitespace-nowrap">{{.Created}}</td>
+                                </tr>
+                                {{else}}
+                                <tr>
+                                    <td colspan="3" class="py-8 text-center text-base-content/45">No users yet.</td>
                                 </tr>
                                 {{end}}
                             </tbody>
                         </table>
                     </div>
                     {{end}}
-                </div>
+            </section>
 
-                <!-- Last 10 Created Sites -->
-                <div class="col-span-2 bg-base-100 shadow rounded-lg p-4">
-                    <h2 class="text-xl font-bold mb-4">
-                        Last 10 Created Sites
-                    </h2>
+            <section class="sites-panel surface rounded-xl p-4 lg:p-5">
+                    <div class="mb-5">
+                        <p class="text-xs font-semibold uppercase text-base-content/45">Sites</p>
+                        <h2 class="section-title text-xl font-bold">Latest Created Sites</h2>
+                    </div>
                     {{if .SitesError}}
                     <div role="alert" class="alert alert-error">
                         <span>{{.SitesError}}</span>
                     </div>
                     {{else}}
-                    <div class="overflow-x-auto">
-                        <table class="table table-zebra">
+                    <div class="table-frame overflow-auto rounded-lg border border-base-300 bg-base-100">
+                        <table class="table table-zebra table-sm">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -189,39 +402,41 @@
                             <tbody>
                                 {{range .Sites}}
                                 <tr>
-                                    <td class="font-mono text-xs">{{.ID}}</td>
+                                    <td class="mono-link text-xs">{{.ID}}</td>
                                     <td>
-                                        <a
-                                            href="https://{{.Domain}}"
-                                            target="_blank"
-                                            class="link link-primary"
-                                        >
+                                        <a href="https://{{.Domain}}" target="_blank" class="link link-primary mono-link text-sm font-semibold">
                                             {{.Domain}}
                                         </a>
                                     </td>
                                     <td>{{.Name}}</td>
-                                    <td>{{.Username}}</td>
-                                    <td>{{.CreatedAt}}</td>
-                                    <td>{{.UpdatedAt}}</td>
-                                    <td>{{.UploadCount}}</td>
+                                    <td>{{if .Username}}{{.Username}}{{else}}<span class="text-base-content/35">unknown</span>{{end}}</td>
+                                    <td class="whitespace-nowrap">{{.CreatedAt}}</td>
+                                    <td class="whitespace-nowrap">{{.UpdatedAt}}</td>
+                                    <td><span class="badge badge-neutral badge-sm">{{.UploadCount}}</span></td>
+                                </tr>
+                                {{else}}
+                                <tr>
+                                    <td colspan="7" class="py-8 text-center text-base-content/45">No sites yet.</td>
                                 </tr>
                                 {{end}}
                             </tbody>
                         </table>
                     </div>
                     {{end}}
-                </div>
-            </div>
+            </section>
 
-            <div class="bg-base-100 shadow rounded-lg p-4">
-                <h2 class="text-xl font-bold mb-4">Last 10 Custom Domains</h2>
+            <section id="domains" class="full-span surface rounded-xl p-4 lg:p-6">
+                <div class="mb-5">
+                    <p class="text-xs font-semibold uppercase text-base-content/45">Custom domains</p>
+                    <h2 class="section-title text-xl font-bold">Latest Domain Checks</h2>
+                </div>
                 {{if .CustomDomainsError}}
                 <div role="alert" class="alert alert-error">
                     <span>{{.CustomDomainsError}}</span>
                 </div>
                 {{else}}
-                <div class="overflow-x-auto">
-                    <table class="table table-zebra">
+                <div class="table-frame overflow-auto rounded-lg border border-base-300 bg-base-100">
+                    <table class="table table-zebra table-sm">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -238,125 +453,113 @@
                         <tbody>
                             {{range .CustomDomains}}
                             <tr>
-                                <td class="font-mono text-xs">{{.ID}}</td>
+                                <td class="mono-link text-xs">{{.ID}}</td>
                                 <td>
-                                    <a
-                                        href="https://{{.Hostname}}"
-                                        target="_blank"
-                                        class="link link-primary"
-                                    >
+                                    <a href="https://{{.Hostname}}" target="_blank" class="link link-primary mono-link text-sm font-semibold">
                                         {{.Hostname}}
                                     </a>
                                 </td>
                                 <td>
                                     {{if eq .Status "active"}}
-                                    <span class="badge badge-success">{{.Status}}</span>
+                                    <span class="badge badge-success badge-sm">{{.Status}}</span>
                                     {{else if eq .Status "verification_failed"}}
-                                    <span class="badge badge-error">{{.Status}}</span>
+                                    <span class="badge badge-error badge-sm">{{.Status}}</span>
                                     {{else if eq .Status "verified"}}
-                                    <span class="badge badge-info">{{.Status}}</span>
+                                    <span class="badge badge-info badge-sm">{{.Status}}</span>
                                     {{else}}
-                                    <span class="badge badge-warning">{{.Status}}</span>
+                                    <span class="badge badge-warning badge-sm">{{.Status}}</span>
                                     {{end}}
                                 </td>
                                 <td>
-                                    <div>{{.SiteName}}</div>
+                                    <div class="font-semibold">{{.SiteName}}</div>
                                     {{if .SiteDomain}}
-                                    <a
-                                        href="https://{{.SiteDomain}}"
-                                        target="_blank"
-                                        class="link link-secondary text-xs"
-                                    >
+                                    <a href="https://{{.SiteDomain}}" target="_blank" class="link link-secondary mono-link text-xs">
                                         {{.SiteDomain}}
                                     </a>
                                     {{end}}
                                 </td>
-                                <td>{{.Username}}</td>
-                                <td>{{.LastCheckedAt}}</td>
-                                <td>{{.ActivatedAt}}</td>
-                                <td>{{.UpdatedAt}}</td>
-                                <td class="max-w-xs truncate" title="{{.LastVerificationError}}">
-                                    {{.LastVerificationError}}
+                                <td>{{if .Username}}{{.Username}}{{else}}<span class="text-base-content/35">unknown</span>{{end}}</td>
+                                <td class="whitespace-nowrap">{{.LastCheckedAt}}</td>
+                                <td class="whitespace-nowrap">{{.ActivatedAt}}</td>
+                                <td class="whitespace-nowrap">{{.UpdatedAt}}</td>
+                                <td class="max-w-sm truncate" title="{{.LastVerificationError}}">
+                                    {{if .LastVerificationError}}{{.LastVerificationError}}{{else}}<span class="text-base-content/35">none</span>{{end}}
                                 </td>
+                            </tr>
+                            {{else}}
+                            <tr>
+                                <td colspan="9" class="py-8 text-center text-base-content/45">No custom domains yet.</td>
                             </tr>
                             {{end}}
                         </tbody>
                     </table>
                 </div>
                 {{end}}
-            </div>
+            </section>
 
-            <div class="bg-error/10 border-2 border-error rounded-lg p-6 mt-8">
-                <h2 class="text-xl font-bold text-error mb-4">Danger Zone</h2>
-                <div class="flex justify-between items-center">
+            <section class="full-span rounded-xl border border-error/20 bg-error/10 p-5 lg:p-6">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                        <p class="text-sm mb-2">
-                            Permanently delete all data from system
-                        </p>
-                        <p class="text-xs text-base-content/60">
-                            This action cannot be undone. All users, sites,
-                            files, and configurations will be deleted.
+                        <p class="text-xs font-semibold uppercase text-error">Danger Zone</p>
+                        <h2 class="mt-1 text-xl font-bold">Wipe all platform data</h2>
+                        <p class="mt-2 max-w-2xl text-sm leading-6 text-base-content/65">
+                            Permanently deletes users, sessions, sites, files, custom domains,
+                            subdomains, upload sessions, S3 objects, and Caddy host routes.
                         </p>
                     </div>
-                    <button
-                        onclick="wipe_modal.showModal()"
-                        class="btn btn-error"
-                    >
+                    <button onclick="wipe_modal.showModal()" class="btn btn-error">
                         Wipe All Data
                     </button>
                 </div>
-            </div>
-        </div>
+            </section>
+        </main>
 
-        <!-- Wipe Confirmation Modal -->
         <dialog id="wipe_modal" class="modal">
-            <div class="modal-box max-w-lg">
-                <h3 class="font-bold text-lg mb-4">Confirm Data Wipe</h3>
-
-                <div class="alert alert-error mb-4">
-                    <span>
-                        THIS WILL DELETE ALL DATA - THIS CANNOT BE UNDONE!
-                    </span>
+            <div class="modal-box max-w-2xl">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-error">Destructive action</p>
+                        <h3 class="mt-1 text-2xl font-bold">Confirm Data Wipe</h3>
+                    </div>
+                    <form method="dialog">
+                        <button class="btn btn-sm btn-circle btn-ghost">x</button>
+                    </form>
                 </div>
 
-                <!-- Data counts (server-rendered) -->
-                <div class="mb-4">
-                    <p class="font-semibold text-sm mb-2">The following will be deleted:</p>
-                    <ul class="list list-disc">
-                        <li class="list-row">{{.WipeCounts.Users}} users</li>
-                        <li class="list-row">{{.WipeCounts.Sessions}} sessions</li>
-                        <li class="list-row">{{.WipeCounts.Sites}} sites</li>
-                        <li class="list-row">{{.WipeCounts.CustomDomains}} custom domains</li>
-                        <li class="list-row">{{.WipeCounts.Subdomains}} subdomains</li>
-                        <li class="list-row">{{.WipeCounts.UploadSessions}} upload sessions</li>
-                        <li class="list-row">{{.WipeCounts.Files}} files (metadata)</li>
-                        <li class="list-row">{{.WipeCounts.S3Objects}} objects in S3 bucket</li>
-                        <li class="list-row">{{.WipeCounts.CaddyHosts}} Caddy subdomain configurations</li>
-                    </ul>
+                <div class="alert alert-error mt-5">
+                    <span>This will delete all dashboard-managed data and cannot be undone.</span>
                 </div>
 
-                <!-- Confirmation input -->
-                <label class="input input-bordered flex items-center gap-4 mb-4">
-                    <span class="label-text">Type <strong>DELETE</strong> to confirm:</span>
+                <div class="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Users</p><p class="font-bold">{{.WipeCounts.Users}}</p></div>
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Sessions</p><p class="font-bold">{{.WipeCounts.Sessions}}</p></div>
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Sites</p><p class="font-bold">{{.WipeCounts.Sites}}</p></div>
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Custom domains</p><p class="font-bold">{{.WipeCounts.CustomDomains}}</p></div>
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Subdomains</p><p class="font-bold">{{.WipeCounts.Subdomains}}</p></div>
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Uploads</p><p class="font-bold">{{.WipeCounts.UploadSessions}}</p></div>
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Files</p><p class="font-bold">{{.WipeCounts.Files}}</p></div>
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">S3 objects</p><p class="font-bold">{{.WipeCounts.S3Objects}}</p></div>
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Caddy hosts</p><p class="font-bold">{{.WipeCounts.CaddyHosts}}</p></div>
+                </div>
+
+                <label class="form-control mt-5">
+                    <div class="label">
+                        <span class="label-text">Type <strong>DELETE</strong> to confirm</span>
+                    </div>
                     <input
                         type="text"
                         id="wipeConfirmInput"
-                        class="grow"
+                        class="input input-bordered w-full"
                         placeholder="DELETE"
+                        autocomplete="off"
                     />
                 </label>
 
-                <!-- Modal actions -->
                 <div class="modal-action">
                     <form method="dialog">
                         <button class="btn">Cancel</button>
                     </form>
-                    <button
-                        id="confirmWipeBtn"
-                        onclick="confirmWipe()"
-                        class="btn btn-error"
-                        disabled
-                    >
+                    <button id="confirmWipeBtn" onclick="confirmWipe()" class="btn btn-error" disabled>
                         Wipe Everything
                     </button>
                 </div>
@@ -367,38 +570,31 @@
         </dialog>
 
         <script>
-            // Enable/disable confirm button based on input
             document.addEventListener("DOMContentLoaded", function () {
                 const input = document.getElementById("wipeConfirmInput");
-                if (input) {
-                    input.addEventListener("input", (e) => {
-                        const btn = document.getElementById("confirmWipeBtn");
-                        btn.disabled = e.target.value !== "DELETE";
-                    });
+                const btn = document.getElementById("confirmWipeBtn");
+                const modal = document.getElementById("wipe_modal");
 
-                    // Reset when modal closes
-                    document
-                        .getElementById("wipe_modal")
-                        .addEventListener("close", () => {
-                            input.value = "";
-                            document.getElementById("confirmWipeBtn").disabled =
-                                true;
-                        });
-                }
+                if (!input || !btn || !modal) return;
+
+                input.addEventListener("input", (event) => {
+                    btn.disabled = event.target.value !== "DELETE";
+                });
+
+                modal.addEventListener("close", () => {
+                    input.value = "";
+                    btn.disabled = true;
+                    btn.innerHTML = "Wipe Everything";
+                });
             });
 
-            // Perform wipe
             async function confirmWipe() {
                 const input = document.getElementById("wipeConfirmInput").value;
                 if (input !== "DELETE") return;
 
                 const btn = document.getElementById("confirmWipeBtn");
-
-                // Show loading state on button
                 btn.disabled = true;
                 btn.innerHTML = '<span class="loading loading-spinner"></span> Wiping...';
-
-                // Close modal
                 document.getElementById("wipe_modal").close();
 
                 try {
@@ -412,7 +608,7 @@
 
                     if (result.success) {
                         alert(
-                            "✓ All data wiped successfully!\n\n" +
+                            "All data wiped successfully.\n\n" +
                                 "Deleted:\n" +
                                 `- ${result.deleted.Users} users\n` +
                                 `- ${result.deleted.Sessions} sessions\n` +
@@ -424,14 +620,14 @@
                                 `- ${result.deleted.S3Objects} S3 objects\n` +
                                 `- ${result.deleted.CaddyHosts} Caddy hosts`,
                         );
-                        window.location.reload(); // Reload to show zeroed stats
+                        window.location.reload();
                     } else {
-                        alert("✗ Wipe failed: " + result.error);
+                        alert("Wipe failed: " + result.error);
                         btn.disabled = false;
                         btn.innerHTML = "Wipe Everything";
                     }
                 } catch (error) {
-                    alert("✗ Network error: " + error.message);
+                    alert("Network error: " + error.message);
                     btn.disabled = false;
                     btn.innerHTML = "Wipe Everything";
                 }
