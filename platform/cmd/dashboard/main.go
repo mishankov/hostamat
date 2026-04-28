@@ -9,7 +9,9 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"slices"
 	"strconv"
+	"strings"
 	"time"
 
 	"hostamat/internal/adapters/caddy"
@@ -167,6 +169,15 @@ func main() {
 			UpdatedAt             string `db:"updated_at"`
 		}
 
+		type caddyHost struct {
+			Host       string
+			Kind       string
+			Status     string
+			SiteName   string
+			SiteDomain string
+			Username   string
+		}
+
 		type dashboardData struct {
 			Stats              []metric
 			Users              []user
@@ -175,10 +186,14 @@ func main() {
 			SitesError         string
 			CustomDomains      []customDomain
 			CustomDomainsError string
+			CaddyHosts         []caddyHost
+			CaddyHostsError    string
+			CaddyShorthandId   string
 			WipeCounts         WipeCounts
 		}
 
 		var data dashboardData
+		data.CaddyShorthandId = conf.Caddy.ShorthandId
 		data.Stats = make([]metric, 4)
 
 		getMetric := func(id, name string, pos int, query string) {
@@ -217,8 +232,84 @@ func main() {
 		hosts, err := caddyAPI.GetHostsFromShorthandId(ctx, conf.Caddy.ShorthandId)
 		if err != nil {
 			data.WipeCounts.CaddyHosts = 0
+			data.CaddyHostsError = err.Error()
 		} else {
+			slices.Sort(hosts)
 			data.WipeCounts.CaddyHosts = len(hosts)
+			data.CaddyHosts = make([]caddyHost, 0, len(hosts))
+			for _, host := range hosts {
+				kind := "configured only"
+				if strings.HasSuffix(host, "."+conf.PublicBaseDomain) {
+					kind = "site subdomain"
+				}
+
+				data.CaddyHosts = append(data.CaddyHosts, caddyHost{
+					Host: host,
+					Kind: kind,
+				})
+			}
+
+			if len(hosts) > 0 {
+				type caddyHostContext struct {
+					Host       string `db:"host"`
+					Kind       string `db:"kind"`
+					Status     string `db:"status"`
+					SiteName   string `db:"site_name"`
+					SiteDomain string `db:"site_domain"`
+					Username   string `db:"username"`
+				}
+
+				query, args, err := sqlx.In(`
+					SELECT s.domain as host,
+					       'site subdomain' as kind,
+					       '' as status,
+					       s.name as site_name,
+					       s.domain as site_domain,
+					       COALESCE(u.username, '') as username
+					FROM sites s
+					LEFT JOIN users u ON s."user" = u.id
+					WHERE s.domain IN (?)
+					UNION ALL
+					SELECT cd.hostname as host,
+					       'custom domain' as kind,
+					       cd.status as status,
+					       COALESCE(s.name, '') as site_name,
+					       COALESCE(s.domain, '') as site_domain,
+					       COALESCE(u.username, '') as username
+					FROM custom_domains cd
+					LEFT JOIN sites s ON cd.site = s.id
+					LEFT JOIN users u ON cd."user" = u.id
+					WHERE cd.hostname IN (?)
+				`, hosts, hosts)
+				if err != nil {
+					data.CaddyHostsError = err.Error()
+				} else {
+					query = conn.Rebind(query)
+					var contexts []caddyHostContext
+					err = conn.SelectContext(ctx, &contexts, query, args...)
+					if err != nil {
+						data.CaddyHostsError = err.Error()
+					} else {
+						contextByHost := make(map[string]caddyHostContext, len(contexts))
+						for _, hostContext := range contexts {
+							contextByHost[hostContext.Host] = hostContext
+						}
+
+						for i, host := range data.CaddyHosts {
+							hostContext, ok := contextByHost[host.Host]
+							if !ok {
+								continue
+							}
+
+							data.CaddyHosts[i].Kind = hostContext.Kind
+							data.CaddyHosts[i].Status = hostContext.Status
+							data.CaddyHosts[i].SiteName = hostContext.SiteName
+							data.CaddyHosts[i].SiteDomain = hostContext.SiteDomain
+							data.CaddyHosts[i].Username = hostContext.Username
+						}
+					}
+				}
+			}
 		}
 
 		objectsCh := s3Client.ListObjects(ctx, conf.S3.Bucket, minio.ListObjectsOptions{Recursive: true})

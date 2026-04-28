@@ -33,6 +33,100 @@
                 {{end}}
             </div>
 
+            <div class="bg-base-100 shadow rounded-lg p-4">
+                <div class="flex flex-col gap-1 mb-4 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold">Caddy Served Domains</h2>
+                        <p class="text-sm text-base-content/60">
+                            Hosts from route matcher <span class="font-mono">{{.CaddyShorthandId}}</span>
+                        </p>
+                    </div>
+                    <div class="stat p-0 min-w-24">
+                        <div class="stat-title text-right">Served now</div>
+                        <div class="stat-value text-right text-2xl">{{.WipeCounts.CaddyHosts}}</div>
+                    </div>
+                </div>
+                {{if .CaddyHostsError}}
+                <div role="alert" class="alert alert-error">
+                    <span>{{.CaddyHostsError}}</span>
+                </div>
+                {{else if not .CaddyHosts}}
+                <div class="alert">
+                    <span>No domains are configured in Caddy for this route.</span>
+                </div>
+                {{else}}
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra">
+                        <thead>
+                            <tr>
+                                <th>Domain</th>
+                                <th>Source</th>
+                                <th>Status</th>
+                                <th>Site</th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range .CaddyHosts}}
+                            <tr>
+                                <td>
+                                    <a
+                                        href="https://{{.Host}}"
+                                        target="_blank"
+                                        class="link link-primary font-mono text-sm"
+                                    >
+                                        {{.Host}}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{if eq .Kind "custom domain"}}
+                                    <span class="badge badge-info">{{.Kind}}</span>
+                                    {{else if eq .Kind "site subdomain"}}
+                                    <span class="badge badge-success">{{.Kind}}</span>
+                                    {{else}}
+                                    <span class="badge badge-warning">{{.Kind}}</span>
+                                    {{end}}
+                                </td>
+                                <td>
+                                    {{if .Status}}
+                                    {{if eq .Status "active"}}
+                                    <span class="badge badge-success">{{.Status}}</span>
+                                    {{else if eq .Status "verification_failed"}}
+                                    <span class="badge badge-error">{{.Status}}</span>
+                                    {{else if eq .Status "verified"}}
+                                    <span class="badge badge-info">{{.Status}}</span>
+                                    {{else}}
+                                    <span class="badge badge-warning">{{.Status}}</span>
+                                    {{end}}
+                                    {{else}}
+                                    <span class="text-base-content/40">-</span>
+                                    {{end}}
+                                </td>
+                                <td>
+                                    {{if .SiteName}}
+                                    <div>{{.SiteName}}</div>
+                                    {{end}}
+                                    {{if .SiteDomain}}
+                                    <a
+                                        href="https://{{.SiteDomain}}"
+                                        target="_blank"
+                                        class="link link-secondary text-xs"
+                                    >
+                                        {{.SiteDomain}}
+                                    </a>
+                                    {{else}}
+                                    <span class="text-base-content/40">not found in DB</span>
+                                    {{end}}
+                                </td>
+                                <td>{{.Username}}</td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+                {{end}}
+            </div>
+
             <!-- Tables Section -->
             <h2 class="text-xl font-bold">Last entries</h2>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
