@@ -31,6 +31,7 @@ type WipeCounts struct {
 	Users          int
 	Sessions       int
 	Sites          int
+	CustomDomains  int
 	Subdomains     int
 	UploadSessions int
 	Files          int
@@ -152,28 +153,33 @@ func main() {
 			UploadCount int    `db:"upload_count"`
 		}
 
-		type dashboardData struct {
-			Stats      []metric
-			Users      []user
-			UsersError string
-			Sites      []site
-			SitesError string
-			WipeCounts WipeCounts
+		type customDomain struct {
+			ID                    string `db:"id"`
+			Hostname              string `db:"hostname"`
+			Status                string `db:"status"`
+			SiteName              string `db:"site_name"`
+			SiteDomain            string `db:"site_domain"`
+			Username              string `db:"username"`
+			LastVerificationError string `db:"last_verification_error"`
+			LastCheckedAt         string `db:"last_checked_at"`
+			ActivatedAt           string `db:"activated_at"`
+			CreatedAt             string `db:"created_at"`
+			UpdatedAt             string `db:"updated_at"`
 		}
 
-		type WipeCounts struct {
-			Users          int
-			Sessions       int
-			Sites          int
-			Subdomains     int
-			UploadSessions int
-			Files          int
-			S3Objects      int
-			CaddyHosts     int
+		type dashboardData struct {
+			Stats              []metric
+			Users              []user
+			UsersError         string
+			Sites              []site
+			SitesError         string
+			CustomDomains      []customDomain
+			CustomDomainsError string
+			WipeCounts         WipeCounts
 		}
 
 		var data dashboardData
-		data.Stats = make([]metric, 3)
+		data.Stats = make([]metric, 4)
 
 		getMetric := func(id, name string, pos int, query string) {
 			data.Stats[pos].Id = id
@@ -188,11 +194,13 @@ func main() {
 
 		getMetric("users", "Users", 0, "select count(*) from users")
 		getMetric("sites", "Sites", 1, "select count(*) from sites")
-		getMetric("us", "Uploads", 2, "select count(*) from uploadsessions")
+		getMetric("custom_domains", "Custom Domains", 2, "select count(*) from custom_domains")
+		getMetric("us", "Uploads", 3, "select count(*) from uploadsessions")
 
 		data.WipeCounts.Users, _ = strconv.Atoi(data.Stats[0].Values[0])
 		data.WipeCounts.Sites, _ = strconv.Atoi(data.Stats[1].Values[0])
-		data.WipeCounts.UploadSessions, _ = strconv.Atoi(data.Stats[2].Values[0])
+		data.WipeCounts.CustomDomains, _ = strconv.Atoi(data.Stats[2].Values[0])
+		data.WipeCounts.UploadSessions, _ = strconv.Atoi(data.Stats[3].Values[0])
 
 		var sessionCount int
 		conn.GetContext(ctx, &sessionCount, "SELECT COUNT(*) FROM sessions")
@@ -237,7 +245,7 @@ func main() {
 
 		// Get last 10 created sites with last upload datetime
 		err = conn.SelectContext(ctx, &data.Sites, `
-				SELECT s.id, s.domain, s.name, u.username, s.created_at,
+				SELECT s.id, s.domain, s.name, COALESCE(u.username, '') as username, s.created_at,
 				       COALESCE(MAX(us.updated_at), s.updated_at) as updated_at,
 				       COUNT(us.id) as upload_count
 				FROM sites s
@@ -249,6 +257,27 @@ func main() {
 			`)
 		if err != nil {
 			data.SitesError = err.Error()
+		}
+
+		// Get last 10 custom domains with site and owner context
+		err = conn.SelectContext(ctx, &data.CustomDomains, `
+				SELECT cd.id, cd.hostname, cd.status,
+				       COALESCE(s.name, '') as site_name,
+				       COALESCE(s.domain, '') as site_domain,
+				       COALESCE(u.username, '') as username,
+				       cd.last_verification_error,
+				       COALESCE(cd.last_checked_at::text, '') as last_checked_at,
+				       COALESCE(cd.activated_at::text, '') as activated_at,
+				       cd.created_at::text as created_at,
+				       cd.updated_at::text as updated_at
+				FROM custom_domains cd
+				LEFT JOIN sites s ON cd.site = s.id
+				LEFT JOIN users u ON cd."user" = u.id
+				ORDER BY cd.updated_at DESC
+				LIMIT 10
+			`)
+		if err != nil {
+			data.CustomDomainsError = err.Error()
 		}
 
 		log.InfoContext(ctx, "data", "stats", data)
@@ -323,7 +352,7 @@ func main() {
 func wipeAllData(ctx context.Context, conn *sqlx.DB, s3Client *s3.S3, caddyAPI *caddy.CaddyAPI, s3Bucket, caddyShorthand string) (*WipeCounts, error) {
 	deleted := &WipeCounts{}
 
-	log.InfoContext(ctx, "Step 1/8: Clearing Caddy subdomain hosts...")
+	log.InfoContext(ctx, "Step 1/9: Clearing Caddy subdomain hosts...")
 	hosts, err := caddyAPI.GetHostsFromShorthandId(ctx, caddyShorthand)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get Caddy hosts: %w", err)
@@ -336,7 +365,7 @@ func wipeAllData(ctx context.Context, conn *sqlx.DB, s3Client *s3.S3, caddyAPI *
 	}
 	log.InfoContext(ctx, "Cleared Caddy hosts", "count", deleted.CaddyHosts)
 
-	log.InfoContext(ctx, "Step 2/8: Cleaning S3 bucket...")
+	log.InfoContext(ctx, "Step 2/9: Cleaning S3 bucket...")
 	objectsCh := s3Client.ListObjects(ctx, s3Bucket, minio.ListObjectsOptions{Recursive: true})
 	s3Count := 0
 	for obj := range objectsCh {
@@ -358,12 +387,13 @@ func wipeAllData(ctx context.Context, conn *sqlx.DB, s3Client *s3.S3, caddyAPI *
 		field *int
 		step  string
 	}{
-		{"files", &deleted.Files, "3/8"},
-		{"uploadsessions", &deleted.UploadSessions, "4/8"},
-		{"sessions", &deleted.Sessions, "5/8"},
-		{"sites", &deleted.Sites, "6/8"},
-		{"subdomains", &deleted.Subdomains, "7/8"},
-		{"users", &deleted.Users, "8/8"},
+		{"files", &deleted.Files, "3/9"},
+		{"uploadsessions", &deleted.UploadSessions, "4/9"},
+		{"custom_domains", &deleted.CustomDomains, "5/9"},
+		{"sessions", &deleted.Sessions, "6/9"},
+		{"sites", &deleted.Sites, "7/9"},
+		{"subdomains", &deleted.Subdomains, "8/9"},
+		{"users", &deleted.Users, "9/9"},
 	}
 
 	for _, table := range tables {

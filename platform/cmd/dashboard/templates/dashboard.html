@@ -119,6 +119,79 @@
                 </div>
             </div>
 
+            <div class="bg-base-100 shadow rounded-lg p-4">
+                <h2 class="text-xl font-bold mb-4">Last 10 Custom Domains</h2>
+                {{if .CustomDomainsError}}
+                <div role="alert" class="alert alert-error">
+                    <span>{{.CustomDomainsError}}</span>
+                </div>
+                {{else}}
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Hostname</th>
+                                <th>Status</th>
+                                <th>Site</th>
+                                <th>User</th>
+                                <th>Last Checked</th>
+                                <th>Activated</th>
+                                <th>Updated</th>
+                                <th>Error</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range .CustomDomains}}
+                            <tr>
+                                <td class="font-mono text-xs">{{.ID}}</td>
+                                <td>
+                                    <a
+                                        href="https://{{.Hostname}}"
+                                        target="_blank"
+                                        class="link link-primary"
+                                    >
+                                        {{.Hostname}}
+                                    </a>
+                                </td>
+                                <td>
+                                    {{if eq .Status "active"}}
+                                    <span class="badge badge-success">{{.Status}}</span>
+                                    {{else if eq .Status "verification_failed"}}
+                                    <span class="badge badge-error">{{.Status}}</span>
+                                    {{else if eq .Status "verified"}}
+                                    <span class="badge badge-info">{{.Status}}</span>
+                                    {{else}}
+                                    <span class="badge badge-warning">{{.Status}}</span>
+                                    {{end}}
+                                </td>
+                                <td>
+                                    <div>{{.SiteName}}</div>
+                                    {{if .SiteDomain}}
+                                    <a
+                                        href="https://{{.SiteDomain}}"
+                                        target="_blank"
+                                        class="link link-secondary text-xs"
+                                    >
+                                        {{.SiteDomain}}
+                                    </a>
+                                    {{end}}
+                                </td>
+                                <td>{{.Username}}</td>
+                                <td>{{.LastCheckedAt}}</td>
+                                <td>{{.ActivatedAt}}</td>
+                                <td>{{.UpdatedAt}}</td>
+                                <td class="max-w-xs truncate" title="{{.LastVerificationError}}">
+                                    {{.LastVerificationError}}
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+                {{end}}
+            </div>
+
             <div class="bg-error/10 border-2 border-error rounded-lg p-6 mt-8">
                 <h2 class="text-xl font-bold text-error mb-4">Danger Zone</h2>
                 <div class="flex justify-between items-center">
@@ -159,6 +232,7 @@
                         <li class="list-row">{{.WipeCounts.Users}} users</li>
                         <li class="list-row">{{.WipeCounts.Sessions}} sessions</li>
                         <li class="list-row">{{.WipeCounts.Sites}} sites</li>
+                        <li class="list-row">{{.WipeCounts.CustomDomains}} custom domains</li>
                         <li class="list-row">{{.WipeCounts.Subdomains}} subdomains</li>
                         <li class="list-row">{{.WipeCounts.UploadSessions}} upload sessions</li>
                         <li class="list-row">{{.WipeCounts.Files}} files (metadata)</li>
@@ -249,6 +323,7 @@
                                 `- ${result.deleted.Users} users\n` +
                                 `- ${result.deleted.Sessions} sessions\n` +
                                 `- ${result.deleted.Sites} sites\n` +
+                                `- ${result.deleted.CustomDomains} custom domains\n` +
                                 `- ${result.deleted.Subdomains} subdomains\n` +
                                 `- ${result.deleted.UploadSessions} upload sessions\n` +
                                 `- ${result.deleted.Files} files\n` +
