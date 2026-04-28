@@ -67,5 +67,6 @@ export class ThemeController {
 
 const [useThemeController, setThemeController] = createContext<ThemeController>();
 
-export const provideThemeController = (controller: ThemeController) => setThemeController(controller);
+export const provideThemeController = (controller: ThemeController) =>
+	setThemeController(controller);
 export { useThemeController, resolveDocumentTheme };

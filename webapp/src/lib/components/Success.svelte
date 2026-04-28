@@ -4,7 +4,7 @@
 	let { children = null, header = '', message = '' } = $props();
 </script>
 
-<Alert variant="success" title={header} message={message}>
+<Alert variant="success" title={header} {message}>
 	{#if children}
 		{@render children?.()}
 	{/if}

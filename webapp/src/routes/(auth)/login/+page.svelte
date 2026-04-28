@@ -30,8 +30,9 @@
 </script>
 
 <svelte:head>
-	<title>Вход | Хостамат</title>
-</svelte:head>
+		<title>Вход | Хостамат</title>
+		<meta name="description" content="Войдите в Хостамат через Яндекс для управления статическими сайтами." />
+	</svelte:head>
 
 <h1>Вход</h1>
 <p class="lead">Выберите способ входа, чтобы продолжить работу с сервисом.</p>
@@ -50,12 +51,12 @@
 	.auth-form {
 		display: flex;
 		flex-direction: column;
-		gap: 0.9rem;
+		gap: var(--space-md);
 	}
 
 	.lead {
 		font-size: 0.95rem;
-		margin-top: -0.4rem;
-		margin-bottom: 0.4rem;
+		margin-top: calc(-1 * var(--space-sm));
+		margin-bottom: var(--space-sm);
 	}
 </style>

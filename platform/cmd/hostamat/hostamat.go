@@ -7,7 +7,9 @@ import (
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/s3"
 	"hostamat/internal/adapters/yandexoauth"
+	"hostamat/internal/customdomain"
 	"hostamat/internal/file"
+	"hostamat/internal/hostsync"
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/internal/uploadsession"
@@ -50,6 +52,7 @@ func main() {
 
 	// API adapters
 	caddyAPI := caddy.New(httpClient, conf.Caddy.BaseURL, "srv0") // Default server name
+	hostSyncService := hostsync.NewService(caddyAPI, conf.Caddy.ShorthandId)
 
 	// S3 client
 	s3Client, err := s3.New(conf.S3.BaseURL, conf.S3.Login, conf.S3.Password, false)
@@ -69,10 +72,15 @@ func main() {
 	defer conn.Close()
 
 	// Domains
-	subdomainDomain := subdomain.New(conn, caddyAPI, conf.PublicBaseDomain, conf.Caddy.ShorthandId)
+	siteRepository := site.NewRepository(conn)
+	subdomainDomain := subdomain.New(conn, hostSyncService, conf.PublicBaseDomain)
 	fileDomain := file.New(s3Client, conf.S3.Bucket)
 	uploadSessionDomain := uploadsession.New(conn)
-	siteDomain := site.New(conn, subdomainDomain.Service, fileDomain.Service, uploadSessionDomain.Service)
+	customDomain := customdomain.New(conn, siteRepository, hostSyncService, customdomain.DNSConfig{
+		VerificationPrefix: conf.CustomDomains.VerificationPrefix,
+		CNAMETarget:        conf.CustomDomains.CNAMETarget,
+	})
+	siteDomain := site.New(conn, subdomainDomain.Service, customDomain.Service, fileDomain.Service, uploadSessionDomain.Service)
 	sessionDomain := session.New(conn)
 	userDomain := user.New(siteDomain.Service, uploadSessionDomain.Service)
 	yandexClient := yandexoauth.New(
@@ -94,17 +102,18 @@ func main() {
 	apiGroup := httpserver.NewHandlerGroup()
 	apiGroup.Use(authDomain.Middleware)
 
-	apiGroup.Handle("/files", siteDomain.FileHandlerGroup)
-	apiGroup.Handle("/sites", siteDomain.SiteHandlerGroup)
-	apiGroup.Handle("/uploadsessions", siteDomain.UploadSessionHandlerGroup)
+	apiGroup.Mount("/files", siteDomain.FileHandlerGroup)
+	apiGroup.Mount("/sites", siteDomain.SiteHandlerGroup)
+	apiGroup.Mount("/domains", customDomain.HandlerGroup)
+	apiGroup.Mount("/uploadsessions", siteDomain.UploadSessionHandlerGroup)
 
 	// HTTP server
 	httpServer := httpserver.New(conf.Port, 10*time.Second)
 
-	httpServer.HandleGroup("/api", apiGroup)
-	httpServer.HandleGroup("/auth", authDomain.HandleGroup)
-	// HandleGroup used here because client would request files by additional path
-	httpServer.HandleGroup(conf.FileServerPath, siteDomain.FileServeHandler)
+	httpServer.Mount("/api", apiGroup)
+	httpServer.Mount("/auth", authDomain.HandleGroup)
+	// Mount used here because client would request files by additional path
+	httpServer.Mount(conf.FileServerPath, siteDomain.FileServeHandler)
 
 	httpServer.Handle("/metrics", promhttp.Handler())
 
@@ -129,10 +138,26 @@ func main() {
 
 		return caddyAPI.CreateBaseConfig(ctx, conf.FileServerHost, conf.FileServerPath, conf.Caddy.ShorthandId)
 	}), application.StartupTaskConfig{Name: "prepareCaddy", AbortOnError: true})
+	app.OnStart(application.RunnerFunc(func(ctx context.Context) error {
+		generatedHosts, err := subdomainDomain.Service.ListHosts(ctx)
+		if err != nil {
+			return err
+		}
+
+		customHosts, err := customDomain.Service.ListActiveHosts(ctx)
+		if err != nil {
+			return err
+		}
+
+		hosts := append(generatedHosts, customHosts...)
+
+		return hostSyncService.Sync(ctx, hosts)
+	}), application.StartupTaskConfig{Name: "syncHosts", AbortOnError: true})
 
 	app.RegisterDatabase("default", db)
 
 	app.RegisterDomain("subdomain", "default", subdomainDomain)
+	app.RegisterDomain("customdomain", "default", customDomain)
 	app.RegisterDomain("site", "default", siteDomain)
 	app.RegisterDomain("file", "", fileDomain)
 	app.RegisterDomain("auth", "default", authDomain)

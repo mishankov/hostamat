@@ -138,7 +138,7 @@
 	.account-menu {
 		position: relative;
 		display: inline-flex;
-		width: min(100%, 240px);
+		width: min(100%, 15rem);
 	}
 
 	.account-menu.header {
@@ -154,16 +154,17 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.7rem;
+		gap: var(--space-md);
 		width: 100%;
 		min-width: 0;
-		padding: 0.78rem 0.95rem;
-		border: 1px solid var(--color-neutral-border);
-		border-radius: 0;
+		padding: 0.7rem 0.9rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
 		background: var(--color-background-object);
 		color: var(--color-accent-text);
-		font-weight: 650;
-		letter-spacing: 0.01em;
+		font-weight: 600;
+		font-size: 0.92rem;
+		letter-spacing: -0.01em;
 		cursor: pointer;
 		transition:
 			border-color 160ms ease-out,
@@ -221,23 +222,42 @@
 
 	.menu-panel {
 		position: absolute;
-		top: calc(100% + 0.6rem);
+		top: calc(100% + var(--space-sm));
 		right: 0;
 		z-index: 80;
-		width: min(240px, min(100vw - 1.5rem, 100%));
+		width: min(15rem, min(100vw - 1.5rem, 100%));
 		display: flex;
 		flex-direction: column;
-		gap: 0.2rem;
-		padding: 0.45rem;
-		border: 1px solid var(--color-neutral-border);
-		border-radius: 0;
+		gap: var(--space-xs);
+		padding: 0.4rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
 		background: var(--color-background-object);
 		box-shadow: var(--shadow-lg);
+		animation: menu-panel-in 180ms var(--ease-out-quart) both;
+		transform-origin: top right;
+	}
+
+	.menu-panel > * {
+		opacity: 0;
+		animation: menu-row-in 160ms var(--ease-out-quart) forwards;
+	}
+
+	.menu-panel > *:nth-child(1) {
+		animation-delay: 30ms;
+	}
+
+	.menu-panel > *:nth-child(2) {
+		animation-delay: 60ms;
+	}
+
+	.menu-panel > *:nth-child(3) {
+		animation-delay: 90ms;
 	}
 
 	.sidebar .menu-panel {
 		top: auto;
-		bottom: calc(100% + 0.75rem);
+		bottom: calc(100% + var(--space-md));
 		left: 0;
 		right: auto;
 	}
@@ -249,14 +269,14 @@
 		justify-content: space-between;
 		width: 100%;
 		min-height: 3rem;
-		padding: 0.85rem 0.95rem;
+		padding: 0.7rem 0.85rem;
 		border: 0;
-		border-radius: 0;
+		border-radius: var(--radius-md);
 		background: transparent;
 		color: var(--color-text-regular);
-		font-size: 1rem;
-		font-weight: 650;
-		letter-spacing: 0.01em;
+		font-size: 0.95rem;
+		font-weight: 600;
+		letter-spacing: -0.01em;
 		text-align: left;
 		text-decoration: none;
 		cursor: pointer;
@@ -301,7 +321,7 @@
 
 	@media (max-width: 980px) {
 		.sidebar .menu-panel {
-			top: calc(100% + 0.6rem);
+			top: calc(100% + var(--space-sm));
 			bottom: auto;
 		}
 	}

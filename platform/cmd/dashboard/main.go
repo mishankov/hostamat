@@ -9,7 +9,9 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"slices"
 	"strconv"
+	"strings"
 	"time"
 
 	"hostamat/internal/adapters/caddy"
@@ -31,6 +33,7 @@ type WipeCounts struct {
 	Users          int
 	Sessions       int
 	Sites          int
+	CustomDomains  int
 	Subdomains     int
 	UploadSessions int
 	Files          int
@@ -152,28 +155,46 @@ func main() {
 			UploadCount int    `db:"upload_count"`
 		}
 
-		type dashboardData struct {
-			Stats      []metric
-			Users      []user
-			UsersError string
-			Sites      []site
-			SitesError string
-			WipeCounts WipeCounts
+		type customDomain struct {
+			ID                    string `db:"id"`
+			Hostname              string `db:"hostname"`
+			Status                string `db:"status"`
+			SiteName              string `db:"site_name"`
+			SiteDomain            string `db:"site_domain"`
+			Username              string `db:"username"`
+			LastVerificationError string `db:"last_verification_error"`
+			LastCheckedAt         string `db:"last_checked_at"`
+			ActivatedAt           string `db:"activated_at"`
+			CreatedAt             string `db:"created_at"`
+			UpdatedAt             string `db:"updated_at"`
 		}
 
-		type WipeCounts struct {
-			Users          int
-			Sessions       int
-			Sites          int
-			Subdomains     int
-			UploadSessions int
-			Files          int
-			S3Objects      int
-			CaddyHosts     int
+		type caddyHost struct {
+			Host       string
+			Kind       string
+			Status     string
+			SiteName   string
+			SiteDomain string
+			Username   string
+		}
+
+		type dashboardData struct {
+			Stats              []metric
+			Users              []user
+			UsersError         string
+			Sites              []site
+			SitesError         string
+			CustomDomains      []customDomain
+			CustomDomainsError string
+			CaddyHosts         []caddyHost
+			CaddyHostsError    string
+			CaddyShorthandId   string
+			WipeCounts         WipeCounts
 		}
 
 		var data dashboardData
-		data.Stats = make([]metric, 3)
+		data.CaddyShorthandId = conf.Caddy.ShorthandId
+		data.Stats = make([]metric, 4)
 
 		getMetric := func(id, name string, pos int, query string) {
 			data.Stats[pos].Id = id
@@ -188,11 +209,13 @@ func main() {
 
 		getMetric("users", "Users", 0, "select count(*) from users")
 		getMetric("sites", "Sites", 1, "select count(*) from sites")
-		getMetric("us", "Uploads", 2, "select count(*) from uploadsessions")
+		getMetric("custom_domains", "Custom Domains", 2, "select count(*) from custom_domains")
+		getMetric("us", "Uploads", 3, "select count(*) from uploadsessions")
 
 		data.WipeCounts.Users, _ = strconv.Atoi(data.Stats[0].Values[0])
 		data.WipeCounts.Sites, _ = strconv.Atoi(data.Stats[1].Values[0])
-		data.WipeCounts.UploadSessions, _ = strconv.Atoi(data.Stats[2].Values[0])
+		data.WipeCounts.CustomDomains, _ = strconv.Atoi(data.Stats[2].Values[0])
+		data.WipeCounts.UploadSessions, _ = strconv.Atoi(data.Stats[3].Values[0])
 
 		var sessionCount int
 		conn.GetContext(ctx, &sessionCount, "SELECT COUNT(*) FROM sessions")
@@ -209,8 +232,84 @@ func main() {
 		hosts, err := caddyAPI.GetHostsFromShorthandId(ctx, conf.Caddy.ShorthandId)
 		if err != nil {
 			data.WipeCounts.CaddyHosts = 0
+			data.CaddyHostsError = err.Error()
 		} else {
+			slices.Sort(hosts)
 			data.WipeCounts.CaddyHosts = len(hosts)
+			data.CaddyHosts = make([]caddyHost, 0, len(hosts))
+			for _, host := range hosts {
+				kind := "configured only"
+				if strings.HasSuffix(host, "."+conf.PublicBaseDomain) {
+					kind = "site subdomain"
+				}
+
+				data.CaddyHosts = append(data.CaddyHosts, caddyHost{
+					Host: host,
+					Kind: kind,
+				})
+			}
+
+			if len(hosts) > 0 {
+				type caddyHostContext struct {
+					Host       string `db:"host"`
+					Kind       string `db:"kind"`
+					Status     string `db:"status"`
+					SiteName   string `db:"site_name"`
+					SiteDomain string `db:"site_domain"`
+					Username   string `db:"username"`
+				}
+
+				query, args, err := sqlx.In(`
+					SELECT s.domain as host,
+					       'site subdomain' as kind,
+					       '' as status,
+					       s.name as site_name,
+					       s.domain as site_domain,
+					       COALESCE(u.username, '') as username
+					FROM sites s
+					LEFT JOIN users u ON s."user" = u.id
+					WHERE s.domain IN (?)
+					UNION ALL
+					SELECT cd.hostname as host,
+					       'custom domain' as kind,
+					       cd.status as status,
+					       COALESCE(s.name, '') as site_name,
+					       COALESCE(s.domain, '') as site_domain,
+					       COALESCE(u.username, '') as username
+					FROM custom_domains cd
+					LEFT JOIN sites s ON cd.site = s.id
+					LEFT JOIN users u ON cd."user" = u.id
+					WHERE cd.hostname IN (?)
+				`, hosts, hosts)
+				if err != nil {
+					data.CaddyHostsError = err.Error()
+				} else {
+					query = conn.Rebind(query)
+					var contexts []caddyHostContext
+					err = conn.SelectContext(ctx, &contexts, query, args...)
+					if err != nil {
+						data.CaddyHostsError = err.Error()
+					} else {
+						contextByHost := make(map[string]caddyHostContext, len(contexts))
+						for _, hostContext := range contexts {
+							contextByHost[hostContext.Host] = hostContext
+						}
+
+						for i, host := range data.CaddyHosts {
+							hostContext, ok := contextByHost[host.Host]
+							if !ok {
+								continue
+							}
+
+							data.CaddyHosts[i].Kind = hostContext.Kind
+							data.CaddyHosts[i].Status = hostContext.Status
+							data.CaddyHosts[i].SiteName = hostContext.SiteName
+							data.CaddyHosts[i].SiteDomain = hostContext.SiteDomain
+							data.CaddyHosts[i].Username = hostContext.Username
+						}
+					}
+				}
+			}
 		}
 
 		objectsCh := s3Client.ListObjects(ctx, conf.S3.Bucket, minio.ListObjectsOptions{Recursive: true})
@@ -237,7 +336,7 @@ func main() {
 
 		// Get last 10 created sites with last upload datetime
 		err = conn.SelectContext(ctx, &data.Sites, `
-				SELECT s.id, s.domain, s.name, u.username, s.created_at,
+				SELECT s.id, s.domain, s.name, COALESCE(u.username, '') as username, s.created_at,
 				       COALESCE(MAX(us.updated_at), s.updated_at) as updated_at,
 				       COUNT(us.id) as upload_count
 				FROM sites s
@@ -249,6 +348,27 @@ func main() {
 			`)
 		if err != nil {
 			data.SitesError = err.Error()
+		}
+
+		// Get last 10 custom domains with site and owner context
+		err = conn.SelectContext(ctx, &data.CustomDomains, `
+				SELECT cd.id, cd.hostname, cd.status,
+				       COALESCE(s.name, '') as site_name,
+				       COALESCE(s.domain, '') as site_domain,
+				       COALESCE(u.username, '') as username,
+				       cd.last_verification_error,
+				       COALESCE(cd.last_checked_at::text, '') as last_checked_at,
+				       COALESCE(cd.activated_at::text, '') as activated_at,
+				       cd.created_at::text as created_at,
+				       cd.updated_at::text as updated_at
+				FROM custom_domains cd
+				LEFT JOIN sites s ON cd.site = s.id
+				LEFT JOIN users u ON cd."user" = u.id
+				ORDER BY cd.updated_at DESC
+				LIMIT 10
+			`)
+		if err != nil {
+			data.CustomDomainsError = err.Error()
 		}
 
 		log.InfoContext(ctx, "data", "stats", data)
@@ -323,7 +443,7 @@ func main() {
 func wipeAllData(ctx context.Context, conn *sqlx.DB, s3Client *s3.S3, caddyAPI *caddy.CaddyAPI, s3Bucket, caddyShorthand string) (*WipeCounts, error) {
 	deleted := &WipeCounts{}
 
-	log.InfoContext(ctx, "Step 1/8: Clearing Caddy subdomain hosts...")
+	log.InfoContext(ctx, "Step 1/9: Clearing Caddy subdomain hosts...")
 	hosts, err := caddyAPI.GetHostsFromShorthandId(ctx, caddyShorthand)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get Caddy hosts: %w", err)
@@ -336,7 +456,7 @@ func wipeAllData(ctx context.Context, conn *sqlx.DB, s3Client *s3.S3, caddyAPI *
 	}
 	log.InfoContext(ctx, "Cleared Caddy hosts", "count", deleted.CaddyHosts)
 
-	log.InfoContext(ctx, "Step 2/8: Cleaning S3 bucket...")
+	log.InfoContext(ctx, "Step 2/9: Cleaning S3 bucket...")
 	objectsCh := s3Client.ListObjects(ctx, s3Bucket, minio.ListObjectsOptions{Recursive: true})
 	s3Count := 0
 	for obj := range objectsCh {
@@ -358,12 +478,13 @@ func wipeAllData(ctx context.Context, conn *sqlx.DB, s3Client *s3.S3, caddyAPI *
 		field *int
 		step  string
 	}{
-		{"files", &deleted.Files, "3/8"},
-		{"uploadsessions", &deleted.UploadSessions, "4/8"},
-		{"sessions", &deleted.Sessions, "5/8"},
-		{"sites", &deleted.Sites, "6/8"},
-		{"subdomains", &deleted.Subdomains, "7/8"},
-		{"users", &deleted.Users, "8/8"},
+		{"files", &deleted.Files, "3/9"},
+		{"uploadsessions", &deleted.UploadSessions, "4/9"},
+		{"custom_domains", &deleted.CustomDomains, "5/9"},
+		{"sessions", &deleted.Sessions, "6/9"},
+		{"sites", &deleted.Sites, "7/9"},
+		{"subdomains", &deleted.Subdomains, "8/9"},
+		{"users", &deleted.Users, "9/9"},
 	}
 
 	for _, table := range tables {

@@ -32,31 +32,34 @@ webapp/
 
 ## WHERE TO LOOK
 
-| Task | Location | Notes |
-|------|----------|-------|
-| Add UI component | `src/lib/components/*.svelte` | 13 components available |
-| Add page | `src/routes/**/+page.svelte` | File-based routing |
-| Server-side data | `src/routes/**/+page.server.ts` | Load functions |
-| API endpoint | `src/routes/api/**/+server.ts` | GET/POST handlers |
-| Backend API call | `src/lib/api-client/*.ts` | Returns `Result<T, E>` |
-| Error handling | `src/lib/safe/index.ts` | `safeFetch`, `tryCatch` |
-| Types | `src/lib/types.ts` | Shared interfaces |
+| Task             | Location                        | Notes                   |
+| ---------------- | ------------------------------- | ----------------------- |
+| Add UI component | `src/lib/components/*.svelte`   | 13 components available |
+| Add page         | `src/routes/**/+page.svelte`    | File-based routing      |
+| Server-side data | `src/routes/**/+page.server.ts` | Load functions          |
+| API endpoint     | `src/routes/api/**/+server.ts`  | GET/POST handlers       |
+| Backend API call | `src/lib/api-client/*.ts`       | Returns `Result<T, E>`  |
+| Error handling   | `src/lib/safe/index.ts`         | `safeFetch`, `tryCatch` |
+| Types            | `src/lib/types.ts`              | Shared interfaces       |
 
 ## CONVENTIONS
 
 ### Result Pattern (CRITICAL)
+
 - NEVER use bare `fetch()` - always `safeFetch()`
 - API functions return `AsyncResult<T, E> = Promise<Result<T, E>>`
 - `Result<T, E> = { data: T, error: null } | { data: null, error: E }`
 - Check errors: `if (error) { return { data: null, error: ... } }`
 
 ### Components (Svelte 5)
+
 - Props: `interface Props` → destructure with `$props()`
 - Children: `children?: any` → render with `{@render children?.()}`
 - Bindable refs: `ref = $bindable(null)`
 - CSS variables for theming: `--color-primary-90`, `--border-radius-regular`
 
 ### API Client Pattern
+
 ```typescript
 export const createSite = async (name: string): AsyncResult<boolean, string> => {
   const { data: resp, error } = await safeFetch('/api/proxy', { ... });
@@ -70,11 +73,13 @@ export const createSite = async (name: string): AsyncResult<boolean, string> => 
 ```
 
 ### Server Routes
+
 - Pass SvelteKit `fetch` + `request` to API client for SSR
 - Example: `getSites(fetch, request)` in `+page.server.ts`
 - API proxy: `/api/proxy` with `X-Method` header routes to backend
 
 ### Testing Policy
+
 - Do not add or maintain unit tests in this webapp.
 - Do not create `*.test.*` or `*.spec.*` files.
 

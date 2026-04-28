@@ -162,14 +162,19 @@ func (s *Service) DeleteFromFolderAsync(ctx context.Context, folder string) erro
 
 func (s *Service) DeleteFromFolder(ctx context.Context, folder string) error {
 	ev := log.EventFromContext(ctx)
-	ev.AddStep(slog.LevelInfo, "file.DeleteFromFolder")
-	ev.AddAttrs(map[string]any{
-		"file.path": folder,
-	})
+	// TODO: remove guard after platforma fixes event logging for queue processors
+	if ev != nil {
+		ev.AddStep(slog.LevelInfo, "file.DeleteFromFolder")
+		ev.AddAttrs(map[string]any{
+			"file.path": folder,
+		})
+	}
 
 	err := s.repo.DeleteFromFolder(ctx, s.bucketName, folder)
 	if err != nil {
-		ev.AddError(err)
+		if ev != nil {
+			ev.AddError(err)
+		}
 		return err
 	}
 

@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"math"
 	"math/rand"
-	"sync"
 
 	"github.com/platforma-dev/platforma/auth"
 	"github.com/platforma-dev/platforma/log"
@@ -19,28 +18,25 @@ type repository interface {
 	Get(ctx context.Context, id string) (*Subdomain, error)
 	Create(ctx context.Context, subdomain *Subdomain) error
 	Delete(ctx context.Context, id string) error
+	ListHosts(ctx context.Context) ([]string, error)
 }
 
-type webserver interface {
-	AddSubdomain(ctx context.Context, baseDomain, subdomain, shorthandId string) error
-	GetHostsFromShorthandId(ctx context.Context, shorthandId string) ([]string, error)
-	RewriteHostsInShorthandId(ctx context.Context, shorthandId string, hosts []string) error
+type hostSync interface {
+	Add(ctx context.Context, host string) error
+	Remove(ctx context.Context, host string) error
 }
 
 type Service struct {
-	caddyMutex  sync.Mutex
-	repo        repository
-	webserver   webserver
-	baseDomain  string
-	shorthandId string
+	repo       repository
+	hostSync   hostSync
+	baseDomain string
 }
 
-func NewService(repo repository, webserver webserver, baseDomain, shorthandId string) *Service {
+func NewService(repo repository, hostSync hostSync, baseDomain string) *Service {
 	return &Service{
-		repo:        repo,
-		webserver:   webserver,
-		baseDomain:  baseDomain,
-		shorthandId: shorthandId,
+		repo:       repo,
+		hostSync:   hostSync,
+		baseDomain: baseDomain,
 	}
 }
 
@@ -115,10 +111,7 @@ func (s *Service) Create(ctx context.Context) (*Subdomain, error) {
 		return nil, err
 	}
 
-	s.caddyMutex.Lock()
-	defer s.caddyMutex.Unlock()
-
-	err = s.webserver.AddSubdomain(ctx, s.baseDomain, subdomain.Name, s.shorthandId)
+	err = s.hostSync.Add(ctx, subdomain.FullDomain)
 	if err != nil {
 		err := fmt.Errorf("failed to add sudomain to webserver: %w", err)
 		ev.AddError(err)
@@ -146,25 +139,7 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 		"subdomain.full_domain": subdomain.FullDomain,
 	})
 
-	s.caddyMutex.Lock()
-	defer s.caddyMutex.Unlock()
-
-	hosts, err := s.webserver.GetHostsFromShorthandId(ctx, s.shorthandId)
-	if err != nil {
-
-		ev.AddError(err)
-
-		return err
-	}
-
-	var newHosts []string
-	for _, host := range hosts {
-		if host != subdomain.FullDomain {
-			newHosts = append(newHosts, host)
-		}
-	}
-
-	err = s.webserver.RewriteHostsInShorthandId(ctx, s.shorthandId, newHosts)
+	err = s.hostSync.Remove(ctx, subdomain.FullDomain)
 	if err != nil {
 
 		ev.AddError(err)
@@ -181,6 +156,10 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) ListHosts(ctx context.Context) ([]string, error) {
+	return s.repo.ListHosts(ctx)
 }
 
 func (s *Service) checkAccess(ctx context.Context, subdomain *Subdomain) bool {

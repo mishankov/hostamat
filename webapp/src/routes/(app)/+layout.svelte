@@ -18,8 +18,7 @@
 		},
 		{
 			route: '/dashboard/domains',
-			label: 'Домены',
-			badge: 'Soon'
+			label: 'Домены'
 		}
 	];
 
@@ -42,6 +41,8 @@
 				</a>
 			</div>
 
+			<div class="sidebar-separator" aria-hidden="true"></div>
+
 			<nav aria-label="Навигация по приложению" class="nav-list">
 				{#each navigationItems as item (item.route)}
 					<a
@@ -56,6 +57,8 @@
 					</a>
 				{/each}
 			</nav>
+
+			<div class="sidebar-separator" aria-hidden="true"></div>
 
 			<div class="sidebar-footer">
 				<AccountMenu username={data.username} onlogout={logout} context="sidebar" />
@@ -75,26 +78,27 @@
 
 	.app-layout {
 		display: grid;
-		grid-template-columns: 300px minmax(0, 1fr);
-		min-height: 100vh;
+		grid-template-columns: 17rem minmax(0, 1fr);
+		height: 100vh;
+		overflow: hidden;
 		align-items: stretch;
 	}
 
 	.app-sidebar {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
-		padding: 1.6rem 1rem 1rem;
-		background: var(--color-neutral-surface);
-		border-right: 1px solid var(--color-neutral-border);
+		gap: var(--space-lg);
+		padding: var(--space-xl) var(--space-lg) var(--space-lg);
+		background: var(--color-background-object);
+		border-right: 1px solid var(--color-border);
 		min-width: 0;
 	}
 
 	.brand-block {
 		display: flex;
 		flex-direction: column;
-		gap: 1.25rem;
-		padding: 0 0.5rem;
+		gap: var(--space-lg);
+		padding: 0 var(--space-sm);
 	}
 
 	.brand-link {
@@ -108,86 +112,106 @@
 
 	.brand {
 		font-family: var(--font-display);
-		font-size: 1.65rem;
-		font-weight: 700;
-		letter-spacing: 0.02em;
-		color: var(--color-primary-95);
+		font-size: 1.4rem;
+		font-weight: 800;
+		letter-spacing: -0.03em;
+		color: var(--color-text-regular);
 	}
 
 	.nav-list {
 		display: flex;
 		flex-direction: column;
-		gap: 0.3rem;
+		gap: var(--space-xs);
 	}
 
 	.nav-link {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.7rem;
+		gap: var(--space-md);
 		width: 100%;
-		padding: 0.82rem 0.95rem;
+		padding: 0.65rem 0.85rem;
 		border: 1px solid transparent;
-		border-radius: 0;
+		border-radius: var(--radius-md);
 		background: transparent;
-		color: var(--color-text-regular);
+		color: var(--color-text-secondary);
 		text-decoration: none;
+		font-size: 0.92rem;
+		font-weight: 500;
 		transition:
-			background-color 180ms ease-out,
-			border-color 180ms ease-out,
-			box-shadow 180ms ease-out,
-			color 180ms ease-out;
+			background-color 180ms var(--ease-out-quart),
+			border-color 180ms var(--ease-out-quart),
+			box-shadow 180ms var(--ease-out-quart),
+			color 180ms var(--ease-out-quart),
+			transform 120ms var(--ease-out-quart);
+	}
+
+	.nav-link:hover {
+		transform: translateX(2px);
 	}
 
 	.nav-link:hover {
 		text-decoration: none;
-		color: var(--color-accent-text);
-		background: var(--color-background-object);
-		border-color: var(--color-neutral-border);
+		color: var(--color-text-regular);
+		background: var(--color-neutral-surface);
+		border-color: var(--color-border);
 	}
 
 	.nav-link.active {
 		color: var(--color-accent-text);
 		background: var(--color-accent-surface);
 		border-color: var(--color-accent-border);
+		box-shadow: var(--shadow-sm);
 	}
 
 	.nav-link-text {
-		font-weight: 650;
+		font-weight: 600;
 		line-height: 1.3;
 	}
 
 	.sidebar-footer {
 		margin-top: auto;
-
 		display: flex;
 		flex-direction: column;
 		justify-content: start;
-		gap: 0.7rem;
+		gap: var(--space-md);
+	}
+
+	.sidebar-separator {
+		border-top: 1px solid var(--color-border);
+		margin: 0 var(--space-sm);
+		opacity: 0.6;
 	}
 
 	.app-panel {
 		min-width: 0;
-		padding: 1.6rem 1.8rem 2rem;
+		padding: var(--space-2xl) 2rem var(--space-2xl);
+		background: var(--color-background);
+		overflow-y: auto;
 	}
 
 	@media (max-width: 980px) {
 		.app-layout {
 			grid-template-columns: minmax(0, 1fr);
+			height: auto;
+			min-height: 100vh;
+			overflow: visible;
 		}
 
 		.app-sidebar {
 			border-right: none;
-			border-bottom: 1px solid var(--color-neutral-border);
-			padding: 1.1rem 1rem;
+			border-bottom: 1px solid var(--color-border);
+			padding: var(--space-lg) var(--space-lg);
+			background: var(--color-background);
 		}
 
 		.app-panel {
-			padding: 1.2rem 1rem 1.5rem;
+			padding: var(--space-lg) var(--space-lg) var(--space-xl);
+			overflow-y: visible;
 		}
 
 		.sidebar-footer {
-			margin-top: 0.5rem;
+			margin-top: var(--space-sm);
 		}
 	}
 </style>

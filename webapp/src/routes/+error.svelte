@@ -7,8 +7,9 @@
 </script>
 
 <svelte:head>
-	<title>{page.status} - Хостамат</title>
-</svelte:head>
+		<title>{page.status} - Хостамат</title>
+		<meta name="description" content="Страница не найдена или произошла ошибка." />
+	</svelte:head>
 
 <main class="page-shell">
 	<div class="page-content error-page">
@@ -45,22 +46,23 @@
 
 <style>
 	main {
-		min-height: calc(100vh - 220px);
+		min-height: calc(100vh - 13.75rem);
 		align-items: center;
 	}
 
 	.error-page {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: var(--space-xl);
+		animation: fade-in-scale 320ms var(--ease-out-quart) both;
 	}
 
 	.error-content {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		gap: 20px;
-		padding: 1.4rem;
+		gap: var(--space-xl);
+		padding: var(--space-xl);
 	}
 
 	.error-code {
@@ -74,7 +76,7 @@
 	}
 
 	.message {
-		font-size: 16px;
+		font-size: 1rem;
 		line-height: 1.6;
 		/*color: var(--color-text-secondary);*/
 		margin: 0;
@@ -82,6 +84,6 @@
 
 	.action-buttons {
 		display: flex;
-		gap: 20px;
+		gap: var(--space-lg);
 	}
 </style>

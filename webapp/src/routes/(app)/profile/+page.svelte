@@ -1,16 +1,12 @@
 <script lang="ts">
 	import { navigateAfterAuthChange } from '$lib/auth/navigation';
-	import { onDestroy } from 'svelte';
-	import { Alert, Button, Card, IconButton, Modal } from '$lib/components';
-	import { Copy } from '$lib/icons';
+	import { Alert, Button, Card, CopyButton, Modal, Toolbar } from '$lib/components';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
 	let errorMessage = $state('');
 	let deleteAccountModal = $state<Modal>();
-	let loginCopied = $state(false);
-	let copyTimer: ReturnType<typeof setTimeout> | null = null;
 
 	const deleteAccountAction = async () => {
 		errorMessage = '';
@@ -34,33 +30,11 @@
 			deleteAccountModal?.close();
 		}
 	};
-
-	const copyLogin = async () => {
-		try {
-			await navigator.clipboard.writeText(data.username);
-			loginCopied = true;
-
-			if (copyTimer) {
-				clearTimeout(copyTimer);
-			}
-
-			copyTimer = setTimeout(() => {
-				loginCopied = false;
-			}, 1400);
-		} catch {
-			loginCopied = false;
-		}
-	};
-
-	onDestroy(() => {
-		if (copyTimer) {
-			clearTimeout(copyTimer);
-		}
-	});
 </script>
 
 <svelte:head>
 	<title>Профиль | Хостамат</title>
+	<meta name="description" content="Управление учётной записью и настройками профиля." />
 </svelte:head>
 
 <div class="profile">
@@ -76,18 +50,13 @@
 	</div>
 
 	<div class="profile-data">
-		<div class="profile-data-row">
-			<span class="label">Яндекс логин</span>
+		<div class="data-row">
+			<span class="data-label">логин:</span>
 			<div class="profile-data-value">
 				<span>{data.username}</span>
-				<IconButton label="Скопировать логин Яндекса" onclick={copyLogin}>
-					<Copy size={15} />
-				</IconButton>
+				<CopyButton textToCopy={data.username} label="Скопировать логин Яндекса" size={15} />
 			</div>
 		</div>
-		{#if loginCopied}
-			<p class="copy-feedback" aria-live="polite">Логин Яндекса скопирован</p>
-		{/if}
 	</div>
 
 	<Card tone="danger">
@@ -116,8 +85,11 @@
 				ваших сайтов и файлов.
 			</p>
 			<div class="delete-actions">
-				<Button id="delete-account-confirm" tone="danger" emphasis="solid" onclick={deleteAccountAction}
-					>Удалить</Button
+				<Button
+					id="delete-account-confirm"
+					tone="danger"
+					emphasis="solid"
+					onclick={deleteAccountAction}>Удалить</Button
 				>
 				<Button tone="danger" onclick={() => deleteAccountModal?.close()}>Отмена</Button>
 			</div>
@@ -127,62 +99,53 @@
 
 <style>
 	.profile {
-		padding-bottom: 2rem;
-		gap: 1rem;
+		padding-bottom: var(--space-xl);
+		gap: var(--space-lg);
 		display: flex;
 		flex-direction: column;
 	}
 
 	.alerts {
-		max-width: 500px;
+		max-width: 31.25rem;
 	}
 
 	.headline {
 		display: flex;
 		flex-direction: column;
-		gap: 0.4rem;
+		gap: var(--space-sm);
+		padding-bottom: var(--space-lg);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.headline h1 {
+		font-weight: 800;
 	}
 
 	.profile-data {
-		padding-top: 10px;
+		padding-top: var(--space-sm);
 		display: flex;
 		flex-direction: column;
-		gap: 0.35rem;
-	}
-
-	.profile-data-row {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 20px;
-	}
-
-	span.label {
-		color: var(--color-text-secondary);
+		gap: var(--space-xs);
 	}
 
 	.profile-data-value {
 		display: flex;
 		flex-direction: row;
-		gap: 4px;
+		gap: var(--space-xs);
 		align-items: center;
-	}
-
-	.copy-feedback {
-		font-size: 0.86rem;
-		color: var(--color-success-strong);
 	}
 
 	.danger-zone {
 		display: flex;
 		flex-direction: column;
-		gap: 0.8rem;
-		max-width: 500px;
-		padding: 1rem;
+		gap: var(--space-lg);
+		max-width: 31.25rem;
+		padding: var(--space-lg);
 	}
 
 	.danger-zone h2 {
 		color: var(--color-danger-90);
+		font-size: 1.1rem;
 	}
 
 	.danger-zone-description {
@@ -194,7 +157,7 @@
 	.delete-modal {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: var(--space-lg);
 	}
 
 	.delete-modal-text {
@@ -203,6 +166,6 @@
 
 	.delete-actions {
 		display: flex;
-		gap: 10px;
+		gap: var(--space-sm);
 	}
 </style>

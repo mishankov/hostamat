@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
-	import { Alert, Button, Card, IconButton, Link, Modal } from '$lib/components';
+	import { Alert, Button, CopyButton, IconButton, Link, Modal, Toolbar } from '$lib/components';
 	import { useThemeController } from '$lib/theme/controller.svelte';
-	import { Copy, Trash, Upload } from '$lib/icons';
+	import { Trash, Upload } from '$lib/icons';
 
 	import FileUploader from './components/FileUploader.svelte';
 	import UpdateSite from './UpdateSite.svelte';
@@ -29,8 +28,6 @@
 	let uploadModal = $state<Modal>();
 	let deleteModal = $state<Modal>();
 	let fileUploader = $state<FileUploader>();
-	let urlCopied = $state(false);
-	let copyTimer: ReturnType<typeof setTimeout> | null = null;
 
 	const uploadTitleId = $derived(`upload-site-title-${site.id}`);
 	const uploadDescId = $derived(`upload-site-description-${site.id}`);
@@ -41,83 +38,63 @@
 	const resetState = () => {
 		loading = false;
 	};
-
-	const copySiteUrl = async () => {
-		try {
-			await navigator.clipboard.writeText(`https://${site.domain}`);
-			urlCopied = true;
-
-			if (copyTimer) {
-				clearTimeout(copyTimer);
-			}
-
-			copyTimer = setTimeout(() => {
-				urlCopied = false;
-			}, 1400);
-		} catch {
-			urlCopied = false;
-		}
-	};
-
-	onDestroy(() => {
-		if (copyTimer) {
-			clearTimeout(copyTimer);
-		}
-	});
 </script>
 
 <div class={['site-content', theme.current === 'dark' && 'theme-dark']}>
-	<div class="site-url-container">
-		<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
-		<span title="Поддомен" class="subdomain">{subdomain}</span>
-		{#if urlCopied}
-			<span class="copy-feedback" aria-live="polite">URL скопирован</span>
-		{/if}
+	<div class="site-data">
+		<div class="data-row">
+			<span class="data-label">название:</span>
+			<Link href="https://{site.domain}" target="_blank" alwaysUnderline>{site.name}</Link>
+		</div>
+		<div class="data-row">
+			<span class="data-label">домен:</span>
+			<span class="subdomain-value" title="Поддомен">{subdomain}</span>
+		</div>
 	</div>
 
-	<div class="site-toolbar-shell">
-		<Card border>
-			<div class="site-toolbar">
-				<UpdateSite
-					siteName={site.name}
-					siteId={site.id}
-					iconButtonGrouped={true}
-					onsuccess={async () => {
-						resetState();
-						await onsiteupdate();
-					}}
-				/>
+	<Toolbar>
+		<UpdateSite
+			siteName={site.name}
+			siteId={site.id}
+			iconButtonGrouped={true}
+			onsuccess={async () => {
+				resetState();
+				await onsiteupdate();
+			}}
+		/>
 
-				<IconButton
-					grouped
-					label="Загрузить сайт"
-					onclick={() => uploadModal?.open()}
-					title="Загрузить сайт"
-				>
-					<Upload size={25} />
-				</IconButton>
-				<IconButton grouped label="Скопировать URL" title="Скопировать URL" onclick={copySiteUrl}>
-					<Copy size={25} background="var(--color-primary-10)" />
-				</IconButton>
+		<IconButton
+			grouped
+			label="Загрузить сайт"
+			onclick={() => uploadModal?.open()}
+			title="Загрузить сайт"
+		>
+			<Upload size={25} />
+		</IconButton>
+		<CopyButton
+			grouped
+			textToCopy={`https://${site.domain}`}
+			label="Скопировать URL"
+			title="Скопировать URL"
+			size={25}
+		/>
 
-				<IconButton
-					grouped
-					label="Удалить сайт"
-					title="Удалить сайт"
-					tone="danger"
-					onclick={() => deleteModal?.open()}
-				>
-					<Trash size={25} />
-				</IconButton>
-			</div>
-		</Card>
-	</div>
+		<IconButton
+			grouped
+			label="Удалить сайт"
+			title="Удалить сайт"
+			tone="danger"
+			onclick={() => deleteModal?.open()}
+		>
+			<Trash size={25} />
+		</IconButton>
+	</Toolbar>
 
 	<Modal
 		bind:this={uploadModal}
 		tone="neutral"
 		title={`Загрузить файлы для "${site.name}"`}
-		panelWidth="540px"
+		panelWidth="33.75rem"
 		titleId={uploadTitleId}
 		descriptionId={uploadDescId}
 		initialFocusSelector=".drop-zone"
@@ -188,55 +165,37 @@
 
 <style>
 	.site-content {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		min-width: 150px;
-		height: 100%;
-
-		padding: 1rem;
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		gap: var(--space-lg);
+		min-width: 0;
+		padding: var(--space-lg) 0;
 	}
 
-	.site-url-container {
+	.site-data {
 		display: flex;
 		flex-direction: column;
-		align-items: start;
-		gap: 5px;
-
-		font-size: 18px;
+		gap: var(--space-xs);
+		min-width: 0;
 	}
 
-	.subdomain {
+	.subdomain-value {
 		font-size: 0.88rem;
 		color: var(--color-text-secondary);
-	}
-
-	.copy-feedback {
-		font-size: 0.82rem;
-		color: var(--color-success-strong);
-	}
-
-	.site-toolbar-shell {
-		width: fit-content;
-		margin-top: auto;
-		align-self: flex-start;
-	}
-
-	.site-toolbar {
-		display: flex;
-		padding: 3px;
+		overflow-wrap: anywhere;
 	}
 
 	.upload-modal {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: var(--space-lg);
 	}
 
 	.delete-modal {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: var(--space-lg);
 	}
 
 	.delete-modal-text {
@@ -245,17 +204,13 @@
 
 	.delete-actions {
 		display: flex;
-		gap: 10px;
+		gap: var(--space-sm);
 	}
 
-	@media (max-width: 620px) {
-		.site-toolbar-shell {
-			width: 100%;
-		}
-
-		.site-toolbar {
-			justify-content: space-between;
-			gap: 4px;
+	@media (max-width: 820px) {
+		.site-content {
+			grid-template-columns: 1fr;
+			gap: var(--space-md);
 		}
 	}
 </style>

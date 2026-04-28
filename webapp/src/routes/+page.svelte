@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Badge, Button, Card } from '$lib/components';
+	import { Badge, Button } from '$lib/components';
 	import { useThemeController } from '$lib/theme/controller.svelte';
 	import type { PageProps } from './$types';
 
@@ -9,116 +9,128 @@
 
 <svelte:head>
 	<title>Хостамат</title>
+	<meta
+		name="description"
+		content="Хостинг статических сайтов с автоматическими HTTPS-поддоменами. Загрузите файлы — получите готовый сайт."
+	/>
 </svelte:head>
 
 <main class="page-shell">
 	<section class={['page-content', 'landing', theme.current === 'dark' && 'theme-dark']}>
-		<Card surface="chrome" class="hero-shell">
-			<div class="hero-card">
-				<div class="hero-main">
-					<div class="hero-copy">
-						<Badge text="Альфа-тестирование" />
-						<h1>Хостинг статических сайтов без лишней настройки</h1>
-						<p class="hero-description">
-							Загрузите файлы или ZIP-архив, получите HTTPS-поддомен и управляйте проектом в удобной
-							панели.
-						</p>
-						<div class="hero-actions">
-							{#if data.isAuthenticated}
-								<Button href="/dashboard/sites" emphasis="solid">Открыть дашборд</Button>
-							{:else}
-								<Button href="/dashboard/sites" emphasis="solid">Запустить свой сайт</Button>
-							{/if}
-							<Button href="/about">Узнать о платформе</Button>
-						</div>
+		<div class="hero">
+			<div class="hero-main">
+				<div class="hero-copy">
+					<Badge text="Альфа-тестирование" />
+					<h1>Хостинг статических сайтов без лишней настройки</h1>
+					<p class="hero-description">
+						Загрузите файлы или ZIP-архив, получите поддомен или подключите свой домен и управляйте
+						проектом в удобной панели.
+					</p>
+					<div class="hero-actions">
+						{#if data.isAuthenticated}
+							<Button href="/dashboard/sites" emphasis="solid">Открыть дашборд</Button>
+						{:else}
+							<Button href="/dashboard/sites" emphasis="solid">Запустить свой сайт</Button>
+						{/if}
+						<Button href="/about">Узнать о платформе</Button>
 					</div>
-					<div class="hero-ascii">
-						<div class="terminal-window" aria-hidden="true">
-							<div class="terminal-titlebar">
-								<div class="terminal-controls">
-									<span class="terminal-control is-close"></span>
-									<span class="terminal-control is-minimize"></span>
-									<span class="terminal-control is-zoom"></span>
-								</div>
-								<p class="terminal-title">Terminal — deploy@hostamat</p>
+				</div>
+				<div class="hero-ascii">
+					<div class="terminal-window" aria-hidden="true">
+						<div class="terminal-titlebar">
+							<div class="terminal-controls">
+								<span class="terminal-control is-close"></span>
+								<span class="terminal-control is-minimize"></span>
+								<span class="terminal-control is-zoom"></span>
 							</div>
-							<div class="terminal-body">
-								<div class="hero-terminal">
-									<div class="terminal-head terminal-line" style="--line-index: 0;">
-										<span class="terminal-head-label">deploy@hostamat</span>
-										<span class="terminal-head-rule"></span>
-									</div>
-									<p class="terminal-brand terminal-line" style="--line-index: 1;">HOSTAMAT</p>
-									<div class="terminal-divider terminal-line" style="--line-index: 2;"></div>
-									<p class="terminal-command terminal-line" style="--line-index: 3;">
-										$ hostamat publish ./portfolio.zip
-									</p>
-									<ul class="terminal-steps">
-										<li class="terminal-step terminal-line" style="--line-index: 4;">
-											<span class="terminal-step-index">[01]</span>
-											<span class="terminal-step-text">unpack assets</span>
-											<span class="terminal-step-fill"></span>
-											<span class="terminal-step-status">[ok]</span>
-										</li>
-										<li class="terminal-step terminal-line" style="--line-index: 5;">
-											<span class="terminal-step-index">[02]</span>
-											<span class="terminal-step-text">reserve subdomain</span>
-											<span class="terminal-step-fill"></span>
-											<span class="terminal-step-status">[ok]</span>
-										</li>
-										<li class="terminal-step terminal-line" style="--line-index: 6;">
-											<span class="terminal-step-index">[03]</span>
-											<span class="terminal-step-text">issue tls certificate</span>
-											<span class="terminal-step-fill"></span>
-											<span class="terminal-step-status">[ok]</span>
-										</li>
-									</ul>
-									<div class="terminal-divider terminal-line" style="--line-index: 8;"></div>
-									<p class="terminal-meta-row terminal-line" style="--line-index: 9;">
-										<span class="terminal-meta-key">domain:</span>
-										<span class="terminal-meta-value">happy-cappy-12345.hostamat.ru</span>
-									</p>
-									<p class="terminal-meta-row terminal-line" style="--line-index: 10;">
-										<span class="terminal-meta-key">status:</span>
-										<span class="terminal-meta-value">live | https</span>
-									</p>
+							<p class="terminal-title">Terminal — deploy@hostamat</p>
+						</div>
+						<div class="terminal-body">
+							<div class="hero-terminal">
+								<div class="terminal-head terminal-line" style="--line-index: 0;">
+									<span class="terminal-head-label">deploy@hostamat</span>
+									<span class="terminal-head-rule"></span>
 								</div>
+								<p class="terminal-brand terminal-line" style="--line-index: 1;">HOSTAMAT</p>
+								<div class="terminal-divider terminal-line" style="--line-index: 2;"></div>
+								<p class="terminal-command terminal-line" style="--line-index: 3;">
+									$ hostamat publish ./portfolio.zip
+								</p>
+								<ul class="terminal-steps">
+									<li class="terminal-step terminal-line" style="--line-index: 4;">
+										<span class="terminal-step-index">[01]</span>
+										<span class="terminal-step-text">unpack assets</span>
+										<span class="terminal-step-fill"></span>
+										<span class="terminal-step-status">[ok]</span>
+									</li>
+									<li class="terminal-step terminal-line" style="--line-index: 5;">
+										<span class="terminal-step-index">[02]</span>
+										<span class="terminal-step-text">reserve subdomain</span>
+										<span class="terminal-step-fill"></span>
+										<span class="terminal-step-status">[ok]</span>
+									</li>
+									<li class="terminal-step terminal-line" style="--line-index: 6;">
+										<span class="terminal-step-index">[03]</span>
+										<span class="terminal-step-text">issue tls certificate</span>
+										<span class="terminal-step-fill"></span>
+										<span class="terminal-step-status">[ok]</span>
+									</li>
+									<li class="terminal-step terminal-line" style="--line-index: 7;">
+										<span class="terminal-step-index">[04]</span>
+										<span class="terminal-step-text">attach custom domain</span>
+										<span class="terminal-step-fill"></span>
+										<span class="terminal-step-status">[ok]</span>
+									</li>
+								</ul>
+								<div class="terminal-divider terminal-line" style="--line-index: 9;"></div>
+								<p class="terminal-meta-row terminal-line" style="--line-index: 10;">
+									<span class="terminal-meta-key">domain:</span>
+									<span class="terminal-meta-value">happy-cappy-12345.hostamat.ru</span>
+								</p>
+								<p class="terminal-meta-row terminal-line" style="--line-index: 11;">
+									<span class="terminal-meta-key">custom:</span>
+									<span class="terminal-meta-value">portfolio.example.com</span>
+								</p>
+								<p class="terminal-meta-row terminal-line" style="--line-index: 12;">
+									<span class="terminal-meta-key">status:</span>
+									<span class="terminal-meta-value">live | https</span>
+								</p>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</Card>
+		</div>
 
 		<div class="steps">
-			<Card class="step-card">
-				<div class="step">
-					<span>01</span>
+			<div class="step">
+				<span class="step-number">01</span>
+				<div class="step-body">
 					<h2>Войдите через Яндекс</h2>
 					<p>Авторизация занимает пару кликов.</p>
 				</div>
-			</Card>
-			<Card class="step-card">
-				<div class="step">
-					<span>02</span>
+			</div>
+			<div class="step">
+				<span class="step-number">02</span>
+				<div class="step-body">
 					<h2>Загрузите файлы</h2>
 					<p>Можно загрузить отдельные файлы или ZIP-архив.</p>
 				</div>
-			</Card>
-			<Card class="step-card">
-				<div class="step">
-					<span>03</span>
-					<h2>Поделитесь ссылкой</h2>
-					<p>Сайт сразу доступен по HTTPS-поддомену.</p>
+			</div>
+			<div class="step">
+				<span class="step-number">03</span>
+				<div class="step-body">
+					<h2>Подключите домен</h2>
+					<p>Сайт доступен по HTTPS-поддомену, а для рабочих проектов можно добавить свой домен.</p>
 				</div>
-			</Card>
-			<Card class="step-card step-card-featured">
-				<div class="step">
-					<span>04</span>
+			</div>
+			<div class="step step-featured">
+				<span class="step-number">04</span>
+				<div class="step-body">
 					<h2>До 5 сайтов бесплатно</h2>
 					<p>Во время альфа-тестирования до 5 сайтов доступны каждому пользователю.</p>
 				</div>
-			</Card>
+			</div>
 		</div>
 	</section>
 </main>
@@ -127,90 +139,76 @@
 	.landing {
 		position: relative;
 		z-index: 1;
-		gap: 1.6rem;
-		padding-bottom: 2rem;
+		gap: var(--space-2xl);
+		padding-bottom: var(--space-2xl);
 	}
 
-	.hero-card {
-		padding: clamp(1.2rem, 2.5vw, 2.2rem);
-	}
-
-	:global(.hero-shell) {
-		box-shadow: var(--shadow-sm);
+	.hero {
+		border: var(--border-regular);
+		background: var(--color-background-object);
 	}
 
 	.hero-main {
 		display: grid;
-		grid-template-columns: minmax(500px, 1.2fr) minmax(320px, 0.95fr);
+		grid-template-columns: minmax(0, 1.16fr) minmax(18rem, 0.95fr);
 		align-items: center;
-		gap: clamp(1rem, 2.4vw, 2.4rem);
+		gap: clamp(1.5rem, 3vw, 3rem);
+		padding: clamp(var(--space-xl), 3vw, var(--space-2xl));
 	}
 
 	.hero-copy {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: var(--space-lg);
 		min-width: 0;
 	}
 
 	h1 {
-		font-size: clamp(2rem, 5vw, 3.6rem);
-		line-height: 1.08;
+		font-size: clamp(2.2rem, 5vw, 3.6rem);
+		line-height: 1.1;
 		max-width: 18ch;
+		font-weight: 800;
 	}
 
 	.hero-description {
 		max-width: 44ch;
 		font-size: 1.05rem;
+		line-height: 1.6;
 	}
 
 	.hero-ascii {
 		margin-top: 0.1rem;
 		position: relative;
 		inline-size: 100%;
+		min-width: 0;
 	}
 
 	.terminal-window {
-		--terminal-window-border: color-mix(
-			in hsl,
-			var(--color-border) 82%,
-			var(--color-accent-30) 18%
-		);
-		--terminal-window-bg: color-mix(
-			in hsl,
-			var(--color-background-object) 97%,
-			var(--color-background)
-		);
-		--terminal-window-shadow: 0 10px 20px color-mix(in hsl, var(--color-accent-30) 10%, transparent);
-		--terminal-titlebar-bg-top: color-mix(
-			in hsl,
-			var(--color-background-object) 94%,
-			var(--color-accent-20) 6%
-		);
+		--terminal-window-border: color-mix(in hsl, var(--color-border) 82%, #8a8177 18%);
+		--terminal-window-bg: color-mix(in hsl, var(--color-background-object) 98%, #f1eee8);
+		--terminal-window-shadow: var(--shadow-lg);
+		--terminal-titlebar-bg-top: color-mix(in hsl, var(--color-background-object) 96%, #ede8df 4%);
 		--terminal-titlebar-bg-bottom: color-mix(
 			in hsl,
-			var(--color-background-object) 97%,
+			var(--color-background-object) 98%,
 			var(--color-background)
 		);
-		--terminal-title-color: color-mix(in hsl, var(--color-accent-80) 72%, var(--color-primary-80));
-		--terminal-body-bg: color-mix(
-			in hsl,
-			var(--color-background-object) 95%,
-			var(--color-accent-10) 5%
-		);
-		--terminal-text: color-mix(in hsl, var(--color-accent-90) 78%, var(--color-primary-90));
-		--terminal-text-dim: color-mix(in hsl, var(--color-accent-70) 82%, var(--color-primary-80));
-		--terminal-line-color: color-mix(in hsl, var(--color-accent-60) 60%, transparent);
-		--terminal-brand-color: color-mix(in hsl, var(--color-accent-80) 84%, var(--color-background));
-		--terminal-brand-stroke: color-mix(in hsl, var(--color-accent-60) 28%, transparent);
-		--terminal-status: color-mix(in hsl, var(--color-confirm-60) 70%, var(--color-accent-70));
-		--terminal-scan: color-mix(in hsl, var(--color-accent-40) 38%, transparent);
+		--terminal-title-color: var(--color-text-secondary);
+		--terminal-body-bg: color-mix(in hsl, var(--color-background-object) 97%, #f4f0e8 3%);
+		--terminal-text: #2d2924;
+		--terminal-text-dim: #6b6258;
+		--terminal-line-color: color-mix(in hsl, #8a8177 48%, transparent);
+		--terminal-brand-color: #35312c;
+		--terminal-brand-stroke: color-mix(in hsl, #8a8177 18%, transparent);
+		--terminal-status: #3f7d32;
+		--terminal-scan: color-mix(in hsl, #d6d0c6 34%, transparent);
 		--terminal-control-close: #ff5f57;
 		--terminal-control-minimize: #febc2e;
 		--terminal-control-zoom: #28c840;
+		container-type: inline-size;
 		position: relative;
 		overflow: hidden;
-		border-radius: 14px;
+		border-radius: var(--radius-lg);
 		border: 1px solid var(--terminal-window-border);
 		background: var(--terminal-window-bg);
 		box-shadow: var(--terminal-window-shadow);
@@ -271,7 +269,7 @@
 			-apple-system,
 			system-ui,
 			sans-serif;
-		font-size: 0.68rem;
+		font-size: 0.75rem;
 		font-weight: 520;
 		letter-spacing: 0.01em;
 		color: var(--terminal-title-color);
@@ -290,7 +288,7 @@
 		gap: 0.3rem;
 		padding: 0.92rem 1.02rem;
 		font-family: var(--font-body);
-		font-size: clamp(0.58rem, 1.04vw, 0.9rem);
+		font-size: clamp(0.75rem, 1.04vw, 0.9rem);
 		line-height: 1.1;
 		letter-spacing: 0;
 		font-kerning: none;
@@ -337,10 +335,10 @@
 		margin: 0;
 		padding-top: 0.04em;
 		font-family: var(--font-body);
-		font-size: clamp(1.82rem, 4.3vw, 4.3rem);
+		font-size: clamp(1.82rem, 13cqi, 3.7rem);
 		font-weight: 700;
 		line-height: 0.88;
-		letter-spacing: 0.05em;
+		letter-spacing: 0.035em;
 		color: var(--terminal-brand-color);
 		text-shadow: none;
 		-webkit-text-stroke: 1px var(--terminal-brand-stroke);
@@ -401,36 +399,24 @@
 	}
 
 	.landing.theme-dark .terminal-window {
-		--terminal-window-border: color-mix(
-			in hsl,
-			var(--color-border) 64%,
-			var(--color-accent-20) 36%
-		);
-		--terminal-window-bg: color-mix(
-			in hsl,
-			var(--color-background-object) 88%,
-			var(--color-primary-10) 12%
-		);
-		--terminal-window-shadow: 0 14px 28px color-mix(in hsl, var(--color-accent-30) 18%, transparent);
-		--terminal-titlebar-bg-top: color-mix(
-			in hsl,
-			var(--color-background-object) 80%,
-			var(--color-primary-20) 20%
-		);
+		--terminal-window-border: color-mix(in hsl, var(--color-border) 76%, #80776d 24%);
+		--terminal-window-bg: color-mix(in hsl, var(--color-background-object) 92%, #141312);
+		--terminal-window-shadow: var(--shadow-xl);
+		--terminal-titlebar-bg-top: color-mix(in hsl, var(--color-background-object) 85%, #2b2925 15%);
 		--terminal-titlebar-bg-bottom: color-mix(
 			in hsl,
-			var(--color-background-object) 86%,
-			var(--color-primary-10) 14%
+			var(--color-background-object) 90%,
+			#191817 10%
 		);
-		--terminal-title-color: color-mix(in hsl, var(--color-accent-70) 80%, var(--color-primary-70));
-		--terminal-body-bg: color-mix(in hsl, var(--color-background-object) 84%, black 16%);
-		--terminal-text: color-mix(in hsl, var(--color-accent-80) 84%, var(--color-background));
-		--terminal-text-dim: color-mix(in hsl, var(--color-accent-60) 84%, var(--color-primary-70));
-		--terminal-line-color: color-mix(in hsl, var(--color-accent-50) 62%, transparent);
-		--terminal-brand-color: color-mix(in hsl, var(--color-accent-80) 90%, var(--color-background));
-		--terminal-brand-stroke: color-mix(in hsl, var(--color-accent-70) 38%, transparent);
-		--terminal-status: color-mix(in hsl, var(--color-confirm-60) 64%, var(--color-accent-70));
-		--terminal-scan: color-mix(in hsl, var(--color-accent-40) 42%, transparent);
+		--terminal-title-color: var(--color-text-secondary);
+		--terminal-body-bg: color-mix(in hsl, var(--color-background-object) 90%, black 10%);
+		--terminal-text: #f0ede7;
+		--terminal-text-dim: #ada69c;
+		--terminal-line-color: color-mix(in hsl, #aaa298 48%, transparent);
+		--terminal-brand-color: #f4f1eb;
+		--terminal-brand-stroke: color-mix(in hsl, #aaa298 26%, transparent);
+		--terminal-status: #8dbc75;
+		--terminal-scan: color-mix(in hsl, #837b70 28%, transparent);
 		--terminal-control-close: #ff5f57;
 		--terminal-control-minimize: #febc2e;
 		--terminal-control-zoom: #28c840;
@@ -475,63 +461,86 @@
 	.hero-actions {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.8rem;
-		padding-top: 0.5rem;
+		gap: var(--space-md);
+		padding-top: var(--space-sm);
 	}
 
 	.steps {
 		display: grid;
-		grid-template-columns: repeat(2, minmax(220px, 1fr));
-		gap: 0.9rem;
-	}
-
-	:global(.step-card) {
-		box-shadow: var(--shadow-sm);
-		transition: transform 180ms ease-out, box-shadow 180ms ease-out;
-	}
-
-	:global(.step-card:hover) {
-		box-shadow: var(--shadow-lg);
-		transform: translateY(-2px);
-	}
-
-	:global(.step-card-featured) {
-		background: var(--color-accent-surface);
-		border-color: var(--color-accent-border);
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		border-top: var(--border-regular);
 	}
 
 	.step {
-		min-height: 170px;
-		padding: 1rem;
+		padding: var(--space-xl);
 		display: flex;
 		flex-direction: column;
-		gap: 0.6rem;
+		gap: var(--space-md);
+		border-left: var(--border-regular);
 	}
 
-	.step span {
+	.step:first-child {
+		border-left: none;
+	}
+
+	.step-featured {
+		background: var(--color-accent-surface);
+	}
+
+	.step-number {
 		font-family: var(--font-display);
-		font-size: 0.9rem;
-		letter-spacing: 0.15em;
-		color: var(--color-accent-60);
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		color: var(--color-accent-strong);
 	}
 
-	.step h2 {
-		font-size: 1.4rem;
+	.step-body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-sm);
+	}
+
+	.step-body h2 {
+		font-size: 1.25rem;
+		font-weight: 700;
+	}
+
+	.step-body p {
+		max-width: 32ch;
+		font-size: 0.875rem;
+		line-height: 1.5;
 	}
 
 	@media (max-width: 920px) {
 		.hero-main {
 			grid-template-columns: 1fr;
-			gap: 0.9rem;
+			gap: var(--space-md);
 		}
 
 		.hero-terminal {
-			font-size: clamp(0.56rem, 1.5vw, 0.78rem);
+			font-size: clamp(0.75rem, 1.5vw, 0.78rem);
 			line-height: 1.04;
 		}
 
 		.terminal-brand {
-			font-size: clamp(1.64rem, 8vw, 3rem);
+			font-size: clamp(1.64rem, 13cqi, 3rem);
+		}
+	}
+
+	@media (max-width: 800px) {
+		.steps {
+			grid-template-columns: 1fr;
+		}
+
+		.step {
+			border-left: none;
+			border-top: var(--border-regular);
+			padding: var(--space-lg);
+		}
+
+		.step:first-child {
+			border-top: none;
 		}
 	}
 
@@ -548,11 +557,11 @@
 
 		.terminal-title {
 			max-inline-size: calc(100% - 6rem);
-			font-size: 0.63rem;
+			font-size: 0.75rem;
 		}
 
 		.hero-terminal {
-			font-size: clamp(0.56rem, 1.95vw, 0.68rem);
+			font-size: clamp(0.75rem, 1.95vw, 0.78rem);
 			line-height: 1;
 		}
 
@@ -575,12 +584,6 @@
 		.terminal-step-status {
 			grid-column: 3;
 			justify-self: end;
-		}
-	}
-
-	@media (max-width: 800px) {
-		.steps {
-			grid-template-columns: 1fr;
 		}
 	}
 

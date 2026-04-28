@@ -53,7 +53,7 @@
 		resetUploadState();
 
 		const files = Array.from(target.files);
-		selectedFiles = files;
+		selectedFiles = selectedFiles.concat(files);
 
 		// Validate file sizes
 		const filesOverallSize = files.reduce((acc, file) => acc + file.size, 0);
@@ -331,30 +331,43 @@
 	.success-message {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: var(--space-sm);
 	}
 
 	.file-upload-container {
-		max-width: 500px;
+		max-width: 31.25rem;
 
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: var(--space-xl);
 	}
 
 	.drop-zone {
-		border: 1px dashed var(--color-accent-border);
-		border-radius: 0;
-		padding: 2rem;
+		border: 1.5px dashed var(--color-accent-border);
+		border-radius: var(--radius-lg);
+		padding: var(--space-xl);
 		text-align: center;
 		cursor: pointer;
-		transition: var(--transition);
+		transition:
+			background-color 180ms var(--ease-out-quart),
+			border-color 180ms var(--ease-out-quart),
+			transform 180ms var(--ease-out-quart),
+			box-shadow 180ms var(--ease-out-quart);
 		background: var(--color-accent-surface);
+	}
+
+	.drop-zone:hover {
+		border-color: var(--color-accent-strong);
+		background: color-mix(in hsl, var(--color-accent-surface) 80%, var(--color-background-object));
 	}
 
 	.drop-zone.drag-over {
 		border-color: var(--color-accent-strong);
 		background: var(--color-background-object);
+		border-style: solid;
+		transform: scale(1.01);
+		box-shadow: var(--shadow-md);
+		animation: pulse-subtle 1.4s var(--ease-out-quart) infinite;
 	}
 
 	.drop-zone:focus-visible {
@@ -370,18 +383,18 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 1rem;
-		border-bottom: var(--border-regular);
+		padding: var(--space-lg) var(--space-lg);
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	.files-header h3 {
 		margin: 0;
-		font-size: 1rem;
-		font-weight: 600;
+		font-size: 0.95rem;
+		font-weight: 700;
 	}
 
 	.files-list {
-		max-height: 200px;
+		max-height: 12.5rem;
 		overflow-y: auto;
 		scrollbar-width: thin;
 	}
@@ -390,8 +403,8 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 0.75rem 1rem;
-		border-bottom: var(--border-regular);
+		padding: var(--space-md) var(--space-lg);
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	.file-item:last-child {
@@ -421,11 +434,27 @@
 
 	.selected-files-shell {
 		width: 100%;
+		animation: fade-in-scale 220ms var(--ease-out-quart) both;
 	}
+
+	.file-item {
+		animation: file-item-in 200ms var(--ease-out-quart) both;
+	}
+
+	.file-item:nth-child(1) { animation-delay: 0ms; }
+	.file-item:nth-child(2) { animation-delay: 30ms; }
+	.file-item:nth-child(3) { animation-delay: 60ms; }
+	.file-item:nth-child(4) { animation-delay: 90ms; }
+	.file-item:nth-child(5) { animation-delay: 120ms; }
+	.file-item:nth-child(6) { animation-delay: 150ms; }
+	.file-item:nth-child(7) { animation-delay: 180ms; }
+	.file-item:nth-child(8) { animation-delay: 210ms; }
+	.file-item:nth-child(9) { animation-delay: 240ms; }
+	.file-item:nth-child(10) { animation-delay: 270ms; }
 
 	.actions {
 		display: flex;
-		gap: 15px;
+		gap: var(--space-lg);
 		align-items: center;
 	}
 </style>

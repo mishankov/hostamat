@@ -36,12 +36,12 @@
 
 		display: flex;
 		flex-direction: column;
-		gap: 6px;
+		gap: var(--space-xs);
 	}
 
 	label {
 		background-color: transparent;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		font-weight: 600;
 		color: var(--color-text-secondary);
 		pointer-events: none;
@@ -52,25 +52,28 @@
 	input {
 		width: 100%;
 
-		padding: 0.74rem 0.82rem;
+		padding: 0.65rem 0.9rem;
 
-		font-size: 16px;
+		font-size: 0.95rem;
 
 		background-color: var(--color-background-object);
 		color: var(--color-text-regular);
 
 		border-width: 1px;
 		border-style: solid;
-		border-radius: 0;
-		border-color: var(--color-neutral-border);
+		border-radius: var(--radius-md);
+		border-color: var(--color-border);
 
-		transition: var(--transition);
+		transition:
+			border-color 180ms var(--ease-out-quart),
+			box-shadow 180ms var(--ease-out-quart),
+			background-color 180ms var(--ease-out-quart);
 	}
 
 	input:focus {
 		outline: none;
 		border-color: var(--color-accent-border);
-		box-shadow: var(--focus-ring);
+		box-shadow: var(--focus-ring), 0 0 0 1px var(--color-accent-border);
 	}
 
 	input::placeholder {
@@ -78,12 +81,21 @@
 	}
 
 	input.invalid {
-		border-color: var(--color-danger-border);
+		border-color: var(--color-danger-strong);
 		background: var(--color-danger-surface);
+		box-shadow: 0 0 0 1px color-mix(in hsl, var(--color-danger-strong) 24%, transparent);
+	}
+
+	input.invalid:focus {
+		border-color: var(--color-danger-strong);
+		box-shadow:
+			0 0 0 3px color-mix(in hsl, var(--color-danger-strong) 20%, transparent),
+			0 0 0 1px var(--color-danger-strong);
 	}
 
 	span.error-message {
-		color: var(--color-danger-border);
-		font-size: 13px;
+		color: var(--color-danger-text);
+		font-size: 0.8125rem;
+		font-weight: 500;
 	}
 </style>

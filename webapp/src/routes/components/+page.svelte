@@ -29,6 +29,23 @@
 		<Button tone="danger" emphasis="solid">Danger</Button>
 	</div>
 
+	<h3>Sizes</h3>
+
+	<div style="display: flex; align-items: center; gap: 10px">
+		<Button size="xs" emphasis="solid">Extra small</Button>
+		<Button size="sm" emphasis="solid">Small</Button>
+		<Button size="default" emphasis="solid">Default</Button>
+		<Button size="lg" emphasis="solid">Large</Button>
+		<Button size="xl" emphasis="solid">Extra large</Button>
+	</div>
+
+	<h3>Disabled</h3>
+
+	<div style="display: flex; gap: 10px">
+		<Button emphasis="solid" disabled>Solid disabled</Button>
+		<Button disabled>Outline disabled</Button>
+	</div>
+
 	<h2>On click event</h2>
 
 	<Button onclick={(event) => alert('Hey!')}>Click me!</Button>

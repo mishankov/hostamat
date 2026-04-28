@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Card, Modal, Input, Button } from '$lib/components';
-	import { Spinner, Plus } from '$lib/icons';
+	import { Button, Modal, Input } from '$lib/components';
+	import { Spinner } from '$lib/icons';
 	import { createSite } from '$lib/api-client';
 
 	let { loading = $bindable(false), onsuccess = async () => {} } = $props();
@@ -17,26 +17,21 @@
 	resetState();
 </script>
 
-<div class="add-site-card-shell">
-	<Card class="add-site-card" style="height: 100%;">
-		<button
-			type="button"
-			class="add-site"
-			onclick={() => {
-				resetState();
-				modal?.open();
-			}}
-		>
-			{#if loading}
-				<p><Spinner size={40} /></p>
-				<p class="add-site-text">Добавляем сайт</p>
-			{:else}
-				<p><Plus size={40} /></p>
-				<p class="add-site-text">Добавить сайт</p>
-			{/if}
-		</button>
-	</Card>
-</div>
+<Button
+	emphasis="solid"
+	disabled={loading}
+	onclick={() => {
+		resetState();
+		modal?.open();
+	}}
+>
+	{#if loading}
+		<Spinner size={16} />
+		<span>Добавляем сайт</span>
+	{:else}
+		<span>Добавить сайт</span>
+	{/if}
+</Button>
 
 <Modal
 	bind:this={modal}
@@ -91,66 +86,16 @@
 </Modal>
 
 <style>
-	.add-site-card-shell {
-		display: flex;
-		min-height: 170px;
-	}
-
-	.add-site {
-		all: unset;
-
-		width: 100%;
-		height: 100%;
-		min-height: 170px;
-		box-sizing: border-box;
-
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 0.5rem;
-		text-align: center;
-
-		padding: 1rem 1.3rem;
-		cursor: pointer;
-	}
-
-	.add-site p {
-		width: 100%;
-		margin: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.add-site-text {
-		color: var(--color-accent-text);
-		font-weight: 700;
-		user-select: none;
-	}
-
-	:global(.add-site-card) {
-		box-shadow: var(--shadow-sm);
-		transition: transform 180ms ease-out, box-shadow 180ms ease-out;
-		border-color: var(--color-accent-border);
-		background: var(--color-accent-surface);
-	}
-
-	:global(.add-site-card:hover) {
-		box-shadow: var(--shadow-lg);
-		transform: translateY(-2px);
-	}
-
 	.modal-body {
 		display: flex;
 		flex-direction: column;
-		gap: 15px;
-		min-width: 270px;
+		gap: var(--space-lg);
+		min-width: 16.875rem;
 	}
 
 	.modal-actions {
 		display: flex;
-		gap: 15px;
+		gap: var(--space-lg);
 		align-items: center;
 	}
 

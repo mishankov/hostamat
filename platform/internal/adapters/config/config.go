@@ -41,6 +41,11 @@ type auth struct {
 	YandexUserInfoURL  string
 }
 
+type customDomains struct {
+	VerificationPrefix string
+	CNAMETarget        string
+}
+
 type Config struct {
 	Port             string // Port to run http server
 	PublicBaseDomain string // Base domain for uploaded sites
@@ -51,6 +56,7 @@ type Config struct {
 	S3               s3
 	DB               db
 	Auth             auth
+	CustomDomains    customDomains
 }
 
 func New() *Config {
@@ -83,6 +89,10 @@ func New() *Config {
 			YandexAuthorizeURL: fallbackEnv("HOSTAMAT_AUTH_YANDEX_AUTHORIZE_URL", "https://oauth.yandex.ru/authorize"),
 			YandexTokenURL:     fallbackEnv("HOSTAMAT_AUTH_YANDEX_TOKEN_URL", "https://oauth.yandex.ru/token"),
 			YandexUserInfoURL:  fallbackEnv("HOSTAMAT_AUTH_YANDEX_USERINFO_URL", "https://login.yandex.ru/info?format=json"),
+		},
+		CustomDomains: customDomains{
+			VerificationPrefix: fallbackEnv("HOSTAMAT_CUSTOM_DOMAIN_TXT_PREFIX", "_hostamat"),
+			CNAMETarget:        fallbackEnv("HOSTAMAT_CUSTOM_DOMAIN_CNAME_TARGET", "dns.hostamat.ru"),
 		},
 		Logger: logger{
 			Level: func() slog.Level {

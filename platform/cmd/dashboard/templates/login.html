@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="corporate">
     <head>
         <meta charset="UTF-8" />
-        <title>Login</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Hostamat Dashboard Login</title>
 
         <link
             href="https://cdn.jsdelivr.net/npm/daisyui@5"
@@ -10,81 +11,110 @@
             type="text/css"
         />
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+        <style>
+            body {
+                background:
+                    radial-gradient(circle at 18% 12%, rgba(20, 184, 166, 0.05), transparent 24rem),
+                    radial-gradient(circle at 90% 18%, rgba(37, 99, 235, 0.04), transparent 22rem),
+                    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            }
+
+            .login-panel {
+                border: 1px solid rgba(15, 23, 42, 0.1);
+                background: rgba(255, 255, 255, 0.94);
+                box-shadow: 0 14px 40px rgba(15, 23, 42, 0.06);
+            }
+        </style>
     </head>
-    <body class="min-h-screen bg-base-200 flex items-center justify-center">
-        <div class="card w-full max-w-md bg-base-100 shadow-xl">
-            <div class="card-body">
+    <body class="min-h-screen text-base-content">
+        <main class="grid min-h-screen place-items-center p-4">
+            <section class="login-panel w-full max-w-md rounded-xl p-6">
+                <div class="mb-8 flex items-center gap-3">
+                    <div class="grid size-10 place-items-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
+                        <span class="text-base font-bold">H</span>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-base-content/50">Hostamat Ops</p>
+                        <h1 class="text-2xl font-bold tracking-tight">Dashboard</h1>
+                    </div>
+                </div>
+
                 <div class="space-y-4">
-                    <div class="form-control">
-                        <label class="label">
-                            <span class="label-text">Authentication Token</span>
-                        </label>
+                    <label class="form-control">
+                        <div class="label">
+                            <span class="label-text font-semibold">Authentication Token</span>
+                        </div>
                         <input
                             type="password"
                             id="token"
-                            placeholder="Enter your auth token"
+                            placeholder="Paste dashboard token"
                             class="input input-bordered w-full"
+                            autocomplete="current-password"
+                            autofocus
                         />
-                    </div>
+                    </label>
 
-                    <div class="form-control mt-6">
-                        <button id="loginBtn" class="btn btn-primary w-full">
-                            Login
-                        </button>
-                    </div>
+                    <button id="loginBtn" class="btn btn-outline w-full">
+                        Login
+                    </button>
                 </div>
 
                 <div id="errorMessage" class="alert alert-error mt-4 hidden">
                     <span id="errorText"></span>
                 </div>
-            </div>
-        </div>
+            </section>
+        </main>
 
         <script>
-            document
-                .getElementById("loginBtn")
-                .addEventListener("click", async () => {
-                    const token = document.getElementById("token").value.trim();
-                    const errorDiv = document.getElementById("errorMessage");
-                    const errorText = document.getElementById("errorText");
-                    const loginBtn = document.getElementById("loginBtn");
+            const loginBtn = document.getElementById("loginBtn");
+            const tokenInput = document.getElementById("token");
+            const errorDiv = document.getElementById("errorMessage");
+            const errorText = document.getElementById("errorText");
 
-                    if (!token) {
-                        errorText.textContent =
-                            "Please enter your authentication token";
+            tokenInput.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    loginBtn.click();
+                }
+            });
+
+            loginBtn.addEventListener("click", async () => {
+                const token = tokenInput.value.trim();
+
+                if (!token) {
+                    errorText.textContent = "Please enter your authentication token.";
+                    errorDiv.classList.remove("hidden");
+                    tokenInput.focus();
+                    return;
+                }
+
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<span class="loading loading-spinner"></span> Logging in...';
+                errorDiv.classList.add("hidden");
+
+                try {
+                    const response = await fetch("/login", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ token: token }),
+                    });
+
+                    if (response.ok) {
+                        window.location.href = "/dashboard";
+                    } else {
+                        errorText.textContent = "Login failed. Please check your token.";
                         errorDiv.classList.remove("hidden");
-                        return;
                     }
-
-                    loginBtn.disabled = true;
-                    loginBtn.textContent = "Logging in...";
-                    errorDiv.classList.add("hidden");
-
-                    try {
-                        const response = await fetch("/login", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ token: token }),
-                        });
-
-                        if (response.ok) {
-                            window.location.href = "/dashboard";
-                        } else {
-                            errorText.textContent =
-                                "Login failed. Please check your token.";
-                            errorDiv.classList.remove("hidden");
-                        }
-                    } catch (error) {
-                        errorText.textContent =
-                            "Network error. Please try again.";
-                        errorDiv.classList.remove("hidden");
-                    } finally {
-                        loginBtn.disabled = false;
-                        loginBtn.textContent = "Login";
-                    }
-                });
+                } catch (error) {
+                    errorText.textContent = "Network error. Please try again.";
+                    errorDiv.classList.remove("hidden");
+                } finally {
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = "Login";
+                }
+            });
         </script>
     </body>
 </html>

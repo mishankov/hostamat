@@ -29,14 +29,14 @@
 
 	const iconColor = $derived.by(() => {
 		if (variant === 'error') {
-			return 'var(--color-danger-50)';
+			return 'var(--color-danger-text)';
 		}
 
 		if (variant === 'success') {
-		return 'var(--color-success-border)';
+			return 'var(--color-success-text)';
 		}
 
-		return 'var(--color-accent-border)';
+		return 'var(--color-accent-text)';
 	});
 
 	const role = $derived(variant === 'error' ? 'alert' : 'status');
@@ -73,16 +73,17 @@
 <style>
 	.alert {
 		width: 100%;
+		animation: fade-in-scale 220ms var(--ease-out-quart) both;
 	}
 
 	.alert-card-body {
 		height: fit-content;
-		padding: 10px;
+		padding: var(--space-md) var(--space-lg);
 	}
 
 	.header {
 		display: flex;
-		gap: 10px;
+		gap: var(--space-md);
 		align-items: center;
 	}
 
@@ -90,7 +91,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: start;
-		gap: 10px;
-		padding-top: 10px;
+		gap: var(--space-sm);
+		padding-top: var(--space-md);
 	}
 </style>

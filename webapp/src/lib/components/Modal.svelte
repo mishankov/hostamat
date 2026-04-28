@@ -137,17 +137,17 @@
 		transform: translateX(-50%) translateY(-50%);
 
 		border: var(--border-regular);
-		border-radius: 0;
+		border-radius: var(--radius-lg);
 
 		padding: 0;
 
 		background: var(--color-background-object);
 		color: var(--color-text-regular);
-		box-shadow: var(--shadow-lg);
+		box-shadow: var(--shadow-xl);
 		backdrop-filter: blur(18px);
 
 		transition: var(--transition);
-		max-width: min(680px, calc(100vw - 1rem));
+		max-width: min(42.5rem, calc(100vw - 1rem));
 		max-height: calc(100vh - 1rem);
 		overflow: auto;
 	}
@@ -166,13 +166,13 @@
 	}
 
 	dialog[open] {
-		animation: fadein 180ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+		animation: modal-panel-in 220ms var(--ease-out-quart) forwards;
 	}
 
-	@keyframes fadein {
+	@keyframes modal-panel-in {
 		0% {
 			opacity: 0;
-			transform: translateX(-50%) translateY(-50%) scale(0.95);
+			transform: translateX(-50%) translateY(-50%) scale(0.96);
 		}
 		100% {
 			opacity: 1;
@@ -183,18 +183,19 @@
 	::backdrop {
 		background-color: hsl(210 28% 10% / 0.35);
 		backdrop-filter: blur(2px);
+		animation: backdrop-in 200ms var(--ease-out-quart) forwards;
 	}
 
 	div.modal-panel {
 		box-sizing: border-box;
 		max-width: calc(100vw - 1rem);
-		padding: 20px;
+		padding: var(--space-xl);
 	}
 
 	div.modal-header {
 		position: relative;
-		margin-bottom: 20px;
-		min-height: 28px;
+		margin-bottom: var(--space-xl);
+		min-height: 1.75rem;
 	}
 
 	.modal-title {
@@ -202,7 +203,7 @@
 	}
 
 	.modal-title.with-close {
-		padding-right: 48px;
+		padding-right: 3rem;
 	}
 
 	.close-modal {
@@ -213,9 +214,9 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 28px;
-		height: 28px;
-		border-radius: 0;
+		width: 1.75rem;
+		height: 1.75rem;
+		border-radius: var(--radius-md);
 		border: var(--border-regular);
 		background: var(--color-background-object);
 		color: var(--color-primary-90);
@@ -240,7 +241,7 @@
 
 	@media (max-width: 520px) {
 		div.modal-panel {
-			padding: 18px;
+			padding: var(--space-lg);
 		}
 
 		.modal-title {
@@ -248,7 +249,7 @@
 		}
 
 		.modal-title.with-close {
-			padding-right: 44px;
+			padding-right: 2.75rem;
 		}
 	}
 </style>

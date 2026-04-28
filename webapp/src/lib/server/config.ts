@@ -11,6 +11,10 @@ export const ProxyConfig = {
 		method: 'GET',
 		url: `${API_BASE}/api/sites`
 	},
+	getDomains: {
+		method: 'GET',
+		url: `${API_BASE}/api/domains`
+	},
 	updateSite: {
 		method: 'PUT',
 		url: `${API_BASE}/api/sites`
@@ -18,6 +22,22 @@ export const ProxyConfig = {
 	deleteSite: {
 		method: 'DELETE',
 		url: `${API_BASE}/api/sites`
+	},
+	createDomain: {
+		method: 'POST',
+		url: `${API_BASE}/api/domains`
+	},
+	updateDomain: {
+		method: 'PUT',
+		url: `${API_BASE}/api/domains`
+	},
+	verifyDomain: {
+		method: 'POST',
+		url: `${API_BASE}/api/domains/verify`
+	},
+	deleteDomain: {
+		method: 'DELETE',
+		url: `${API_BASE}/api/domains`
 	},
 	createUploadSession: {
 		method: 'POST',

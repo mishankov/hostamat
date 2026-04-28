@@ -1,9 +1,5 @@
 version: "3"
 
-vars:
-  SSH_PROD: -i ~/.ssh/hostamat_admin root@5.129.199.174
-  CONTAINER_REGISTRY: hostamat-container-registry.registry.twcstorage.ru
-
 tasks:
   # Infra
 
@@ -23,6 +19,7 @@ tasks:
     deps: [test-infra]
     dir: infra/test
     cmds:
+      - docker compose down hostamat
       - docker compose up hostamat
 
   test-backend:
@@ -38,53 +35,12 @@ tasks:
       - bun run --bun dev
 
   # Dashboard
-
   dash:
     dir: infra/test
     cmds:
       - docker compose up dashboard --build
 
-  # Docker
-
-  push-backend:
-    vars:
-      TAG: hostamat/backend:latest
-    dir: platform
-    cmds:
-      - docker build --tag {{.TAG}} --platform linux/amd64 .
-      - docker tag {{.TAG}} {{.CONTAINER_REGISTRY}}/{{.TAG}}
-      - docker push {{.CONTAINER_REGISTRY}}/{{.TAG}}
-
-  push-webapp:
-    vars:
-      TAG: hostamat/webapp:latest
-    dir: webapp
-    cmds:
-      - docker build --tag {{.TAG}} --platform linux/amd64 .
-      - docker tag {{.TAG}} {{.CONTAINER_REGISTRY}}/{{.TAG}}
-      - docker push {{.CONTAINER_REGISTRY}}/{{.TAG}}
-
-  push-dashboard:
-    vars:
-      TAG: hostamat/dashboard:latest
-    dir: platform
-    cmds:
-      - docker build --tag {{.TAG}} --platform linux/amd64 --file Dockerfile.dashboard .
-      - docker tag {{.TAG}} {{.CONTAINER_REGISTRY}}/{{.TAG}}
-      - docker push {{.CONTAINER_REGISTRY}}/{{.TAG}}
-
-  push-caddy:
-    vars:
-      TAG: hostamat/caddy:latest
-    dir: infra/prod
-    cmds:
-      - docker build --tag {{.TAG}} --platform linux/amd64 --file Dockerfile.caddy .
-      - docker tag {{.TAG}} {{.CONTAINER_REGISTRY}}/{{.TAG}}
-      - docker push {{.CONTAINER_REGISTRY}}/{{.TAG}}
-
   # Deploy
-
-  deploy-stack:
-    deps: ["push-backend", "push-webapp", "push-dashboard", "push-caddy"]
+  deploy:
     cmds:
-      - cat ./infra/prod/scripts/deploy-stack.sh | ssh -t {{.SSH_PROD}}
+      - atkins -f pipelines/deploy.yml --log execution.log

@@ -29,7 +29,9 @@
 		...restProps
 	}: IconButtonProps = $props();
 
-	const resolvedTone = $derived<'neutral' | 'danger'>(tone || (kind === 'danger' ? 'danger' : 'neutral'));
+	const resolvedTone = $derived<'neutral' | 'danger'>(
+		tone || (kind === 'danger' ? 'danger' : 'neutral')
+	);
 </script>
 
 <button
@@ -51,28 +53,37 @@
 		align-items: center;
 		justify-content: center;
 
-		padding: 6px;
-		border-radius: 0;
+		padding: 0.4rem;
+		border-radius: var(--radius-md);
 		border: var(--border-regular);
 		background: var(--color-background-object);
 		color: var(--color-text-regular);
 
 		transition:
-			color 260ms ease-out,
-			background-color 260ms ease-out,
-			border-color 260ms ease-out;
+			color 140ms var(--ease-out-quart),
+			background-color 140ms var(--ease-out-quart),
+			border-color 140ms var(--ease-out-quart),
+			box-shadow 140ms var(--ease-out-quart),
+			transform 120ms var(--ease-out-quart);
 	}
 
 	button.grouped {
 		border: none;
-		border-radius: 0;
+		border-radius: var(--radius-sm);
 	}
 
 	button:hover:enabled {
-		transition-duration: 90ms;
+		transition-duration: 100ms;
 		background: var(--color-accent-surface);
+		border-color: var(--color-accent-border);
 		cursor: pointer;
-		transform: none;
+		box-shadow: var(--shadow-sm);
+		transform: translateY(-1px);
+	}
+
+	button:active:enabled {
+		transform: translateY(1px) scale(0.95);
+		transition-duration: 80ms;
 	}
 
 	button.danger:hover:enabled {
@@ -83,10 +94,16 @@
 		cursor: pointer;
 	}
 
+	button.danger:active:enabled {
+		transform: translateY(1px) scale(0.95);
+		transition-duration: 80ms;
+	}
+
 	button:disabled {
 		background-color: var(--color-disabled-surface);
 		border-color: var(--color-disabled-border);
 		color: var(--color-disabled-text);
 		cursor: not-allowed;
+		transform: none;
 	}
 </style>

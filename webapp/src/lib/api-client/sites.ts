@@ -10,8 +10,8 @@ export const getSites = async (
 	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
 	request: Request
 ): AsyncResult<SitesResponse, string> => {
-	const headers = request.headers;
-	headers.append('X-Method', 'getSites');
+	const headers = new Headers(request.headers);
+	headers.set('X-Method', 'getSites');
 	const { data: resp, error } = await safeFetch(
 		'/api/proxy',
 		{
