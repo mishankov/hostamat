@@ -95,6 +95,19 @@
 		display: flex;
 		gap: var(--space-md);
 		align-items: center;
+		line-height: 1;
+	}
+
+	.header :global(svg) {
+		display: block;
+		flex: 0 0 auto;
+		transform: translateY(-0.08em);
+	}
+
+	.header h4,
+	.header p {
+		margin: 0;
+		line-height: 1;
 	}
 
 	.content {
