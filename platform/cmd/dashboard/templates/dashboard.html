@@ -408,6 +408,7 @@
                                     <th>Created</th>
                                     <th>Last Upload</th>
                                     <th>Uploads</th>
+                                    <th>Warnings</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -433,10 +434,20 @@
                                     <td class="whitespace-nowrap">{{.CreatedAt}}</td>
                                     <td class="whitespace-nowrap">{{.UpdatedAt}}</td>
                                     <td><span class="badge badge-neutral badge-sm">{{.UploadCount}}</span></td>
+                                    <td>
+                                        {{if .WarningCount}}
+                                        <div class="flex flex-col gap-1">
+                                            <span class="badge badge-warning badge-sm">{{.WarningCount}}</span>
+                                            <span class="mono-link text-xs text-base-content/60">{{.WarningCodes}}</span>
+                                        </div>
+                                        {{else}}
+                                        <span class="text-base-content/35">none</span>
+                                        {{end}}
+                                    </td>
                                 </tr>
                                 {{else}}
                                 <tr>
-                                    <td colspan="7" class="py-8 text-center text-base-content/45">No sites yet.</td>
+                                    <td colspan="8" class="py-8 text-center text-base-content/45">No sites yet.</td>
                                 </tr>
                                 {{end}}
                             </tbody>

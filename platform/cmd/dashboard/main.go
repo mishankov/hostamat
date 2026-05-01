@@ -147,14 +147,16 @@ func main() {
 		}
 
 		type site struct {
-			ID          string `db:"id"`
-			Domain      string `db:"domain"`
-			Name        string `db:"name"`
-			Username    string `db:"username"`
-			Email       string `db:"email"`
-			CreatedAt   string `db:"created_at"`
-			UpdatedAt   string `db:"updated_at"`
-			UploadCount int    `db:"upload_count"`
+			ID           string `db:"id"`
+			Domain       string `db:"domain"`
+			Name         string `db:"name"`
+			Username     string `db:"username"`
+			Email        string `db:"email"`
+			CreatedAt    string `db:"created_at"`
+			UpdatedAt    string `db:"updated_at"`
+			UploadCount  int    `db:"upload_count"`
+			WarningCount int    `db:"warning_count"`
+			WarningCodes string `db:"warning_codes"`
 		}
 
 		type customDomain struct {
@@ -347,10 +349,13 @@ func main() {
 				SELECT s.id, s.domain, s.name, COALESCE(u.username, '') as username,
 				       COALESCE(u.email, '') as email, s.created_at,
 				       COALESCE(MAX(us.updated_at), s.updated_at) as updated_at,
-				       COUNT(us.id) as upload_count
+				       COUNT(DISTINCT us.id) as upload_count,
+				       COUNT(DISTINCT sw.code) as warning_count,
+				       COALESCE(string_agg(DISTINCT sw.code, ', '), '') as warning_codes
 				FROM sites s
 				LEFT JOIN users u ON s."user" = u.id
 				LEFT JOIN uploadsessions us ON s.id = us.site
+				LEFT JOIN site_warnings sw ON s.id = sw.site
 				GROUP BY s.id, s.domain, s.name, u.username, u.email, s.created_at, s.updated_at
 				ORDER BY COALESCE(MAX(us.updated_at), s.updated_at) DESC
 				LIMIT 10
