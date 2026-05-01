@@ -35,7 +35,7 @@ func main() {
 	// Logging
 	logger := log.NewWideEventLogger(
 		os.Stdout,
-		log.NewDefaultSampler(1*time.Second, 400, 1),
+		log.NewDefaultSampler(1*time.Second, 400, .25),
 		"json",
 		nil,
 	)

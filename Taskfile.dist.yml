@@ -2,7 +2,6 @@ version: "3"
 
 tasks:
   # Infra
-
   update-test-infra:
     dir: infra/test
     cmds:
@@ -14,7 +13,6 @@ tasks:
       - docker compose up proxymini caddy minio db -d --remove-orphans
 
   # Backend
-
   backend:
     deps: [test-infra]
     dir: infra/test
@@ -28,7 +26,6 @@ tasks:
       - go test ./... -v -cover
 
   # Webapp
-
   webapp:
     dir: webapp
     cmds:
@@ -45,3 +42,9 @@ tasks:
     cmds:
       - clear
       - atkins -f pipelines/deploy.yml --log execution.log
+
+  # LLM helpers
+  hrns:commit:
+    desc: Commit and push using hrns
+    cmds:
+      - hrns exec -message="Create commit message for uncommited changes. Make commit with this message and push it to remote. Do not ask about commit message, just choose most fitting one" -provider="OpenCode Go" -model=deepseek-v4-pro -agent=Builder
