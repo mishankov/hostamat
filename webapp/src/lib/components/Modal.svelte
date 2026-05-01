@@ -147,7 +147,7 @@
 		backdrop-filter: blur(18px);
 
 		transition: var(--transition);
-		max-width: min(42.5rem, calc(100vw - 1rem));
+		max-width: min(76rem, calc(100vw - 1rem));
 		max-height: calc(100vh - 1rem);
 		overflow: auto;
 	}

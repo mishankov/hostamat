@@ -1,0 +1,1030 @@
+openapi: 3.1.0
+info:
+  title: Публичный API Hostamat
+  summary: Управление сайтами, загрузками и пользовательскими доменами через bearer API-ключи.
+  description: |
+    Публичный API Hostamat предназначен для внешних интеграций, CI/CD и скриптов.
+    Клиенты передают API-ключ в заголовке `Authorization: Bearer <api-key>`.
+
+    API-ключи имеют явные непересекающиеся scopes:
+    `sites:read`, `sites:write`, `sites:upload`, `domains:read`, `domains:write`.
+    Ни один scope не включает другой.
+
+    Спецификация описывает только публичный bearer-token API. Dashboard/session endpoints,
+    включая управление API-ключами из веб-интерфейса, намеренно не входят в этот контракт.
+  version: 1.0.0
+servers:
+  - url: https://api.hostamat.ru/v1
+    description: Продакшен API v1
+security:
+  - bearerAuth: []
+tags:
+  - name: Auth
+    description: Проверка API-ключа и получение минимальной информации о текущем пользователе.
+  - name: Sites
+    description: Управление сайтами владельца API-ключа.
+  - name: Uploads
+    description: Синхронная загрузка zip-архива с файлами сайта.
+  - name: Domains
+    description: Управление пользовательскими доменами владельца API-ключа.
+paths:
+  /me:
+    get:
+      tags:
+        - Auth
+      operationId: getMe
+      summary: Проверить API-ключ
+      description: |
+        Возвращает минимальную информацию о пользователе и метаданные API-ключа.
+        Resource scope не требуется: достаточно валидного bearer API-ключа.
+      responses:
+        "200":
+          description: API-ключ действителен.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /sites:
+    get:
+      tags:
+        - Sites
+      operationId: listSites
+      summary: Получить список сайтов
+      description: |
+        Возвращает все сайты пользователя, которому принадлежит API-ключ.
+        В v1 список не поддерживает пагинацию, фильтрацию или сортировку.
+      x-required-scopes:
+        - sites:read
+      responses:
+        "200":
+          description: Список сайтов.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags:
+        - Sites
+      operationId: createSite
+      summary: Создать сайт
+      description: |
+        Создает новый сайт для пользователя API-ключа. Действуют те же проверки
+        имени, владения и лимитов аккаунта, что и в dashboard.
+      x-required-scopes:
+        - sites:write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSiteRequest"
+            examples:
+              default:
+                value:
+                  name: Landing
+      responses:
+        "201":
+          description: Сайт создан.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /sites/{siteId}:
+    parameters:
+      - $ref: "#/components/parameters/SiteId"
+    get:
+      tags:
+        - Sites
+      operationId: getSite
+      summary: Получить сайт
+      description: Возвращает один сайт, если он принадлежит пользователю API-ключа.
+      x-required-scopes:
+        - sites:read
+      responses:
+        "200":
+          description: Сайт найден.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags:
+        - Sites
+      operationId: updateSite
+      summary: Переименовать сайт
+      description: |
+        Частично обновляет сайт. В v1 публичный API позволяет менять только `name`.
+      x-required-scopes:
+        - sites:write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSiteRequest"
+            examples:
+              default:
+                value:
+                  name: Production landing
+      responses:
+        "200":
+          description: Сайт обновлен.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags:
+        - Sites
+      operationId: deleteSite
+      summary: Удалить сайт
+      description: Удаляет сайт, если он принадлежит пользователю API-ключа.
+      x-required-scopes:
+        - sites:write
+      responses:
+        "204":
+          description: Сайт удален.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /sites/{siteId}/upload:
+    parameters:
+      - $ref: "#/components/parameters/SiteId"
+    post:
+      tags:
+        - Uploads
+      operationId: uploadSiteZip
+      summary: Загрузить zip-архив сайта
+      description: |
+        Принимает raw `application/zip` body и синхронно заменяет все файлы сайта
+        результатом распаковки архива. Поведение путей, допустимых файлов, лимитов,
+        uploaded/skipped результатов и ошибок совпадает с текущей логикой загрузки
+        файлов в dashboard. Ответ содержит только summary и список файлов, без объекта сайта.
+      x-required-scopes:
+        - sites:upload
+      requestBody:
+        required: true
+        content:
+          application/zip:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: Архив обработан, файлы сайта заменены.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "413":
+          $ref: "#/components/responses/PayloadTooLarge"
+        "415":
+          $ref: "#/components/responses/UnsupportedMediaType"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /domains:
+    get:
+      tags:
+        - Domains
+      operationId: listDomains
+      summary: Получить список пользовательских доменов
+      description: |
+        Возвращает все пользовательские домены владельца API-ключа.
+        Сгенерированные домены Hostamat возвращаются в site responses, а не в Domains API.
+        В v1 список доменов глобальный для пользователя и не поддерживает per-site route,
+        пагинацию, фильтрацию или сортировку.
+      x-required-scopes:
+        - domains:read
+      responses:
+        "200":
+          description: Список пользовательских доменов.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DomainListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    post:
+      tags:
+        - Domains
+      operationId: createDomain
+      summary: Добавить пользовательский домен
+      description: |
+        Создает пользовательский домен для сайта, принадлежащего пользователю API-ключа.
+        `siteId` обязателен. Нормализация hostname, запрет apex, проверка уникальности,
+        DNS-инструкции и дальнейшая активация следуют существующей доменной логике продукта.
+      x-required-scopes:
+        - domains:write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDomainRequest"
+            examples:
+              default:
+                value:
+                  hostname: www.example.com
+                  siteId: 018f68f5-3296-7a0c-9b1f-57b59a07d918
+      responses:
+        "201":
+          description: Домен создан.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DomainResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /domains/{domainId}:
+    parameters:
+      - $ref: "#/components/parameters/DomainId"
+    get:
+      tags:
+        - Domains
+      operationId: getDomain
+      summary: Получить пользовательский домен
+      description: Возвращает один пользовательский домен, если он принадлежит пользователю API-ключа.
+      x-required-scopes:
+        - domains:read
+      responses:
+        "200":
+          description: Домен найден.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DomainResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags:
+        - Domains
+      operationId: updateDomain
+      summary: Переместить домен на другой сайт
+      description: |
+        Частично обновляет пользовательский домен. В v1 публичный API использует
+        этот endpoint для перемещения домена на другой сайт через `siteId`.
+      x-required-scopes:
+        - domains:write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDomainRequest"
+            examples:
+              default:
+                value:
+                  siteId: 018f68f5-3296-7a0c-9b1f-57b59a07d918
+      responses:
+        "200":
+          description: Домен обновлен.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DomainResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags:
+        - Domains
+      operationId: deleteDomain
+      summary: Удалить пользовательский домен
+      description: Удаляет пользовательский домен владельца API-ключа.
+      x-required-scopes:
+        - domains:write
+      responses:
+        "204":
+          description: Домен удален.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /domains/{domainId}/verify:
+    parameters:
+      - $ref: "#/components/parameters/DomainId"
+    post:
+      tags:
+        - Domains
+      operationId: verifyDomain
+      summary: Проверить DNS пользовательского домена
+      description: |
+        Запускает проверку DNS для пользовательского домена. Ответ возвращает
+        актуальное состояние домена, DNS-инструкции, время последней проверки и,
+        если применимо, последнюю ошибку проверки.
+      x-required-scopes:
+        - domains:write
+      responses:
+        "200":
+          description: Проверка выполнена, домен возвращен в актуальном состоянии.
+          headers:
+            Hostamat-Trace-Id:
+              $ref: "#/components/headers/HostamatTraceId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DomainResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: "hmat_<id>_<secret>"
+      description: |
+        API-ключ из dashboard в формате `hmat_<id>_<secret>`.
+        Полный secret показывается только один раз при создании ключа.
+  headers:
+    HostamatTraceId:
+      description: Идентификатор запроса для диагностики. Передается в ответах, включая ошибки.
+      schema:
+        type: string
+      example: 01HV9CZY55BTJ9KQJZ4T0A5W6P
+  parameters:
+    SiteId:
+      name: siteId
+      in: path
+      required: true
+      description: Стабильный идентификатор сайта.
+      schema:
+        type: string
+        format: uuid
+      example: 018f68f5-3296-7a0c-9b1f-57b59a07d918
+    DomainId:
+      name: domainId
+      in: path
+      required: true
+      description: Стабильный идентификатор пользовательского домена.
+      schema:
+        type: string
+        format: uuid
+      example: 018f6901-8db7-73a7-a6c9-c675f0f6767e
+  responses:
+    Unauthorized:
+      description: API-ключ отсутствует, некорректен, истек, отозван, неизвестен или владелец ключа неактивен.
+      headers:
+        Hostamat-Trace-Id:
+          $ref: "#/components/headers/HostamatTraceId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            missingBearerToken:
+              value:
+                error:
+                  code: missing_bearer_token
+                  message: Authorization bearer token is required.
+            malformedBearerToken:
+              value:
+                error:
+                  code: malformed_bearer_token
+                  message: Authorization bearer token is malformed.
+            apiKeyExpired:
+              value:
+                error:
+                  code: expired_api_key
+                  message: API key expired
+            apiKeyRevoked:
+              value:
+                error:
+                  code: revoked_api_key
+                  message: API key revoked
+            apiKeyUnknown:
+              value:
+                error:
+                  code: unknown_api_key
+                  message: API key not found
+            apiKeyOwnerInactive:
+              value:
+                error:
+                  code: api_key_owner_inactive
+                  message: API key owner is inactive.
+    Forbidden:
+      description: API-ключ действителен, но не имеет нужного scope.
+      headers:
+        Hostamat-Trace-Id:
+          $ref: "#/components/headers/HostamatTraceId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            insufficientScope:
+              value:
+                error:
+                  code: insufficient_scope
+                  message: API key does not have the required scope.
+    ValidationError:
+      description: Запрос не прошел валидацию.
+      headers:
+        Hostamat-Trace-Id:
+          $ref: "#/components/headers/HostamatTraceId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            invalidBody:
+              value:
+                error:
+                  code: invalid_body
+                  message: Request body is invalid.
+    NotFound:
+      description: Ресурс не найден или не принадлежит пользователю API-ключа.
+      headers:
+        Hostamat-Trace-Id:
+          $ref: "#/components/headers/HostamatTraceId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            notFound:
+              value:
+                error:
+                  code: not_found
+                  message: Resource was not found.
+    Conflict:
+      description: Операция конфликтует с текущим состоянием или лимитами аккаунта.
+      headers:
+        Hostamat-Trace-Id:
+          $ref: "#/components/headers/HostamatTraceId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            hostnameTaken:
+              value:
+                error:
+                  code: hostname_taken
+                  message: Hostname is already connected to another site.
+            siteLimitReached:
+              value:
+                error:
+                  code: site_limit_reached
+                  message: Site limit reached.
+    PayloadTooLarge:
+      description: Zip-архив превышает допустимый размер.
+      headers:
+        Hostamat-Trace-Id:
+          $ref: "#/components/headers/HostamatTraceId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            payloadTooLarge:
+              value:
+                error:
+                  code: upload_too_large
+                  message: Upload exceeds the maximum allowed size.
+    UnsupportedMediaType:
+      description: Этот endpoint принимает только zip-архивы.
+      headers:
+        Hostamat-Trace-Id:
+          $ref: "#/components/headers/HostamatTraceId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            unsupportedMediaType:
+              value:
+                error:
+                  code: unsupported_media_type
+                  message: Upload body must be application/zip.
+    InternalError:
+      description: Внутренняя ошибка сервера.
+      headers:
+        Hostamat-Trace-Id:
+          $ref: "#/components/headers/HostamatTraceId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            internalError:
+              value:
+                error:
+                  code: internal_error
+                  message: Internal server error.
+  schemas:
+    ApiScope:
+      type: string
+      description: Явный непересекающийся scope API-ключа.
+      enum:
+        - sites:read
+        - sites:write
+        - sites:upload
+        - domains:read
+        - domains:write
+    MeResponse:
+      type: object
+      required:
+        - user
+        - apiKey
+      properties:
+        user:
+          $ref: "#/components/schemas/CurrentUser"
+        apiKey:
+          $ref: "#/components/schemas/CurrentApiKey"
+    CurrentUser:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - username
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 018f68e5-c654-7740-a1d2-eaa8b13f22d8
+        username:
+          type: string
+          example: user
+    CurrentApiKey:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - keyPrefix
+        - scopes
+        - expiresAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 018f68ef-1ac0-7408-9b87-db22fd61d4a2
+        name:
+          type: string
+          example: CI deploy
+        keyPrefix:
+          type: string
+          example: hmat_018f68ef
+        scopes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApiScope"
+          example:
+            - sites:read
+            - sites:upload
+        expiresAt:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: "null"
+          example: null
+    SiteListResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - sites
+      properties:
+        sites:
+          type: array
+          items:
+            $ref: "#/components/schemas/Site"
+    SiteResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - site
+      properties:
+        site:
+          $ref: "#/components/schemas/Site"
+    Site:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - hostamatDomain
+        - url
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 018f68f5-3296-7a0c-9b1f-57b59a07d918
+        name:
+          type: string
+          example: Landing
+        hostamatDomain:
+          type: string
+          description: Сгенерированный домен Hostamat для этого сайта.
+          example: bright-river.hostamat.ru
+        url:
+          type: string
+          format: uri
+          description: Публичный HTTPS URL сгенерированного домена Hostamat.
+          example: https://bright-river.hostamat.ru
+        createdAt:
+          type: string
+          format: date-time
+          example: 2026-04-28T09:30:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2026-04-28T09:45:00Z
+    CreateSiteRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+          example: Landing
+    UpdateSiteRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+          example: Production landing
+    UploadResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - summary
+        - files
+      properties:
+        summary:
+          $ref: "#/components/schemas/UploadSummary"
+        files:
+          type: array
+          items:
+            $ref: "#/components/schemas/UploadedFile"
+    UploadSummary:
+      type: object
+      additionalProperties: false
+      required:
+        - uploadedCount
+        - skippedCount
+        - totalBytes
+      properties:
+        uploadedCount:
+          type: integer
+          minimum: 0
+          example: 12
+        skippedCount:
+          type: integer
+          minimum: 0
+          example: 1
+        totalBytes:
+          type: integer
+          minimum: 0
+          example: 245760
+    UploadedFile:
+      type: object
+      additionalProperties: false
+      required:
+        - path
+        - size
+        - status
+      properties:
+        path:
+          type: string
+          example: /index.html
+        size:
+          type: integer
+          minimum: 0
+          example: 4096
+        status:
+          type: string
+          enum:
+            - uploaded
+            - skipped
+          example: uploaded
+        reason:
+          type: string
+          description: Машинно-читаемая причина пропуска файла, если применимо.
+          example: unsupported_file_type
+    DomainListResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - domains
+      properties:
+        domains:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomDomain"
+    DomainResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - domain
+      properties:
+        domain:
+          $ref: "#/components/schemas/CustomDomain"
+    CustomDomain:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - hostname
+        - status
+        - site
+        - dnsInstructions
+        - lastVerificationError
+        - lastCheckedAt
+        - activatedAt
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 018f6901-8db7-73a7-a6c9-c675f0f6767e
+        hostname:
+          type: string
+          example: www.example.com
+        status:
+          $ref: "#/components/schemas/DomainStatus"
+        site:
+          $ref: "#/components/schemas/LinkedSite"
+        dnsInstructions:
+          type: array
+          items:
+            $ref: "#/components/schemas/DnsInstruction"
+        lastVerificationError:
+          anyOf:
+            - type: string
+            - type: "null"
+          example: null
+        lastCheckedAt:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: "null"
+          example: null
+        activatedAt:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: "null"
+          example: null
+        createdAt:
+          type: string
+          format: date-time
+          example: 2026-04-28T09:35:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2026-04-28T09:50:00Z
+    DomainStatus:
+      type: string
+      enum:
+        - pending
+        - verification_failed
+        - verified
+        - active
+      example: pending
+    LinkedSite:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - hostamatDomain
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 018f68f5-3296-7a0c-9b1f-57b59a07d918
+        name:
+          type: string
+          example: Landing
+        hostamatDomain:
+          type: string
+          example: bright-river.hostamat.ru
+    DnsInstruction:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - name
+        - value
+      properties:
+        type:
+          type: string
+          enum:
+            - CNAME
+            - TXT
+          example: CNAME
+        name:
+          type: string
+          example: www
+        value:
+          type: string
+          example: dns.hostamat.ru
+        ttl:
+          type: integer
+          minimum: 0
+          deprecated: true
+          example: 300
+    CreateDomainRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - hostname
+        - siteId
+      properties:
+        hostname:
+          type: string
+          example: www.example.com
+        siteId:
+          type: string
+          format: uuid
+          example: 018f68f5-3296-7a0c-9b1f-57b59a07d918
+    UpdateDomainRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - siteId
+      properties:
+        siteId:
+          type: string
+          format: uuid
+          description: Новый целевой сайт, принадлежащий владельцу API-ключа.
+          example: 018f68f5-3296-7a0c-9b1f-57b59a07d918
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - error
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorEnvelope"
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Стабильный машинно-читаемый код ошибки.
+          enum:
+            - missing_bearer_token
+            - malformed_bearer_token
+            - unknown_api_key
+            - expired_api_key
+            - revoked_api_key
+            - api_key_owner_inactive
+            - insufficient_scope
+            - invalid_body
+            - invalid_upload
+            - not_found
+            - forbidden
+            - site_limit_reached
+            - upload_too_large
+            - unsupported_media_type
+            - invalid_file_type
+            - hostname_taken
+            - name_too_long
+            - missing_required_field
+            - invalid_hostname
+            - internal_error
+          example: invalid_body
+        message:
+          type: string
+          description: Англоязычное сообщение об ошибке для человека.
+          example: Request body is invalid.

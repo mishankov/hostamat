@@ -7,9 +7,11 @@ import (
 	"hostamat/internal/adapters/config"
 	"hostamat/internal/adapters/s3"
 	"hostamat/internal/adapters/yandexoauth"
+	"hostamat/internal/apikey"
 	"hostamat/internal/customdomain"
 	"hostamat/internal/file"
 	"hostamat/internal/hostsync"
+	"hostamat/internal/publicapi"
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
 	"hostamat/internal/uploadsession"
@@ -93,6 +95,8 @@ func main() {
 		conf.Auth.YandexRedirectURI,
 	)
 	authDomain := userauth.New(conn, sessionDomain.Service, yandexClient, "hsessionid", conf.Auth.YandexRedirectURI, userDomain.CleanupQueue)
+	apiKeyDomain := apikey.New(conn, conf.APIKeyPepper)
+	publicAPIDomain := publicapi.New(apiKeyDomain.Service, siteDomain.Service, customDomain.Service)
 
 	// Middlewares
 	recoverMiddleware := httpserver.NewRecoverMiddleware()
@@ -106,11 +110,13 @@ func main() {
 	apiGroup.Mount("/sites", siteDomain.SiteHandlerGroup)
 	apiGroup.Mount("/domains", customDomain.HandlerGroup)
 	apiGroup.Mount("/uploadsessions", siteDomain.UploadSessionHandlerGroup)
+	apiGroup.Mount("/api-keys", apiKeyDomain.HandlerGroup)
 
 	// HTTP server
 	httpServer := httpserver.New(conf.Port, 10*time.Second)
 
 	httpServer.Mount("/api", apiGroup)
+	httpServer.Mount("/v1", publicAPIDomain.HandlerGroup)
 	httpServer.Mount("/auth", authDomain.HandleGroup)
 	// Mount used here because client would request files by additional path
 	httpServer.Mount(conf.FileServerPath, siteDomain.FileServeHandler)
@@ -161,6 +167,7 @@ func main() {
 	app.RegisterDomain("site", "default", siteDomain)
 	app.RegisterDomain("file", "", fileDomain)
 	app.RegisterDomain("auth", "default", authDomain)
+	app.RegisterDomain("apikey", "default", apiKeyDomain)
 	app.RegisterDomain("session", "default", sessionDomain)
 	app.RegisterDomain("uploadsession", "default", uploadSessionDomain)
 

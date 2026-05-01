@@ -39,6 +39,22 @@ export const ProxyConfig = {
 		method: 'DELETE',
 		url: `${API_BASE}/api/domains`
 	},
+	getApiKeys: {
+		method: 'GET',
+		url: `${API_BASE}/api/api-keys`
+	},
+	createApiKey: {
+		method: 'POST',
+		url: `${API_BASE}/api/api-keys`
+	},
+	updateApiKey: {
+		method: 'PATCH',
+		url: `${API_BASE}/api/api-keys`
+	},
+	revokeApiKey: {
+		method: 'DELETE',
+		url: `${API_BASE}/api/api-keys`
+	},
 	createUploadSession: {
 		method: 'POST',
 		url: `${API_BASE}/api/uploadsessions`

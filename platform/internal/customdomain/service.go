@@ -214,6 +214,16 @@ func (s *Service) Create(ctx context.Context, siteID, hostname string) (*DomainR
 	return &record, nil
 }
 
+func (s *Service) Get(ctx context.Context, domainID string) (*DomainRecord, error) {
+	domain, siteRecord, err := s.getOwnedDomain(ctx, domainID)
+	if err != nil {
+		return nil, err
+	}
+
+	record := s.recordFromDomain(domain, siteRecord)
+	return &record, nil
+}
+
 func (s *Service) UpdateSite(ctx context.Context, domainID, siteID string) (*DomainRecord, error) {
 	ev := log.EventFromContext(ctx)
 	ev.AddStep(slog.LevelInfo, "customdomain.UpdateSite")

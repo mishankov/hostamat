@@ -10,6 +10,7 @@ import (
 	"hostamat/internal/uploadsession"
 	"io"
 	"log/slog"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -25,6 +26,7 @@ type repository interface {
 	GetList(ctx context.Context, userId string) ([]*Site, error)
 	Create(ctx context.Context, site *Site) error
 	Update(ctx context.Context, site *Site) error
+	UpdateActiveRelease(ctx context.Context, siteId, releaseId string) error
 	Delete(ctx context.Context, id string) error
 }
 
@@ -38,15 +40,32 @@ type customDomainService interface {
 	DeleteBySite(ctx context.Context, siteID string) error
 }
 
+type fileService interface {
+	GetFile(ctx context.Context, path string) (io.Reader, string, error)
+	UploadFile(ctx context.Context, path, filename string, file io.Reader, size int64) ([]file.File, []file.File, error)
+	UploadZipArchive(ctx context.Context, path string, file io.Reader, size, maxUncompressedSize int64) ([]file.File, []file.File, error)
+	DeleteFromFolderAsync(ctx context.Context, folder string) error
+}
+
+type uploadSessionService interface {
+	Create(ctx context.Context, siteId string) (*uploadsession.UploadSession, error)
+	Get(ctx context.Context, id string) (*uploadsession.UploadSession, error)
+	GetSize(ctx context.Context, uploadSessionId string) (int, error)
+	CreateFile(ctx context.Context, uploadSessionId, filename string, size int, uploaded bool) error
+	GetFiles(ctx context.Context, uploadSessionId string) ([]uploadsession.File, error)
+	Close(ctx context.Context, uploadSessionId string) error
+	SetStatus(ctx context.Context, uploadSessionId string, status uploadsession.UploadSessionStatus) error
+}
+
 type Service struct {
 	repository           repository
 	subdomainService     subdomainService
 	customDomainService  customDomainService
-	fileService          *file.Service
-	uploadSessionService *uploadsession.Service
+	fileService          fileService
+	uploadSessionService uploadSessionService
 }
 
-func NewService(repository repository, subdomainService subdomainService, customDomainService customDomainService, fileService *file.Service, uploadSessionService *uploadsession.Service) *Service {
+func NewService(repository repository, subdomainService subdomainService, customDomainService customDomainService, fileService fileService, uploadSessionService uploadSessionService) *Service {
 	return &Service{
 		repository:           repository,
 		subdomainService:     subdomainService,
@@ -391,11 +410,6 @@ func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*uplo
 		"site.domain": site.Domain,
 	})
 
-	err = s.fileService.DeleteFromFolder(ctx, site.Id)
-	if err != nil {
-		return nil, err
-	}
-
 	us, err := s.uploadSessionService.Create(ctx, site.Id)
 	if err != nil {
 		return nil, err
@@ -425,6 +439,11 @@ func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string
 		"site.id": us.Site,
 	})
 
+	if us.Status != uploadsession.UploadSessionStatusOpen {
+		ev.AddStep(slog.LevelWarn, "site.CloseUploadSession.invalid_status")
+		return nil, errors.New("upload session is not open")
+	}
+
 	_, err = s.Get(ctx, us.Site)
 	if err != nil {
 		return nil, err
@@ -435,7 +454,7 @@ func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string
 		return nil, err
 	}
 
-	err = s.uploadSessionService.Close(ctx, us.Id)
+	err = s.publishUploadSession(ctx, us)
 	if err != nil {
 		return nil, err
 	}
@@ -470,13 +489,17 @@ func (s *Service) GetFile(ctx context.Context, host, filePath string) (io.Reader
 		"file.path": filePath,
 	})
 
-	reader, resolvedPath, err := s.fileService.GetFile(ctx, site.Id+"/"+filePath)
+	filePrefix := site.Id
+	if site.ActiveReleaseId != nil && *site.ActiveReleaseId != "" {
+		filePrefix = releasePrefix(site.Id, *site.ActiveReleaseId)
+	}
+
+	reader, resolvedPath, err := s.fileService.GetFile(ctx, filePrefix+"/"+filePath)
 	if err != nil {
 		return nil, "", err
 	}
 
-	// Strip the site ID prefix from the resolved path
-	resolvedPath = strings.TrimPrefix(resolvedPath, site.Id+"/")
+	resolvedPath = strings.TrimPrefix(resolvedPath, filePrefix+"/")
 
 	ev.AddAttrs(map[string]any{
 		"file.resolved_path": resolvedPath,
@@ -495,18 +518,6 @@ func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename stri
 		"file.size":        size,
 	})
 
-	currentSize, err := s.uploadSessionService.GetSize(ctx, uploadSessionId)
-	if err != nil {
-		return err
-	}
-
-	if int64(currentSize)+size > maxFilesSize {
-
-		ev.AddStep(slog.LevelWarn, "site.UploadFile.max_size_exceeded")
-
-		return errUploadSize
-	}
-
 	us, err := s.uploadSessionService.Get(ctx, uploadSessionId)
 	if err != nil {
 		return err
@@ -516,13 +527,46 @@ func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename stri
 		"site.id": us.Site,
 	})
 
+	if us.Status != uploadsession.UploadSessionStatusOpen {
+		ev.AddStep(slog.LevelWarn, "site.UploadFile.invalid_status")
+		return errors.New("upload session is not open")
+	}
+
+	currentSize, err := s.uploadSessionService.GetSize(ctx, uploadSessionId)
+	if err != nil {
+		return err
+	}
+
+	if int64(currentSize)+size > maxFilesSize {
+
+		ev.AddStep(slog.LevelWarn, "site.UploadFile.max_size_exceeded")
+		s.failUploadSession(ctx, us)
+
+		return errUploadSize
+	}
+
 	_, err = s.Get(ctx, us.Site)
 	if err != nil {
 		return err
 	}
 
-	uploaded, skipped, err := s.fileService.UploadFile(ctx, us.Site, filename, fileReader, size)
+	remainingSize := maxFilesSize - int64(currentSize)
+	releasePath := releasePrefix(us.Site, us.Id)
+
+	var uploaded, skipped []file.File
+	if strings.EqualFold(filepath.Ext(filename), ".zip") {
+		uploaded, skipped, err = s.fileService.UploadZipArchive(ctx, releasePath, fileReader, size, remainingSize)
+	} else {
+		uploaded, skipped, err = s.fileService.UploadFile(ctx, releasePath, filename, fileReader, size)
+	}
 	if err != nil {
+		s.failUploadSession(ctx, us)
+
+		if errors.Is(err, file.ErrUploadSizeExceeded) {
+			ev.AddStep(slog.LevelWarn, "site.UploadFile.max_size_exceeded")
+			return errUploadSize
+		}
+
 		if errors.Is(err, file.ErrInvalidFileType) {
 
 			ev.AddStep(slog.LevelWarn, "site.UploadFile.invalid_file_type")
@@ -542,6 +586,98 @@ func (s *Service) UploadFile(ctx context.Context, uploadSessionId, filename stri
 	}
 
 	return nil
+}
+
+func (s *Service) UploadZipArchive(ctx context.Context, siteId string, fileReader io.Reader, size int64) ([]UploadedFile, error) {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "site.UploadZipArchive")
+	ev.AddAttrs(map[string]any{
+		"site.id":   siteId,
+		"file.size": size,
+	})
+
+	if size > maxFilesSize {
+		ev.AddStep(slog.LevelWarn, "site.UploadZipArchive.max_size_exceeded")
+		return nil, errUploadSize
+	}
+
+	site, err := s.Get(ctx, siteId)
+	if err != nil {
+		return nil, err
+	}
+
+	us, err := s.uploadSessionService.Create(ctx, site.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	uploaded, skipped, err := s.fileService.UploadZipArchive(ctx, releasePrefix(site.Id, us.Id), fileReader, size, maxFilesSize)
+	if err != nil {
+		s.failUploadSession(ctx, us)
+		if errors.Is(err, file.ErrUploadSizeExceeded) {
+			return nil, errUploadSize
+		}
+		return nil, err
+	}
+
+	files := make([]UploadedFile, 0, len(uploaded)+len(skipped))
+	for _, current := range uploaded {
+		files = append(files, UploadedFile{Name: current.Name, Size: current.Size, Uploaded: true})
+	}
+
+	for _, current := range skipped {
+		files = append(files, UploadedFile{Name: current.Name, Size: current.Size, Uploaded: false})
+	}
+
+	if err := s.publishUploadSession(ctx, us); err != nil {
+		return nil, err
+	}
+
+	return files, nil
+}
+
+func (s *Service) publishUploadSession(ctx context.Context, us *uploadsession.UploadSession) error {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "site.publishUploadSession")
+	ev.AddAttrs(map[string]any{
+		"site.id":              us.Site,
+		"uploadsession.id":     us.Id,
+		"uploadsession.status": us.Status,
+	})
+
+	if us.Status != uploadsession.UploadSessionStatusOpen {
+		ev.AddStep(slog.LevelWarn, "site.publishUploadSession.invalid_status")
+		return errors.New("upload session is not open")
+	}
+
+	if err := s.uploadSessionService.SetStatus(ctx, us.Id, uploadsession.UploadSessionStatusPublishing); err != nil {
+		return err
+	}
+
+	if err := s.repository.UpdateActiveRelease(ctx, us.Site, us.Id); err != nil {
+		s.failUploadSession(ctx, us)
+		return err
+	}
+
+	return s.uploadSessionService.Close(ctx, us.Id)
+}
+
+func (s *Service) failUploadSession(ctx context.Context, us *uploadsession.UploadSession) {
+	ev := log.EventFromContext(ctx)
+
+	if statusErr := s.uploadSessionService.SetStatus(ctx, us.Id, uploadsession.UploadSessionStatusFailed); statusErr != nil {
+		ev.AddError(statusErr)
+	}
+
+	if deleteErr := s.fileService.DeleteFromFolderAsync(ctx, releasePrefix(us.Site, us.Id)); deleteErr != nil {
+		ev.AddError(deleteErr)
+	}
+}
+
+func releasePrefix(siteId, releaseId string) string {
+	return siteId + "/releases/" + releaseId
 }
 
 func (s *Service) validate(_ context.Context, site *Site) error {

@@ -51,6 +51,7 @@ type Config struct {
 	PublicBaseDomain string // Base domain for uploaded sites
 	FileServerHost   string // Internal host for file server
 	FileServerPath   string
+	APIKeyPepper     string
 	Logger           logger
 	Caddy            caddy
 	S3               s3
@@ -65,6 +66,7 @@ func New() *Config {
 		PublicBaseDomain: os.Getenv("HOSTAMAT_DOMAIN"),
 		FileServerHost:   os.Getenv("HOSTAMAT_FILESERVER_HOST"),
 		FileServerPath:   os.Getenv("HOSTAMAT_FILESERVER_PATH"),
+		APIKeyPepper:     os.Getenv("HOSTAMAT_API_KEY_PEPPER"),
 		Caddy: caddy{
 			BaseURL:     os.Getenv("HOSTAMAT_CADDY_URL"),
 			ShorthandId: os.Getenv("HOSTAMAT_CADDY_SHORTHAND_ID"),

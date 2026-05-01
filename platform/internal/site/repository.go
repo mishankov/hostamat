@@ -34,8 +34,8 @@ func (r *Repository) Migrations() fs.FS {
 
 func (r *Repository) Create(ctx context.Context, site *Site) error {
 	query := `
-		INSERT INTO ` + tableName + ` (id, name, "user", subdomain, domain, created_at, updated_at)
-		VALUES (:id, :name, :user, :subdomain, :domain, :created_at, :updated_at)
+		INSERT INTO ` + tableName + ` (id, name, "user", subdomain, domain, active_release_id, created_at, updated_at)
+		VALUES (:id, :name, :user, :subdomain, :domain, :active_release_id, :created_at, :updated_at)
 	`
 	_, err := r.db.NamedExecContext(ctx, query, site)
 	return err
@@ -75,6 +75,11 @@ func (r *Repository) Update(ctx context.Context, site *Site) error {
 		WHERE id = :id
 	`
 	_, err := r.db.NamedExecContext(ctx, query, site)
+	return err
+}
+
+func (r *Repository) UpdateActiveRelease(ctx context.Context, siteId, releaseId string) error {
+	_, err := r.db.ExecContext(ctx, "UPDATE "+tableName+" SET active_release_id = $1, updated_at = NOW() WHERE id = $2", releaseId, siteId)
 	return err
 }
 

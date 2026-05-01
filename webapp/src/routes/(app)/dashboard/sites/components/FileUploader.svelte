@@ -151,11 +151,6 @@
 				error = result.errorMessage;
 				uploading = false;
 				onuploaderror?.({ error });
-				// Close upload session on error
-				const { error: closeError } = await closeUploadSession(uploadSession);
-				if (closeError) {
-					error = closeError;
-				}
 				return;
 			}
 
