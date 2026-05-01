@@ -43,4 +43,5 @@ tasks:
   # Deploy
   deploy:
     cmds:
+      - clear
       - atkins -f pipelines/deploy.yml --log execution.log
