@@ -13,7 +13,7 @@
 		additionalHeaders?: Record<string, string>;
 		siteId: string;
 		onfilesselected?: (event: { files: File[] }) => void;
-		onuploadcomplete?: (event: { fileCount: number }) => void;
+		onuploadcomplete?: (event: { fileCount: number }) => void | Promise<void>;
 		onuploaderror?: (event: { error: string }) => void;
 		onclose?: () => void;
 	}
@@ -171,8 +171,6 @@
 		selectedFiles = [];
 		fileInput.value = '';
 
-		onuploadcomplete?.({ fileCount: uploadedCount });
-
 		const closeUploadResp = await closeUploadSession(uploadSession);
 
 		if (closeUploadResp.data) {
@@ -182,6 +180,7 @@
 			skippedFiles = closeUploadResp.data.skippedFiles.map((file) => file.name);
 			availablePages = closeUploadResp.data.availablePages;
 			hasHomePage = closeUploadResp.data.hasHomePage;
+			await onuploadcomplete?.({ fileCount: uploadedCount });
 		} else {
 			error = closeUploadResp.error;
 		}
@@ -215,6 +214,10 @@
 		fileInput.value = '';
 		error = '';
 		uploadProgress = 0;
+		uploadedFiles = [];
+		skippedFiles = [];
+		availablePages = [];
+		hasHomePage = null;
 	}
 
 	function handleKeyDown(event: KeyboardEvent): void {

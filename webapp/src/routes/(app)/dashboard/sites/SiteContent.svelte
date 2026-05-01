@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { Alert, Button, CopyButton, IconButton, Link, Modal, Toolbar } from '$lib/components';
 	import { useThemeController } from '$lib/theme/controller.svelte';
-	import { Trash, Upload } from '$lib/icons';
+	import { I, Trash, Upload } from '$lib/icons';
 
 	import FileUploader from './components/FileUploader.svelte';
 	import UpdateSite from './UpdateSite.svelte';
-	import { type Site } from '$lib/types';
+	import { type Site, type SiteWarning } from '$lib/types';
 	import { deleteSite } from '$lib/api-client';
 
 	interface Props {
@@ -27,16 +27,31 @@
 
 	let uploadModal = $state<Modal>();
 	let deleteModal = $state<Modal>();
+	let warningsModal = $state<Modal>();
 	let fileUploader = $state<FileUploader>();
+	let refreshAfterUploadModalClose = $state(false);
 
 	const uploadTitleId = $derived(`upload-site-title-${site.id}`);
 	const uploadDescId = $derived(`upload-site-description-${site.id}`);
 	const deleteTitleId = $derived(`delete-site-title-${site.id}`);
 	const deleteDescId = $derived(`delete-site-description-${site.id}`);
 	const deleteButtonId = $derived(`delete-site-confirm-${site.id}`);
+	const warningsTitleId = $derived(`site-warnings-title-${site.id}`);
+	const warningsDescId = $derived(`site-warnings-description-${site.id}`);
 
 	const resetState = () => {
 		loading = false;
+	};
+
+	const warningCopy = (warning: SiteWarning) => {
+		switch (warning.code) {
+			case 'missing_home_page':
+				return {
+					title: 'Главная страница не найдена',
+					message:
+						'Загрузите файл index.html в корень сайта или ZIP-архива, чтобы главный адрес сайта открывался.'
+				};
+		}
 	};
 </script>
 
@@ -53,6 +68,18 @@
 	</div>
 
 	<Toolbar>
+		{#if site.warnings?.length > 0}
+			<IconButton
+				grouped
+				label="Предупреждения сайта"
+				title="Предупреждения сайта"
+				tone="warning"
+				onclick={() => warningsModal?.open()}
+			>
+				<I size={25} color="currentColor" />
+			</IconButton>
+		{/if}
+
 		<UpdateSite
 			siteName={site.name}
 			siteId={site.id}
@@ -100,6 +127,10 @@
 		initialFocusSelector=".drop-zone"
 		closeCallback={() => {
 			fileUploader?.resetUploadState();
+			if (refreshAfterUploadModalClose) {
+				refreshAfterUploadModalClose = false;
+				void onsiteupdate();
+			}
 		}}
 	>
 		<div class="upload-modal">
@@ -114,6 +145,9 @@
 			<FileUploader
 				bind:this={fileUploader}
 				onclose={() => uploadModal?.close()}
+				onuploadcomplete={() => {
+					refreshAfterUploadModalClose = true;
+				}}
 				multiple={true}
 				uploadUrl="/api/uploadFile"
 				siteId={site.id}
@@ -161,6 +195,27 @@
 			</div>
 		</div>
 	</Modal>
+
+	<Modal
+		bind:this={warningsModal}
+		tone="neutral"
+		title="Предупреждения сайта"
+		panelWidth="32rem"
+		titleId={warningsTitleId}
+		descriptionId={warningsDescId}
+	>
+		<div class="warnings-modal">
+			<p id={warningsDescId} class="warnings-modal-text">
+				Проверьте эти предупреждения перед тем, как делиться сайтом.
+			</p>
+
+			{#each site.warnings ?? [] as warning (warning.code)}
+				<Alert variant="warning" title={warningCopy(warning).title}>
+					<p>{warningCopy(warning).message}</p>
+				</Alert>
+			{/each}
+		</div>
+	</Modal>
 </div>
 
 <style>
@@ -196,6 +251,16 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-lg);
+	}
+
+	.warnings-modal {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-lg);
+	}
+
+	.warnings-modal-text {
+		color: var(--color-text-secondary);
 	}
 
 	.delete-modal-text {

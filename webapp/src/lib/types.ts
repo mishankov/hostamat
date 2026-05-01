@@ -5,6 +5,14 @@ export type Site = {
 	domain: string;
 	createdAt?: string;
 	updatedAt: string;
+	warnings: SiteWarning[];
+};
+
+export type SiteWarning = {
+	code: 'missing_home_page';
+	severity: 'warning';
+	createdAt: string;
+	updatedAt: string;
 };
 
 export type DomainType = 'generated' | 'custom';

@@ -6,7 +6,7 @@
 		children?: Snippet;
 		onclick?: (event: MouseEvent) => void;
 		class?: string;
-		tone?: 'neutral' | 'danger';
+		tone?: 'neutral' | 'danger' | 'warning';
 		kind?: 'primary' | 'danger';
 		grouped?: boolean;
 		title?: string;
@@ -29,7 +29,7 @@
 		...restProps
 	}: IconButtonProps = $props();
 
-	const resolvedTone = $derived<'neutral' | 'danger'>(
+	const resolvedTone = $derived<'neutral' | 'danger' | 'warning'>(
 		tone || (kind === 'danger' ? 'danger' : 'neutral')
 	);
 </script>
@@ -97,6 +97,18 @@
 	button.danger:active:enabled {
 		transform: translateY(1px) scale(0.95);
 		transition-duration: 80ms;
+	}
+
+	button.warning {
+		color: var(--color-warning-text);
+	}
+
+	button.warning:hover:enabled {
+		transition-duration: 90ms;
+		background: var(--color-warning-surface);
+		border-color: var(--color-warning-border);
+		color: var(--color-warning-text);
+		cursor: pointer;
 	}
 
 	button:disabled {

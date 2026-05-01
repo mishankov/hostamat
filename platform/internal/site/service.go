@@ -23,8 +23,11 @@ type repository interface {
 	Get(ctx context.Context, id string) (*Site, error)
 	GetByDomain(ctx context.Context, domain string) (*Site, error)
 	GetList(ctx context.Context, userId string) ([]*Site, error)
+	GetWarningsForSites(ctx context.Context, siteIDs []string) ([]SiteWarning, error)
 	Create(ctx context.Context, site *Site) error
 	Update(ctx context.Context, site *Site) error
+	UpsertWarning(ctx context.Context, warning *SiteWarning) error
+	DeleteWarning(ctx context.Context, siteID, code string) error
 	Delete(ctx context.Context, id string) error
 }
 
@@ -281,9 +284,16 @@ func (s *Service) GetList(ctx context.Context) ([]*Site, error) {
 	sites, err := s.repository.GetList(ctx, user.ID)
 	if err != nil {
 		ev.AddError(err)
+		return nil, err
 	}
 
-	return sites, err
+	err = s.attachWarnings(ctx, sites)
+	if err != nil {
+		ev.AddError(err)
+		return nil, err
+	}
+
+	return sites, nil
 }
 
 func (s *Service) UpdateName(ctx context.Context, id, name string) error {
@@ -440,7 +450,54 @@ func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string
 		return nil, err
 	}
 
-	return BuildUploadSummary(site.Domain, files), nil
+	summary := BuildUploadSummary(site.Domain, files)
+	err = s.syncUploadWarnings(ctx, site.Id, summary)
+	if err != nil {
+		return nil, err
+	}
+
+	return summary, nil
+}
+
+func (s *Service) attachWarnings(ctx context.Context, sites []*Site) error {
+	siteIDs := make([]string, 0, len(sites))
+	sitesByID := make(map[string]*Site, len(sites))
+	for _, site := range sites {
+		site.Warnings = []SiteWarning{}
+		siteIDs = append(siteIDs, site.Id)
+		sitesByID[site.Id] = site
+	}
+
+	warnings, err := s.repository.GetWarningsForSites(ctx, siteIDs)
+	if err != nil {
+		return err
+	}
+
+	for _, warning := range warnings {
+		site, ok := sitesByID[warning.Site]
+		if !ok {
+			continue
+		}
+
+		site.Warnings = append(site.Warnings, warning)
+	}
+
+	return nil
+}
+
+func (s *Service) syncUploadWarnings(ctx context.Context, siteID string, summary *UploadSummary) error {
+	if summary.HasHomePage {
+		return s.repository.DeleteWarning(ctx, siteID, SiteWarningMissingHomePage)
+	}
+
+	now := time.Now()
+	return s.repository.UpsertWarning(ctx, &SiteWarning{
+		Site:      siteID,
+		Code:      SiteWarningMissingHomePage,
+		Severity:  SiteWarningSeverityWarning,
+		CreatedAt: now,
+		UpdatedAt: now,
+	})
 }
 
 func (s *Service) GetFile(ctx context.Context, host, filePath string) (io.Reader, string, error) {
