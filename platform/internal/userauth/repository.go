@@ -46,8 +46,8 @@ func (r *Repository) GetByProviderUserID(ctx context.Context, provider Provider,
 
 func (r *Repository) Create(ctx context.Context, user *User) error {
 	query := `
-		INSERT INTO users (id, username, password, salt, created, updated, status, provider, provider_user_id)
-		VALUES (:id, :username, :password, :salt, :created, :updated, :status, :provider, :provider_user_id)
+		INSERT INTO users (id, username, email, password, salt, created, updated, status, provider, provider_user_id)
+		VALUES (:id, :username, :email, :password, :salt, :created, :updated, :status, :provider, :provider_user_id)
 	`
 	if _, err := r.db.NamedExecContext(ctx, query, user); err != nil {
 		return fmt.Errorf("failed to create user: %w", err)
@@ -56,14 +56,14 @@ func (r *Repository) Create(ctx context.Context, user *User) error {
 	return nil
 }
 
-func (r *Repository) UpdateUsername(ctx context.Context, id, username string) error {
+func (r *Repository) UpdateOAuthProfile(ctx context.Context, id, username string, email *string) error {
 	query := `
 		UPDATE users
-		SET username = $1, updated = CURRENT_TIMESTAMP
-		WHERE id = $2
+		SET username = $1, email = $2, updated = CURRENT_TIMESTAMP
+		WHERE id = $3
 	`
-	if _, err := r.db.ExecContext(ctx, query, username, id); err != nil {
-		return fmt.Errorf("failed to update username: %w", err)
+	if _, err := r.db.ExecContext(ctx, query, username, email, id); err != nil {
+		return fmt.Errorf("failed to update oauth profile: %w", err)
 	}
 
 	return nil

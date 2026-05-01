@@ -142,6 +142,7 @@ func main() {
 		type user struct {
 			ID       string `db:"id"`
 			Username string `db:"username"`
+			Email    string `db:"email"`
 			Created  string `db:"created"`
 		}
 
@@ -150,6 +151,7 @@ func main() {
 			Domain      string `db:"domain"`
 			Name        string `db:"name"`
 			Username    string `db:"username"`
+			Email       string `db:"email"`
 			CreatedAt   string `db:"created_at"`
 			UpdatedAt   string `db:"updated_at"`
 			UploadCount int    `db:"upload_count"`
@@ -162,6 +164,7 @@ func main() {
 			SiteName              string `db:"site_name"`
 			SiteDomain            string `db:"site_domain"`
 			Username              string `db:"username"`
+			Email                 string `db:"email"`
 			LastVerificationError string `db:"last_verification_error"`
 			LastCheckedAt         string `db:"last_checked_at"`
 			ActivatedAt           string `db:"activated_at"`
@@ -176,6 +179,7 @@ func main() {
 			SiteName   string
 			SiteDomain string
 			Username   string
+			Email      string
 		}
 
 		type dashboardData struct {
@@ -257,6 +261,7 @@ func main() {
 					SiteName   string `db:"site_name"`
 					SiteDomain string `db:"site_domain"`
 					Username   string `db:"username"`
+					Email      string `db:"email"`
 				}
 
 				query, args, err := sqlx.In(`
@@ -265,7 +270,8 @@ func main() {
 					       '' as status,
 					       s.name as site_name,
 					       s.domain as site_domain,
-					       COALESCE(u.username, '') as username
+					       COALESCE(u.username, '') as username,
+					       COALESCE(u.email, '') as email
 					FROM sites s
 					LEFT JOIN users u ON s."user" = u.id
 					WHERE s.domain IN (?)
@@ -275,7 +281,8 @@ func main() {
 					       cd.status as status,
 					       COALESCE(s.name, '') as site_name,
 					       COALESCE(s.domain, '') as site_domain,
-					       COALESCE(u.username, '') as username
+					       COALESCE(u.username, '') as username,
+					       COALESCE(u.email, '') as email
 					FROM custom_domains cd
 					LEFT JOIN sites s ON cd.site = s.id
 					LEFT JOIN users u ON cd."user" = u.id
@@ -306,6 +313,7 @@ func main() {
 							data.CaddyHosts[i].SiteName = hostContext.SiteName
 							data.CaddyHosts[i].SiteDomain = hostContext.SiteDomain
 							data.CaddyHosts[i].Username = hostContext.Username
+							data.CaddyHosts[i].Email = hostContext.Email
 						}
 					}
 				}
@@ -324,7 +332,7 @@ func main() {
 
 		// Get last 10 registered users
 		err = conn.SelectContext(ctx, &data.Users, `
-				SELECT id, username, created
+				SELECT id, username, COALESCE(email, '') as email, created
 				FROM users
 				WHERE username IS NOT NULL
 				ORDER BY created DESC
@@ -336,13 +344,14 @@ func main() {
 
 		// Get last 10 created sites with last upload datetime
 		err = conn.SelectContext(ctx, &data.Sites, `
-				SELECT s.id, s.domain, s.name, COALESCE(u.username, '') as username, s.created_at,
+				SELECT s.id, s.domain, s.name, COALESCE(u.username, '') as username,
+				       COALESCE(u.email, '') as email, s.created_at,
 				       COALESCE(MAX(us.updated_at), s.updated_at) as updated_at,
 				       COUNT(us.id) as upload_count
 				FROM sites s
 				LEFT JOIN users u ON s."user" = u.id
 				LEFT JOIN uploadsessions us ON s.id = us.site
-				GROUP BY s.id, s.domain, s.name, u.username, s.created_at, s.updated_at
+				GROUP BY s.id, s.domain, s.name, u.username, u.email, s.created_at, s.updated_at
 				ORDER BY COALESCE(MAX(us.updated_at), s.updated_at) DESC
 				LIMIT 10
 			`)
@@ -356,6 +365,7 @@ func main() {
 				       COALESCE(s.name, '') as site_name,
 				       COALESCE(s.domain, '') as site_domain,
 				       COALESCE(u.username, '') as username,
+				       COALESCE(u.email, '') as email,
 				       cd.last_verification_error,
 				       COALESCE(cd.last_checked_at::text, '') as last_checked_at,
 				       COALESCE(cd.activated_at::text, '') as activated_at,

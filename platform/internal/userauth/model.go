@@ -16,6 +16,7 @@ const (
 type User struct {
 	ID             string              `db:"id"               json:"id"`
 	Username       string              `db:"username"         json:"username"`
+	Email          *string             `db:"email"            json:"email"`
 	Password       string              `db:"password"         json:"-"`
 	Salt           string              `db:"salt"             json:"-"`
 	Created        time.Time           `db:"created"          json:"created"`

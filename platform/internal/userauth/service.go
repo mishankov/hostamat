@@ -25,7 +25,7 @@ type repository interface {
 	Get(ctx context.Context, id string) (*User, error)
 	GetByProviderUserID(ctx context.Context, provider Provider, providerUserID string) (*User, error)
 	Create(ctx context.Context, user *User) error
-	UpdateUsername(ctx context.Context, id, username string) error
+	UpdateOAuthProfile(ctx context.Context, id, username string, email *string) error
 	Delete(ctx context.Context, id string) error
 }
 
@@ -133,12 +133,14 @@ func (s *Service) CreateSessionFromYandexCode(ctx context.Context, code string) 
 	}
 
 	username := resolveUsername(userInfo)
+	email := resolveEmail(userInfo)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		providerUserID := userInfo.ID
 		user = &User{
 			ID:             uuid.NewString(),
 			Username:       username,
+			Email:          email,
 			Password:       "",
 			Salt:           "",
 			Created:        time.Now(),
@@ -156,17 +158,18 @@ func (s *Service) CreateSessionFromYandexCode(ctx context.Context, code string) 
 
 			return "", fmt.Errorf("failed to create oauth user: %w", err)
 		}
-	} else if user.Username != username {
+	} else if user.Username != username || !equalStringPointers(user.Email, email) {
 
-		ev.AddStep(slog.LevelInfo, "userauth.CreateSessionFromYandexCode.update_username")
+		ev.AddStep(slog.LevelInfo, "userauth.CreateSessionFromYandexCode.update_oauth_profile")
 
-		if err := s.repo.UpdateUsername(ctx, user.ID, username); err != nil {
+		if err := s.repo.UpdateOAuthProfile(ctx, user.ID, username, email); err != nil {
 
 			ev.AddError(err)
 
-			return "", fmt.Errorf("failed to update oauth username: %w", err)
+			return "", fmt.Errorf("failed to update oauth profile: %w", err)
 		}
 		user.Username = username
+		user.Email = email
 	}
 
 	ev.AddAttrs(map[string]any{
@@ -342,4 +345,21 @@ func resolveUsername(userInfo *yandexoauth.UserInfo) string {
 	}
 
 	return userInfo.ID
+}
+
+func resolveEmail(userInfo *yandexoauth.UserInfo) *string {
+	email := strings.TrimSpace(userInfo.DefaultEmail)
+	if email == "" {
+		return nil
+	}
+
+	return &email
+}
+
+func equalStringPointers(left, right *string) bool {
+	if left == nil || right == nil {
+		return left == right
+	}
+
+	return *left == *right
 }

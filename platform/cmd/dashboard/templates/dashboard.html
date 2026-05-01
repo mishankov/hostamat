@@ -330,7 +330,16 @@
                                     <span class="text-base-content/35">not found in DB</span>
                                     {{end}}
                                 </td>
-                                <td>{{if .Username}}{{.Username}}{{else}}<span class="text-base-content/35">unknown</span>{{end}}</td>
+                                <td>
+                                    {{if .Username}}
+                                    <div class="font-semibold">{{.Username}}</div>
+                                    {{else}}
+                                    <span class="text-base-content/35">unknown</span>
+                                    {{end}}
+                                    {{if .Email}}
+                                    <div class="text-xs text-base-content/55">{{.Email}}</div>
+                                    {{end}}
+                                </td>
                             </tr>
                             {{end}}
                         </tbody>
@@ -355,6 +364,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Username</th>
+                                    <th>Email</th>
                                     <th>Registered</th>
                                 </tr>
                             </thead>
@@ -363,11 +373,12 @@
                                 <tr>
                                     <td class="mono-link text-xs">{{.ID}}</td>
                                     <td class="font-semibold">{{.Username}}</td>
+                                    <td>{{if .Email}}{{.Email}}{{else}}<span class="text-base-content/35">empty</span>{{end}}</td>
                                     <td class="whitespace-nowrap">{{.Created}}</td>
                                 </tr>
                                 {{else}}
                                 <tr>
-                                    <td colspan="3" class="py-8 text-center text-base-content/45">No users yet.</td>
+                                    <td colspan="4" class="py-8 text-center text-base-content/45">No users yet.</td>
                                 </tr>
                                 {{end}}
                             </tbody>
@@ -409,7 +420,16 @@
                                         </a>
                                     </td>
                                     <td>{{.Name}}</td>
-                                    <td>{{if .Username}}{{.Username}}{{else}}<span class="text-base-content/35">unknown</span>{{end}}</td>
+                                    <td>
+                                        {{if .Username}}
+                                        <div class="font-semibold">{{.Username}}</div>
+                                        {{else}}
+                                        <span class="text-base-content/35">unknown</span>
+                                        {{end}}
+                                        {{if .Email}}
+                                        <div class="text-xs text-base-content/55">{{.Email}}</div>
+                                        {{end}}
+                                    </td>
                                     <td class="whitespace-nowrap">{{.CreatedAt}}</td>
                                     <td class="whitespace-nowrap">{{.UpdatedAt}}</td>
                                     <td><span class="badge badge-neutral badge-sm">{{.UploadCount}}</span></td>
@@ -478,7 +498,16 @@
                                     </a>
                                     {{end}}
                                 </td>
-                                <td>{{if .Username}}{{.Username}}{{else}}<span class="text-base-content/35">unknown</span>{{end}}</td>
+                                <td>
+                                    {{if .Username}}
+                                    <div class="font-semibold">{{.Username}}</div>
+                                    {{else}}
+                                    <span class="text-base-content/35">unknown</span>
+                                    {{end}}
+                                    {{if .Email}}
+                                    <div class="text-xs text-base-content/55">{{.Email}}</div>
+                                    {{end}}
+                                </td>
                                 <td class="whitespace-nowrap">{{.LastCheckedAt}}</td>
                                 <td class="whitespace-nowrap">{{.ActivatedAt}}</td>
                                 <td class="whitespace-nowrap">{{.UpdatedAt}}</td>

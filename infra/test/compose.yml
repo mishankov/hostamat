@@ -57,6 +57,8 @@ services:
       - 1002:4444
     volumes:
       - ../../platform:/app
+      - dashboard-go-mod-cache:/go/pkg/mod
+      - dashboard-go-build-cache:/root/.cache/go-build
 
   hostamat:
     build:
@@ -68,3 +70,11 @@ services:
       - 1001:1001
     volumes:
       - ../../platform:/app
+      - hostamat-go-mod-cache:/go/pkg/mod
+      - hostamat-go-build-cache:/root/.cache/go-build
+
+volumes:
+  dashboard-go-mod-cache:
+  dashboard-go-build-cache:
+  hostamat-go-mod-cache:
+  hostamat-go-build-cache:
