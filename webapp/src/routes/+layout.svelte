@@ -107,6 +107,7 @@
 						<nav id="primary-navigation" class={[menuOpen && 'open']}>
 							<Link href={resolve('/dashboard/sites')} onclick={closeMenu}>Дашборд</Link>
 							<Link href={resolve('/about')} onclick={closeMenu}>О сервисе</Link>
+							<Link href={resolve('/api-docs')} onclick={closeMenu}>API</Link>
 							<Link href={resolve('/faq')} onclick={closeMenu}>Вопросы</Link>
 						</nav>
 
@@ -137,6 +138,7 @@
 							</div>
 							<div class="footer-links">
 								<Link href="/cookies" alwaysUnderline>Куки</Link>
+								<Link href="/api-docs" alwaysUnderline>API</Link>
 								<Link href="/privacy" alwaysUnderline>Политика конфиденциальности</Link>
 								<Link href="/rights" alwaysUnderline>Права потребителя</Link>
 								<Link href="/terms" alwaysUnderline>Пользовательское соглашение</Link>

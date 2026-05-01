@@ -116,10 +116,10 @@ func (s *Service) UploadFile(ctx context.Context, path, filename string, file io
 
 	var uploaded, skipped []File
 
-	switch filepath.Ext(filename) {
+	switch strings.ToLower(filepath.Ext(filename)) {
 	case ".zip":
 		var err error
-		uploaded, skipped, err = s.uploadZipArchive(ctx, path, file, size)
+		uploaded, skipped, err = s.UploadZipArchive(ctx, path, file, size, 0)
 		if err != nil {
 			ev.AddError(err)
 			return nil, nil, err
@@ -139,6 +139,25 @@ func (s *Service) UploadFile(ctx context.Context, path, filename string, file io
 		} else {
 			uploaded = []File{{filename, int(size)}}
 		}
+	}
+
+	return uploaded, skipped, nil
+}
+
+func (s *Service) UploadZipArchive(ctx context.Context, folder string, file io.Reader, size, maxUncompressedSize int64) ([]File, []File, error) {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "file.UploadZipArchive")
+	ev.AddAttrs(map[string]any{
+		"file.path":                folder,
+		"file.size":                size,
+		"file.maxUncompressedSize": maxUncompressedSize,
+	})
+
+	uploaded, skipped, err := s.uploadZipArchive(ctx, folder, file, size, maxUncompressedSize)
+	if err != nil {
+		ev.AddError(err)
+		return nil, nil, err
 	}
 
 	return uploaded, skipped, nil
@@ -188,7 +207,7 @@ func (s *Service) uploadSingleFile(ctx context.Context, folder, filename string,
 	return s.repo.PutObject(ctx, s.bucketName, folder+"/"+filename, file, size)
 }
 
-func (s *Service) uploadZipArchive(ctx context.Context, folder string, file io.Reader, size int64) ([]File, []File, error) {
+func (s *Service) uploadZipArchive(ctx context.Context, folder string, file io.Reader, size, maxUncompressedSize int64) ([]File, []File, error) {
 	fileReaderAt, ok := file.(io.ReaderAt)
 	if !ok {
 		return nil, nil, errors.New("zip file must be seekable")
@@ -199,7 +218,17 @@ func (s *Service) uploadZipArchive(ctx context.Context, folder string, file io.R
 		return nil, nil, err
 	}
 
-	var uploadedFiles, skippedFiles []File
+	type zipFile struct {
+		source *zip.File
+		name   string
+		size   int64
+	}
+
+	var (
+		files        []zipFile
+		skippedFiles []File
+		totalSize    int64
+	)
 
 	for _, f := range zipReader.File {
 		if f.FileInfo().IsDir() {
@@ -212,23 +241,40 @@ func (s *Service) uploadZipArchive(ctx context.Context, folder string, file io.R
 			continue
 		}
 
-		fileReader, err := f.Open()
-		if err != nil {
-			skippedFiles = append(skippedFiles, File{filename, 0})
-			continue
+		if f.UncompressedSize64 > uint64(maxInt64()) {
+			return nil, nil, ErrUploadSizeExceeded
 		}
 
-		err = s.uploadSingleFile(ctx, folder, filename, fileReader, int64(f.UncompressedSize64))
+		fileSize := int64(f.UncompressedSize64)
+		if maxUncompressedSize > 0 && totalSize > maxUncompressedSize-fileSize {
+			return nil, nil, ErrUploadSizeExceeded
+		}
+
+		totalSize += fileSize
+		files = append(files, zipFile{source: f, name: filename, size: fileSize})
+	}
+
+	uploadedFiles := make([]File, 0, len(files))
+	for _, f := range files {
+		fileReader, err := f.source.Open()
+		if err != nil {
+			return nil, nil, err
+		}
+
+		err = s.uploadSingleFile(ctx, folder, f.name, fileReader, f.size)
 		fileReader.Close()
 		if err != nil {
-			skippedFiles = append(skippedFiles, File{filename, 0})
-			continue
+			return nil, nil, err
 		}
 
-		uploadedFiles = append(uploadedFiles, File{filename, int(f.UncompressedSize64)})
+		uploadedFiles = append(uploadedFiles, File{f.name, int(f.size)})
 	}
 
 	return uploadedFiles, skippedFiles, nil
+}
+
+func maxInt64() int64 {
+	return int64(^uint64(0) >> 1)
 }
 
 func isAllowedFile(filename string) bool {

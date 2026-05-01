@@ -56,7 +56,7 @@ func (s *Service) Close(ctx context.Context, uploadSessionId string) error {
 		return err
 	}
 
-	us.Status = UploadSessionStatusClosed
+	us.Status = UploadSessionStatusPublished
 	us.UpdatedAt = time.Now()
 
 	err = s.repo.UpdateStatus(ctx, us)
@@ -72,6 +72,31 @@ func (s *Service) Close(ctx context.Context, uploadSessionId string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) SetStatus(ctx context.Context, uploadSessionId string, status UploadSessionStatus) error {
+	ev := log.EventFromContext(ctx)
+
+	ev.AddStep(slog.LevelInfo, "uploadsession.SetStatus")
+	ev.AddAttrs(map[string]any{
+		"uploadsession.id":     uploadSessionId,
+		"uploadsession.status": status,
+	})
+
+	us, err := s.Get(ctx, uploadSessionId)
+	if err != nil {
+		return err
+	}
+
+	us.Status = status
+	us.UpdatedAt = time.Now()
+
+	err = s.repo.UpdateStatus(ctx, us)
+	if err != nil {
+		ev.AddError(err)
+	}
+
+	return err
 }
 
 func (s *Service) Create(ctx context.Context, siteId string) (*UploadSession, error) {

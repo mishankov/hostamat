@@ -91,13 +91,20 @@
 				</Alert>
 			</div>
 		</div>
-	{:else if customDomains.length > 0 || true}
+	{:else}
 		<div class="domain-list">
-			{#each customDomains as domain (domain.id)}
-				<div class="domain-row">
-					<DomainCard {domain} {sites} onrefresh={refresh} />
+			{#if customDomains.length === 0}
+				<div class="empty-state">
+					<h2>Доменов пока нет</h2>
+					<p>Подключите пользовательский домен к сайту и проверьте DNS-записи.</p>
 				</div>
-			{/each}
+			{:else}
+				{#each customDomains as domain (domain.id)}
+					<div class="domain-row">
+						<DomainCard {domain} {sites} onrefresh={refresh} />
+					</div>
+				{/each}
+			{/if}
 		</div>
 		<div class="add-action">
 			<AddDomainCard {sites} onrefresh={refresh} />
@@ -155,11 +162,20 @@
 		min-width: 0;
 	}
 
-	.loading-state {
+	.loading-state,
+	.empty-state {
 		display: flex;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		gap: var(--space-sm);
 		min-height: 10.625rem;
+		text-align: center;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.empty-state p {
+		max-width: 42ch;
 	}
 
 	.limit-info-wrap {

@@ -29,6 +29,7 @@ const proxyHandler = (): RequestHandler => {
 };
 
 export const GET: RequestHandler = proxyHandler();
+export const PATCH: RequestHandler = proxyHandler();
 export const PUT: RequestHandler = proxyHandler();
 export const POST: RequestHandler = proxyHandler();
 export const DELETE: RequestHandler = proxyHandler();

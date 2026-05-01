@@ -113,8 +113,8 @@ The dashboard will gain an API key management surface where users can create, in
 - Hosted interactive documentation will be available publicly inside the main app and backed by Scalar over an OpenAPI specification.
 - Written tutorial documentation will be Russian-only in v1 and reachable from public navigation and the API keys dashboard page.
 - OpenAPI title, summaries, and descriptions will be Russian in v1, while schema fields and error codes remain stable code-oriented identifiers.
-- The OpenAPI specification will be a hand-maintained committed artifact at `docs/api/openapi.yaml`.
-- Each public API implementation phase should update `docs/api/openapi.yaml` for the endpoints it introduces.
+- The OpenAPI specification will be a hand-maintained committed artifact at `webapp/src/lib/api-docs/openapi.yaml`.
+- Each public API implementation phase should update `webapp/src/lib/api-docs/openapi.yaml` for the endpoints it introduces.
 - OpenAPI documents only the public bearer-token API, not dashboard/session API key management endpoints.
 - Tutorial examples will use `HOSTAMAT_API_BASE_URL`, documented with default value `https://api.hostamat.ru/v1`.
 - The public API should avoid depending on browser cookies or CSRF behavior because external clients will authenticate with bearer keys.

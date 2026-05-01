@@ -6,7 +6,7 @@
 	import { resolve } from '$app/paths';
 
 	type AppShellNavItem = {
-		route: '/dashboard/sites' | '/dashboard/domains';
+		route: '/dashboard/sites' | '/dashboard/domains' | '/dashboard/api-keys';
 		label: string;
 		badge?: string;
 	};
@@ -19,6 +19,10 @@
 		{
 			route: '/dashboard/domains',
 			label: 'Домены'
+		},
+		{
+			route: '/dashboard/api-keys',
+			label: 'API-ключи'
 		}
 	];
 

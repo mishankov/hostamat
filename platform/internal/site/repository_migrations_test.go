@@ -23,7 +23,7 @@ func TestRepositoryMigrations(t *testing.T) {
 		ids = append(ids, migration.ID)
 	}
 
-	expected := []string{"init", "add_user_column", "add_name_column", "drop_version_column"}
+	expected := []string{"init", "add_user_column", "add_name_column", "drop_version_column", "add_active_release_id"}
 	if !slices.Equal(ids, expected) {
 		t.Fatalf("migration ids = %v, want %v", ids, expected)
 	}

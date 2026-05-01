@@ -5,8 +5,11 @@ import "time"
 type UploadSessionStatus string
 
 const (
-	UploadSessionStatusOpen   UploadSessionStatus = "open"
-	UploadSessionStatusClosed UploadSessionStatus = "closed"
+	UploadSessionStatusOpen       UploadSessionStatus = "open"
+	UploadSessionStatusPublishing UploadSessionStatus = "publishing"
+	UploadSessionStatusPublished  UploadSessionStatus = "published"
+	UploadSessionStatusFailed     UploadSessionStatus = "failed"
+	UploadSessionStatusExpired    UploadSessionStatus = "expired"
 )
 
 type UploadSession struct {

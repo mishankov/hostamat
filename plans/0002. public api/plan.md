@@ -66,8 +66,8 @@ Durable decisions that apply across all phases:
   Public API JSON fields use `camelCase`.
   Public API timestamps are RFC 3339 strings.
   Public list endpoints do not add pagination, filtering, or sorting in v1.
-  OpenAPI spec is a hand-maintained committed contract artifact at `docs/api/openapi.yaml` that reflects public API behavior.
-  Each public API implementation phase updates `docs/api/openapi.yaml` for the endpoints it introduces; the hosted documentation phase publishes and validates the completed reference.
+  OpenAPI spec is a hand-maintained committed contract artifact at `webapp/src/lib/api-docs/openapi.yaml` that reflects public API behavior.
+  Each public API implementation phase updates `webapp/src/lib/api-docs/openapi.yaml` for the endpoints it introduces; the hosted documentation phase publishes and validates the completed reference.
   Written tutorial documentation is Russian-only in v1.
   OpenAPI title, summaries, and descriptions are Russian in v1, while schema fields and error codes remain stable code-oriented identifiers.
   OpenAPI documents only the public bearer-token API, not dashboard/session API key management endpoints.
@@ -113,7 +113,7 @@ This phase establishes the API key domain, persistence, dashboard management UI,
 - [ ] API key verification uses a stable configured pepper so keys survive backend restarts and deploys.
 - [ ] `GET /v1/me` returns minimal non-sensitive user identity plus key metadata, including key ID, key name, scopes, and expiration, and does not require a resource scope.
 - [ ] Successful public API authentication updates last-used tracking without logging the key secret, with throttling to avoid a database write on every request.
-- [ ] `docs/api/openapi.yaml` documents the public authentication model and `GET /v1/me`.
+- [ ] `webapp/src/lib/api-docs/openapi.yaml` documents the public authentication model and `GET /v1/me`.
 - [ ] Backend tests cover key creation, secret verification, expiration, revocation, missing scopes, and last-used updates.
 
 ---
@@ -140,7 +140,7 @@ This phase proves the public API can wrap an existing product domain without byp
 - [ ] Site creation through the public API respects the existing per-user site limit.
 - [ ] Site validation errors, not-found errors, ownership failures, and scope failures use the public API error envelope.
 - [ ] Site responses include stable identifiers, site names, generated Hostamat domains, and timestamps suitable for external clients.
-- [ ] `docs/api/openapi.yaml` documents public site endpoints.
+- [ ] `webapp/src/lib/api-docs/openapi.yaml` documents public site endpoints.
 - [ ] Backend HTTP tests cover successful site operations, insufficient scopes, cross-user access prevention, and limit enforcement.
 
 ---
@@ -166,7 +166,7 @@ This phase makes the public API useful for CI/CD while keeping upload permission
 - [ ] Upload-only keys cannot read sites, create sites, delete sites, or manage domains unless they also have those explicit scopes.
 - [ ] Upload validation, allowed file behavior, total size limits, missing site handling, and ownership checks match dashboard behavior.
 - [ ] Upload failures return stable public API error codes and useful messages for CI logs.
-- [ ] `docs/api/openapi.yaml` documents public zip upload.
+- [ ] `webapp/src/lib/api-docs/openapi.yaml` documents public zip upload.
 - [ ] Backend tests cover raw zip upload, replacement behavior, validation failures, limit failures, insufficient scopes, and cross-user access prevention.
 
 ---
@@ -193,7 +193,7 @@ This phase completes the resource-management surface promised by the PRD while p
 - [ ] Domain responses include DNS instructions and last verification error details when applicable.
 - [ ] Because scopes are non-hierarchical, keys need `domains:read` for domain reads and `domains:write` for domain mutations.
 - [ ] Read-only domain keys cannot create, verify, update, or delete domains.
-- [ ] `docs/api/openapi.yaml` documents public custom domain endpoints.
+- [ ] `webapp/src/lib/api-docs/openapi.yaml` documents public custom domain endpoints.
 - [ ] Backend tests cover successful domain operations, duplicate hostnames, ownership failures, DNS verification outcomes, and insufficient scopes.
 
 ---
@@ -210,7 +210,7 @@ This phase makes the API self-serve and reviewable as a product contract rather 
 
 ### Acceptance criteria
 
-- [ ] A hand-maintained committed OpenAPI spec at `docs/api/openapi.yaml` describes public authentication, scopes, errors, sites, zip upload flow, and custom domains.
+- [ ] A hand-maintained committed OpenAPI spec at `webapp/src/lib/api-docs/openapi.yaml` describes public authentication, scopes, errors, sites, zip upload flow, and custom domains.
 - [ ] OpenAPI excludes dashboard/session API key management endpoints.
 - [ ] The webapp hosts a public Scalar OpenAPI documentation page reachable from the product.
 - [ ] Public API documentation is linked from public navigation and from the dashboard API keys page.

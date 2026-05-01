@@ -37,3 +37,27 @@ export type DomainRecord = {
 	updatedAt: string;
 	instructions?: DomainInstructions;
 };
+
+export type ApiKeyScope =
+	| 'sites:read'
+	| 'sites:write'
+	| 'sites:upload'
+	| 'domains:read'
+	| 'domains:write';
+
+export type ApiKeyState = 'active' | 'expired' | 'revoked';
+
+export type ApiKeyRecord = {
+	id: string;
+	name: string;
+	prefix?: string;
+	keyPrefix?: string;
+	identifier?: string;
+	scopes: ApiKeyScope[];
+	createdAt: string;
+	updatedAt?: string;
+	expiresAt: string | null;
+	lastUsedAt: string | null;
+	state?: ApiKeyState;
+	revokedAt?: string | null;
+};

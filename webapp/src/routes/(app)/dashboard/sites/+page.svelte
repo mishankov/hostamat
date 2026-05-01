@@ -63,19 +63,26 @@
 			</div>
 		{:then sitesResult}
 			{#if sitesResult.data}
-				{#each sites ?? [] as site (site.id)}
-					<div class="site-row">
-						<SiteContent
-							{site}
-							bind:loading
-							bind:errorMessage
-							onsiteupdate={async () => {
-								await invalidateAll();
-								updateState();
-							}}
-						/>
+				{#if sites.length === 0}
+					<div class="empty-state">
+						<h2>Сайтов пока нет</h2>
+						<p>Создайте сайт, загрузите файлы и получите автоматический адрес Hostamat.</p>
 					</div>
-				{/each}
+				{:else}
+					{#each sites ?? [] as site (site.id)}
+						<div class="site-row">
+							<SiteContent
+								{site}
+								bind:loading
+								bind:errorMessage
+								onsiteupdate={async () => {
+									await invalidateAll();
+									updateState();
+								}}
+							/>
+						</div>
+					{/each}
+				{/if}
 
 				{#if loading === false && sites && sites.length >= maxAmount}
 					<div class="limit-info-wrap">
@@ -155,11 +162,20 @@
 		min-width: 0;
 	}
 
-	.loading-state {
+	.loading-state,
+	.empty-state {
 		display: flex;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		gap: var(--space-sm);
 		min-height: 10.625rem;
+		text-align: center;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.empty-state p {
+		max-width: 42ch;
 	}
 
 	.limit-info-wrap {
