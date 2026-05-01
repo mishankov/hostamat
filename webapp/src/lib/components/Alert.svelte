@@ -3,8 +3,8 @@
 	import { Check, I, X } from '$lib/icons';
 	import Card from './Card.svelte';
 
-	type AlertVariant = 'error' | 'info' | 'success';
-	type CardTone = 'danger' | 'neutral' | 'success';
+	type AlertVariant = 'error' | 'info' | 'success' | 'warning';
+	type CardTone = 'danger' | 'neutral' | 'success' | 'warning';
 
 	type AlertProps = {
 		variant?: AlertVariant;
@@ -24,6 +24,10 @@
 			return 'success';
 		}
 
+		if (variant === 'warning') {
+			return 'warning';
+		}
+
 		return 'neutral';
 	});
 
@@ -36,10 +40,14 @@
 			return 'var(--color-success-text)';
 		}
 
+		if (variant === 'warning') {
+			return 'var(--color-warning-text)';
+		}
+
 		return 'var(--color-accent-text)';
 	});
 
-	const role = $derived(variant === 'error' ? 'alert' : 'status');
+	const role = $derived(variant === 'error' || variant === 'warning' ? 'alert' : 'status');
 </script>
 
 <div class="alert" {role}>
@@ -50,6 +58,8 @@
 					<X size={25} color={iconColor} />
 				{:else if variant === 'success'}
 					<Check size={25} color={iconColor} />
+				{:else if variant === 'warning'}
+					<I size={25} color={iconColor} />
 				{:else}
 					<I size={25} color={iconColor} />
 				{/if}

@@ -21,16 +21,29 @@ export const createUploadSession = async (siteId: string): AsyncResult<string, s
 	return { data: await resp.text(), error: null };
 };
 
-type UploadedFile = {
+export type UploadedFile = {
 	id: string;
 	name: string;
 	uploaded: boolean;
 	size: number;
 };
 
+export type UploadedPage = {
+	fileName: string;
+	path: string;
+	url: string;
+};
+
+export type UploadSummary = {
+	uploadedFiles: UploadedFile[];
+	skippedFiles: UploadedFile[];
+	availablePages: UploadedPage[];
+	hasHomePage: boolean;
+};
+
 export const closeUploadSession = async (
 	uploadSessionId: string
-): AsyncResult<UploadedFile[], string> => {
+): AsyncResult<UploadSummary, string> => {
 	const { data: resp, error } = await safeFetch('/api/proxy', {
 		method: 'DELETE',
 		headers: {
@@ -48,5 +61,5 @@ export const closeUploadSession = async (
 		return { data: null, error: errorData.errorMessage };
 	}
 
-	return { data: (await resp.json()) as UploadedFile[], error: null };
+	return { data: (await resp.json()) as UploadSummary, error: null };
 };

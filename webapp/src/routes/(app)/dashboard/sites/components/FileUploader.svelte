@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { Alert, Button, Card, Details, IconButton, ProgressBar } from '$lib/components';
+	import { Alert, Button, Card, Details, IconButton, Link, ProgressBar } from '$lib/components';
 	import { Upload, X } from '$lib/icons';
 	import { closeUploadSession, createUploadSession } from '$lib/api-client';
+	import type { UploadedPage } from '$lib/api-client/upload-session';
 	import { uploadFile } from './utils';
 
 	interface Props {
@@ -37,11 +38,15 @@
 	let error: string = $state('');
 	let uploadedFiles: string[] = $state([]);
 	let skippedFiles: string[] = $state([]);
+	let availablePages: UploadedPage[] = $state([]);
+	let hasHomePage: boolean | null = $state(null);
 	let isDragOver = $state(false);
 
 	export function resetUploadState() {
 		uploadedFiles = [];
 		skippedFiles = [];
+		availablePages = [];
+		hasHomePage = null;
 		uploadProgress = 0;
 		error = '';
 	}
@@ -171,10 +176,12 @@
 		const closeUploadResp = await closeUploadSession(uploadSession);
 
 		if (closeUploadResp.data) {
-			uploadedFiles = closeUploadResp.data
-				.filter((file) => file.uploaded)
-				.map((file) => `${file.name} (${formatFileSize(file.size)})`);
-			skippedFiles = closeUploadResp.data.filter((file) => !file.uploaded).map((file) => file.name);
+			uploadedFiles = closeUploadResp.data.uploadedFiles.map(
+				(file) => `${file.name} (${formatFileSize(file.size)})`
+			);
+			skippedFiles = closeUploadResp.data.skippedFiles.map((file) => file.name);
+			availablePages = closeUploadResp.data.availablePages;
+			hasHomePage = closeUploadResp.data.hasHomePage;
 		} else {
 			error = closeUploadResp.error;
 		}
@@ -223,9 +230,23 @@
 		<Alert variant="error" message={error} />
 	{/if}
 
-	{#if uploadProgress == 100}
+	{#if uploadProgress == 100 && !error}
 		<Alert variant="success" title="Загрузка успешно завершена">
 			<div class="success-message">
+				{#if availablePages.length > 0}
+					<div class="available-pages">
+						<Details summary="Доступные страницы ({availablePages.length})">
+							<ul class="page-list">
+								{#each availablePages as page (page.url)}
+									<li>
+										<Link href={page.url} target="_blank" alwaysUnderline>{page.url}</Link>
+										<span>{page.fileName}</span>
+									</li>
+								{/each}
+							</ul>
+						</Details>
+					</div>
+				{/if}
 				{#if uploadedFiles.length > 0}
 					<div class="uploaded-files">
 						<Details summary="Загруженные файлы ({uploadedFiles.length})">
@@ -249,6 +270,15 @@
 					</div>
 				{/if}
 			</div>
+		</Alert>
+	{/if}
+
+	{#if uploadProgress == 100 && hasHomePage === false && !error}
+		<Alert variant="warning" title="Главная страница не найдена">
+			<p>
+				Загрузи файл <strong>index.html</strong> в корень сайта или ZIP-архива, чтобы главный адрес сайта
+				открывался.
+			</p>
 		</Alert>
 	{/if}
 
@@ -332,6 +362,36 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-sm);
+	}
+
+	.page-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-sm);
+		list-style: none;
+		padding: 0;
+	}
+
+	.page-list li {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-xs);
+		min-width: 0;
+	}
+
+	.page-list :global(a) {
+		color: var(--color-accent-text);
+		font-weight: 700;
+		overflow-wrap: anywhere;
+		text-decoration-thickness: 0.08em;
+		text-underline-offset: 0.16em;
+	}
+
+	.page-list span {
+		color: var(--color-text-secondary);
+		font-family: var(--font-mono);
+		font-size: var(--font-size-caption);
+		overflow-wrap: anywhere;
 	}
 
 	.file-upload-container {
@@ -441,16 +501,36 @@
 		animation: file-item-in 200ms var(--ease-out-quart) both;
 	}
 
-	.file-item:nth-child(1) { animation-delay: 0ms; }
-	.file-item:nth-child(2) { animation-delay: 30ms; }
-	.file-item:nth-child(3) { animation-delay: 60ms; }
-	.file-item:nth-child(4) { animation-delay: 90ms; }
-	.file-item:nth-child(5) { animation-delay: 120ms; }
-	.file-item:nth-child(6) { animation-delay: 150ms; }
-	.file-item:nth-child(7) { animation-delay: 180ms; }
-	.file-item:nth-child(8) { animation-delay: 210ms; }
-	.file-item:nth-child(9) { animation-delay: 240ms; }
-	.file-item:nth-child(10) { animation-delay: 270ms; }
+	.file-item:nth-child(1) {
+		animation-delay: 0ms;
+	}
+	.file-item:nth-child(2) {
+		animation-delay: 30ms;
+	}
+	.file-item:nth-child(3) {
+		animation-delay: 60ms;
+	}
+	.file-item:nth-child(4) {
+		animation-delay: 90ms;
+	}
+	.file-item:nth-child(5) {
+		animation-delay: 120ms;
+	}
+	.file-item:nth-child(6) {
+		animation-delay: 150ms;
+	}
+	.file-item:nth-child(7) {
+		animation-delay: 180ms;
+	}
+	.file-item:nth-child(8) {
+		animation-delay: 210ms;
+	}
+	.file-item:nth-child(9) {
+		animation-delay: 240ms;
+	}
+	.file-item:nth-child(10) {
+		animation-delay: 270ms;
+	}
 
 	.actions {
 		display: flex;

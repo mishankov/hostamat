@@ -1,7 +1,6 @@
 <script lang="ts">
-	type CardTone = 'neutral' | 'success' | 'danger';
+	type CardTone = 'neutral' | 'success' | 'danger' | 'warning';
 	type CardSurface = 'default' | 'chrome';
-	type LegacyCardKind = 'primary' | 'confirm' | 'danger' | 'action';
 	let {
 		children,
 		class: className = '',
@@ -72,6 +71,12 @@
 		--card-surface: var(--color-danger-surface);
 		--card-border-color: var(--color-danger-border);
 		--card-text-color: var(--color-danger-text);
+	}
+
+	.warning {
+		--card-surface: var(--color-warning-surface);
+		--card-border-color: var(--color-warning-border);
+		--card-text-color: var(--color-warning-text);
 	}
 
 	.default {

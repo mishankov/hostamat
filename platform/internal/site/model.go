@@ -2,6 +2,8 @@ package site
 
 import (
 	"time"
+
+	"hostamat/internal/uploadsession"
 )
 
 const (
@@ -18,4 +20,17 @@ type Site struct {
 	Domain    string    `db:"domain" json:"domain"`
 	CreatedAt time.Time `db:"created_at" json:"createdAt"`
 	UpdatedAt time.Time `db:"updated_at" json:"updatedAt"`
+}
+
+type UploadedPage struct {
+	FileName string `json:"fileName"`
+	Path     string `json:"path"`
+	URL      string `json:"url"`
+}
+
+type UploadSummary struct {
+	UploadedFiles  []uploadsession.File `json:"uploadedFiles"`
+	SkippedFiles   []uploadsession.File `json:"skippedFiles"`
+	AvailablePages []UploadedPage       `json:"availablePages"`
+	HasHomePage    bool                 `json:"hasHomePage"`
 }

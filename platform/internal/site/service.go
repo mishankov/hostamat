@@ -408,7 +408,7 @@ func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*uplo
 	return us, nil
 }
 
-func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string) ([]uploadsession.File, error) {
+func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string) (*UploadSummary, error) {
 	ev := log.EventFromContext(ctx)
 
 	ev.AddStep(slog.LevelInfo, "site.CloseUploadSession")
@@ -425,7 +425,7 @@ func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string
 		"site.id": us.Site,
 	})
 
-	_, err = s.Get(ctx, us.Site)
+	site, err := s.Get(ctx, us.Site)
 	if err != nil {
 		return nil, err
 	}
@@ -440,7 +440,7 @@ func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string
 		return nil, err
 	}
 
-	return files, nil
+	return BuildUploadSummary(site.Domain, files), nil
 }
 
 func (s *Service) GetFile(ctx context.Context, host, filePath string) (io.Reader, string, error) {
