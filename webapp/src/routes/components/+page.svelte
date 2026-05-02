@@ -1,7 +1,20 @@
 <script lang="ts">
 	import { Alert, Button, Card, Input, Link, Separator } from '$lib/components';
-	import { Copy, Download, Plus, Spinner, Trash, Upload, X } from '$lib/icons';
-	import Check from '$lib/icons/Check.svelte';
+	import {
+		Check,
+		Copy,
+		Download,
+		Edit,
+		I as Info,
+		Moon,
+		Plus,
+		Spinner,
+		Sun,
+		Trash,
+		Upload,
+		Warning,
+		X
+	} from '$lib/icons';
 </script>
 
 <svelte:head>
@@ -104,36 +117,56 @@
 	</div>
 
 	<h1>Icons</h1>
-	<div style="display: flex; gap: 10px">
-		<div>
+	<div class="icons-grid">
+		<div class="icon-preview">
 			<h2>Plus</h2>
 			<Plus />
 		</div>
-		<div>
+		<div class="icon-preview">
 			<h2>Copy</h2>
 			<Copy />
 		</div>
-		<div>
+		<div class="icon-preview">
 			<h2>Trash</h2>
 			<Trash />
 		</div>
-		<div>
+		<div class="icon-preview">
 			<h2>Upload</h2>
 			<Upload />
 		</div>
-		<div>
+		<div class="icon-preview">
 			<h2>Download</h2>
 			<Download />
 		</div>
-		<div>
+		<div class="icon-preview">
+			<h2>Edit</h2>
+			<Edit />
+		</div>
+		<div class="icon-preview">
 			<h2>X</h2>
 			<X animated />
 		</div>
-		<div>
+		<div class="icon-preview">
 			<h2>Check</h2>
 			<Check />
 		</div>
-		<div>
+		<div class="icon-preview">
+			<h2>Warning</h2>
+			<Warning />
+		</div>
+		<div class="icon-preview">
+			<h2>Info</h2>
+			<Info />
+		</div>
+		<div class="icon-preview">
+			<h2>Sun</h2>
+			<Sun />
+		</div>
+		<div class="icon-preview">
+			<h2>Moon</h2>
+			<Moon />
+		</div>
+		<div class="icon-preview">
 			<h2>Spinner</h2>
 			<Spinner />
 		</div>
@@ -147,5 +180,29 @@
 
 	h2 {
 		padding-top: 10px;
+	}
+
+	.icons-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+		gap: 16px;
+		max-width: 920px;
+	}
+
+	.icon-preview {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		min-height: 150px;
+		border: 1px solid var(--color-border);
+		border-radius: var(--border-radius-regular);
+	}
+
+	.icon-preview h2 {
+		padding-top: 0;
+		font-size: 14px;
+		font-weight: 500;
 	}
 </style>

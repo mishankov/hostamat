@@ -1,0 +1,28 @@
+{
+	"name": "hostamat-icons",
+	"preset": "clean-custom",
+	"grid": 24,
+	"strokeWidth": 1.75,
+	"strokeLinecap": "round",
+	"strokeLinejoin": "round",
+	"cornerRadius": 2,
+	"padding": 2,
+	"opticalBalance": true,
+	"iconCount": 13,
+	"icons": [
+		"check",
+		"copy",
+		"download",
+		"edit",
+		"info",
+		"moon",
+		"plus",
+		"spinner",
+		"sun",
+		"trash",
+		"upload",
+		"warning",
+		"x"
+	],
+	"generated": "2026-05-02"
+}

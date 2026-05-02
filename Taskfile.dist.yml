@@ -47,4 +47,4 @@ tasks:
   hrns:commit:
     desc: Commit and push using hrns
     cmds:
-      - hrns exec -message="Create commit message for uncommited changes. Make commit with this message and push it to remote. Do not ask about commit message, just choose most fitting one" -provider="OpenCode Go" -model=deepseek-v4-flash -agent=Builder
+      - hrns exec -message="Create commit message for uncommited changes. Make commit with this message and push it to remote. Do not ask about commit message, just choose most fitting one" -provider="OpenCode Go" -model=kimi-k2.6 -agent=Builder

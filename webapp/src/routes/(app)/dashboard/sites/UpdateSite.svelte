@@ -8,6 +8,7 @@
 		siteId = '',
 		loading = false,
 		iconButtonGrouped = false,
+		iconSize = 25,
 		onsuccess = async () => {}
 	} = $props();
 
@@ -25,7 +26,7 @@
 	onclick={() => modal?.open()}
 	title="Изменить сайт"
 >
-	<Edit size={25} />
+	<Edit size={iconSize} />
 </IconButton>
 <Modal
 	bind:this={modal}

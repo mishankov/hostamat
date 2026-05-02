@@ -1,53 +1,58 @@
 <script lang="ts">
-	let { size = 100 } = $props();
+	type IconProps = {
+		size?: number | string;
+		color?: string;
+		class?: string;
+	};
 
-	let strokeWidth = 7;
+	let {
+		size = 100,
+		color = 'var(--color-primary-90)',
+		class: className = ''
+	}: IconProps = $props();
 </script>
 
-<svg width={size} viewBox="0 0 100 100">
-	<path class="back" d="M33 10 H69 Q83 10 83 24 V64" stroke-width={strokeWidth} />
-
+<svg
+	class={className}
+	width={size}
+	height={size}
+	viewBox="0 0 24 24"
+	fill="none"
+	stroke="currentColor"
+	stroke-width="1.75"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	style:color
+	aria-hidden="true"
+>
+	<path
+		class="back"
+		d="M8.5 8V6.5A2 2 0 0 1 10.5 4.5H17A2 2 0 0 1 19 6.5v8A2 2 0 0 1 17 16.5h-1.5"
+	/>
 	<rect
 		class="front"
 		x="5"
-		y="25"
-		rx="10"
-		ry="10"
-		width="60"
-		height="60"
-		stroke-width={strokeWidth}
+		y="8"
+		width="10.5"
+		height="12"
+		rx="2"
+		fill="var(--icon-surface, var(--color-background-object))"
 	/>
 </svg>
 
 <style>
-	path,
-	rect {
-		stroke: var(--color-primary-90);
-		transition: all 260ms ease-out;
-	}
-
-	path {
-		fill: none;
-		stroke-linecap: round;
-		stroke-linejoin: round;
-	}
-
-	rect {
-		fill: transparent;
-	}
-
-	svg:hover path,
-	svg:hover rect {
-		transition-duration: 90ms;
-		stroke: var(--color-primary-90);
+	.back,
+	.front {
+		transition:
+			transform 180ms ease-out,
+			fill 120ms ease-out;
 	}
 
 	svg:hover .back {
-		transition-duration: 90ms;
-		transform: translateX(1px) translateY(-1px);
+		transform: translate(0.5px, -0.5px);
 	}
 
-	svg:active rect.front {
-		fill: var(--color-primary-90);
+	svg:active .front {
+		fill: currentColor;
 	}
 </style>

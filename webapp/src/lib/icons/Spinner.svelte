@@ -1,31 +1,41 @@
 <script lang="ts">
-	let { size = 100, color = 'var(--color-primary-90)' } = $props();
+	type IconProps = {
+		size?: number | string;
+		color?: string;
+		class?: string;
+	};
+
+	let {
+		size = 100,
+		color = 'var(--color-primary-90)',
+		class: className = ''
+	}: IconProps = $props();
 </script>
 
-<svg width={size} viewBox="-50 -50 100 100" class="spinner">
-	<circle
-		cx="0"
-		cy="0"
-		r="40"
-		stroke={color}
-		stroke-width="7"
-		stroke-dasharray="60 188"
-		stroke-dashoffset="0"
-		stroke-linecap="round"
-		fill="none"
-	/>
+<svg
+	class={['spinner', className]}
+	width={size}
+	height={size}
+	viewBox="0 0 24 24"
+	fill="none"
+	stroke="currentColor"
+	stroke-width="1.75"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	style:color
+	aria-hidden="true"
+>
+	<circle cx="12" cy="12" r="8.25" stroke-dasharray="18 34" />
 </svg>
 
 <style>
 	circle {
-		animation: rotate 1s linear infinite;
+		transform-origin: center;
+		animation: rotate 900ms linear infinite;
 	}
 
 	@keyframes rotate {
-		0% {
-			transform: rotate(0deg);
-		}
-		100% {
+		to {
 			transform: rotate(360deg);
 		}
 	}

@@ -1,17 +1,31 @@
 <script lang="ts">
-	let { size = 100, color = 'var(--color-primary-90)' } = $props();
+	type IconProps = {
+		size?: number | string;
+		color?: string;
+		class?: string;
+	};
+
+	let {
+		size = 100,
+		color = 'var(--color-primary-90)',
+		class: className = ''
+	}: IconProps = $props();
 </script>
 
-<svg width={size} viewBox="-50 -50 100 100" aria-hidden="true">
-	<path
-		d="M 0 -38 L 42 34 H -42 Z"
-		fill="transparent"
-		stroke={color}
-		stroke-width="7"
-		stroke-linejoin="round"
-	/>
-
-	<line x1="0" y1="-16" x2="0" y2="8" stroke={color} stroke-width="8" stroke-linecap="round" />
-
-	<line x1="0" y1="24" x2="0" y2="24" stroke={color} stroke-width="8" stroke-linecap="round" />
+<svg
+	class={className}
+	width={size}
+	height={size}
+	viewBox="0 0 24 24"
+	fill="none"
+	stroke="currentColor"
+	stroke-width="1.75"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	style:color
+	aria-hidden="true"
+>
+	<path d="M12 2.75 21.5 20H2.5z" />
+	<path d="M12 8.5v5" />
+	<path d="M12 17h.01" stroke-width="2.5" />
 </svg>

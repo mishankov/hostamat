@@ -1,87 +1,51 @@
 <script lang="ts">
-	let { size = 100 } = $props();
+	type IconProps = {
+		size?: number | string;
+		color?: string;
+		class?: string;
+	};
+
+	let {
+		size = 100,
+		color = 'var(--color-primary-90)',
+		class: className = ''
+	}: IconProps = $props();
 </script>
 
-<svg width={size} viewBox="-50 -50 100 100">
-	<g class="cap">
-		<polyline
-			points="
-        -10 -20
-        -5 -30
-        5 -30
-        10 -20
-      "
-			stroke="var(--color-primary-90)"
-			stroke-width="7"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			fill="none"
-		/>
-
-		<line
-			x1="-30"
-			y1="-20"
-			x2="30"
-			y2="-20"
-			stroke="var(--color-primary-90)"
-			stroke-width="7"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			fill="none"
-		/>
+<svg
+	class={className}
+	width={size}
+	height={size}
+	viewBox="0 0 24 24"
+	fill="none"
+	stroke="currentColor"
+	stroke-width="1.75"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	style:color
+	aria-hidden="true"
+>
+	<g class="lid">
+		<path d="M8.25 7V5.5a1.75 1.75 0 0 1 1.75-1.75h4A1.75 1.75 0 0 1 15.75 5.5V7" />
+		<path d="M4 7h16" />
 	</g>
-
-	<line
-		x1="-8"
-		y1="-10"
-		x2="-8"
-		y2="20"
-		stroke="var(--color-primary-90)"
-		stroke-width="7"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-	/>
-
-	<line
-		x1="8"
-		y1="-10"
-		x2="8"
-		y2="20"
-		stroke="var(--color-primary-90)"
-		stroke-width="7"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-	/>
-
-	<polyline
-		class="can"
-		points="
-      -25 -20
-      -20 30
-      20 30
-      25 -20
-    "
-		stroke="var(--color-primary-90)"
-		stroke-width="7"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-		fill="none"
-	/>
+	<path d="M6.25 9.25 7.25 20.25h9.5l1-11" />
+	<path d="M10 11.5v5.75" />
+	<path d="M14 11.5v5.75" />
 </svg>
 
 <style>
-	.cap {
+	.lid {
 		transform-box: fill-box;
 		transform-origin: center;
-		transition: all 260ms ease-out;
+		transition: transform 180ms ease-out;
 	}
 
-	svg:hover .cap {
-		transition-duration: 90ms;
-		transform: translateY(-10px) translateX(2px) rotate(8deg);
+	svg:hover .lid {
+		transform: translate(0.25px, -1px) rotate(6deg);
 	}
 
-	svg:active .cap {
-		transform: translateY(-15px) translateX(4px) rotate(15deg);
+	svg:active .lid {
+		transform: translate(0.5px, -1.5px) rotate(10deg);
 	}
 </style>

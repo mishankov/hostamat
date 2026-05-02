@@ -38,6 +38,7 @@
 	const deleteButtonId = $derived(`delete-site-confirm-${site.id}`);
 	const warningsTitleId = $derived(`site-warnings-title-${site.id}`);
 	const warningsDescId = $derived(`site-warnings-description-${site.id}`);
+	const toolbarIconSize = 25;
 
 	const resetState = () => {
 		loading = false;
@@ -76,7 +77,7 @@
 				tone="warning"
 				onclick={() => warningsModal?.open()}
 			>
-				<Warning size={25} color="currentColor" />
+				<Warning size={toolbarIconSize} color="currentColor" />
 			</IconButton>
 		{/if}
 
@@ -84,6 +85,7 @@
 			siteName={site.name}
 			siteId={site.id}
 			iconButtonGrouped={true}
+			iconSize={toolbarIconSize}
 			onsuccess={async () => {
 				resetState();
 				await onsiteupdate();
@@ -96,14 +98,14 @@
 			onclick={() => uploadModal?.open()}
 			title="Загрузить сайт"
 		>
-			<Upload size={25} />
+			<Upload size={toolbarIconSize} />
 		</IconButton>
 		<CopyButton
 			grouped
 			textToCopy={`https://${site.domain}`}
 			label="Скопировать URL"
 			title="Скопировать URL"
-			size={25}
+			size={toolbarIconSize}
 		/>
 
 		<IconButton
@@ -113,7 +115,7 @@
 			tone="danger"
 			onclick={() => deleteModal?.open()}
 		>
-			<Trash size={25} />
+			<Trash size={toolbarIconSize} />
 		</IconButton>
 	</Toolbar>
 

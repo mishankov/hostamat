@@ -1,23 +1,37 @@
 <script lang="ts">
-	let { size = 100, color = 'var(--color-primary-90)' } = $props();
+	type IconProps = {
+		size?: number | string;
+		color?: string;
+		class?: string;
+	};
+
+	let {
+		size = 100,
+		color = 'var(--color-primary-90)',
+		class: className = ''
+	}: IconProps = $props();
 </script>
 
-<svg width={size} viewBox="-50 -50 100 100" aria-hidden="true">
-	<circle cx="0" cy="0" r="18" fill="none" stroke={color} stroke-width="7" />
-	<line x1="0" y1="-38" x2="0" y2="-28" stroke={color} stroke-width="7" stroke-linecap="round" />
-	<line x1="0" y1="38" x2="0" y2="28" stroke={color} stroke-width="7" stroke-linecap="round" />
-	<line x1="-38" y1="0" x2="-28" y2="0" stroke={color} stroke-width="7" stroke-linecap="round" />
-	<line x1="38" y1="0" x2="28" y2="0" stroke={color} stroke-width="7" stroke-linecap="round" />
-	<line
-		x1="-27"
-		y1="-27"
-		x2="-20"
-		y2="-20"
-		stroke={color}
-		stroke-width="7"
-		stroke-linecap="round"
-	/>
-	<line x1="27" y1="27" x2="20" y2="20" stroke={color} stroke-width="7" stroke-linecap="round" />
-	<line x1="27" y1="-27" x2="20" y2="-20" stroke={color} stroke-width="7" stroke-linecap="round" />
-	<line x1="-27" y1="27" x2="-20" y2="20" stroke={color} stroke-width="7" stroke-linecap="round" />
+<svg
+	class={className}
+	width={size}
+	height={size}
+	viewBox="0 0 24 24"
+	fill="none"
+	stroke="currentColor"
+	stroke-width="1.75"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	style:color
+	aria-hidden="true"
+>
+	<circle cx="12" cy="12" r="4" />
+	<path d="M12 2.75v2" />
+	<path d="M12 19.25v2" />
+	<path d="M4.25 4.25 5.75 5.75" />
+	<path d="M18.25 18.25 19.75 19.75" />
+	<path d="M2.75 12h2" />
+	<path d="M19.25 12h2" />
+	<path d="M4.25 19.75 5.75 18.25" />
+	<path d="M18.25 5.75 19.75 4.25" />
 </svg>

@@ -1,57 +1,45 @@
 <script lang="ts">
-	let { size = 100 } = $props();
+	type IconProps = {
+		size?: number | string;
+		color?: string;
+		class?: string;
+	};
+
+	let {
+		size = 100,
+		color = 'var(--color-primary-90)',
+		class: className = ''
+	}: IconProps = $props();
 </script>
 
-<svg width={size} viewBox="-50 -50 100 100">
-	<polyline
-		points="
-      -20 0
-      -40 0
-      -40 30
-      40 30
-      40 0
-      20 0
-    "
-		stroke="var(--color-primary-90)"
-		stroke-width="7"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-		fill="none"
-	/>
-
-	<!-- 0 15
-      0 -30
-      15 -20
-      0 -30
-      -15 -20 -->
-
-	<polyline
-		class="arrow"
-		points="
-      0 -30
-      0 15
-      10 5
-      0 15
-      -10 5
-    "
-		stroke="var(--color-primary-90)"
-		stroke-width="7"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-		fill="none"
-	/>
+<svg
+	class={className}
+	width={size}
+	height={size}
+	viewBox="0 0 24 24"
+	fill="none"
+	stroke="currentColor"
+	stroke-width="1.75"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	style:color
+	aria-hidden="true"
+>
+	<path d="M3.75 13.75v3.75A2.75 2.75 0 0 0 6.5 20.25h11a2.75 2.75 0 0 0 2.75-2.75v-3.75" />
+	<path class="arrow" d="M12 4.25v10.25" />
+	<polyline class="arrow" points="6.75 9.5 12 14.75 17.25 9.5" />
 </svg>
 
 <style>
 	.arrow {
-		transition: all 260ms ease-out;
+		transition: transform 180ms ease-out;
 	}
+
 	svg:hover .arrow {
-		transition-duration: 90ms;
-		transform: translateY(5px);
+		transform: translateY(1px);
 	}
 
 	svg:active .arrow {
-		transform: translateY(8px);
+		transform: translateY(1.75px);
 	}
 </style>
