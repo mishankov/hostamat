@@ -3,6 +3,7 @@ name: Deploy
 vars:
   SSH_PROD: -i ~/.ssh/hostamat_admin root@5.129.199.174
   CONTAINER_REGISTRY: hostamat-container-registry.registry.twcstorage.ru
+  TAG: $(date +%Y%m%d-%H%M%S)
 
 jobs:
   default:
@@ -13,40 +14,48 @@ jobs:
 
   push-backend:
     vars:
-      TAG: hostamat/backend:latest
+      IMAGE: hostamat/backend
     dir: platform
     detach: true
     steps:
-      - run: docker build --tag ${{TAG}} --platform linux/amd64 .
-      - run: docker tag ${{TAG}} ${{CONTAINER_REGISTRY}}/${{TAG}}
-      - run: docker push ${{CONTAINER_REGISTRY}}/${{TAG}}
+      - run: docker build --tag ${{IMAGE}}:${{TAG}} --platform linux/amd64 .
+      - run: docker tag ${{IMAGE}}:${{TAG}} ${{CONTAINER_REGISTRY}}/${{IMAGE}}:${{TAG}}
+      - run: docker tag ${{IMAGE}}:${{TAG}} ${{CONTAINER_REGISTRY}}/${{IMAGE}}:latest
+      - run: docker push ${{CONTAINER_REGISTRY}}/${{IMAGE}}:${{TAG}}
+      - run: docker push ${{CONTAINER_REGISTRY}}/${{IMAGE}}:latest
 
   push-webapp:
     vars:
-      TAG: hostamat/webapp:latest
+      IMAGE: hostamat/webapp
     dir: webapp
     detach: true
     steps:
-      - run: docker build --tag ${{TAG}} --platform linux/amd64 .
-      - run: docker tag ${{TAG}} ${{CONTAINER_REGISTRY}}/${{TAG}}
-      - run: docker push ${{CONTAINER_REGISTRY}}/${{TAG}}
+      - run: docker build --tag ${{IMAGE}}:${{TAG}} --platform linux/amd64 .
+      - run: docker tag ${{IMAGE}}:${{TAG}} ${{CONTAINER_REGISTRY}}/${{IMAGE}}:${{TAG}}
+      - run: docker tag ${{IMAGE}}:${{TAG}} ${{CONTAINER_REGISTRY}}/${{IMAGE}}:latest
+      - run: docker push ${{CONTAINER_REGISTRY}}/${{IMAGE}}:${{TAG}}
+      - run: docker push ${{CONTAINER_REGISTRY}}/${{IMAGE}}:latest
 
   push-dashboard:
     vars:
-      TAG: hostamat/dashboard:latest
+      IMAGE: hostamat/dashboard
     dir: platform
     detach: true
     steps:
-      - run: docker build --tag ${{TAG}} --platform linux/amd64 --file Dockerfile.dashboard .
-      - run: docker tag ${{TAG}} ${{CONTAINER_REGISTRY}}/${{TAG}}
-      - run: docker push ${{CONTAINER_REGISTRY}}/${{TAG}}
+      - run: docker build --tag ${{IMAGE}}:${{TAG}} --platform linux/amd64 --file Dockerfile.dashboard .
+      - run: docker tag ${{IMAGE}}:${{TAG}} ${{CONTAINER_REGISTRY}}/${{IMAGE}}:${{TAG}}
+      - run: docker tag ${{IMAGE}}:${{TAG}} ${{CONTAINER_REGISTRY}}/${{IMAGE}}:latest
+      - run: docker push ${{CONTAINER_REGISTRY}}/${{IMAGE}}:${{TAG}}
+      - run: docker push ${{CONTAINER_REGISTRY}}/${{IMAGE}}:latest
 
   push-caddy:
     vars:
-      TAG: hostamat/caddy:latest
+      IMAGE: hostamat/caddy
     dir: infra/prod
     detach: true
     steps:
-      - run: docker build --tag ${{TAG}} --platform linux/amd64 --file Dockerfile.caddy .
-      - run: docker tag ${{TAG}} ${{CONTAINER_REGISTRY}}/${{TAG}}
-      - run: docker push ${{CONTAINER_REGISTRY}}/${{TAG}}
+      - run: docker build --tag ${{IMAGE}}:${{TAG}} --platform linux/amd64 --file Dockerfile.caddy .
+      - run: docker tag ${{IMAGE}}:${{TAG}} ${{CONTAINER_REGISTRY}}/${{IMAGE}}:${{TAG}}
+      - run: docker tag ${{IMAGE}}:${{TAG}} ${{CONTAINER_REGISTRY}}/${{IMAGE}}:latest
+      - run: docker push ${{CONTAINER_REGISTRY}}/${{IMAGE}}:${{TAG}}
+      - run: docker push ${{CONTAINER_REGISTRY}}/${{IMAGE}}:latest
