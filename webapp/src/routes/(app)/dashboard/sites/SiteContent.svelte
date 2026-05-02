@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Alert, Button, CopyButton, IconButton, Link, Modal, Toolbar } from '$lib/components';
 	import { useThemeController } from '$lib/theme/controller.svelte';
-	import { I, Trash, Upload } from '$lib/icons';
+	import { Trash, Upload, Warning } from '$lib/icons';
 
 	import FileUploader from './components/FileUploader.svelte';
 	import UpdateSite from './UpdateSite.svelte';
@@ -76,7 +76,7 @@
 				tone="warning"
 				onclick={() => warningsModal?.open()}
 			>
-				<I size={25} color="currentColor" />
+				<Warning size={25} color="currentColor" />
 			</IconButton>
 		{/if}
 

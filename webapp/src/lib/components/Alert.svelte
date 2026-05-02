@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { Check, I, X } from '$lib/icons';
+	import { Check, I, Warning, X } from '$lib/icons';
 	import Card from './Card.svelte';
 
 	type AlertVariant = 'error' | 'info' | 'success' | 'warning';
@@ -59,7 +59,7 @@
 				{:else if variant === 'success'}
 					<Check size={25} color={iconColor} />
 				{:else if variant === 'warning'}
-					<I size={25} color={iconColor} />
+					<Warning size={25} color={iconColor} />
 				{:else}
 					<I size={25} color={iconColor} />
 				{/if}

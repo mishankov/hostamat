@@ -9,6 +9,7 @@ import Sun from './Sun.svelte';
 import Moon from './Moon.svelte';
 import Trash from './Trash.svelte';
 import Upload from './Upload.svelte';
+import Warning from './Warning.svelte';
 import X from './X.svelte';
 
-export { Copy, Download, Edit, I, Plus, Spinner, Check, Sun, Moon, Trash, Upload, X };
+export { Copy, Download, Edit, I, Plus, Spinner, Check, Sun, Moon, Trash, Upload, Warning, X };
