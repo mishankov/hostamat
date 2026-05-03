@@ -332,19 +332,19 @@ func main() {
 		}
 		data.WipeCounts.S3Objects = s3Count
 
-		// Get last 10 registered users
+		// Get last 100 registered users
 		err = conn.SelectContext(ctx, &data.Users, `
 				SELECT id, username, COALESCE(email, '') as email, created
 				FROM users
 				WHERE username IS NOT NULL
 				ORDER BY created DESC
-				LIMIT 10
+				LIMIT 100
 			`)
 		if err != nil {
 			data.UsersError = err.Error()
 		}
 
-		// Get last 10 created sites with last upload datetime
+		// Get last 100 created sites with last upload datetime
 		err = conn.SelectContext(ctx, &data.Sites, `
 				SELECT s.id, s.domain, s.name, COALESCE(u.username, '') as username,
 				       COALESCE(u.email, '') as email, s.created_at,
@@ -358,13 +358,13 @@ func main() {
 				LEFT JOIN site_warnings sw ON s.id = sw.site
 				GROUP BY s.id, s.domain, s.name, u.username, u.email, s.created_at, s.updated_at
 				ORDER BY COALESCE(MAX(us.updated_at), s.updated_at) DESC
-				LIMIT 10
+				LIMIT 100
 			`)
 		if err != nil {
 			data.SitesError = err.Error()
 		}
 
-		// Get last 10 custom domains with site and owner context
+		// Get last 100 custom domains with site and owner context
 		err = conn.SelectContext(ctx, &data.CustomDomains, `
 				SELECT cd.id, cd.hostname, cd.status,
 				       COALESCE(s.name, '') as site_name,
@@ -380,7 +380,7 @@ func main() {
 				LEFT JOIN sites s ON cd.site = s.id
 				LEFT JOIN users u ON cd."user" = u.id
 				ORDER BY cd.updated_at DESC
-				LIMIT 10
+				LIMIT 100
 			`)
 		if err != nil {
 			data.CustomDomainsError = err.Error()
