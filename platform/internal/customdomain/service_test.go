@@ -515,6 +515,83 @@ func TestDeleteBySiteRemovesActiveDomainsFromProxy(t *testing.T) {
 	}
 }
 
+func TestDeleteStaleUnverifiedDeletesOnlyOldPendingAndFailedDomains(t *testing.T) {
+	t.Parallel()
+
+	now := time.Now()
+	repo := &repositoryMock{
+		domains: map[string]*customdomain.CustomDomain{
+			"old-pending": {
+				Id:        "old-pending",
+				Status:    customdomain.DomainStatusPending,
+				CreatedAt: now.Add(-49 * time.Hour),
+			},
+			"old-failed": {
+				Id:        "old-failed",
+				Status:    customdomain.DomainStatusVerificationFailed,
+				CreatedAt: now.Add(-72 * time.Hour),
+			},
+			"recently-updated-failed": {
+				Id:        "recently-updated-failed",
+				Status:    customdomain.DomainStatusVerificationFailed,
+				CreatedAt: now.Add(-72 * time.Hour),
+				UpdatedAt: now.Add(-1 * time.Hour),
+			},
+			"recently-checked-failed": {
+				Id:            "recently-checked-failed",
+				Status:        customdomain.DomainStatusVerificationFailed,
+				CreatedAt:     now.Add(-72 * time.Hour),
+				UpdatedAt:     now.Add(-72 * time.Hour),
+				LastCheckedAt: sql.NullTime{Time: now.Add(-1 * time.Hour), Valid: true},
+			},
+			"new-pending": {
+				Id:        "new-pending",
+				Status:    customdomain.DomainStatusPending,
+				CreatedAt: now.Add(-47 * time.Hour),
+			},
+			"old-active": {
+				Id:        "old-active",
+				Status:    customdomain.DomainStatusActive,
+				CreatedAt: now.Add(-72 * time.Hour),
+			},
+			"old-verified": {
+				Id:        "old-verified",
+				Status:    customdomain.DomainStatusVerified,
+				CreatedAt: now.Add(-72 * time.Hour),
+			},
+		},
+	}
+
+	service := customdomain.NewService(
+		repo,
+		&siteRepositoryMock{},
+		&hostSyncMock{},
+		&dnsLookupMock{},
+		customdomain.DNSConfig{VerificationPrefix: "_hostamat"},
+	)
+
+	deleted, err := service.DeleteStaleUnverified(context.Background(), 48*time.Hour)
+	if err != nil {
+		t.Fatalf("DeleteStaleUnverified() error = %v", err)
+	}
+
+	if deleted != 2 {
+		t.Fatalf("DeleteStaleUnverified() deleted = %d, want 2", deleted)
+	}
+
+	for _, id := range []string{"old-pending", "old-failed"} {
+		if _, ok := repo.domains[id]; ok {
+			t.Fatalf("domain %q was not deleted", id)
+		}
+	}
+
+	for _, id := range []string{"recently-updated-failed", "recently-checked-failed", "new-pending", "old-active", "old-verified"} {
+		if _, ok := repo.domains[id]; !ok {
+			t.Fatalf("domain %q was deleted", id)
+		}
+	}
+}
+
 type repositoryMock struct {
 	domains       map[string]*customdomain.CustomDomain
 	bySite        map[string][]*customdomain.CustomDomain
@@ -586,6 +663,28 @@ func (m *repositoryMock) Delete(_ context.Context, id string) error {
 	m.deleted = append(m.deleted, id)
 	delete(m.domains, id)
 	return nil
+}
+
+func (m *repositoryMock) DeleteStaleUnverified(_ context.Context, cutoff time.Time) (int64, error) {
+	var deleted int64
+	for id, domain := range m.domains {
+		activityAt := domain.CreatedAt
+		if !domain.UpdatedAt.IsZero() {
+			activityAt = domain.UpdatedAt
+		}
+		if domain.LastCheckedAt.Valid {
+			activityAt = domain.LastCheckedAt.Time
+		}
+
+		if activityAt.Before(cutoff) &&
+			(domain.Status == customdomain.DomainStatusPending || domain.Status == customdomain.DomainStatusVerificationFailed) {
+			delete(m.domains, id)
+			m.deleted = append(m.deleted, id)
+			deleted++
+		}
+	}
+
+	return deleted, nil
 }
 
 func (m *repositoryMock) ResolveSiteByHostname(_ context.Context, hostname string) (*site.Site, error) {

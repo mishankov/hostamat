@@ -167,6 +167,7 @@ func main() {
 	app.RegisterService("http", httpServer)
 	app.RegisterService("deleteFolderQueue", fileDomain.DeleteFolderQueue)
 	app.RegisterService("userCleanupQueue", userDomain.CleanupQueue)
+	app.RegisterService("staleCustomDomainScheduler", customDomain.CleanupScheduler)
 
 	if err := app.Run(ctx); err != nil {
 		logger.Error("Applicaton finished with error", "error", err)

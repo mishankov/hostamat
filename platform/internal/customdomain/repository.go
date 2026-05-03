@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"io/fs"
+	"time"
 
 	"hostamat/internal/customdomain/migrations"
 	"hostamat/internal/site"
@@ -148,6 +149,21 @@ func (r *Repository) Update(ctx context.Context, domain *CustomDomain) error {
 func (r *Repository) Delete(ctx context.Context, id string) error {
 	_, err := r.db.ExecContext(ctx, "DELETE FROM "+tableName+" WHERE id = $1", id)
 	return err
+}
+
+func (r *Repository) DeleteStaleUnverified(ctx context.Context, cutoff time.Time) (int64, error) {
+	const query = `
+		DELETE FROM ` + tableName + `
+		WHERE status IN ($1, $2)
+			AND COALESCE(last_checked_at, updated_at, created_at) < $3
+	`
+
+	result, err := r.db.ExecContext(ctx, query, DomainStatusPending, DomainStatusVerificationFailed, cutoff)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 func (r *Repository) ResolveSiteByHostname(ctx context.Context, hostname string) (*site.Site, error) {

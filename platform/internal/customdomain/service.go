@@ -28,6 +28,7 @@ type repository interface {
 	GetListByUser(ctx context.Context, userID string) ([]*DomainWithSite, error)
 	Update(ctx context.Context, domain *CustomDomain) error
 	Delete(ctx context.Context, id string) error
+	DeleteStaleUnverified(ctx context.Context, cutoff time.Time) (int64, error)
 	ResolveSiteByHostname(ctx context.Context, hostname string) (*site.Site, error)
 	ListActiveHosts(ctx context.Context) ([]string, error)
 }
@@ -390,6 +391,22 @@ func (s *Service) ResolveSiteByHost(ctx context.Context, host string) (*site.Sit
 
 func (s *Service) ListActiveHosts(ctx context.Context) ([]string, error) {
 	return s.repo.ListActiveHosts(ctx)
+}
+
+func (s *Service) DeleteStaleUnverified(ctx context.Context, olderThan time.Duration) (int64, error) {
+	if olderThan <= 0 {
+		return 0, fmt.Errorf("olderThan must be positive")
+	}
+
+	cutoff := time.Now().Add(-olderThan)
+	deleted, err := s.repo.DeleteStaleUnverified(ctx, cutoff)
+	if err != nil {
+		return 0, err
+	}
+
+	log.InfoContext(ctx, "deleted stale custom domains", "deleted", deleted, "cutoff", cutoff)
+
+	return deleted, nil
 }
 
 func (s *Service) getOwnedDomain(ctx context.Context, domainID string) (*CustomDomain, *site.Site, error) {
