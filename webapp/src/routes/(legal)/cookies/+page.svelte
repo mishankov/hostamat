@@ -4,9 +4,9 @@
 </script>
 
 <svelte:head>
-		<title>Политика использования cookie | Хостамат</title>
-		<meta name="description" content="Политика использования файлов cookie сервисом Хостамат." />
-	</svelte:head>
+	<title>Политика использования cookie | Хостамат</title>
+	<meta name="description" content="Политика использования файлов cookie сервисом Хостамат." />
+</svelte:head>
 
 <main class="page-shell">
 	<div class="page-content legal-page">
@@ -106,7 +106,8 @@
 		<section class="legal-section">
 			<h2>8. Контактная информация</h2>
 			<p>
-				По вопросам, связанным с использованием файлов cookie, вы можете обратиться через <Link
+				По вопросам, связанным с использованием файлов cookie, авторизованные пользователи могут
+				написать через обратную связь в дашборде. Без входа можно обратиться через <Link
 					href="https://forms.yandex.ru/u/6907bbfc49af47f3cae7650a"
 					target="_blank"
 					alwaysUnderline>форму обратной связи</Link

@@ -3,9 +3,12 @@
 </script>
 
 <svelte:head>
-		<title>О сервисе | Хостамат</title>
-		<meta name="description" content="Хостамат — сервис для быстрой публикации статических сайтов с автоматическими поддоменами и TLS-сертификатами." />
-	</svelte:head>
+	<title>О сервисе | Хостамат</title>
+	<meta
+		name="description"
+		content="Хостамат — сервис для быстрой публикации статических сайтов с автоматическими поддоменами и TLS-сертификатами."
+	/>
+</svelte:head>
 
 <main class="page-shell">
 	<div class="page-content about">
@@ -66,7 +69,8 @@
 				<section class="card-section">
 					<h2>Обратная связь</h2>
 					<p>
-						Если заметили баг или хотите предложить идею, отправьте сообщение через <Link
+						Если вы вошли в аккаунт, отправьте сообщение кнопкой обратной связи в дашборде. Без
+						входа можно написать через <Link
 							href="https://forms.yandex.ru/u/6907bbfc49af47f3cae7650a"
 							target="_blank"
 							alwaysUnderline>форму</Link

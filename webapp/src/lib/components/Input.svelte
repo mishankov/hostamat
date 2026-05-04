@@ -8,6 +8,8 @@
 		placeholder = ' ',
 		value = $bindable(''),
 		ref = $bindable(null),
+		readonly = false,
+		tabindex = undefined,
 		...restProps
 	} = $props();
 </script>
@@ -18,11 +20,14 @@
 	{/if}
 	<input
 		{id}
-		class={[(invalid || errorMessage) && 'invalid']}
+		class={[(invalid || errorMessage) && 'invalid', readonly && 'readonly']}
 		{type}
 		bind:value
 		bind:this={ref}
 		{placeholder}
+		{readonly}
+		tabindex={readonly ? -1 : tabindex}
+		aria-readonly={readonly ? 'true' : undefined}
 		{...restProps}
 	/>
 	{#if errorMessage}
@@ -73,7 +78,23 @@
 	input:focus {
 		outline: none;
 		border-color: var(--color-accent-border);
-		box-shadow: var(--focus-ring), 0 0 0 1px var(--color-accent-border);
+		box-shadow:
+			var(--focus-ring),
+			0 0 0 1px var(--color-accent-border);
+	}
+
+	input.readonly {
+		background: var(--color-neutral-surface);
+		border-color: color-mix(in hsl, var(--color-border) 74%, var(--color-disabled-border));
+		box-shadow: inset 0 0 0 1px color-mix(in hsl, var(--color-border) 55%, transparent);
+		color: var(--color-text-secondary);
+		caret-color: transparent;
+		cursor: default;
+	}
+
+	input.readonly:focus {
+		border-color: color-mix(in hsl, var(--color-border) 74%, var(--color-disabled-border));
+		box-shadow: inset 0 0 0 1px color-mix(in hsl, var(--color-border) 55%, transparent);
 	}
 
 	input::placeholder {

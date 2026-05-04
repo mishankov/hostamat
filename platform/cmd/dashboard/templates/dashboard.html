@@ -60,7 +60,7 @@
             .overview-metrics {
                 display: grid;
                 grid-column: span 5;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-columns: repeat(3, minmax(0, 1fr));
                 gap: var(--space-md);
             }
 
@@ -137,6 +137,13 @@
                     "Liberation Mono", "Courier New", monospace;
             }
 
+            .feedback-message {
+                max-width: 46rem;
+                white-space: pre-wrap;
+                overflow-wrap: anywhere;
+                line-height: 1.55;
+            }
+
             @media (max-width: 1180px) {
                 .overview-panel,
                 .overview-metrics,
@@ -196,6 +203,7 @@
                     <a class="btn btn-sm btn-ghost" href="#stats">Stats</a>
                     <a class="btn btn-sm btn-ghost" href="#caddy">Caddy</a>
                     <a class="btn btn-sm btn-ghost" href="#activity">Activity</a>
+                    <a class="btn btn-sm btn-ghost" href="#feedback">Feedback</a>
                     <a class="btn btn-sm btn-ghost" href="#domains">Domains</a>
                     <button onclick="window.location.reload()" class="btn btn-sm btn-outline">
                         Refresh
@@ -456,6 +464,67 @@
                     {{end}}
             </section>
 
+            <section id="feedback" class="full-span surface rounded-xl p-4 lg:p-6">
+                <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-base-content/45">Customer voice</p>
+                        <h2 class="section-title text-xl font-bold">Latest Feedback</h2>
+                    </div>
+                    <div class="stats bg-transparent p-0">
+                        <div class="stat p-0 text-right">
+                            <div class="stat-title">Stored</div>
+                            <div class="stat-value text-3xl">{{.WipeCounts.Feedback}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                {{if .FeedbackError}}
+                <div role="alert" class="alert alert-error">
+                    <span>{{.FeedbackError}}</span>
+                </div>
+                {{else}}
+                <div class="table-frame overflow-auto rounded-lg border border-base-300 bg-base-100">
+                    <table class="table table-zebra table-sm">
+                        <thead>
+                            <tr>
+                                <th>Message</th>
+                                <th>User</th>
+                                <th>URL</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range .Feedback}}
+                            <tr>
+                                <td>
+                                    <div class="feedback-message text-sm">{{.Message}}</div>
+                                    <div class="mono-link mt-2 text-xs text-base-content/40">{{.ID}}</div>
+                                </td>
+                                <td>
+                                    <div class="font-semibold">{{.Username}}</div>
+                                    <div class="text-xs text-base-content/55">{{.Email}}</div>
+                                    <div class="mono-link mt-1 text-xs text-base-content/35">{{.UserID}}</div>
+                                </td>
+                                <td>
+                                    {{if .URL}}
+                                    <span class="mono-link text-xs">{{.URL}}</span>
+                                    {{else}}
+                                    <span class="text-base-content/35">empty</span>
+                                    {{end}}
+                                </td>
+                                <td class="whitespace-nowrap">{{.CreatedAt}}</td>
+                            </tr>
+                            {{else}}
+                            <tr>
+                                <td colspan="4" class="py-8 text-center text-base-content/45">No feedback yet.</td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+                {{end}}
+            </section>
+
             <section id="domains" class="full-span surface rounded-xl p-4 lg:p-6">
                 <div class="mb-5">
                     <p class="text-xs font-semibold uppercase text-base-content/45">Custom domains</p>
@@ -575,6 +644,7 @@
                     <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Sessions</p><p class="font-bold">{{.WipeCounts.Sessions}}</p></div>
                     <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Sites</p><p class="font-bold">{{.WipeCounts.Sites}}</p></div>
                     <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Custom domains</p><p class="font-bold">{{.WipeCounts.CustomDomains}}</p></div>
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Feedback</p><p class="font-bold">{{.WipeCounts.Feedback}}</p></div>
                     <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Subdomains</p><p class="font-bold">{{.WipeCounts.Subdomains}}</p></div>
                     <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Uploads</p><p class="font-bold">{{.WipeCounts.UploadSessions}}</p></div>
                     <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Files</p><p class="font-bold">{{.WipeCounts.Files}}</p></div>

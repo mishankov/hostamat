@@ -39,6 +39,10 @@ export const ProxyConfig = {
 		method: 'DELETE',
 		url: `${API_BASE}/api/domains`
 	},
+	createFeedback: {
+		method: 'POST',
+		url: `${API_BASE}/api/feedback`
+	},
 	createUploadSession: {
 		method: 'POST',
 		url: `${API_BASE}/api/uploadsessions`

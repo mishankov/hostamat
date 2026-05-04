@@ -292,14 +292,14 @@
 			var(--color-accent-surface) 46%,
 			var(--color-background-object)
 		);
-		--button-hover-border: color-mix(in hsl, var(--color-accent-border) 54%, var(--color-border));
+		--button-hover-border: color-mix(in hsl, var(--color-border) 86%, var(--color-text-secondary));
 		--button-hover-text: var(--color-text-regular);
 		--button-active-background: color-mix(
 			in hsl,
 			var(--color-accent-surface) 62%,
 			var(--color-background-object)
 		);
-		--button-active-border: color-mix(in hsl, var(--color-accent-border) 68%, var(--color-border));
+		--button-active-border: color-mix(in hsl, var(--color-border) 78%, var(--color-text-secondary));
 		--button-active-text: var(--color-text-regular);
 		--button-shadow: 0 1px 2px hsl(214 30% 12% / 0.06);
 		--button-inner-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.2);
@@ -309,11 +309,7 @@
 
 	.variant-destructive-outline {
 		--button-background: color-mix(in hsl, var(--color-background-object) 96%, transparent);
-		--button-border: color-mix(
-			in hsl,
-			var(--color-danger-border) 78%,
-			var(--color-danger-surface)
-		);
+		--button-border: color-mix(in hsl, var(--color-danger-border) 78%, var(--color-danger-surface));
 		--button-text: var(--color-danger-text);
 		--button-hover-background: color-mix(
 			in hsl,

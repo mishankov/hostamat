@@ -34,6 +34,7 @@ type WipeCounts struct {
 	Sessions       int
 	Sites          int
 	CustomDomains  int
+	Feedback       int
 	Subdomains     int
 	UploadSessions int
 	Files          int
@@ -174,6 +175,16 @@ func main() {
 			UpdatedAt             string `db:"updated_at"`
 		}
 
+		type feedbackItem struct {
+			ID        string `db:"id"`
+			UserID    string `db:"user_id"`
+			Username  string `db:"username"`
+			Email     string `db:"email"`
+			URL       string `db:"url"`
+			Message   string `db:"message"`
+			CreatedAt string `db:"created_at"`
+		}
+
 		type caddyHost struct {
 			Host       string
 			Kind       string
@@ -192,6 +203,8 @@ func main() {
 			SitesError         string
 			CustomDomains      []customDomain
 			CustomDomainsError string
+			Feedback           []feedbackItem
+			FeedbackError      string
 			CaddyHosts         []caddyHost
 			CaddyHostsError    string
 			CaddyShorthandId   string
@@ -200,7 +213,7 @@ func main() {
 
 		var data dashboardData
 		data.CaddyShorthandId = conf.Caddy.ShorthandId
-		data.Stats = make([]metric, 4)
+		data.Stats = make([]metric, 5)
 
 		getMetric := func(id, name string, pos int, query string) {
 			data.Stats[pos].Id = id
@@ -217,11 +230,13 @@ func main() {
 		getMetric("sites", "Sites", 1, "select count(*) from sites")
 		getMetric("custom_domains", "Custom Domains", 2, "select count(*) from custom_domains")
 		getMetric("us", "Uploads", 3, "select count(*) from uploadsessions")
+		getMetric("feedback", "Feedback", 4, "select count(*) from feedback")
 
 		data.WipeCounts.Users, _ = strconv.Atoi(data.Stats[0].Values[0])
 		data.WipeCounts.Sites, _ = strconv.Atoi(data.Stats[1].Values[0])
 		data.WipeCounts.CustomDomains, _ = strconv.Atoi(data.Stats[2].Values[0])
 		data.WipeCounts.UploadSessions, _ = strconv.Atoi(data.Stats[3].Values[0])
+		data.WipeCounts.Feedback, _ = strconv.Atoi(data.Stats[4].Values[0])
 
 		var sessionCount int
 		conn.GetContext(ctx, &sessionCount, "SELECT COUNT(*) FROM sessions")
@@ -386,7 +401,15 @@ func main() {
 			data.CustomDomainsError = err.Error()
 		}
 
-		log.InfoContext(ctx, "data", "stats", data)
+		err = conn.SelectContext(ctx, &data.Feedback, `
+				SELECT id, user_id, username, email, url, message, created_at::text as created_at
+				FROM feedback
+				ORDER BY created_at DESC
+				LIMIT 100
+			`)
+		if err != nil {
+			data.FeedbackError = err.Error()
+		}
 
 		err = tmpls.ExecuteTemplate(w, "dashboard.html", data)
 		if err != nil {
@@ -496,10 +519,11 @@ func wipeAllData(ctx context.Context, conn *sqlx.DB, s3Client *s3.S3, caddyAPI *
 		{"files", &deleted.Files, "3/9"},
 		{"uploadsessions", &deleted.UploadSessions, "4/9"},
 		{"custom_domains", &deleted.CustomDomains, "5/9"},
-		{"sessions", &deleted.Sessions, "6/9"},
-		{"sites", &deleted.Sites, "7/9"},
-		{"subdomains", &deleted.Subdomains, "8/9"},
-		{"users", &deleted.Users, "9/9"},
+		{"feedback", &deleted.Feedback, "6/10"},
+		{"sessions", &deleted.Sessions, "7/10"},
+		{"sites", &deleted.Sites, "8/10"},
+		{"subdomains", &deleted.Subdomains, "9/10"},
+		{"users", &deleted.Users, "10/10"},
 	}
 
 	for _, table := range tables {

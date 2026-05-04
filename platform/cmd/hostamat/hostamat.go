@@ -8,6 +8,7 @@ import (
 	"hostamat/internal/adapters/s3"
 	"hostamat/internal/adapters/yandexoauth"
 	"hostamat/internal/customdomain"
+	"hostamat/internal/feedback"
 	"hostamat/internal/file"
 	"hostamat/internal/hostsync"
 	"hostamat/internal/site"
@@ -80,9 +81,10 @@ func main() {
 		VerificationPrefix: conf.CustomDomains.VerificationPrefix,
 		CNAMETarget:        conf.CustomDomains.CNAMETarget,
 	})
+	feedbackDomain := feedback.New(conn)
 	siteDomain := site.New(conn, subdomainDomain.Service, customDomain.Service, fileDomain.Service, uploadSessionDomain.Service)
 	sessionDomain := session.New(conn)
-	userDomain := user.New(siteDomain.Service, uploadSessionDomain.Service)
+	userDomain := user.New(siteDomain.Service, uploadSessionDomain.Service, feedbackDomain.Service)
 	yandexClient := yandexoauth.New(
 		httpClient,
 		conf.Auth.YandexAuthorizeURL,
@@ -105,6 +107,7 @@ func main() {
 	apiGroup.Mount("/files", siteDomain.FileHandlerGroup)
 	apiGroup.Mount("/sites", siteDomain.SiteHandlerGroup)
 	apiGroup.Mount("/domains", customDomain.HandlerGroup)
+	apiGroup.Mount("/feedback", feedbackDomain.HandlerGroup)
 	apiGroup.Mount("/uploadsessions", siteDomain.UploadSessionHandlerGroup)
 
 	// HTTP server
@@ -158,6 +161,7 @@ func main() {
 
 	app.RegisterDomain("subdomain", "default", subdomainDomain)
 	app.RegisterDomain("customdomain", "default", customDomain)
+	app.RegisterDomain("feedback", "default", feedbackDomain)
 	app.RegisterDomain("site", "default", siteDomain)
 	app.RegisterDomain("file", "", fileDomain)
 	app.RegisterDomain("auth", "default", authDomain)

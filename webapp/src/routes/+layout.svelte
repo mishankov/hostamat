@@ -44,7 +44,7 @@
 		}
 
 		console.info(
-			'%cHostamat feedback%c\nЕсли что-то пошло не так, форма обратной связи:\nhttps://forms.yandex.ru/u/6907bbfc49af47f3cae7650a/',
+			'%cHostamat feedback%c\nВ дашборде есть кнопка обратной связи. Для сообщений без входа используйте форму:\nhttps://forms.yandex.ru/u/6907bbfc49af47f3cae7650a/',
 			'color: hsl(212 60% 42%); font-weight: 700; font-size: 14px;',
 			'font-size: 13px;'
 		);
@@ -237,7 +237,9 @@
 		font-weight: 500;
 		font-size: 0.88rem;
 		color: var(--color-text-secondary);
-		transition: background 140ms ease-out, color 140ms ease-out;
+		transition:
+			background 140ms ease-out,
+			color 140ms ease-out;
 		text-decoration: none;
 	}
 

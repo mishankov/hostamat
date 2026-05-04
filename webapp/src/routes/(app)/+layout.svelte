@@ -4,6 +4,7 @@
 	import { AccountMenu, Badge } from '$lib/components';
 	import type { LayoutProps } from './$types';
 	import { resolve } from '$app/paths';
+	import FeedbackWidget from './FeedbackWidget.svelte';
 
 	type AppShellNavItem = {
 		route: '/dashboard/sites' | '/dashboard/domains';
@@ -59,6 +60,8 @@
 			</nav>
 
 			<div class="sidebar-separator" aria-hidden="true"></div>
+
+			<FeedbackWidget email={data.email} />
 
 			<div class="sidebar-footer">
 				<AccountMenu username={data.username} onlogout={logout} context="sidebar" />

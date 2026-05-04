@@ -252,6 +252,29 @@ func (s *Service) GetFromSession(ctx context.Context, sessionID string) (*platfo
 	}, nil
 }
 
+func (s *Service) GetProfileFromSession(ctx context.Context, sessionID string) (*User, error) {
+	userID, err := s.authStorage.GetUserIdFromSessionId(ctx, sessionID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user id from session: %w", err)
+	}
+	if userID == "" {
+		return nil, platformauth.ErrUserNotFound
+	}
+
+	user, err := s.repo.Get(ctx, userID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, platformauth.ErrUserNotFound
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user: %w", err)
+	}
+	if user.Provider != ProviderYandex {
+		return nil, platformauth.ErrUserNotFound
+	}
+
+	return user, nil
+}
+
 func (s *Service) DeleteSession(ctx context.Context, sessionID string) error {
 	ev := log.EventFromContext(ctx)
 
@@ -354,6 +377,14 @@ func resolveEmail(userInfo *yandexoauth.UserInfo) *string {
 	}
 
 	return &email
+}
+
+func stringValue(value *string) string {
+	if value == nil {
+		return ""
+	}
+
+	return *value
 }
 
 func equalStringPointers(left, right *string) bool {

@@ -23,16 +23,22 @@ type uploadSessionService interface {
 	DeleteByUser(ctx context.Context, userId string) error
 }
 
+type feedbackService interface {
+	DeleteByUser(ctx context.Context, userId string) error
+}
+
 type Service struct {
 	siteService          siteService
 	uploadSessionService uploadSessionService
+	feedbackService      feedbackService
 	cleanupProcessor     *queue.Processor[auth.UserCleanupJob]
 }
 
-func NewService(siteService siteService, uploadSessionService uploadSessionService) *Service {
+func NewService(siteService siteService, uploadSessionService uploadSessionService, feedbackService feedbackService) *Service {
 	service := &Service{
 		siteService:          siteService,
 		uploadSessionService: uploadSessionService,
+		feedbackService:      feedbackService,
 	}
 
 	cleanupQueue := queue.NewChanQueue[auth.UserCleanupJob](5, time.Second)
@@ -64,6 +70,14 @@ func (s *Service) cleanupUser(ctx context.Context, userId string) error {
 	if err != nil {
 		log.ErrorContext(ctx, "failed to delete upload sessions during user cleanup", "userId", userId, "error", err)
 		return err
+	}
+
+	if s.feedbackService != nil {
+		err = s.feedbackService.DeleteByUser(ctx, userId)
+		if err != nil {
+			log.ErrorContext(ctx, "failed to delete feedback during user cleanup", "userId", userId, "error", err)
+			return err
+		}
 	}
 
 	log.InfoContext(ctx, "user cleanup completed", "userId", userId)

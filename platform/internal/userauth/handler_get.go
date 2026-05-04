@@ -13,6 +13,7 @@ import (
 
 type getUserService interface {
 	GetFromSession(ctx context.Context, sessionID string) (*platformauth.User, error)
+	GetProfileFromSession(ctx context.Context, sessionID string) (*User, error)
 	CookieName() string
 }
 
@@ -41,7 +42,7 @@ func (h *GetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.service.GetFromSession(r.Context(), cookie.Value)
+	user, err := h.service.GetProfileFromSession(r.Context(), cookie.Value)
 	if errors.Is(err, platformauth.ErrUserNotFound) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -54,9 +55,11 @@ func (h *GetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	resp := struct {
 		Username string   `json:"username"`
+		Email    string   `json:"email"`
 		Provider Provider `json:"provider"`
 	}{
 		Username: user.Username,
+		Email:    stringValue(user.Email),
 		Provider: ProviderYandex,
 	}
 

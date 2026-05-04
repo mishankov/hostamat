@@ -7,9 +7,12 @@
 </script>
 
 <svelte:head>
-		<title>Вопросы | Хостамат</title>
-		<meta name="description" content="Часто задаваемые вопросы о статическом хостинге Хостамат: загрузка файлов, поддомены, ограничения." />
-	</svelte:head>
+	<title>Вопросы | Хостамат</title>
+	<meta
+		name="description"
+		content="Часто задаваемые вопросы о статическом хостинге Хостамат: загрузка файлов, поддомены, ограничения."
+	/>
+</svelte:head>
 
 <main class="page-shell">
 	<div class={['page-content', 'faq', theme.current === 'dark' && 'theme-dark']}>
@@ -64,9 +67,10 @@
 		<section class="qa">
 			<h2>Что означает «альфа-тестирование»?</h2>
 			<p>
-				Сервис активно развивается: некоторые функции могут работать нестабильно. Нам важна обратная
-				связь через <Link href="https://forms.yandex.ru/u/6907bbfc49af47f3cae7650a" target="_blank"
-					>форму</Link
+				Сервис активно развивается: некоторые функции могут работать нестабильно. Если вы вошли в
+				аккаунт, отправьте обратную связь из дашборда. Без входа доступна <Link
+					href="https://forms.yandex.ru/u/6907bbfc49af47f3cae7650a"
+					target="_blank">форма</Link
 				>.
 			</p>
 		</section>
