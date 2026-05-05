@@ -613,7 +613,7 @@
                         <h2 class="mt-1 text-xl font-bold">Wipe all platform data</h2>
                         <p class="mt-2 max-w-2xl text-sm leading-6 text-base-content/65">
                             Permanently deletes users, sessions, sites, files, custom domains,
-                            subdomains, upload sessions, S3 objects, and Caddy host routes.
+                            form collection data, subdomains, upload sessions, S3 objects, and Caddy host routes.
                         </p>
                     </div>
                     <button onclick="wipe_modal.showModal()" class="btn btn-error">
@@ -645,6 +645,9 @@
                     <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Sites</p><p class="font-bold">{{.WipeCounts.Sites}}</p></div>
                     <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Custom domains</p><p class="font-bold">{{.WipeCounts.CustomDomains}}</p></div>
                     <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Feedback</p><p class="font-bold">{{.WipeCounts.Feedback}}</p></div>
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Form discoveries</p><p class="font-bold">{{.WipeCounts.FormDiscoveries}}</p></div>
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Form definitions</p><p class="font-bold">{{.WipeCounts.FormDefinitions}}</p></div>
+                    <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Form submissions</p><p class="font-bold">{{.WipeCounts.FormSubmissions}}</p></div>
                     <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Subdomains</p><p class="font-bold">{{.WipeCounts.Subdomains}}</p></div>
                     <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Uploads</p><p class="font-bold">{{.WipeCounts.UploadSessions}}</p></div>
                     <div class="rounded-lg bg-base-200 p-3"><p class="text-xs text-base-content/50">Files</p><p class="font-bold">{{.WipeCounts.Files}}</p></div>
@@ -724,6 +727,9 @@
                                 `- ${result.deleted.Sessions} sessions\n` +
                                 `- ${result.deleted.Sites} sites\n` +
                                 `- ${result.deleted.CustomDomains} custom domains\n` +
+                                `- ${result.deleted.FormDiscoveries} form discoveries\n` +
+                                `- ${result.deleted.FormDefinitions} form definitions\n` +
+                                `- ${result.deleted.FormSubmissions} form submissions\n` +
                                 `- ${result.deleted.Subdomains} subdomains\n` +
                                 `- ${result.deleted.UploadSessions} upload sessions\n` +
                                 `- ${result.deleted.Files} files\n` +

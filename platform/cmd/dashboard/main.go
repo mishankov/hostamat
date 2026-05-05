@@ -30,16 +30,19 @@ import (
 const cookieName = "dashsession"
 
 type WipeCounts struct {
-	Users          int
-	Sessions       int
-	Sites          int
-	CustomDomains  int
-	Feedback       int
-	Subdomains     int
-	UploadSessions int
-	Files          int
-	S3Objects      int
-	CaddyHosts     int
+	Users           int
+	Sessions        int
+	Sites           int
+	CustomDomains   int
+	Feedback        int
+	FormDiscoveries int
+	FormDefinitions int
+	FormSubmissions int
+	Subdomains      int
+	UploadSessions  int
+	Files           int
+	S3Objects       int
+	CaddyHosts      int
 }
 
 //go:embed templates
@@ -249,6 +252,10 @@ func main() {
 		var fileCount int
 		conn.GetContext(ctx, &fileCount, "SELECT COUNT(*) FROM files")
 		data.WipeCounts.Files = fileCount
+
+		conn.GetContext(ctx, &data.WipeCounts.FormDiscoveries, "SELECT COUNT(*) FROM form_discoveries")
+		conn.GetContext(ctx, &data.WipeCounts.FormDefinitions, "SELECT COUNT(*) FROM form_definitions")
+		conn.GetContext(ctx, &data.WipeCounts.FormSubmissions, "SELECT COUNT(*) FROM form_submissions")
 
 		hosts, err := caddyAPI.GetHostsFromShorthandId(ctx, conf.Caddy.ShorthandId)
 		if err != nil {
@@ -481,7 +488,7 @@ func main() {
 func wipeAllData(ctx context.Context, conn *sqlx.DB, s3Client *s3.S3, caddyAPI *caddy.CaddyAPI, s3Bucket, caddyShorthand string) (*WipeCounts, error) {
 	deleted := &WipeCounts{}
 
-	log.InfoContext(ctx, "Step 1/9: Clearing Caddy subdomain hosts...")
+	log.InfoContext(ctx, "Step 1/13: Clearing Caddy subdomain hosts...")
 	hosts, err := caddyAPI.GetHostsFromShorthandId(ctx, caddyShorthand)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get Caddy hosts: %w", err)
@@ -494,7 +501,7 @@ func wipeAllData(ctx context.Context, conn *sqlx.DB, s3Client *s3.S3, caddyAPI *
 	}
 	log.InfoContext(ctx, "Cleared Caddy hosts", "count", deleted.CaddyHosts)
 
-	log.InfoContext(ctx, "Step 2/9: Cleaning S3 bucket...")
+	log.InfoContext(ctx, "Step 2/13: Cleaning S3 bucket...")
 	objectsCh := s3Client.ListObjects(ctx, s3Bucket, minio.ListObjectsOptions{Recursive: true})
 	s3Count := 0
 	for obj := range objectsCh {
@@ -516,14 +523,17 @@ func wipeAllData(ctx context.Context, conn *sqlx.DB, s3Client *s3.S3, caddyAPI *
 		field *int
 		step  string
 	}{
-		{"files", &deleted.Files, "3/9"},
-		{"uploadsessions", &deleted.UploadSessions, "4/9"},
-		{"custom_domains", &deleted.CustomDomains, "5/9"},
-		{"feedback", &deleted.Feedback, "6/10"},
-		{"sessions", &deleted.Sessions, "7/10"},
-		{"sites", &deleted.Sites, "8/10"},
-		{"subdomains", &deleted.Subdomains, "9/10"},
-		{"users", &deleted.Users, "10/10"},
+		{"files", &deleted.Files, "3/13"},
+		{"uploadsessions", &deleted.UploadSessions, "4/13"},
+		{"custom_domains", &deleted.CustomDomains, "5/13"},
+		{"feedback", &deleted.Feedback, "6/13"},
+		{"form_submissions", &deleted.FormSubmissions, "7/13"},
+		{"form_definitions", &deleted.FormDefinitions, "8/13"},
+		{"form_discoveries", &deleted.FormDiscoveries, "9/13"},
+		{"sessions", &deleted.Sessions, "10/13"},
+		{"sites", &deleted.Sites, "11/13"},
+		{"subdomains", &deleted.Subdomains, "12/13"},
+		{"users", &deleted.Users, "13/13"},
 	}
 
 	for _, table := range tables {

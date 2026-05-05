@@ -27,18 +27,24 @@ type feedbackService interface {
 	DeleteByUser(ctx context.Context, userId string) error
 }
 
-type Service struct {
-	siteService          siteService
-	uploadSessionService uploadSessionService
-	feedbackService      feedbackService
-	cleanupProcessor     *queue.Processor[auth.UserCleanupJob]
+type formCollectionService interface {
+	DeleteByUser(ctx context.Context, userId string) error
 }
 
-func NewService(siteService siteService, uploadSessionService uploadSessionService, feedbackService feedbackService) *Service {
+type Service struct {
+	siteService           siteService
+	uploadSessionService  uploadSessionService
+	feedbackService       feedbackService
+	formCollectionService formCollectionService
+	cleanupProcessor      *queue.Processor[auth.UserCleanupJob]
+}
+
+func NewService(siteService siteService, uploadSessionService uploadSessionService, feedbackService feedbackService, formCollectionService formCollectionService) *Service {
 	service := &Service{
-		siteService:          siteService,
-		uploadSessionService: uploadSessionService,
-		feedbackService:      feedbackService,
+		siteService:           siteService,
+		uploadSessionService:  uploadSessionService,
+		feedbackService:       feedbackService,
+		formCollectionService: formCollectionService,
 	}
 
 	cleanupQueue := queue.NewChanQueue[auth.UserCleanupJob](5, time.Second)
@@ -57,6 +63,14 @@ func (s *Service) cleanupUser(ctx context.Context, userId string) error {
 	sites, err := s.siteService.GetList(ctx)
 	if err != nil {
 		return err
+	}
+
+	if s.formCollectionService != nil {
+		err = s.formCollectionService.DeleteByUser(ctx, userId)
+		if err != nil {
+			log.ErrorContext(ctx, "failed to delete form data during user cleanup", "userId", userId, "error", err)
+			return err
+		}
 	}
 
 	for _, site := range sites {

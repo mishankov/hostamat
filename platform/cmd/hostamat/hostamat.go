@@ -10,6 +10,7 @@ import (
 	"hostamat/internal/customdomain"
 	"hostamat/internal/feedback"
 	"hostamat/internal/file"
+	"hostamat/internal/formcollection"
 	"hostamat/internal/hostsync"
 	"hostamat/internal/site"
 	"hostamat/internal/subdomain"
@@ -17,6 +18,7 @@ import (
 	"hostamat/internal/user"
 	"hostamat/internal/userauth"
 	"os"
+	"strings"
 	"time"
 
 	"hostamat/internal/httpclient"
@@ -82,9 +84,10 @@ func main() {
 		CNAMETarget:        conf.CustomDomains.CNAMETarget,
 	})
 	feedbackDomain := feedback.New(conn)
-	siteDomain := site.New(conn, subdomainDomain.Service, customDomain.Service, fileDomain.Service, uploadSessionDomain.Service)
+	formCollectionDomain := formcollection.New(conn, fileDomain.Service)
+	siteDomain := site.New(conn, subdomainDomain.Service, customDomain.Service, fileDomain.Service, uploadSessionDomain.Service, formCollectionDomain.Service)
 	sessionDomain := session.New(conn)
-	userDomain := user.New(siteDomain.Service, uploadSessionDomain.Service, feedbackDomain.Service)
+	userDomain := user.New(siteDomain.Service, uploadSessionDomain.Service, feedbackDomain.Service, formCollectionDomain.Service)
 	yandexClient := yandexoauth.New(
 		httpClient,
 		conf.Auth.YandexAuthorizeURL,
@@ -108,6 +111,7 @@ func main() {
 	apiGroup.Mount("/sites", siteDomain.SiteHandlerGroup)
 	apiGroup.Mount("/domains", customDomain.HandlerGroup)
 	apiGroup.Mount("/feedback", feedbackDomain.HandlerGroup)
+	apiGroup.Mount("/forms", formCollectionDomain.HandlerGroup)
 	apiGroup.Mount("/uploadsessions", siteDomain.UploadSessionHandlerGroup)
 
 	// HTTP server
@@ -115,6 +119,10 @@ func main() {
 
 	httpServer.Mount("/api", apiGroup)
 	httpServer.Mount("/auth", authDomain.HandleGroup)
+	httpServer.Mount("/forms", formCollectionDomain.PublicHandlerGroup)
+	if conf.FileServerPath != "" {
+		httpServer.Mount(strings.TrimRight(conf.FileServerPath, "/")+"/forms", formCollectionDomain.PublicHandlerGroup)
+	}
 	// Mount used here because client would request files by additional path
 	httpServer.Mount(conf.FileServerPath, siteDomain.FileServeHandler)
 
@@ -162,6 +170,7 @@ func main() {
 	app.RegisterDomain("subdomain", "default", subdomainDomain)
 	app.RegisterDomain("customdomain", "default", customDomain)
 	app.RegisterDomain("feedback", "default", feedbackDomain)
+	app.RegisterDomain("formcollection", "default", formCollectionDomain)
 	app.RegisterDomain("site", "default", siteDomain)
 	app.RegisterDomain("file", "", fileDomain)
 	app.RegisterDomain("auth", "default", authDomain)

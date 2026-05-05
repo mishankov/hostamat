@@ -2,7 +2,7 @@ import type { RequestHandler } from './$types';
 import { getConfigForMethod } from '$lib/server/config';
 
 const proxyHandler = (): RequestHandler => {
-	return async ({ request, fetch }) => {
+	return async ({ request, fetch, url }) => {
 		try {
 			const method = request.headers.get('X-Method');
 			const config = getConfigForMethod(method);
@@ -11,7 +11,8 @@ const proxyHandler = (): RequestHandler => {
 				return new Response('Method not allowed', { status: 405 });
 			}
 
-			const response = await fetch(config.url, {
+			const targetUrl = `${config.url}${url.search}`;
+			const response = await fetch(targetUrl, {
 				method: config.method,
 				headers: request.headers,
 				body: request.body

@@ -1,4 +1,5 @@
 import { safeFetch, type AsyncResult } from '$lib/safe';
+import type { DiscoveredForm, FormDiscovery } from './form-submissions';
 
 export const createUploadSession = async (siteId: string): AsyncResult<string, string> => {
 	const { data: resp, error } = await safeFetch('/api/proxy', {
@@ -39,6 +40,8 @@ export type UploadSummary = {
 	skippedFiles: UploadedFile[];
 	availablePages: UploadedPage[];
 	hasHomePage: boolean;
+	formDiscovery?: FormDiscovery | null;
+	forms?: DiscoveredForm[];
 };
 
 export const closeUploadSession = async (

@@ -247,6 +247,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-lg);
+		min-width: 0;
+		width: 100%;
 	}
 
 	.delete-modal {

@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { Alert, Button, Card, Details, IconButton, Link, ProgressBar } from '$lib/components';
 	import { Upload, X } from '$lib/icons';
-	import { closeUploadSession, createUploadSession } from '$lib/api-client';
+	import { closeUploadSession, createUploadSession, enableFormCollection } from '$lib/api-client';
 	import type { UploadedPage } from '$lib/api-client/upload-session';
+	import type {
+		DiscoveredForm,
+		DiscoveredFormField,
+		FormDiscovery
+	} from '$lib/api-client/form-submissions';
 	import { uploadFile } from './utils';
 
 	interface Props {
@@ -41,6 +46,20 @@
 	let availablePages: UploadedPage[] = $state([]);
 	let hasHomePage: boolean | null = $state(null);
 	let isDragOver = $state(false);
+	let closedDiscoveryId = $state('');
+	let formDiscovery = $state.raw<FormDiscovery | null>(null);
+	let selectedFormIds = $state<string[]>([]);
+	let enabledFormIds = $state<string[]>([]);
+	let enablingForms = $state(false);
+	let enableError = $state('');
+	let enableStatus = $state('');
+
+	const discoveredForms = $derived(formDiscovery?.forms ?? []);
+	const supportedForms = $derived(discoveredForms.filter((form) => isSupportedForm(form)));
+	const unsupportedForms = $derived(discoveredForms.filter((form) => !isSupportedForm(form)));
+	const selectedSupportedCount = $derived(
+		supportedForms.filter((form) => selectedFormIds.includes(form.id)).length
+	);
 
 	export function resetUploadState() {
 		uploadedFiles = [];
@@ -49,6 +68,13 @@
 		hasHomePage = null;
 		uploadProgress = 0;
 		error = '';
+		closedDiscoveryId = '';
+		formDiscovery = null;
+		selectedFormIds = [];
+		enabledFormIds = [];
+		enablingForms = false;
+		enableError = '';
+		enableStatus = '';
 	}
 
 	function handleFileSelect(event: Event): void {
@@ -180,6 +206,12 @@
 			skippedFiles = closeUploadResp.data.skippedFiles.map((file) => file.name);
 			availablePages = closeUploadResp.data.availablePages;
 			hasHomePage = closeUploadResp.data.hasHomePage;
+			const normalizedDiscovery = normalizeFormDiscovery(closeUploadResp.data);
+			formDiscovery = normalizedDiscovery;
+			closedDiscoveryId = normalizedDiscovery?.discoveryId ?? '';
+			selectedFormIds = (normalizedDiscovery?.forms ?? [])
+				.filter((form) => isSupportedForm(form))
+				.map((form) => form.id);
 			await onuploadcomplete?.({ fileCount: uploadedCount });
 		} else {
 			error = closeUploadResp.error;
@@ -218,12 +250,120 @@
 		skippedFiles = [];
 		availablePages = [];
 		hasHomePage = null;
+		closedDiscoveryId = '';
+		formDiscovery = null;
+		selectedFormIds = [];
+		enabledFormIds = [];
+		enableError = '';
+		enableStatus = '';
 	}
 
 	function handleKeyDown(event: KeyboardEvent): void {
 		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault();
 			fileInput.click();
+		}
+	}
+
+	function normalizeFormDiscovery(summary: {
+		formDiscovery?: FormDiscovery | null;
+		forms?: DiscoveredForm[];
+	}): FormDiscovery | null {
+		const forms = summary.formDiscovery?.forms ?? summary.forms ?? [];
+		if (forms.length === 0) {
+			return null;
+		}
+
+		const supported = forms.filter((form) => isSupportedForm(form)).length;
+
+		return {
+			totalForms: summary.formDiscovery?.totalForms ?? forms.length,
+			supportedForms: summary.formDiscovery?.supportedForms ?? supported,
+			unsupportedForms: summary.formDiscovery?.unsupportedForms ?? forms.length - supported,
+			discoveryId: summary.formDiscovery?.discoveryId,
+			forms
+		};
+	}
+
+	function isSupportedForm(form: DiscoveredForm): boolean {
+		return Boolean(form.id) && form.supported !== false && !form.unsupportedReason && !form.reason;
+	}
+
+	function formTitle(form: DiscoveredForm): string {
+		return form.label || form.displayName || form.name || 'Форма без названия';
+	}
+
+	function formPage(form: DiscoveredForm): string {
+		return form.pagePath || form.path || '/';
+	}
+
+	function formAction(form: DiscoveredForm): string {
+		return form.action || form.originalAction || 'не указан';
+	}
+
+	function unsupportedReason(form: DiscoveredForm): string {
+		return form.unsupportedReason || form.reason || 'эта форма пока не поддерживается';
+	}
+
+	function fieldSummary(form: DiscoveredForm): string {
+		if (Array.isArray(form.fields) && form.fields.length > 0) {
+			return form.fields.map((field) => fieldLabel(field)).join(', ');
+		}
+
+		if (Array.isArray(form.fieldSummary)) {
+			return form.fieldSummary.join(', ');
+		}
+
+		return form.fieldSummary || 'поля без названий';
+	}
+
+	function fieldLabel(field: DiscoveredFormField | string): string {
+		if (typeof field === 'string') {
+			return field;
+		}
+
+		const type = field.type ? ` (${field.type})` : '';
+		const required = field.required ? ' *' : '';
+		return `${field.name}${type}${required}`;
+	}
+
+	function toggleForm(formId: string, checked: boolean): void {
+		enableError = '';
+		enableStatus = '';
+
+		if (checked) {
+			selectedFormIds = [...new Set([...selectedFormIds, formId])];
+			return;
+		}
+
+		selectedFormIds = selectedFormIds.filter((id) => id !== formId);
+	}
+
+	async function enableSelectedForms(): Promise<void> {
+		if (!closedDiscoveryId || selectedFormIds.length === 0) {
+			return;
+		}
+
+		enablingForms = true;
+		enableError = '';
+		enableStatus = '';
+
+		const { data, error: enableRespError } = await enableFormCollection({
+			siteId,
+			discoveryId: closedDiscoveryId,
+			formIds: selectedFormIds
+		});
+
+		enablingForms = false;
+
+		if (enableRespError) {
+			enableError = enableRespError;
+			return;
+		}
+
+		if (data) {
+			enabledFormIds = selectedFormIds;
+			enableStatus = `Сбор ответов включён для форм: ${selectedSupportedCount}`;
 		}
 	}
 </script>
@@ -283,6 +423,87 @@
 				открывался.
 			</p>
 		</Alert>
+	{/if}
+
+	{#if uploadProgress == 100 && formDiscovery && !error}
+		<section class="form-discovery" aria-labelledby="form-discovery-title">
+			<div class="form-discovery-header">
+				<div>
+					<h3 id="form-discovery-title">Найдены формы на сайте</h3>
+					<p>
+						Хостамат может собирать ответы с выбранных форм. При включении действия форм будут
+						заменены на endpoint Хостамата.
+					</p>
+				</div>
+				<span class="form-counter">{formDiscovery.totalForms ?? discoveredForms.length}</span>
+			</div>
+
+			{#if enableError}
+				<Alert variant="error" message={enableError} />
+			{/if}
+
+			{#if enableStatus}
+				<Alert variant="success" message={enableStatus} />
+			{/if}
+
+			{#if supportedForms.length > 0}
+				<div class="detected-form-list" aria-label="Поддерживаемые формы">
+					{#each supportedForms as form (form.id)}
+						<label class={['detected-form', enabledFormIds.includes(form.id) && 'is-enabled']}>
+							<input
+								type="checkbox"
+								checked={selectedFormIds.includes(form.id)}
+								disabled={enablingForms || enabledFormIds.includes(form.id)}
+								onchange={(event) =>
+									toggleForm(form.id, (event.currentTarget as HTMLInputElement).checked)}
+							/>
+							<span class="form-card-body">
+								<span class="form-mainline">
+									<strong>{formTitle(form)}</strong>
+									<span>{formPage(form)}</span>
+								</span>
+								<span class="form-meta">
+									<span>Метод: {(form.method || 'get').toUpperCase()}</span>
+									<span>Action: {formAction(form)}</span>
+								</span>
+								<span class="field-line">Поля: {fieldSummary(form)}</span>
+							</span>
+						</label>
+					{/each}
+				</div>
+
+				<div class="form-actions">
+					<Button
+						emphasis="solid"
+						disabled={enablingForms || selectedFormIds.length === 0 || enabledFormIds.length > 0}
+						onclick={enableSelectedForms}
+					>
+						{enablingForms ? 'Включаем...' : `Включить сбор: ${selectedSupportedCount}`}
+					</Button>
+					<Button
+						disabled={enablingForms || enabledFormIds.length > 0}
+						onclick={() => {
+							selectedFormIds = [];
+							enableError = '';
+							enableStatus = 'Формы оставлены без изменений';
+						}}>Не включать</Button
+					>
+				</div>
+			{/if}
+
+			{#if unsupportedForms.length > 0}
+				<Details summary="Недоступные формы ({unsupportedForms.length})">
+					<ul class="unsupported-list">
+						{#each unsupportedForms as form (form.id || formPage(form) + formTitle(form))}
+							<li>
+								<strong>{formTitle(form)}</strong>
+								<span>{formPage(form)}: {unsupportedReason(form)}</span>
+							</li>
+						{/each}
+					</ul>
+				</Details>
+			{/if}
+		</section>
 	{/if}
 
 	<div
@@ -398,7 +619,9 @@
 	}
 
 	.file-upload-container {
-		max-width: 31.25rem;
+		width: 100%;
+		max-width: 42rem;
+		min-width: 0;
 
 		display: flex;
 		flex-direction: column;
@@ -539,5 +762,165 @@
 		display: flex;
 		gap: var(--space-lg);
 		align-items: center;
+	}
+
+	.form-discovery {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-md);
+		min-width: 0;
+		padding: var(--space-md);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		background: var(--color-background-object);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.form-discovery-header {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: var(--space-sm);
+		align-items: start;
+	}
+
+	.form-discovery h3 {
+		margin: 0 0 var(--space-xs);
+		font-size: 1rem;
+		font-weight: 800;
+	}
+
+	.form-discovery p {
+		margin: 0;
+		color: var(--color-text-secondary);
+		line-height: 1.5;
+	}
+
+	.form-counter {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 2.25rem;
+		height: 2.25rem;
+		border: 1px solid var(--color-accent-border);
+		border-radius: 999px;
+		background: var(--color-accent-surface);
+		color: var(--color-accent-text);
+		font-weight: 800;
+	}
+
+	.detected-form-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-sm);
+	}
+
+	.detected-form {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: var(--space-sm);
+		align-items: start;
+		min-width: 0;
+		padding: var(--space-sm);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		background: var(--color-background);
+		cursor: pointer;
+		transition:
+			border-color 160ms var(--ease-out-quart),
+			background-color 160ms var(--ease-out-quart),
+			box-shadow 160ms var(--ease-out-quart);
+	}
+
+	.detected-form:hover {
+		border-color: var(--color-accent-border);
+		background: var(--color-accent-surface);
+	}
+
+	.detected-form.is-enabled {
+		border-color: var(--color-success-border);
+		background: var(--color-success-surface);
+	}
+
+	.detected-form input {
+		width: 1rem;
+		height: 1rem;
+		margin-top: 0.2rem;
+		accent-color: var(--color-accent-strong);
+	}
+
+	.form-card-body {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: var(--space-xs);
+	}
+
+	.form-mainline {
+		display: grid;
+		gap: var(--space-xs);
+		min-width: 0;
+	}
+
+	.form-mainline strong {
+		font-weight: 800;
+	}
+
+	.form-mainline span,
+	.form-meta,
+	.field-line {
+		color: var(--color-text-secondary);
+		overflow-wrap: anywhere;
+	}
+
+	.form-meta {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-xs);
+		font-family: var(--font-mono);
+		font-size: var(--font-size-caption);
+	}
+
+	.field-line {
+		font-size: 0.86rem;
+		line-height: 1.45;
+	}
+
+	.form-actions {
+		display: flex;
+		gap: var(--space-sm);
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.unsupported-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-sm);
+		margin: var(--space-sm) 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.unsupported-list li {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-xs);
+		padding: var(--space-sm) 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.unsupported-list span {
+		color: var(--color-text-secondary);
+		overflow-wrap: anywhere;
+	}
+
+	@media (max-width: 560px) {
+		.form-discovery-header {
+			grid-template-columns: 1fr;
+		}
+
+		.detected-form {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

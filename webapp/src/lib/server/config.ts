@@ -50,6 +50,18 @@ export const ProxyConfig = {
 	closeUploadSession: {
 		method: 'DELETE',
 		url: `${API_BASE}/api/uploadsessions`
+	},
+	enableFormCollection: {
+		method: 'POST',
+		url: `${API_BASE}/api/forms/enable`
+	},
+	getFormSubmissions: {
+		method: 'GET',
+		url: `${API_BASE}/api/forms/submissions`
+	},
+	deleteFormSubmission: {
+		method: 'DELETE',
+		url: `${API_BASE}/api/forms/submissions`
 	}
 };
 

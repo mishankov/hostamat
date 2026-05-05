@@ -8,8 +8,8 @@ type Domain struct {
 	CleanupQueue *queue.Processor[auth.UserCleanupJob]
 }
 
-func New(siteService siteService, uploadSessionService uploadSessionService, feedbackService feedbackService) *Domain {
-	service := NewService(siteService, uploadSessionService, feedbackService)
+func New(siteService siteService, uploadSessionService uploadSessionService, feedbackService feedbackService, formCollectionService formCollectionService) *Domain {
+	service := NewService(siteService, uploadSessionService, feedbackService, formCollectionService)
 
 	return &Domain{
 		Service:      service,

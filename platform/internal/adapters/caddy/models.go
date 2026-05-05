@@ -19,6 +19,7 @@ type Upstream struct {
 }
 
 type Match struct {
-	Host []string `json:"host"`
+	Host []string `json:"host,omitempty"`
+	Path []string `json:"path,omitempty"`
 	Id   string   `json:"@id,omitempty"`
 }

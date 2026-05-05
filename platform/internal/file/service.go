@@ -144,6 +144,20 @@ func (s *Service) UploadFile(ctx context.Context, path, filename string, file io
 	return uploaded, skipped, nil
 }
 
+func (s *Service) PutFile(ctx context.Context, folder, filename string, file io.Reader, size int64) error {
+	ev := log.EventFromContext(ctx)
+	if ev != nil {
+		ev.AddStep(slog.LevelInfo, "file.PutFile")
+		ev.AddAttrs(map[string]any{
+			"file.path": folder,
+			"file.name": filename,
+			"file.size": size,
+		})
+	}
+
+	return s.uploadSingleFile(ctx, folder, filename, file, size)
+}
+
 func (s *Service) DeleteFromFolderAsync(ctx context.Context, folder string) error {
 	ev := log.EventFromContext(ctx)
 
