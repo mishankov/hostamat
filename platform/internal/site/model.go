@@ -3,6 +3,7 @@ package site
 import (
 	"time"
 
+	"hostamat/internal/formcollection"
 	"hostamat/internal/uploadsession"
 )
 
@@ -43,8 +44,9 @@ type UploadedPage struct {
 }
 
 type UploadSummary struct {
-	UploadedFiles  []uploadsession.File `json:"uploadedFiles"`
-	SkippedFiles   []uploadsession.File `json:"skippedFiles"`
-	AvailablePages []UploadedPage       `json:"availablePages"`
-	HasHomePage    bool                 `json:"hasHomePage"`
+	UploadedFiles  []uploadsession.File             `json:"uploadedFiles"`
+	SkippedFiles   []uploadsession.File             `json:"skippedFiles"`
+	AvailablePages []UploadedPage                   `json:"availablePages"`
+	HasHomePage    bool                             `json:"hasHomePage"`
+	FormDiscovery  *formcollection.DiscoverySummary `json:"formDiscovery,omitempty"`
 }

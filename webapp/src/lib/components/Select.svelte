@@ -76,7 +76,9 @@
 	select:focus {
 		outline: none;
 		border-color: var(--color-accent-border);
-		box-shadow: var(--focus-ring), 0 0 0 1px var(--color-accent-border);
+		box-shadow:
+			var(--focus-ring),
+			0 0 0 1px var(--color-accent-border);
 	}
 
 	select:has(option[value='']:checked) {

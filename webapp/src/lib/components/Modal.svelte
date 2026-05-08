@@ -147,9 +147,11 @@
 		backdrop-filter: blur(18px);
 
 		transition: var(--transition);
-		max-width: min(42.5rem, calc(100vw - 1rem));
+		width: fit-content;
+		max-width: calc(100vw - 1rem);
 		max-height: calc(100vh - 1rem);
 		overflow: auto;
+		overflow-x: hidden;
 	}
 
 	.neutral {
@@ -188,6 +190,7 @@
 
 	div.modal-panel {
 		box-sizing: border-box;
+		width: min(100%, calc(100vw - 1rem));
 		max-width: calc(100vw - 1rem);
 		padding: var(--space-xl);
 	}

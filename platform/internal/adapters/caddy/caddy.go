@@ -61,6 +61,17 @@ func (capi *CaddyAPI) CreateBaseConfig(ctx context.Context, target, handlerPrefi
 			Handler: "subroute",
 			Routes: []Route{
 				{
+					Match: []Match{{
+						Path: []string{"/forms/submit/*"},
+					}},
+					Handle: []Handle{{
+						Handler: "reverse_proxy",
+						Upstreams: []Upstream{{
+							Dial: target,
+						}},
+					}},
+				},
+				{
 					Group: "group2",
 					Handle: []Handle{{
 						Handler: "rewrite",

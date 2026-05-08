@@ -70,7 +70,9 @@
 	</IconButton>
 	{#if copied}
 		{#key copiedPulse}
-			<span class={['copy-tooltip', copiedLeaving && 'leaving']} aria-live="polite">Скопировано</span>
+			<span class={['copy-tooltip', copiedLeaving && 'leaving']} aria-live="polite"
+				>Скопировано</span
+			>
 		{/key}
 	{/if}
 </div>

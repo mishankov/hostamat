@@ -2,6 +2,7 @@ import { getSites, updateSite, createSite, deleteSite } from './sites';
 import { getDomains, createDomain, updateDomain, verifyDomain, deleteDomain } from './domains';
 import { createUploadSession, closeUploadSession } from './upload-session';
 import { createFeedback } from './feedback';
+import { enableFormCollection, getFormSubmissions, deleteFormSubmission } from './form-submissions';
 
 export {
 	getSites,
@@ -15,5 +16,8 @@ export {
 	deleteDomain,
 	createFeedback,
 	createUploadSession,
-	closeUploadSession
+	closeUploadSession,
+	enableFormCollection,
+	getFormSubmissions,
+	deleteFormSubmission
 };

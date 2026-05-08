@@ -7,7 +7,7 @@
 	import FeedbackWidget from './FeedbackWidget.svelte';
 
 	type AppShellNavItem = {
-		route: '/dashboard/sites' | '/dashboard/domains';
+		route: '/dashboard/sites' | '/dashboard/domains' | '/dashboard/submissions';
 		label: string;
 		badge?: string;
 	};
@@ -20,6 +20,10 @@
 		{
 			route: '/dashboard/domains',
 			label: 'Домены'
+		},
+		{
+			route: '/dashboard/submissions',
+			label: 'Ответы форм'
 		}
 	];
 

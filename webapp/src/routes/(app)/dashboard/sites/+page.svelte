@@ -7,7 +7,7 @@
 
 	import { type Site } from '$lib/types';
 	import AddNewSite from './AddNewSite.svelte';
-	import SiteContent from './SiteContent.svelte';
+	import SiteCard from './SiteCard.svelte';
 
 	let { data }: PageProps = $props();
 	let sites = $state<Site[]>([]);
@@ -56,7 +56,7 @@
 		<Alert variant="error" message={errorMessage} />
 	{/if}
 
-	<div class="site-list">
+	<div class="site-grid">
 		{#await data.sitesResp}
 			<div class="loading-state" aria-live="polite">
 				<Spinner size={50} />
@@ -64,17 +64,15 @@
 		{:then sitesResult}
 			{#if sitesResult.data}
 				{#each sites ?? [] as site (site.id)}
-					<div class="site-row">
-						<SiteContent
-							{site}
-							bind:loading
-							bind:errorMessage
-							onsiteupdate={async () => {
-								await invalidateAll();
-								updateState();
-							}}
-						/>
-					</div>
+					<SiteCard
+						{site}
+						bind:loading
+						bind:errorMessage
+						onsiteupdate={async () => {
+							await invalidateAll();
+							updateState();
+						}}
+					/>
 				{/each}
 
 				{#if loading === false && sites && sites.length >= maxAmount}
@@ -143,15 +141,10 @@
 		white-space: nowrap;
 	}
 
-	.site-list {
-		display: flex;
-		flex-direction: column;
-		min-width: 0;
-		border-top: 1px solid var(--color-border);
-	}
-
-	.site-row {
-		border-bottom: 1px solid var(--color-border);
+	.site-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+		gap: var(--space-lg);
 		min-width: 0;
 	}
 
@@ -160,6 +153,7 @@
 		align-items: center;
 		justify-content: center;
 		min-height: 10.625rem;
+		grid-column: 1 / -1;
 	}
 
 	.limit-info-wrap {
@@ -167,6 +161,7 @@
 		display: flex;
 		align-items: center;
 		padding: var(--space-lg) 0;
+		grid-column: 1 / -1;
 	}
 
 	.add-action {

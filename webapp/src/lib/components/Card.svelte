@@ -42,7 +42,6 @@
 
 <style>
 	.card {
-		min-width: fit-content;
 		position: relative;
 		--card-surface: var(--color-background-object);
 		--card-border-color: var(--color-border);
@@ -93,13 +92,5 @@
 
 	.floating-compat {
 		box-shadow: var(--shadow-sm);
-		transition:
-			transform 180ms ease-out,
-			box-shadow 180ms ease-out;
-	}
-
-	.floating-compat:hover {
-		box-shadow: var(--shadow-lg);
-		transform: translateY(-2px);
 	}
 </style>

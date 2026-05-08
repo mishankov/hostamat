@@ -21,9 +21,9 @@ func (d *Domain) GetRepository() any {
 	return d.Repository
 }
 
-func New(db db, subdomainService subdomainService, customDomainService customDomainService, fileService *file.Service, uploadSessionService *uploadsession.Service) *Domain {
+func New(db db, subdomainService subdomainService, customDomainService customDomainService, fileService *file.Service, uploadSessionService *uploadsession.Service, formCollectionService formCollectionService) *Domain {
 	repository := NewRepository(db)
-	service := NewService(repository, subdomainService, customDomainService, fileService, uploadSessionService)
+	service := NewService(repository, subdomainService, customDomainService, fileService, uploadSessionService, formCollectionService)
 
 	siteHandlerGroup := httpserver.NewHandlerGroup()
 	siteHandlerGroup.Handle("GET /", NewListSiteHandler(service))

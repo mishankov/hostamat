@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"hostamat/internal/file"
+	"hostamat/internal/formcollection"
 	"hostamat/internal/subdomain"
 	"hostamat/internal/uploadsession"
 	"io"
@@ -41,21 +42,29 @@ type customDomainService interface {
 	DeleteBySite(ctx context.Context, siteID string) error
 }
 
+type formCollectionService interface {
+	RecordDiscovery(ctx context.Context, siteID string, files []formcollection.UploadedHTMLFile) (*formcollection.DiscoverySummary, error)
+	DisableActiveBySite(ctx context.Context, siteID string) error
+	DeleteBySite(ctx context.Context, siteID string) error
+}
+
 type Service struct {
 	repository           repository
 	subdomainService     subdomainService
 	customDomainService  customDomainService
 	fileService          *file.Service
 	uploadSessionService *uploadsession.Service
+	formCollection       formCollectionService
 }
 
-func NewService(repository repository, subdomainService subdomainService, customDomainService customDomainService, fileService *file.Service, uploadSessionService *uploadsession.Service) *Service {
+func NewService(repository repository, subdomainService subdomainService, customDomainService customDomainService, fileService *file.Service, uploadSessionService *uploadsession.Service, formCollectionService formCollectionService) *Service {
 	return &Service{
 		repository:           repository,
 		subdomainService:     subdomainService,
 		customDomainService:  customDomainService,
 		fileService:          fileService,
 		uploadSessionService: uploadSessionService,
+		formCollection:       formCollectionService,
 	}
 }
 
@@ -363,6 +372,13 @@ func (s *Service) Delete(ctx context.Context, id string) error {
 		return err
 	}
 
+	if s.formCollection != nil {
+		err = s.formCollection.DeleteBySite(ctx, site.Id)
+		if err != nil {
+			return err
+		}
+	}
+
 	// `s.Get` already checks permission, so can delete without additional checks
 	err = s.repository.Delete(ctx, id)
 	if err != nil {
@@ -404,6 +420,17 @@ func (s *Service) CreateUploadSession(ctx context.Context, siteId string) (*uplo
 	err = s.fileService.DeleteFromFolder(ctx, site.Id)
 	if err != nil {
 		return nil, err
+	}
+
+	if s.formCollection != nil {
+		err = s.formCollection.DisableActiveBySite(ctx, site.Id)
+		if err != nil {
+			return nil, err
+		}
+		_, err = s.formCollection.RecordDiscovery(ctx, site.Id, nil)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	us, err := s.uploadSessionService.Create(ctx, site.Id)
@@ -451,12 +478,45 @@ func (s *Service) CloseUploadSession(ctx context.Context, uploadSessionId string
 	}
 
 	summary := BuildUploadSummary(site.Domain, files)
+	if s.formCollection != nil {
+		htmlFiles, err := s.uploadedHTMLFiles(ctx, site.Id, summary.AvailablePages)
+		if err != nil {
+			return nil, err
+		}
+		formDiscovery, err := s.formCollection.RecordDiscovery(ctx, site.Id, htmlFiles)
+		if err != nil {
+			return nil, err
+		}
+		summary.FormDiscovery = formDiscovery
+	}
+
 	err = s.syncUploadWarnings(ctx, site.Id, summary)
 	if err != nil {
 		return nil, err
 	}
 
 	return summary, nil
+}
+
+func (s *Service) uploadedHTMLFiles(ctx context.Context, siteID string, pages []UploadedPage) ([]formcollection.UploadedHTMLFile, error) {
+	files := make([]formcollection.UploadedHTMLFile, 0, len(pages))
+	for _, page := range pages {
+		reader, _, err := s.fileService.GetFile(ctx, siteID+"/"+page.FileName)
+		if err != nil {
+			return nil, err
+		}
+		body, err := io.ReadAll(reader)
+		if err != nil {
+			return nil, err
+		}
+		files = append(files, formcollection.UploadedHTMLFile{
+			FileName: page.FileName,
+			PagePath: page.Path,
+			Body:     body,
+		})
+	}
+
+	return files, nil
 }
 
 func (s *Service) attachWarnings(ctx context.Context, sites []*Site) error {
