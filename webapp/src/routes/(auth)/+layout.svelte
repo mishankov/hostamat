@@ -31,6 +31,4 @@
 		gap: var(--space-lg);
 		padding: var(--space-2xl);
 	}
-
-
 </style>

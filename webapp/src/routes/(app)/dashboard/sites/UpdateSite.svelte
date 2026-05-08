@@ -1,7 +1,19 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { Button, IconButton, Modal, Input } from '$lib/components';
 	import { Edit, Spinner } from '$lib/icons';
 	import { updateSite } from '$lib/api-client';
+
+	interface Props {
+		siteName?: string;
+		siteId?: string;
+		loading?: boolean;
+		iconButtonGrouped?: boolean;
+		iconSize?: number;
+		onsuccess?: () => Promise<void>;
+		trigger?: Snippet<[{ open: () => void }]>;
+		ontrigger?: (open: () => void) => void;
+	}
 
 	let {
 		siteName = '',
@@ -9,25 +21,37 @@
 		loading = false,
 		iconButtonGrouped = false,
 		iconSize = 25,
-		onsuccess = async () => {}
-	} = $props();
+		onsuccess = async () => {},
+		trigger,
+		ontrigger
+	}: Props = $props();
 
 	let modal = $state<Modal>();
 	let newName = $state('');
 	let errorMessage = $state('');
 
+	$effect(() => {
+		if (ontrigger) {
+			ontrigger(() => modal?.open());
+		}
+	});
+
 	const modalTitleId = $derived(`update-site-title-${siteId}`);
 	const inputId = $derived(`update-site-name-${siteId}`);
 </script>
 
-<IconButton
-	label="Изменить сайт"
-	grouped={iconButtonGrouped}
-	onclick={() => modal?.open()}
-	title="Изменить сайт"
->
-	<Edit size={iconSize} />
-</IconButton>
+{#if trigger}
+	{@render trigger({ open: () => modal?.open() })}
+{:else if !ontrigger}
+	<IconButton
+		label="Изменить сайт"
+		grouped={iconButtonGrouped}
+		onclick={() => modal?.open()}
+		title="Изменить сайт"
+	>
+		<Edit size={iconSize} />
+	</IconButton>
+{/if}
 <Modal
 	bind:this={modal}
 	tone="neutral"

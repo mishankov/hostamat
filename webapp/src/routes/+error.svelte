@@ -7,9 +7,9 @@
 </script>
 
 <svelte:head>
-		<title>{page.status} - Хостамат</title>
-		<meta name="description" content="Страница не найдена или произошла ошибка." />
-	</svelte:head>
+	<title>{page.status} - Хостамат</title>
+	<meta name="description" content="Страница не найдена или произошла ошибка." />
+</svelte:head>
 
 <main class="page-shell">
 	<div class="page-content error-page">

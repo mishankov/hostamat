@@ -1,4 +1,5 @@
 import Copy from './Copy.svelte';
+import DotsVertical from './DotsVertical.svelte';
 import Download from './Download.svelte';
 import Edit from './Edit.svelte';
 import I from './I.svelte';
@@ -12,4 +13,19 @@ import Upload from './Upload.svelte';
 import Warning from './Warning.svelte';
 import X from './X.svelte';
 
-export { Copy, Download, Edit, I, Plus, Spinner, Check, Sun, Moon, Trash, Upload, Warning, X };
+export {
+	Copy,
+	DotsVertical,
+	Download,
+	Edit,
+	I,
+	Plus,
+	Spinner,
+	Check,
+	Sun,
+	Moon,
+	Trash,
+	Upload,
+	Warning,
+	X
+};
